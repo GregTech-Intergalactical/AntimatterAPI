@@ -22,42 +22,42 @@ import tesseract.fabric.TesseractImpl;
 public class AntimatterAPIImpl {
     @SuppressWarnings("UnstableApiUsage")
     public static void registerTransferApi(BlockEntityType<? extends TileEntityMachine<?>> type){
-        FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).map(f -> f).orElse(null), type);
-        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> i).orElse(null), type);
+        FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).orElse(null), type);
+        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
-        TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), (be, direction) -> be.rfHandler.side(direction).orElse(null), type);
+        TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).orElse(null), (be, direction) -> be.rfHandler.side(direction).orElse(null), type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-            TesseractImpl.registerMITile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), type);
+            TesseractImpl.registerMITile((be, direction) -> be.energyHandler.side(direction).orElse(null), type);
         }
-        AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.side(direction).map(c -> c).orElse(null), type);
+        AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.side(direction).orElse(null), type);
     }
 
     public static void registerTransferApiPipe(BlockEntityType<? extends TileEntityPipe<?>> type){
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityFluidPipe<?> fluidPipe)) return null;
-            return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
+            return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).orElse(null);
         }, type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityItemPipe<?> itemPipe)) return null;
-            return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
+            return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).orElse(null);
         }, type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityCable<?> cable)) return null;
-            return (IEnergyHandler) cable.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
+            return (IEnergyHandler) cable.getPipeCapHolder().side(direction).orElse(null);
         }, type);
         TesseractImpl.registerTRETile((be, direction) -> {
             if (!(be instanceof TileEntityCable<?> cable)) return null;
-            return (IEnergyHandler) cable.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
+            return (IEnergyHandler) cable.getPipeCapHolder().side(direction).orElse(null);
         }, (be, direction) -> null, type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
             TesseractImpl.registerMITile((be, direction) -> {
                 if (!(be instanceof TileEntityCable<?> cable)) return null;
-                return (IEnergyHandler) cable.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
+                return (IEnergyHandler) cable.getPipeCapHolder().side(direction).orElse(null);
             }, type);
         }
         TesseractLookups.HEAT_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityHeatPipe<?> heatPipe)) return null;
-            return (IHeatHandler) heatPipe.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
+            return (IHeatHandler) heatPipe.getPipeCapHolder().side(direction).orElse(null);
         }, type);
         AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.map(c -> c).orElse(null), type);
     }

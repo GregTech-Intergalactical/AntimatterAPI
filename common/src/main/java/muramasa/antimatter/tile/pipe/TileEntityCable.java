@@ -25,6 +25,8 @@ import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 
+import java.util.Optional;
+
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
     private long holder;
@@ -116,13 +118,13 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    public LazyOptional<IEnergyHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractGTCapability<>(this, side, !isConnector(), (stack,in,out,simulate) -> 
+    public Optional<IEnergyHandler> forSide(Direction side) {
+        return Optional.of(new TesseractGTCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
         this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
     @Override
-    public LazyOptional<IEnergyHandler> forNullSide() {
+    public Optional<IEnergyHandler> forNullSide() {
         return forSide(null);
     }
 

@@ -31,6 +31,7 @@ import tesseract.TesseractGraphWrappers;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
@@ -260,13 +261,13 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Override
-    public LazyOptional<? extends IFluidHandler> forNullSide() {
-        return LazyOptional.of(() -> new FluidHandlerNullSideWrapper(this));
+    public Optional<? extends IFluidHandler> forNullSide() {
+        return Optional.of(new FluidHandlerNullSideWrapper(this));
     }
 
     @Override
-    public LazyOptional<IFluidHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new FluidHandlerSidedWrapper(this, tile.coverHandler.map(c -> c).orElse(null), side));
+    public Optional<IFluidHandler> forSide(Direction side) {
+        return Optional.of(new FluidHandlerSidedWrapper(this, tile.coverHandler.map(c -> c).orElse(null), side));
     }
 
     public IFluidHandler getGuiHandler() {

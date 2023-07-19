@@ -144,13 +144,13 @@ public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler 
     }
 
     @Override
-    public LazyOptional<? extends IRFNode> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public Optional<? extends IRFNode> forSide(Direction side) {
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<? extends IRFNode> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public Optional<? extends IRFNode> forNullSide() {
+        return Optional.of(this);
     }
 
     public void onRemove() {

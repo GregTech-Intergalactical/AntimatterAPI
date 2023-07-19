@@ -178,12 +178,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
 
     @Override
-    public LazyOptional<IEnergyHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public Optional<IEnergyHandler> forSide(Direction side) {
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<? extends IEnergyHandler> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public Optional<? extends IEnergyHandler> forNullSide() {
+        return Optional.of(this);
     }
 }

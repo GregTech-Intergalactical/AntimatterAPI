@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Optional;
 
 
 public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler<?>> {
@@ -92,12 +93,12 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
-    public LazyOptional<ICoverHandler<?>> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public Optional<ICoverHandler<?>> forSide(Direction side) {
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<? extends ICoverHandler<?>> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public Optional<? extends ICoverHandler<?>> forNullSide() {
+        return Optional.of(this);
     }
 }

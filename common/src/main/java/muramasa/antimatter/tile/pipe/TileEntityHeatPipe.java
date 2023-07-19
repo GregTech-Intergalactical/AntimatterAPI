@@ -16,6 +16,8 @@ import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;
 import tesseract.api.heat.IHeatPipe;
 
+import java.util.Optional;
+
 public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T> implements IHeatPipe {
 
     public TileEntityHeatPipe(T type, BlockPos pos, BlockState state) {
@@ -65,32 +67,32 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public HeatTransaction extract() {
-        return ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::extract).orElse(null);
+        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::extract).orElse(null);
     }
 
     @Override
     public void insert(HeatTransaction transaction) {
-        ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(t -> t.insert(transaction));
+        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(t -> t.insert(transaction));
     }
 
     @Override
     public int getHeat() {
-        return ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getHeat).orElse(0);
+        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getHeat).orElse(0);
     }
 
     @Override
     public int getHeatCap() {
-        return ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getHeatCap).orElse(0);
+        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getHeatCap).orElse(0);
     }
 
     @Override
     public int getTemperature() {
-        return ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getTemperature).orElse(0);
+        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getTemperature).orElse(0);
     }
 
     @Override
     public void update(boolean active) {
-        ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(t -> t.update(active));
+        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(t -> t.update(active));
     }
 
     @Override
@@ -100,11 +102,11 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public CompoundTag serializeNBT() {
-        return ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).map(h -> h.serializeNBT()).orElse(null);
+        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(h -> h.serializeNBT()).orElse(null);
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(h -> h.deserializeNBT(nbt));
+        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(h -> h.deserializeNBT(nbt));
     }
 }

@@ -20,6 +20,8 @@ import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
 
+import java.util.Optional;
+
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         implements IItemPipe, Dispatch.Sided<IItemHandler>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
 
@@ -73,13 +75,13 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
-    public LazyOptional<IItemHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
-                simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
+    public Optional<IItemHandler> forSide(Direction side) {
+        return Optional.of(new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
+                                                                                            simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
     @Override
-    public LazyOptional<? extends IItemHandler> forNullSide() {
+    public Optional<? extends IItemHandler> forNullSide() {
         return forSide(null);
     }
 

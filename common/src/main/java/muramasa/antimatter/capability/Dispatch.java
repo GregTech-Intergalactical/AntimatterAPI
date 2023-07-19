@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class Dispatch {
 
@@ -48,10 +49,10 @@ public class Dispatch {
     }
 
     public interface Sided<U> {
-        LazyOptional<? extends U> forSide(Direction side);
+        Optional<? extends U> forSide(Direction side);
 
-        default LazyOptional<? extends U> forNullSide() {
-            return LazyOptional.empty();
+        default Optional<? extends U> forNullSide() {
+            return Optional.empty();
         }
     }
 }

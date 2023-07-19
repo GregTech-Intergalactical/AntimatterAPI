@@ -38,6 +38,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.GUI;
@@ -391,12 +392,12 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     @Override
-    public LazyOptional<IItemHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
+    public Optional<IItemHandler> forSide(Direction side) {
+        return Optional.of(new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
     }
 
     @Override
-    public LazyOptional<? extends IItemHandler> forNullSide() {
-        return LazyOptional.of(() -> new ROCombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
+    public Optional<? extends IItemHandler> forNullSide() {
+        return Optional.of(new ROCombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
     }
 }

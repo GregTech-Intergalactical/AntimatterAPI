@@ -93,7 +93,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         return resolved;
     }
 
-    public LazyOptional<? extends V> nullSide() {
+    public Optional<? extends V> nullSide() {
         if (resolved == null) {
             get();
         }
@@ -158,15 +158,15 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         return value != null && predicate.test(value) ? Optional.of(value) : Optional.empty();
     }
 
-    public LazyOptional<? extends V> side(Direction side) {
+    public Optional<? extends V> side(Direction side) {
         if (!isPresent()) {
-            return LazyOptional.empty();
+            return Optional.empty();
         }
         if (resolved == null) {
             get();
         }
         int index = side == null ? 6 : side.get3DDataValue();
-        LazyOptional<? extends V> t = sided[index];
+        Optional<? extends V> t = sided[index];
         if (!t.isPresent()) {
             sided[index] = (t = (side == null ? nullSide() : resolved.forSide(side)));
         }

@@ -13,6 +13,8 @@ import tesseract.TesseractCapUtils;
 import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;
 
+import java.util.Optional;
+
 public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHandler> {
 
     public final int heatCap;
@@ -83,32 +85,31 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     }
 
     @Override
-    public LazyOptional<? extends IHeatHandler> forSide(Direction side) {
+    public Optional<? extends IHeatHandler> forSide(Direction side) {
         if (tile instanceof TileEntityMachine<?> m) {
-            if (side == null) return LazyOptional.of(() -> this);
+            if (side == null) return Optional.of(this);
             if (m.coverHandler.map(t -> t.get(side).getFactory() == Data.COVERHEAT).orElse(false)) {
-                return LazyOptional.of(() -> this);
+                return Optional.of(this);
             } else {
-                return LazyOptional.empty();
+                return Optional.empty();
             }
         }
-        return LazyOptional.of(() -> this);
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<? extends IHeatHandler> forNullSide() {
+    public Optional<? extends IHeatHandler> forNullSide() {
         return forSide(null);
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundTag serialize(CompoundTag tag) {
         tag.putInt(Ref.TAG_MACHINE_HEAT, this.currentHeat);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         this.currentHeat = nbt.getInt(Ref.TAG_MACHINE_HEAT);
     }
 }

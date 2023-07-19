@@ -30,6 +30,7 @@ import tesseract.api.gt.GTTransaction;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineState.*;
 import static muramasa.antimatter.machine.event.ContentEvent.ENERGY_SLOT_CHANGED;
@@ -692,12 +693,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     @Override
-    public LazyOptional<MachineRecipeHandler<?>> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public Optional<MachineRecipeHandler<?>> forSide(Direction side) {
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<MachineRecipeHandler<?>> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public Optional<MachineRecipeHandler<?>> forNullSide() {
+        return Optional.of(this);
     }
 }

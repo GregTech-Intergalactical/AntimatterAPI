@@ -28,16 +28,17 @@ import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.fluid.IFluidPipe;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
-    protected LazyOptional<PipeFluidHandler> fluidHandler;
+    protected Optional<PipeFluidHandler> fluidHandler;
     private PipeFluidHolder holder;
 
     public TileEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         if (fluidHandler == null) {
-            fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : LazyOptional.empty();
+            fluidHandler = FluidController.SLOOSH ? Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : Optional.empty();
         }
         pipeCapHolder.set(() -> this);
     }
@@ -82,7 +83,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onRemove() {
         fluidHandler.ifPresent(FluidHandler::onRemove);
-        fluidHandler.invalidate();
         super.onRemove();
     }
 
@@ -141,20 +141,20 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public LazyOptional<? extends IFluidHandler> forSide(Direction side) {
+    public Optional<? extends IFluidHandler> forSide(Direction side) {
         if (FluidController.SLOOSH) {
             if (fluidHandler == null) {
-                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
+                fluidHandler = Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
             }
         } else {
-            return LazyOptional.of(() -> new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) -> 
+            return Optional.of(new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
             this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
         }
         return fluidHandler;
     }
 
     @Override
-    public LazyOptional<? extends IFluidHandler> forNullSide() {
+    public Optional<? extends IFluidHandler> forNullSide() {
         return forSide(null);
     }
 

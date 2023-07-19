@@ -294,20 +294,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return coverHandler.map(t -> t.blocksCapability(getCapClass(), side)).orElse(false);
     }
 
-    //For covers
-    @Nonnull
-    public <U> LazyOptional<U> getCoverCapability(@Nonnull Class<U> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
-        //if (!this.connects(side)) return LazyOptional.empty();
-        if (cap == getCapClass()) {
-            return pipeCapHolder.side(side).cast();
-        }
-        if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){
-            return pipeCapHolder.side(side).cast();
-        }
-        return LazyOptional.empty();
-    }
-
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
