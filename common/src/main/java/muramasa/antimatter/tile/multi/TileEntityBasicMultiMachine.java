@@ -5,10 +5,6 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
-import muramasa.antimatter.cover.CoverDynamo;
-import muramasa.antimatter.cover.CoverEnergy;
-import muramasa.antimatter.cover.CoverInput;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
@@ -22,10 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import tesseract.api.gt.IEnergyHandler;
-import tesseract.api.rf.IRFNode;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -170,22 +162,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.serverTick(level, pos, state);
         if (result != null)
             result.tick(this);
-    }
-
-    public <T> LazyOptional<T> getCapabilityFromFake(Class<T> cap, BlockPos pos, Direction side,
-                                                     ICover coverPresent) {
-        if (!allowsFakeTiles()) return LazyOptional.empty();
-        if (cap == IItemHandler.class && itemHandler.isPresent())
-            return itemHandler.side(side).cast();
-        else if (cap == IFluidHandler.class && fluidHandler.isPresent())
-            return fluidHandler.side(side).cast();
-        else if (cap == IEnergyHandler.class && energyHandler.isPresent()
-                && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
-            return energyHandler.side(side).cast();
-        else if (cap == IRFNode.class && rfHandler.isPresent()
-                && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
-            return rfHandler.side(side).cast();
-        return LazyOptional.empty();
     }
 
     public boolean allowsFakeTiles(){

@@ -5,6 +5,9 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
 import muramasa.antimatter.common.event.CommonEvents;
+import muramasa.antimatter.cover.CoverDynamo;
+import muramasa.antimatter.cover.CoverEnergy;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.item.IFluidItem;
 import muramasa.antimatter.material.Material;
@@ -40,11 +43,16 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.forge.Provider;
 import tesseract.api.forge.TesseractCaps;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
 
 import static muramasa.antimatter.material.Material.NULL;
@@ -195,16 +203,22 @@ public class ForgeCommonEvents {
                 @NotNull
                 @Override
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-                    if (fakeBlock.getController() == null){
+                    TileEntityBasicMultiMachine<?> controller = fakeBlock.getController();
+                    if (controller == null){
                         return LazyOptional.empty();
                     }
-                    LazyOptional<T> opt = fakeBlock.getController().getCapabilityFromFake((Class<T>) AntimatterCaps.CAP_MAP.inverse().get(capability), fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
-                    if (opt.isPresent()) {
-                        if (capability == CapabilityEnergy.ENERGY && opt.map(e -> e instanceof IRFNode).orElse(false)){
-                            LazyOptional<T> finalOpt = opt;
-                            opt = LazyOptional.of(() -> finalOpt.map(e -> new ForgeEnergyContainer<>(((IRFNode)e), fakeBlock)).get()).cast();
-                        }
-                        return opt;
+                    ICover coverPresent = fakeBlock.covers.get(side);
+                    if (!controller.allowsFakeTiles()) return LazyOptional.empty();
+                    if (capability == ITEM_HANDLER_CAPABILITY && controller.itemHandler.isPresent()) {
+                        return controller.itemHandler.side(side).cast();
+                    } else if (capability == FLUID_HANDLER_CAPABILITY && controller.fluidHandler.isPresent()) {
+                        return controller.fluidHandler.side(side).cast();
+                    } else if (capability == TesseractCaps.ENERGY_HANDLER_CAPABILITY && controller.energyHandler.isPresent()
+                            && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) {
+                        return controller.energyHandler.side(side).cast();
+                    } else if (capability == CapabilityEnergy.ENERGY && controller.rfHandler.isPresent()
+                            && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) {
+                        return LazyOptional.of(() -> new ForgeEnergyContainer<>(controller.rfHandler.side(side).resolve().get(), fakeBlock)).cast();
                     }
                     return LazyOptional.empty();
                 }

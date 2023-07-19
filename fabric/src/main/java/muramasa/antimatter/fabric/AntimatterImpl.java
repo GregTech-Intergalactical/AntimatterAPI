@@ -8,6 +8,9 @@ import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.fabric.AntimatterLookups;
 import muramasa.antimatter.common.event.CommonEvents;
+import muramasa.antimatter.cover.CoverDynamo;
+import muramasa.antimatter.cover.CoverEnergy;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
@@ -74,20 +77,56 @@ public class AntimatterImpl implements ModInitializer {
             CommonHandler.setup();
             AntimatterFabricWorldgen.init();
             RecipeConditions.init();
-            FluidStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IFluidHandler.class, be, direction), BlockFakeTile.TYPE);
-            ItemStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IItemHandler.class, be, direction), BlockFakeTile.TYPE);
-            TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(IEnergyHandler.class, be, direction), BlockFakeTile.TYPE);
+            FluidStorage.SIDED.registerForBlockEntity((be, direction) -> {
+                TileEntityBasicMultiMachine<?> controller = be.getController();
+                if (controller == null){
+                    return null;
+                }
+                if (!controller.allowsFakeTiles()) return null;
+                return controller.fluidHandler.side(direction).resolve().orElse(null);
+            }, BlockFakeTile.TYPE);
+            ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
+                TileEntityBasicMultiMachine<?> controller = be.getController();
+                if (controller == null){
+                    return null;
+                }
+                if (!controller.allowsFakeTiles()) return null;
+                return controller.itemHandler.side(direction).resolve().orElse(null);
+            }, BlockFakeTile.TYPE);
+            TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
+                TileEntityBasicMultiMachine<?> controller = be.getController();
+                if (controller == null){
+                    return null;
+                }
+                if (!controller.allowsFakeTiles()) return null;
+                ICover coverPresent = be.getCover(direction);
+                if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
+                return controller.energyHandler.side(direction).resolve().orElse(null);
+            }, BlockFakeTile.TYPE);
             EnergyStorage.SIDED.registerForBlockEntity((be, direction) -> {
-                IEnergyHandler handler = getCap(IEnergyHandler.class, be, direction);
-                if (handler != null) return (EnergyStorage) handler;
-                IRFNode node = getCap(IRFNode.class, be, direction);
-                if (node != null) return node instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(node, node, be);
-                return null;
+                TileEntityBasicMultiMachine<?> controller = be.getController();
+                if (controller == null){
+                    return null;
+                }
+                if (!controller.allowsFakeTiles()) return null;
+                ICover coverPresent = be.getCover(direction);
+                if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
+                return controller.rfHandler.side(direction).resolve().map(rf -> {
+                    return rf instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(rf, rf, be);
+                }).orElse(null);
             }, BlockFakeTile.TYPE);
             if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-                TesseractImpl.registerMITile((be, direction) -> getCap(IEnergyHandler.class, be, direction), BlockFakeTile.TYPE);
+                TesseractImpl.registerMITile((be, direction) -> {
+                    TileEntityBasicMultiMachine<?> controller = be.getController();
+                    if (controller == null){
+                        return null;
+                    }
+                    if (!controller.allowsFakeTiles()) return null;
+                    ICover coverPresent = be.getCover(direction);
+                    if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
+                    return controller.energyHandler.side(direction).resolve().orElse(null);
+                }, BlockFakeTile.TYPE);
             }
-            AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(ICoverHandler.class, be, direction), BlockFakeTile.TYPE);
             AntimatterAPI.all(Material.class).forEach(m -> {
                 Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
                 if (map != null){
@@ -125,17 +164,6 @@ public class AntimatterImpl implements ModInitializer {
                 FluidVariantAttributes.register(flowing, new FluidAttributesVariantWrapper(f.getAttributes()));
             });
         }
-    }
-
-    private <T> T getCap(Class<T> clazz, TileEntityFakeBlock fakeBlock, Direction side){
-        if (fakeBlock.getController() == null){
-            return null;
-        }
-        LazyOptional<T> opt = fakeBlock.getController().getCapabilityFromFake(clazz, fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
-        if (opt.isPresent()) {
-            return opt.orElse(null);
-        }
-        return null;
     }
 
     private void providers(ProvidersEvent ev) {
