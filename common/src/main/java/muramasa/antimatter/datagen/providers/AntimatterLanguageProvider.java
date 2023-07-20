@@ -36,6 +36,7 @@ import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.devtech.arrp.json.lang.JLang;
+import net.minecraft.Util;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
@@ -191,7 +192,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 add(s, localized);
             });
             AntimatterAPI.all(AntimatterFluid.class).forEach((AntimatterFluid s) -> {
-                add(s.getAttributes().getTranslationKey(), tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())));
+                add(Util.makeDescriptionId("fluid_type", s.getLoc()), tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())));
                 Item bucket = AntimatterAPI.get(Item.class, s.getId() + "_bucket", Ref.SHARED_ID);
                 if (bucket != null) add(bucket, tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())) + " Bucket");
             });
