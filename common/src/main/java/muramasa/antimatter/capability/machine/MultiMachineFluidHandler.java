@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +34,7 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
     }
 
     @Override
-    public boolean canOutputsFit(FluidStack[] outputs) {
+    public boolean canOutputsFit(FluidHolder[] outputs) {
         return outputs != null && this.outputs != null && this.outputs.length >= outputs.length;
     }
 

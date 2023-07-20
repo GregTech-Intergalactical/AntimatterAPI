@@ -4,12 +4,12 @@ import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.RecipeUtil;
@@ -23,14 +23,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
-import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,9 +61,9 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
                     fluidInputs.add(getFluidIngredient(element));
                 }
             }
-            FluidStack[] fluidOutputs = null;
+            FluidHolder[] fluidOutputs = null;
             if (json.has("fluid_out")) {
-                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(AntimatterRecipeSerializer::getStack).toArray(FluidStack[]::new);
+                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(AntimatterRecipeSerializer::getStack).toArray(FluidHolder[]::new);
             }
             long eut = json.get("eu").getAsLong();
             int duration = json.get("duration").getAsInt();
@@ -97,27 +94,27 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         }
         return null;
     }
-    public static FluidStack getStack(JsonElement element) {
+    public static FluidHolder getStack(JsonElement element) {
         try {
             if (!(element.isJsonObject())) {
-                return FluidStack.EMPTY;
+                return FluidHooks.emptyFluid();
             }
             JsonObject obj = (JsonObject) element;
             ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
             Fluid fluid = AntimatterPlatformUtils.getFluidFromID(fluidName);
             if (fluid == null) {
-                return FluidStack.EMPTY;
+                return FluidHooks.emptyFluid();
             }
-            FluidStack stack = FluidPlatformUtils.createFluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsLong() : 1000 * TesseractGraphWrappers.dropletMultiplier);
+            FluidHolder stack = FluidPlatformUtils.createFluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsLong() : 1000 * TesseractGraphWrappers.dropletMultiplier);
 
             if (obj.has("tag")) {
-                stack.setTag(TagParser.parseTag(obj.get("tag").getAsString()));
+                stack.setCompound(TagParser.parseTag(obj.get("tag").getAsString()));
             }
             return stack;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
         }
-        return FluidStack.EMPTY;
+        return FluidHooks.emptyFluid();
     }
 
     public static FluidIngredient getFluidIngredient(JsonElement element) {
@@ -163,10 +160,10 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             }
         }
         size = buffer.readInt();
-        FluidStack[] outf = new FluidStack[size];
+        FluidHolder[] outf = new FluidHolder[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                outf[i] = AntimatterPlatformUtils.readFluidStack(buffer);
+                outf[i] = FluidPlatformUtils.readFromPacket(buffer);
             }
         }
         size = buffer.readInt();
@@ -214,7 +211,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         }
         buffer.writeInt(!recipe.hasOutputFluids() ? 0 : recipe.getOutputFluids().length);
         if (recipe.hasOutputFluids()) {
-            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> AntimatterPlatformUtils.writeFluidStack(stack, buffer));
+            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> FluidPlatformUtils.writeToPacket(buffer, stack));
         }
         buffer.writeInt(recipe.hasChances() ? recipe.getChances().length : 0);
         if (recipe.hasChances()) {

@@ -1,6 +1,7 @@
 package muramasa.antimatter.integration.jei;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
@@ -43,7 +44,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -166,17 +166,17 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @ExpectPlatform
-    public static void uses(FluidStack val, boolean USE) {
+    public static void uses(FluidHolder val, boolean USE) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){
+    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static FluidStack getIngredient(ITypedIngredient<?> ingredient){
+    public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
         throw new AssertionError();
     }
 

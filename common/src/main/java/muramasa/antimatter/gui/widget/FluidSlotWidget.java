@@ -3,6 +3,8 @@ package muramasa.antimatter.gui.widget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -18,8 +20,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidStack;
-import tesseract.TesseractCapUtils;
+import tesseract.FluidPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class FluidSlotWidget extends Widget {
 
     private final int slot;
     private final SlotData<?> slots;
-    private FluidStack stack = FluidStack.EMPTY;
+    private FluidHolder stack = FluidHooks.emptyFluid();
 
     protected FluidSlotWidget(GuiInstance gui, IGuiElement parent, int fluidSlot, SlotData<?> slots) {
         super(gui, parent);
@@ -52,8 +54,8 @@ public class FluidSlotWidget extends Widget {
     public void init() {
         super.init();
         if (this.gui.handler instanceof BlockEntity blockEntity){
-            this.gui.syncFluidStack(() -> TesseractCapUtils.getFluidHandler(blockEntity, null)
-                    .map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack, SERVER_TO_CLIENT);
+            this.gui.syncFluidStack(() -> FluidHooks.safeGetBlockFluidManager(blockEntity, null)
+                    .map(t -> t.getFluidInTank(slot)).orElse(FluidHooks.emptyFluid()), stack -> this.stack = stack, SERVER_TO_CLIENT);
         }
 
     }
@@ -64,7 +66,7 @@ public class FluidSlotWidget extends Widget {
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderFluid(PoseStack stack, FluidStack fluid, int x, int y) {
+    public void renderFluid(PoseStack stack, FluidHolder fluid, int x, int y) {
         if (fluid.isEmpty())
             return;
         RenderHelper.drawFluid(stack, Minecraft.getInstance(), x, y, getW(), getH(), 16, fluid);
@@ -84,9 +86,9 @@ public class FluidSlotWidget extends Widget {
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
         List<Component> str = new ArrayList<>();
-        str.add(new TextComponent(this.stack.getDisplayName().getString()));
+        str.add(FluidPlatformUtils.getFluidDisplayName(this.stack));
         str.add(new TextComponent(
-                NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB")
+                NumberFormat.getNumberInstance(Locale.US).format(this.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mB")
                 .withStyle(ChatFormatting.GRAY));
         AntimatterJEIREIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().font, stack);

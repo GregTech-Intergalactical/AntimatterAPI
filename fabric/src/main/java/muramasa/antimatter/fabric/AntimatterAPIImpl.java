@@ -66,9 +66,6 @@ public class AntimatterAPIImpl {
         if (item instanceof IEnergyItem energyItem){
             TesseractImpl.registerTREItem((s, c) -> energyItem.createEnergyHandler(new ContainerItemContextWrapper(c)), item);
         }
-        if (item instanceof IFluidItem fluidItem){
-            FluidStorage.ITEM.registerForItems((s, c) -> fluidItem.getFluidHandlerItem(s), item);
-        }
     }
 
     public static void registerEventBus(){

@@ -1,5 +1,7 @@
 package muramasa.antimatter.integration.jei.fabric;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import mezz.jei.api.fabric.constants.FabricTypes;
 import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -17,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AntimatterJEIPluginImpl {
-    public static void uses(FluidStack val, boolean USE) {
+    public static void uses(FluidHolder val, boolean USE) {
         //TODO uncomment when https://github.com/mezz/JustEnoughItems/issues/2891
         IJeiFluidIngredient v = new JeiFLuidWrapper(val);
         AntimatterJEIPlugin.getRuntime().getRecipesGui().show(new IFocus<IJeiFluidIngredient>() {
@@ -60,15 +62,15 @@ public class AntimatterJEIPluginImpl {
         });
     }
 
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){
-        builder.addIngredients(FabricTypes.FLUID_STACK, stacks.stream().map(f -> new JeiFLuidWrapper(f)).collect(Collectors.toList()));
+    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
+        builder.addIngredients(FabricTypes.FLUID_STACK, stacks.stream().map(JeiFLuidWrapper::new).collect(Collectors.toList()));
     }
 
-    public static FluidStack getIngredient(ITypedIngredient<?> ingredient){
+    public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
         IJeiFluidIngredient fluidIngredient = ingredient.getIngredient(FabricTypes.FLUID_STACK).get();
-        return new FluidStack(fluidIngredient.getFluid(), fluidIngredient.getAmount(), fluidIngredient.getTag().get());
+        return FluidHooks.newFluidHolder(fluidIngredient.getFluid(), fluidIngredient.getAmount(), fluidIngredient.getTag().get());
     }
-    record JeiFLuidWrapper(FluidStack stack) implements IJeiFluidIngredient{
+    record JeiFLuidWrapper(FluidHolder stack) implements IJeiFluidIngredient{
 
         @Override
         public Fluid getFluid() {
@@ -77,12 +79,12 @@ public class AntimatterJEIPluginImpl {
 
         @Override
         public long getAmount() {
-            return stack.getRealAmount();
+            return stack.getFluidAmount();
         }
 
         @Override
         public Optional<CompoundTag> getTag() {
-            return Optional.of(stack.getTag());
+            return Optional.of(stack.getCompound());
         }
     }
 }

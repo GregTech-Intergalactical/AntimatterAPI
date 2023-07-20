@@ -341,13 +341,6 @@ public class ForgeCommonEvents {
         return opt;
     }
 
-    @SubscribeEvent
-    public static void onAttachCapabilitiesEventItem(AttachCapabilitiesEvent<ItemStack> event){
-        if (event.getObject().getItem() instanceof IFluidItem fluidItem){
-            event.addCapability(new ResourceLocation(Ref.ID, "fluid_item"), new Provider<>(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, () -> fluidItem.getFluidHandlerItem(event.getObject())));
-        }
-    }
-
     /**
      * Recipe event for local servers, builds recipes.
      * @param ev forge event callback.

@@ -75,11 +75,12 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 }
                 PlatformFluidItemHandler fluidItemHandler = FluidHooks.safeGetItemFluidManager(cell).orElse(null);
                 if (fluidItemHandler != null){
-                    ItemStackHolder holder = new ItemStackHolder(cell);
+                    ItemStackHolder holder = new ItemStackHolder(cell.copy());
                     long inserted = FluidPlatformUtils.moveStandardToItemFluid(this.getCellAccessibleTanks(), fluidItemHandler, holder, maxFill, true);
                     if (inserted > 0){
                         if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), true).isEmpty())
                             return false;
+                        holder = new ItemStackHolder(cell);
                         FluidPlatformUtils.moveStandardToItemFluid(this.getCellAccessibleTanks(), fluidItemHandler, holder, maxFill, false);
                         MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), false);
                         MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
@@ -90,6 +91,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                         if (extracted > 0){
                             if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), true).isEmpty())
                                 return false;
+                            holder = new ItemStackHolder(cell);
                             FluidPlatformUtils.moveItemToStandardFluid(fluidItemHandler, this.getCellAccessibleTanks(), holder, maxFill, false);
                             MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), false);
                             MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
