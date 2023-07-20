@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +33,7 @@ public class Recipe implements IRecipe {
     private final List<Ingredient> itemsInput;
     @Nonnull
     private final List<FluidIngredient> fluidsInput;
-    private final FluidStack[] fluidsOutput;
+    private final FluidHolder[] fluidsOutput;
     private final int duration;
     private final int special;
     private final long power;
@@ -54,7 +55,7 @@ public class Recipe implements IRecipe {
 
     public static final RecipeType<IRecipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
-    public Recipe(@Nonnull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
+    public Recipe(@Nonnull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidHolder[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = ImmutableList.copyOf(stacksInput);
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -208,7 +209,7 @@ public class Recipe implements IRecipe {
     }
 
     @Nullable
-    public FluidStack[] getOutputFluids() {
+    public FluidHolder[] getOutputFluids() {
         return hasOutputFluids() ? fluidsOutput.clone() : null;
     }
 
@@ -291,7 +292,7 @@ public class Recipe implements IRecipe {
         if (fluidsOutput != null) {
             builder.append("Output Fluids: { ");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(AntimatterPlatformUtils.getIdFromFluid(fluidsOutput[i].getFluid())).append(": ").append(fluidsOutput[i].getAmount()).append("mb");
+                builder.append(AntimatterPlatformUtils.getIdFromFluid(fluidsOutput[i].getFluid())).append(": ").append(fluidsOutput[i].getFluidAmount() / TesseractGraphWrappers.dropletMultiplier).append("mb");
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");

@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -199,7 +200,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return InteractionResult.SUCCESS;
                     //Has gui?
-                    if (TesseractCapUtils.getFluidHandler(tile, hit.getDirection()).map(fh -> {
+                    if (FluidHooks.safeGetBlockFluidManager(tile, hit.getDirection()).map(fh -> {
                         int capacity = stack.getItem() instanceof ItemFluidCell cell ? cell.getCapacity() : 1000;
                         fh = tile.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(fh);
                         FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, capacity, player, true);

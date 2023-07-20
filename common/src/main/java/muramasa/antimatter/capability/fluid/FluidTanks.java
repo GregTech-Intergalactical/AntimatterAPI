@@ -1,16 +1,23 @@
 package muramasa.antimatter.capability.fluid;
 
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
+import earth.terrarium.botarium.common.fluid.impl.SimpleFluidSnapshot;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityBase;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractGraphWrappers;
+import tesseract.api.fluid.FluidContainerHandler;
+import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -23,7 +30,7 @@ import java.util.stream.LongStream;
 /**
  * Array of multiple instances of FluidTank
  */
-public class FluidTanks implements IFluidHandler {
+public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     public static <T extends TileEntityBase<T> & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent,
                                                                                     UnaryOperator<Builder<T>> builder) {
@@ -41,7 +48,7 @@ public class FluidTanks implements IFluidHandler {
         this.totalCapacity = tanks * tankAmountInMB * TesseractGraphWrappers.dropletMultiplier;
     }
 
-    public FluidTanks(int tanks, long tankAmountInMB, Predicate<FluidStack> validator) {
+    public FluidTanks(int tanks, long tankAmountInMB, Predicate<FluidHolder> validator) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
             this.tanks[i] = new FluidTank(tankAmountInMB * TesseractGraphWrappers.dropletMultiplier, validator);
@@ -59,23 +66,23 @@ public class FluidTanks implements IFluidHandler {
 
     public FluidTanks(Collection<FluidTank> tanks) {
         this.tanks = tanks.toArray(new FluidTank[0]);
-        this.totalCapacity = tanks.stream().mapToLong(FluidTank::getCapacityInDroplets).sum();
+        this.totalCapacity = tanks.stream().mapToLong(FluidTank::getCapacity).sum();
     }
 
-    public FluidTanks(FluidTank... tanks) {
+    public FluidTanks(@NotNull FluidTank... tanks) {
         this.tanks = tanks;
-        this.totalCapacity = Arrays.stream(tanks).mapToLong(FluidTank::getCapacityInDroplets).sum();
+        this.totalCapacity = Arrays.stream(tanks).mapToLong(FluidTank::getCapacity).sum();
     }
 
-    public int getFirstAvailableTank(FluidStack stack, boolean drain) {
+    public int getFirstAvailableTank(FluidHolder stack, boolean drain) {
         int firstAvailable = -1;
         for (int i = 0; i < tanks.length; i++) {
             FluidTank tank = this.tanks[i];
             if (tank.isEmpty()) {
                 firstAvailable = i;
                 break;
-            } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty())
-                    || (!drain && tank.fillDroplets(stack, FluidAction.SIMULATE) != 0)) {
+            } else if ((drain && !tank.extractFluid(stack, true).isEmpty())
+                    || (!drain && tank.insertFluid(stack, true) != 0)) {
                 return i;
             }
         }
@@ -86,44 +93,79 @@ public class FluidTanks implements IFluidHandler {
         return this.tanks[tank];
     }
 
-    public FluidStack[] getFluids() {
-        return Arrays.stream(this.tanks).map(FluidTank::getFluid).toArray(FluidStack[]::new);
+    public List<FluidHolder> getFluids() {
+        return Arrays.stream(this.tanks).map(FluidTank::getFluid).toList();
     }
 
     public FluidTank[] getBackingTanks() {
         return tanks;
     }
 
+
     @Override
-    public int getTanks() {
-        return this.tanks.length;
+    public int getSize() {
+        return tanks.length;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        boolean hasFluid = false;
+        for (int i = 0; i < getSize(); i++) {
+            if (!getTank(i).isEmpty()){
+                hasFluid = true;
+            }
+        }
+        return !hasFluid;
+    }
+
+    @Override
+    public FluidContainer copy() {
+        return null;
     }
 
     @Nonnull
-    @Override
-    public FluidStack getFluidInTank(int tank) {
+    public FluidHolder getFluidInTank(int tank) {
         return this.tanks[tank].getFluid();
     }
 
     @Override
-    public long getTankCapacityInDroplets(int tank) {
-        return this.tanks[tank].getCapacityInDroplets();
+    public long getTankCapacity(int tank) {
+        return this.tanks[tank].getCapacity();
     }
 
     @Override
-    public int getTankCapacity(int tank) {
-        return (int) (getTankCapacityInDroplets(tank) / TesseractGraphWrappers.dropletMultiplier);
+    public void fromContainer(FluidContainer container) {
+
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+    public long extractFromSlot(FluidHolder fluidHolder, FluidHolder toInsert, Runnable snapshot) {
+        return 0;
+    }
+
+    @Override
+    public boolean allowsInsertion() {
+        return true;
+    }
+
+    @Override
+    public boolean allowsExtraction() {
+        return true;
+    }
+
+    @Override
+    public FluidSnapshot createSnapshot() {
+        return new SimpleFluidSnapshot(this);
+    }
+
+    public boolean isFluidValid(int tank, @Nonnull FluidHolder stack) {
         return this.tanks[tank].isFluidValid(stack);
     }
 
     public long getTotalFluidAmount() {
         long amount = 0;
         for (FluidTank tank : tanks) {
-            amount += tank.getFluidAmountInDroplets();
+            amount += tank.getFluid().getFluidAmount();
         }
         return amount;
     }
@@ -133,9 +175,14 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public long fillDroplets(FluidStack stack, FluidAction action) {
+    public FluidContainer getFluidContainer() {
+        return this;
+    }
+
+    @Override
+    public long insertFluid(FluidHolder fluid, boolean simulate) {
         for (int i = 0; i < tanks.length; i++) {
-            long fill = getTank(i).fillDroplets(stack, action);
+            long fill = getTank(i).insertFluid(fluid, simulate);
             if (fill > 0)
                 return fill;
         }
@@ -143,24 +190,23 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public int fill(FluidStack stack, FluidAction action){
-        return (int) (fillDroplets(stack, action) / TesseractGraphWrappers.dropletMultiplier);
-    }
-
-    @Nonnull
-    @Override
-    public FluidStack drain(FluidStack stack, FluidAction action) {
+    public FluidHolder extractFluid(FluidHolder fluid, boolean simulate) {
         for (int i = 0; i < tanks.length; i++) {
-            FluidStack drain = getTank(i).drain(stack, action);
+            FluidHolder drain = getTank(i).extractFluid(fluid, simulate);
             if (!drain.isEmpty())
                 return drain;
         }
-        return FluidStack.EMPTY;
+        return FluidHooks.emptyFluid();
+    }
+
+    @Override
+    public void setFluid(int slot, FluidHolder fluid) {
+        tanks[slot].setFluid(0, fluid);
     }
 
     public ListTag serializeNBT() {
         ListTag nbt = new ListTag();
-        Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().writeToNBT(new CompoundTag())));
+        Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().serialize()));
         return nbt;
     }
 
@@ -171,28 +217,26 @@ public class FluidTanks implements IFluidHandler {
                 CompoundTag cnbt = (CompoundTag) tank;
                 if (i > tanks.length - 1)
                     break;
-                tanks[i++].setFluid(FluidStack.loadFluidStackFromNBT(cnbt));
+                tanks[i++].setFluid(0, FluidHooks.fluidFromCompound(cnbt));
             }
         }
     }
 
-    @Nonnull
     @Override
-    public FluidStack drain(long maxDrain, FluidAction action) {
-        for (int i = 0; i < getTanks(); i++) {
-            FluidTank tank = getTank(i);
-            FluidStack stack = tank.drain(maxDrain, action);
-            if (!stack.isEmpty()) {
-                return stack;
-            }
-        }
-        return FluidStack.EMPTY;
+    public void deserialize(CompoundTag nbt) {
+
     }
 
-    @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, FluidAction action) {
-        return drain((long) maxDrain * TesseractGraphWrappers.dropletMultiplier, action);
+    public CompoundTag serialize(CompoundTag nbt) {
+        return null;
+    }
+
+    @Override
+    public void clearContent() {
+        for (FluidTank tank : tanks) {
+            tank.clearContent();
+        }
     }
 
     public static class Builder<T extends TileEntityBase & IMachineHandler> {
@@ -207,7 +251,7 @@ public class FluidTanks implements IFluidHandler {
             this.contentEvent = contentEvent;
         }
 
-        public Builder<T> tank(Predicate<FluidStack> validator, int amount) {
+        public Builder<T> tank(Predicate<FluidHolder> validator, int amount) {
             this.tanks.add(new FluidTank(amount, validator) {
                 @Override
                 protected void onContentsChanged() {

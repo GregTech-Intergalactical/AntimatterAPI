@@ -8,6 +8,8 @@ import com.mojang.math.Vector4f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -16,6 +18,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -28,11 +31,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.ToolUtils;
 import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
-import net.minecraft.advancements.critereon.EnterBlockTrigger;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -61,7 +60,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -71,16 +69,12 @@ import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -109,8 +103,11 @@ public class Utils {
     /**
      * Returns true of A has the same Fluid as B
      **/
-    public static boolean equals(FluidStack a, FluidStack b) {
-        return a.isFluidEqual(b);
+    public static boolean equals(FluidHolder a, FluidHolder b) {
+        if (a == b) return true;
+        if (a == null || b == null) return false;
+
+        return a.getFluid() == b.getFluid() && a.getCompound() == b.getCompound();
     }
 
     /**
@@ -123,8 +120,8 @@ public class Utils {
     /**
      * Returns true if A equals() B and A amount >= B amount
      **/
-    public static boolean contains(FluidStack a, FluidStack b) {
-        return a.containsFluid(b);
+    public static boolean contains(FluidHolder a, FluidHolder b) {
+        return equals(a, b) && a.getFluidAmount() >= b.getFluidAmount();
     }
 
     /**
@@ -154,7 +151,7 @@ public class Utils {
     /**
      * Returns the index of a fluid in a list, or -1 if not found
      **/
-    public static int contains(List<FluidStack> list, FluidStack fluid) {
+    public static int contains(List<FluidHolder> list, FluidHolder fluid) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
             if (equals(list.get(i), fluid)) return i;
@@ -177,15 +174,15 @@ public class Utils {
     }
 
     /**
-     * Merges two Lists of FluidStacks, ignoring max amount
+     * Merges two Lists of FluidHolders, ignoring max amount
      **/
-    public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
+    public static List<FluidHolder> mergeFluids(List<FluidHolder> a, List<FluidHolder> b) {
         int position, size = b.size();
-        for (FluidStack stack : b) {
+        for (FluidHolder stack : b) {
             if (stack == null) continue;
             position = contains(a, stack);
             if (position == -1) a.add(stack);
-            else a.get(position).grow(stack.getAmount());
+            else a.get(position).setAmount(a.get(position).getFluidAmount() + stack.getFluidAmount());
         }
         return a;
     }
@@ -196,8 +193,8 @@ public class Utils {
         return stack;
     }
 
-    public static FluidStack ca(long amount, FluidStack toCopy) {
-        FluidStack stack = toCopy.copy();
+    public static FluidHolder ca(long amount, FluidHolder toCopy) {
+        FluidHolder stack = toCopy.copyHolder();
         stack.setAmount(amount);
         return stack;
     }
@@ -232,16 +229,16 @@ public class Utils {
         return ca(stack.getCount() * amount, stack);
     }
 
-    public static FluidStack mul(long amount, FluidStack stack) {
-        return ca(stack.getAmount() * amount, stack);
+    public static FluidHolder mul(long amount, FluidHolder stack) {
+        return ca(stack.getFluidAmount() * amount, stack);
     }
 
     public static boolean hasNoConsumeTag(ItemStack stack) {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
 
-    public static boolean hasNoConsumeTag(FluidStack stack) {
-        return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
+    public static boolean hasNoConsumeTag(FluidHolder stack) {
+        return stack.getCompound() != null && stack.getCompound().contains(Ref.KEY_STACK_NO_CONSUME);
     }
 
     public static boolean hasIgnoreNbtTag(ItemStack stack) {
@@ -253,8 +250,8 @@ public class Utils {
         return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
 
-    public static boolean getNoConsumeTag(FluidStack stack) {
-        return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
+    public static boolean getNoConsumeTag(FluidHolder stack) {
+        return stack.getCompound().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
 
     public static ItemStack addNoConsumeTag(ItemStack stack) {
@@ -262,8 +259,8 @@ public class Utils {
         return stack;
     }
 
-    public static FluidStack addNoConsumeTag(FluidStack stack) {
-        validateNBT(stack).getTag().putBoolean(Ref.KEY_STACK_NO_CONSUME, true);
+    public static FluidHolder addNoConsumeTag(FluidHolder stack) {
+        validateNBT(stack).getCompound().putBoolean(Ref.KEY_STACK_NO_CONSUME, true);
         return stack;
     }
 
@@ -272,8 +269,8 @@ public class Utils {
         return stack;
     }
 
-    public static FluidStack validateNBT(FluidStack stack) {
-        if (!stack.hasTag()) stack.setTag(new CompoundTag());
+    public static FluidHolder validateNBT(FluidHolder stack) {
+        if (stack.getCompound() == null) stack.setCompound(new CompoundTag());
         return stack;
     }
 
@@ -292,9 +289,9 @@ public class Utils {
         return true;
     }
 
-    public static boolean areFluidsValid(FluidStack... fluids) {
+    public static boolean areFluidsValid(FluidHolder... fluids) {
         if (fluids == null || fluids.length == 0) return false;
-        for (FluidStack fluid : fluids) {
+        for (FluidHolder fluid : fluids) {
             if (fluid.getFluid() == Fluids.EMPTY) return false;
         }
         return true;
@@ -309,8 +306,8 @@ public class Utils {
     }
 
 
-    public static boolean areFluidsValid(FluidStack[]... fluidArrays) {
-        for (FluidStack[] fluidArray : fluidArrays) {
+    public static boolean areFluidsValid(FluidHolder[]... fluidArrays) {
+        for (FluidHolder[] fluidArray : fluidArrays) {
             if (!areFluidsValid(fluidArray)) return false;
         }
         return true;
@@ -344,12 +341,12 @@ public class Utils {
         return matchCount >= a.size();
     }
 
-    public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
+    public static boolean doFluidsMatchAndSizeValid(FluidHolder[] a, FluidHolder[] b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
         int matchCount = 0;
-        for (FluidStack fluidStack : a) {
-            for (FluidStack stack : b) {
+        for (FluidHolder fluidStack : a) {
+            for (FluidHolder stack : b) {
                 if (contains(stack, fluidStack)) {
                     matchCount++;
                     break;
@@ -476,28 +473,28 @@ public class Utils {
         return false;
     }
 
-    public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap, Predicate<FluidStack> filter) {
+    public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to, int cap, Predicate<FluidHolder> filter) {
         boolean successful = false;
-        for (int i = 0; i < to.getTanks(); i++) {
+        for (int i = 0; i < to.getTankAmount(); i++) {
             //if (i >= from.getTanks()) break;
-            FluidStack toInsert;
-            for (int j = 0; j < from.getTanks(); j++) {
+            FluidHolder toInsert;
+            for (int j = 0; j < from.getTankAmount(); j++) {
                 if (cap > 0) {
-                    FluidStack fluid = from.getFluidInTank(j);
+                    FluidHolder fluid = from.getFluidInTank(j);
                     if (fluid.isEmpty() || !filter.test(fluid)) {
                         continue;
                     }
-                    fluid = fluid.copy();
-                    long toDrain = Math.min(cap * TesseractGraphWrappers.dropletMultiplier, fluid.getRealAmount());
+                    fluid = fluid.copyHolder();
+                    long toDrain = Math.min(cap * TesseractGraphWrappers.dropletMultiplier, fluid.getFluidAmount());
                     fluid.setAmount(toDrain);
-                    toInsert = from.drain(fluid, SIMULATE);
+                    toInsert = from.extractFluid(fluid, true);
                 } else {
-                    toInsert = from.drain(from.getFluidInTank(j), SIMULATE);
+                    toInsert = from.extractFluid(from.getFluidInTank(j), true);
                 }
-                long filled = to.fillDroplets(toInsert, SIMULATE);
+                long filled = to.insertFluid(toInsert, true);
                 if (filled > 0) {
                     toInsert.setAmount(filled);
-                    to.fillDroplets(from.drain(toInsert, EXECUTE), EXECUTE);
+                    to.insertFluid(from.extractFluid(toInsert, false), false);
                     successful = true;
                 }
             }
@@ -511,7 +508,7 @@ public class Utils {
         return (Consumer<T>) SINK;
     }
 
-    public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
+    public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to, int cap) {
         return transferFluids(from, to, cap, fluidStack -> true);
     }
 
@@ -526,7 +523,7 @@ public class Utils {
         }
     }
 
-    public static boolean transferFluids(IFluidHandler from, IFluidHandler to) {
+    public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to) {
         return transferFluids(from, to, -1);
     }
 
@@ -1281,11 +1278,11 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static IRecipe getEmptyRecipe() {
-        return new Recipe(Collections.emptyList(), new ItemStack[0], Collections.emptyList(), new FluidStack[0], 1, 1, 0, 1);
+        return new Recipe(Collections.emptyList(), new ItemStack[0], Collections.emptyList(), new FluidHolder[0], 1, 1, 0, 1);
     }
 
     public static IRecipe getEmptyPoweredRecipe(int duration, long euT, int amps) {
-        return new Recipe(Collections.emptyList(), new ItemStack[0], Collections.emptyList(), new FluidStack[0], duration, euT, 0, amps);
+        return new Recipe(Collections.emptyList(), new ItemStack[0], Collections.emptyList(), new FluidHolder[0], duration, euT, 0, amps);
     }
 
     /**
@@ -1298,7 +1295,7 @@ public class Utils {
      * @param amps     amps outputted.
      * @return recipe.
      */
-    public static IRecipe getFluidPoweredRecipe(List<FluidIngredient> input, FluidStack[] output, int duration, long euT, int amps) {
+    public static IRecipe getFluidPoweredRecipe(List<FluidIngredient> input, FluidHolder[] output, int duration, long euT, int amps) {
         return new Recipe(Collections.emptyList(), new ItemStack[0], input, output, duration, euT, 0, amps);
     }
 

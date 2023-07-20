@@ -16,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.FluidPlatformUtils;
@@ -172,7 +171,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public List<String> getInfo() {
         List<String> list = super.getInfo();
         fluidHandler.ifPresent(t -> {
-            for (int i = 0; i < t.getTanks(); i++) {
+            for (int i = 0; i < t.getSize(); i++) {
                 FluidStack stack = t.getFluidInTank(i);
                 list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
             }

@@ -1,5 +1,7 @@
 package muramasa.antimatter.recipe.map;
 
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -30,9 +32,9 @@ import java.util.function.Predicate;
 
 public interface IRecipeMap extends ISharedAntimatterObject {
     ItemStack[] EMPTY_ITEM = new ItemStack[0];
-    FluidStack[] EMPTY_FLUID = new FluidStack[0];
+    FluidHolder[] EMPTY_FLUID = new FluidHolder[0];
 
-    IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle);
+    IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidHolder[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle);
 
     default IRecipe findByID(ResourceLocation id){
         return getRecipes(false).stream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
@@ -43,7 +45,7 @@ public interface IRecipeMap extends ISharedAntimatterObject {
     void resetCompiled();
     Collection<IRecipe> getRecipes(boolean filterHidden);
     boolean acceptsItem(ItemStack item);
-    boolean acceptsFluid(FluidStack fluid);
+    boolean acceptsFluid(FluidHolder fluid);
 
     @Nullable
     default Tier getGuiTier() {
@@ -54,7 +56,7 @@ public interface IRecipeMap extends ISharedAntimatterObject {
         return null;
     }
 
-    default <T extends TileEntityMachine<T>> IRecipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler, Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Tier tier, Predicate<IRecipe> validateRecipe) {
+    default <T extends TileEntityMachine<T>> IRecipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler, Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler, Tier tier, Predicate<IRecipe> validateRecipe) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), tier, validateRecipe);
     }

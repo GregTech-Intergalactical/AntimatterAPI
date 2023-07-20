@@ -1,6 +1,10 @@
 package muramasa.antimatter.gui.event;
 
+import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
+import earth.terrarium.botarium.common.fluid.base.PlatformFluidItemHandler;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.GuiInstance;
@@ -55,20 +59,20 @@ public class SlotClickEvent implements IGuiEvent {
         return false;
     }
 
-    private IFluidHandler tryGetCap(IGuiHandler handler) {
+    private PlatformFluidHandler tryGetCap(IGuiHandler handler) {
         if (handler instanceof TileEntityMachine) {
             TileEntityMachine<?> machine = (TileEntityMachine<?>) handler;
             return machine.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(null);
         }
         if (handler instanceof BlockEntity be) {
-            return TesseractCapUtils.getFluidHandler(be, null).orElse(null);
+            return FluidHooks.safeGetBlockFluidManager(be, null).orElse(null);
         }
         return null;
     }
 
     @Override
     public void handle(Player player, GuiInstance instance) {
-        IFluidHandler sink = tryGetCap(instance.handler);
+        PlatformFluidHandler sink = tryGetCap(instance.handler);
         if (sink == null) return;
         ItemStack stack = player.containerMenu.getCarried();
         if (type == SlotType.FL_IN || type == SlotType.FL_OUT) {
@@ -78,8 +82,8 @@ public class SlotClickEvent implements IGuiEvent {
             } else {
                 max = 1000;
             }
-            Optional<IFluidHandlerItem> iHandler = TesseractCapUtils.getFluidHandlerItem(stack);
-            boolean hasFluid = iHandler.map(t -> t.getTanks() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
+            Optional<PlatformFluidItemHandler> iHandler = FluidHooks.safeGetItemFluidManager(stack);
+            boolean hasFluid = iHandler.map(t -> t.getTankAmount() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
             FluidActionResult res;
             if (hasFluid && type == SlotType.FL_IN) {
                 res = FluidUtil.tryEmptyContainerAndStow(stack, sink, new InvWrapper(player.getInventory()), max, player, true);

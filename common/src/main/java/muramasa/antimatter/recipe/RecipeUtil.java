@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe;
 
 import com.google.gson.JsonObject;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -46,12 +47,12 @@ public class RecipeUtil {
         throw new AssertionError();
     }
 
-    public static JsonObject fluidstackToJson(FluidStack stack){
+    public static JsonObject fluidstackToJson(FluidHolder stack){
         JsonObject object = new JsonObject();
         object.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
-        object.addProperty("amount", stack.getRealAmount());
-        if (stack.hasTag()){
-            object.addProperty("tag", stack.getTag().toString());
+        object.addProperty("amount", stack.getFluidAmount());
+        if (stack.getCompound() != null){
+            object.addProperty("tag", stack.getCompound().toString());
         }
         return object;
     }

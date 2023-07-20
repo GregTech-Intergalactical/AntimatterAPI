@@ -3,7 +3,6 @@ package muramasa.antimatter.gui;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 
 import java.util.function.BiConsumer;

@@ -1,5 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
@@ -65,7 +67,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     //Items used to find recipe
     protected List<ItemStack> itemInputs = Collections.emptyList();
-    protected List<FluidStack> fluidInputs = Collections.emptyList();
+    protected List<FluidHolder> fluidInputs = Collections.emptyList();
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
@@ -390,7 +392,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
             if (!tile.getMachineState().allowRecipeCheck()) return;
-            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), this.tile.getMachineTier(), this::validateRecipe);
+            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidHolder[0]), this.tile.getMachineTier(), this::validateRecipe);
             if (activeRecipe == null) return;
             calculateDurations();
             lastRecipe = activeRecipe;
@@ -422,7 +424,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return map == null || map.acceptsItem(stack);
     }
 
-    public boolean accepts(FluidStack stack) {
+    public boolean accepts(FluidHolder stack) {
         IRecipeMap map = this.tile.getMachineType().getRecipeMap();
         return map == null || map.acceptsFluid(stack);
     }
@@ -470,7 +472,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         long actualConsume = toConsume;
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidHolder(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
@@ -526,7 +528,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidHolder(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
@@ -663,7 +665,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }
         ListTag fluid = new ListTag();
         if (fluidInputs.size() > 0) {
-            fluidInputs.forEach(t -> fluid.add(t.writeToNBT(new CompoundTag())));
+            fluidInputs.forEach(t -> fluid.add(t.serialize()));
         }
         nbt.put("I", item);
         nbt.putInt("T", tickTimer);
@@ -683,7 +685,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         itemInputs = new ObjectArrayList<>();
         fluidInputs = new ObjectArrayList<>();
         nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));
-        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundTag) t)));
+        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidHooks.fluidFromCompound((CompoundTag) t)));
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
