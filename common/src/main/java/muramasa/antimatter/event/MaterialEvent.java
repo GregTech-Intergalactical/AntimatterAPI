@@ -189,7 +189,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
         MaterialTags.TOOLS.add(this.material, new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this.material, toolQuality - 1);
-        for (AntimatterToolType type : toolTypes){
+        for (AntimatterToolType type : toolTypesList){
             if (type.getMaterialTypeItem() != null && material != Flint && material != NULL && !material.has(RUBBERTOOLS) && material != Wood){
                 flags(type.getMaterialTypeItem());
             }
