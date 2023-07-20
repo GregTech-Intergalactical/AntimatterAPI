@@ -11,7 +11,6 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 
@@ -44,7 +43,6 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
     public int drawInfo(TankMachine.TankRenderWidget instance, PoseStack stack, Font renderer, int left, int top) {
         left = left + 55;
         top = top + 24;
-        FluidStack stack1;
         renderer.draw(stack, FluidPlatformUtils.getFluidDisplayName(instance.stack).getString(), left, top, 16448255);
         StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
         if (AntimatterPlatformUtils.isFabric()){

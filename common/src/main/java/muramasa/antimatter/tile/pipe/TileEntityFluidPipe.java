@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
@@ -16,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
@@ -70,13 +70,13 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
-            fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+            fluidHandler.ifPresent(t -> t.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
     }
 
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serializeNBT()));
+        fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serialize(new CompoundTag())));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public int getPressure() {
+    public long getPressure() {
         return getPipeType().getPressure(getPipeSize());
     }
 
@@ -159,7 +159,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
-        renderer.draw(stack, "Pressure used: " + instance.stack.getAmount(), left, top, 16448255);
+        renderer.draw(stack, "Pressure used: " + instance.stack.getFluidAmount(), left, top, 16448255);
         renderer.draw(stack, "Pressure total: " + getPressure()*20, left, top + 8, 16448255);
         renderer.draw(stack, "Fluid: " + FluidPlatformUtils.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
         renderer.draw(stack, "(Above only in intersection)", left, top + 24, 16448255);
@@ -172,7 +172,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         List<String> list = super.getInfo();
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getSize(); i++) {
-                FluidStack stack = t.getFluidInTank(i);
+                FluidHolder stack = t.getFluidInTank(i);
                 list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
             }
         });

@@ -47,7 +47,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 
@@ -380,7 +379,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
                         world.setBlockAndUpdate(pos, state.setValue(LayeredCauldronBlock.LEVEL, level+1));
                     }
                     world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    ItemStack newStack = cell.drain(Utils.ca(1, stack), new FluidStack(fluid.getFluid(), 1000));
+                    ItemStack newStack = cell.drain(Utils.ca(1, stack), FluidHooks.newFluidHolder(fluid.getFluid(), 1000 * TesseractGraphWrappers.dropletMultiplier, null));
                     if (stack.getCount() > 1) {
                         stack.shrink(1);
                         addItem(player, newStack);
