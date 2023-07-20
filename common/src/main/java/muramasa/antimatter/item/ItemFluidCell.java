@@ -104,7 +104,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Override
     public long getTankSize() {
-        return capacity;
+        return capacity * TesseractGraphWrappers.dropletMultiplier;
     }
 
     @Override

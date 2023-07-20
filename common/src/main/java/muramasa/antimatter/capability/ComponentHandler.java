@@ -8,10 +8,6 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

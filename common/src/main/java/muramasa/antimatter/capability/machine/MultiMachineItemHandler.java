@@ -4,8 +4,6 @@ import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;

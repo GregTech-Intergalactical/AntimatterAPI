@@ -17,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;

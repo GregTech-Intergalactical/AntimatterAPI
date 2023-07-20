@@ -60,7 +60,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
 import tesseract.TesseractGraphWrappers;
@@ -81,8 +80,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static net.minecraft.advancements.critereon.MinMaxBounds.Ints.ANY;
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class Utils {
 

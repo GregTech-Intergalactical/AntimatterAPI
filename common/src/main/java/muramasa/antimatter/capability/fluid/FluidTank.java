@@ -9,13 +9,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.Fluids;
+import tesseract.api.fluid.FluidContainerHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class FluidTank implements FluidContainer {
+public class FluidTank implements FluidContainer, FluidContainerHandler {
     protected Predicate<FluidHolder> validator;
     @Nonnull
     protected FluidHolder fluid = FluidHooks.emptyFluid();
@@ -57,6 +58,11 @@ public class FluidTank implements FluidContainer {
     public boolean isFluidValid(FluidHolder stack)
     {
         return validator.test(stack);
+    }
+
+    @Override
+    public FluidContainer getFluidContainer() {
+        return this;
     }
 
     @Override

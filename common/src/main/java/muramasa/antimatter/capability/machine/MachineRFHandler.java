@@ -19,7 +19,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.rf.IRFNode;
 
 import java.util.List;

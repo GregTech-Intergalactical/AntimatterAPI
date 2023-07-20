@@ -8,8 +8,6 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import earth.terrarium.botarium.common.item.ItemStackHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import tesseract.api.context.TesseractItemContext;
 
 import java.util.function.BiPredicate;
 

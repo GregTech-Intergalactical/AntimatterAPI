@@ -27,11 +27,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.TesseractCapUtils;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
 
 import javax.annotation.Nonnull;

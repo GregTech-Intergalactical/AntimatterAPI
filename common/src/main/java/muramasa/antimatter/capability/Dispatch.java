@@ -2,7 +2,6 @@ package muramasa.antimatter.capability;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Map;
 import java.util.Optional;

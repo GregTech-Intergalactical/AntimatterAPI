@@ -8,7 +8,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractCapUtils;
 import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;

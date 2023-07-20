@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
@@ -17,7 +18,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
@@ -29,7 +29,7 @@ import tesseract.api.fluid.IFluidPipe;
 import java.util.List;
 import java.util.Optional;
 
-public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
+public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
     protected Optional<PipeFluidHandler> fluidHandler;
     private PipeFluidHolder holder;
@@ -136,11 +136,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public Class<?> getCapClass() {
-        return IFluidHandler.class;
+        return FluidContainer.class;
     }
 
     @Override
-    public Optional<? extends IFluidHandler> forSide(Direction side) {
+    public Optional<? extends FluidContainer> forSide(Direction side) {
         if (FluidController.SLOOSH) {
             if (fluidHandler == null) {
                 fluidHandler = Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
@@ -153,7 +153,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public Optional<? extends IFluidHandler> forNullSide() {
+    public Optional<? extends FluidContainer> forNullSide() {
         return forSide(null);
     }
 

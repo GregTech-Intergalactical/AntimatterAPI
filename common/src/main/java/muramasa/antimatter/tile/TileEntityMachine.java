@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
@@ -68,7 +69,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
@@ -117,7 +117,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
 
     public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(IItemHandler.class, dispatch);
-    public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(IFluidHandler.class, dispatch);
+    public Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler = new Holder<>(FluidContainer.class, dispatch);
     public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(ICoverHandler.class, dispatch, null);
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(IEnergyHandler.class, dispatch);
     public Holder<IRFNode, MachineRFHandler<T>> rfHandler = new Holder<>(IRFNode.class, dispatch);

@@ -30,6 +30,8 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
@@ -73,34 +75,20 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 if (cell.isEmpty()) {
                     return false;
                 }
-                PlatformFluidItemHandler fluidItemHandler = FluidHooks.safeGetItemFluidManager(cell).orElse(null);
-                if (fluidItemHandler != null){
-                    ItemStackHolder holder = new ItemStackHolder(cell.copy());
-                    long inserted = FluidPlatformUtils.moveStandardToItemFluid(this.getCellAccessibleTanks(), fluidItemHandler, holder, maxFill, true);
-                    if (inserted > 0){
-                        if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), true).isEmpty())
-                            return false;
-                        holder = new ItemStackHolder(cell);
-                        FluidPlatformUtils.moveStandardToItemFluid(this.getCellAccessibleTanks(), fluidItemHandler, holder, maxFill, false);
-                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), false);
-                        MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
-                        lastCellSlot = cellSlot;
-                        return true;
-                    } else {
-                        long extracted = FluidPlatformUtils.moveItemToStandardFluid(fluidItemHandler, this.getCellAccessibleTanks(), holder, maxFill, true);
-                        if (extracted > 0){
-                            if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), true).isEmpty())
-                                return false;
-                            holder = new ItemStackHolder(cell);
-                            FluidPlatformUtils.moveItemToStandardFluid(fluidItemHandler, this.getCellAccessibleTanks(), holder, maxFill, false);
-                            MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, holder.getStack(), false);
-                            MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
-                            lastCellSlot = cellSlot;
-                            return true;
-                        }
-                    }
+                boolean success = false;
+                Predicate<ItemStack> predicate = s -> MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, s, true).isEmpty();
+                Consumer<ItemStack> consumer = s -> {
+                    MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, s, false);
+                    MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
+                };
+                if (FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, cell), this.getCellAccessibleTanks(), predicate, consumer)){
+                    success = true;
+                    lastCellSlot = cellSlot;
+                } else if (FluidPlatformUtils.emptyItemintoContainer(Utils.ca(1, cell), this.getCellAccessibleTanks(), predicate, consumer)){
+                    success = true;
+                    lastCellSlot = cellSlot;
                 }
-                return false;
+                return success;
             }).orElse(false);
         } else {
             filledLastTick = false;

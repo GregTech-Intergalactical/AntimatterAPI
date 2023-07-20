@@ -4,10 +4,6 @@ import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullConsumer;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;

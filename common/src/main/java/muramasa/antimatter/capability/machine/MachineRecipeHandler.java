@@ -470,7 +470,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         long actualConsume = toConsume;
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidHolder(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount(actualConsume, h, true, true);
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
@@ -526,7 +526,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidHolder(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount((int) actualConsume, h, true, true);
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
