@@ -620,7 +620,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             disabledState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE_D)];
         }
         if (tag.contains(Ref.KEY_MACHINE_ITEMS))
-            itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
+            itemHandler.ifPresent(i -> i.deserialize(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY)) {
             if (type.has(RF))
                 rfHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
@@ -628,16 +628,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         }
         if (tag.contains(Ref.KEY_MACHINE_COVER))
-            coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
+            coverHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) {
-            fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+            fluidHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
             if (level != null && level.isClientSide) {
                 cacheInvalidate();
             }
 
         }
         if (tag.contains(Ref.KEY_MACHINE_RECIPE))
-            recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
+            recipeHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
     }
 
     @Override
@@ -648,21 +648,21 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         if (disabledState != null)
             tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
-        itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
+        itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serialize(new CompoundTag())));
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
         rfHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
-        coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER , e.serializeNBT()));
-        fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
-        recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));
+        coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER , e.serialize(new CompoundTag())));
+        fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serialize(new CompoundTag())));
+        recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serialize()));
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
+        coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serialize(new CompoundTag())));
         if (this.getMachineType().renderContainerLiquids()) {
-            fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
+            fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serialize(new CompoundTag())));
         }
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());

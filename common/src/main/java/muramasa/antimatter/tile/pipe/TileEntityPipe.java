@@ -43,6 +43,7 @@ import tesseract.graph.Connectivity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTickable<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
 
@@ -55,7 +56,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     /**
      * Capabilities
      **/
-    public final LazyOptional<PipeCoverHandler<?>> coverHandler;
+    public final Optional<PipeCoverHandler<?>> coverHandler;
 
     ///** Tesseract **/
     //private Direction direction; // when cap not initialized yet, it will help to store preset direction
@@ -71,7 +72,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         super(type.getTileType(), pos, state);
         this.size = getPipeSize(state);
         this.type = getPipeType(state);
-        this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
+        this.coverHandler = Optional.of(new PipeCoverHandler<>(this));
         this.pipeCapHolder = new Holder<>(getCapClass(), this.dispatch);
     }
 
@@ -298,7 +299,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
-            coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+            coverHandler.ifPresent(t -> t.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         if (newConnection != connection && (level != null && level.isClientSide)) {
             Utils.markTileForRenderUpdate(this);
@@ -326,7 +327,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize(new CompoundTag())));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
     }
 

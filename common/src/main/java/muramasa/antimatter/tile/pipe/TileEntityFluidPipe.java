@@ -173,7 +173,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getSize(); i++) {
                 FluidHolder stack = t.getFluidInTank(i);
-                list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
+                list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mb.");
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));

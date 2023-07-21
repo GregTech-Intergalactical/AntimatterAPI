@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fluids.FluidUtil;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
@@ -103,7 +104,7 @@ public class CoverOutput extends CoverInput {
             return;
         TesseractCapUtils.getFluidHandler(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> Utils.transferFluids(adjHandler, h, 1000, true));
+                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
                 });
     }
 

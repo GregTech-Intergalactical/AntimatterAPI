@@ -652,7 +652,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
      * NBT STUFF
      **/
 
-    public CompoundTag serializeNBT() {
+    public CompoundTag serialize() {
         CompoundTag nbt = new CompoundTag();
         ListTag item = new ListTag();
         if (itemInputs.size() > 0) {
@@ -678,7 +678,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return nbt;
     }
 
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         itemInputs = new ObjectArrayList<>();
         fluidInputs = new ObjectArrayList<>();
         nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));

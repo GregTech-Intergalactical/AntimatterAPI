@@ -9,14 +9,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityBase;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.fluid.FluidContainerHandler;
-import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -203,13 +201,13 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
         tanks[slot].setFluid(0, fluid);
     }
 
-    public ListTag serializeNBT() {
+    public ListTag serialize() {
         ListTag nbt = new ListTag();
         Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().serialize()));
         return nbt;
     }
 
-    public void deserializeNBT(ListTag nbt) {
+    public void deserialize(ListTag nbt) {
         int i = 0;
         for (Tag tank : nbt) {
             if (tank instanceof CompoundTag) {

@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ExtendedItemContainer;
+import tesseract.api.item.ExtendedItemContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

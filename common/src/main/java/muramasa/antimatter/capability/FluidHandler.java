@@ -14,7 +14,6 @@ import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import org.apache.commons.lang3.ArrayUtils;
 import tesseract.FluidPlatformUtils;
 import tesseract.api.fluid.IFluidNode;
 
@@ -335,14 +334,14 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         tanks.forEach((k, v) -> {
             if (!nbt.contains(k.toString()))
                 return;
-            v.deserializeNBT(nbt.getList(k.toString(), Tag.TAG_COMPOUND));
+            v.deserialize(nbt.getList(k.toString(), Tag.TAG_COMPOUND));
         });
     }
 
     @Override
     public CompoundTag serialize(CompoundTag nbt) {
         tanks.forEach((k, v) -> {
-            nbt.put(k.name(), v.serializeNBT());
+            nbt.put(k.name(), v.serialize());
         });
         return nbt;
     }

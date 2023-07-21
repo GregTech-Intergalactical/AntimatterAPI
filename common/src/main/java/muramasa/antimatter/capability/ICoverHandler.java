@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability;
 
+import earth.terrarium.botarium.util.Serializable;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.core.Direction;
@@ -8,11 +9,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 
-public interface ICoverHandler<T extends BlockEntity> extends INBTSerializable<CompoundTag> {
+public interface ICoverHandler<T extends BlockEntity> extends Serializable {
 
     /**
      * Getters/Setters
@@ -72,12 +72,12 @@ public interface ICoverHandler<T extends BlockEntity> extends INBTSerializable<C
         }
 
         @Override
-        public CompoundTag serializeNBT() {
+        public CompoundTag serialize(CompoundTag nbt) {
             return new CompoundTag();
         }
 
         @Override
-        public void deserializeNBT(CompoundTag nbt) {
+        public void deserialize(CompoundTag nbt) {
 
         }
 

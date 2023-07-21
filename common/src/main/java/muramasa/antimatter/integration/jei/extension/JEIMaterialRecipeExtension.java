@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static net.minecraft.ChatFormatting.GOLD;
 
+@SuppressWarnings("removal")
 public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraftingCategoryExtension {
 
     @Override

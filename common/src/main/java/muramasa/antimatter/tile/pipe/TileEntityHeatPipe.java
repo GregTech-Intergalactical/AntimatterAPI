@@ -101,12 +101,12 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(h -> h.serializeNBT()).orElse(null);
+    public CompoundTag serialize(CompoundTag nbt) {
+        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(h -> h.serialize(new CompoundTag())).orElse(null);
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(h -> h.deserializeNBT(nbt));
+    public void deserialize(CompoundTag nbt) {
+        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(h -> h.deserialize(nbt));
     }
 }
