@@ -176,6 +176,11 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @ExpectPlatform
+    public static Object getFluidObject(FluidHolder fluidHolder){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
         throw new AssertionError();
     }
@@ -186,7 +191,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     public static <T> void addModDescriptor(List<Component> tooltip, T t) {
         if (t == null || helpers == null) return;
-        String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
+        Object o = t;
+        if (t instanceof FluidHolder holder) o = getFluidObject(holder);
+        String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(o).getDisplayModId(o));
         tooltip.add(new TextComponent(text));
     }
 

@@ -216,7 +216,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.setFluidRenderer(fluids[s].getFluidAmount(), true, 16, 16);
+                    slot.setFluidRenderer((int)fluids[s].getFluidAmount(), true, 16, 16);
                     AntimatterJEIPlugin.addFluidIngredients(slot, Collections.singletonList(fluids[s]));
                 }
             }
