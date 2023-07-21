@@ -12,7 +12,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 import java.util.Optional;
