@@ -314,7 +314,7 @@ public class ForgeCommonEvents {
         }
     }
 
-    private static <T> LazyOptional<T> fromHolder(Holder<T, ?> holder, Direction side){
+    public static <T> LazyOptional<T> fromHolder(Holder<T, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
         LazyOptional<T> opt = LazyOptional.of(() -> holder.side(side).get());
         holder.addListener(side, opt::invalidate);
