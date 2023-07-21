@@ -61,6 +61,7 @@ import org.jetbrains.annotations.Nullable;
 import tesseract.api.forge.Provider;
 import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
 import java.util.Optional;
@@ -220,9 +221,9 @@ public class ForgeCommonEvents {
                     ICover coverPresent = fakeBlock.covers.get(side);
                     if (!controller.allowsFakeTiles()) return LazyOptional.empty();
                     if (capability == ITEM_HANDLER_CAPABILITY && controller.itemHandler.isPresent()) {
-                        return controller.itemHandler.side(side).cast();
+                        return fromItemHolder(controller.itemHandler, side).cast();
                     } else if (capability == FLUID_HANDLER_CAPABILITY && controller.fluidHandler.isPresent()) {
-                        return controller.fluidHandler.side(side).cast();
+                        return fromFluidHolder(controller.fluidHandler, side).cast();
                     } else if (capability == TesseractCaps.ENERGY_HANDLER_CAPABILITY && controller.energyHandler.isPresent()
                             && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) {
                         return fromHolder(controller.energyHandler, side).cast();
@@ -256,13 +257,13 @@ public class ForgeCommonEvents {
                     if (machine.blocksCapability(AntimatterCaps.CAP_MAP.inverse().get(cap), side)) return LazyOptional.empty();
                     if (cap == ITEM_HANDLER_CAPABILITY && machine.itemHandler.isPresent()) {
                         //return LazyOptional.of(() -> new InvWrapper(machine.itemHandler.side(side).resolve().get())).cast();
-                        return machine.itemHandler.side(side).cast();
+                        return fromItemHolder(machine.itemHandler, side).cast();
                     }
                     if (cap == AntimatterCaps.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) {
                         return fromHolder(machine.recipeHandler, side).cast();
                     } else if (cap == FLUID_HANDLER_CAPABILITY && machine.fluidHandler.isPresent()) {
                         //return LazyOptional.of(() -> new ForgeFluidContainer(machine.fluidHandler.side(side).resolve().get())).cast()
-                        return machine.fluidHandler.side(side).cast();
+                        return fromFluidHolder(machine.fluidHandler, side).cast();
                     } else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) {
                         if (machine.energyHandler.isPresent()) {
                             return fromHolder(machine.energyHandler, side).cast();
@@ -282,7 +283,7 @@ public class ForgeCommonEvents {
                 @Override
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
                     if (side == null) return LazyOptional.empty();
-                    if (capability == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && pipe.coverHandler.isPresent()) return pipe.coverHandler.cast();
+                    if (capability == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && pipe.coverHandler.isPresent()) return LazyOptional.of(() -> pipe.coverHandler.get()).cast();
                     if (!pipe.connects(side)) return LazyOptional.empty();
                     if (capability == CapabilityEnergy.ENERGY) {
                         if (pipe instanceof TileEntityCable<?>) {
@@ -295,7 +296,7 @@ public class ForgeCommonEvents {
                     if (capability == FLUID_HANDLER_CAPABILITY && pipe.getCapClass() == FluidContainer.class){
                         return fromFluidHolder(pipe.getPipeCapHolder(), side).cast();
                     }
-                    if (capability == ITEM_HANDLER_CAPABILITY && pipe.getCapClass() == Container.class){
+                    if (capability == ITEM_HANDLER_CAPABILITY && pipe.getCapClass() == ExtendedItemContainer.class){
                         return fromItemHolder(pipe.getPipeCapHolder(), side).cast();
                     }
                     try {
@@ -320,7 +321,7 @@ public class ForgeCommonEvents {
         return opt;
     }
 
-    private static LazyOptional<IItemHandler> fromItemHolder(Holder<Container, ?> holder, Direction side){
+    private static LazyOptional<IItemHandler> fromItemHolder(Holder<ExtendedItemContainer, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
         LazyOptional<IItemHandler> opt = LazyOptional.of(() -> new InvWrapper(holder.side(side).get()));
         holder.addListener(side, opt::invalidate);

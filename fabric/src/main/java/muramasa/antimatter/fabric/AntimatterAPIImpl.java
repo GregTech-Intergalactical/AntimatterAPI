@@ -1,5 +1,8 @@
 package muramasa.antimatter.fabric;
 
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
+import earth.terrarium.botarium.fabric.fluid.storage.FabricBlockFluidContainer;
+import earth.terrarium.botarium.util.Updatable;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.fabric.AntimatterLookups;
 import muramasa.antimatter.item.IFluidItem;
@@ -7,13 +10,17 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.*;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import tesseract.api.fabric.TesseractLookups;
 import tesseract.api.fabric.wrapper.ContainerItemContextWrapper;
+import tesseract.api.fluid.IFluidNode;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyItem;
 import tesseract.api.heat.IHeatHandler;
@@ -22,8 +29,8 @@ import tesseract.fabric.TesseractImpl;
 public class AntimatterAPIImpl {
     @SuppressWarnings("UnstableApiUsage")
     public static void registerTransferApi(BlockEntityType<? extends TileEntityMachine<?>> type){
-        FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).orElse(null), type);
-        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).orElse(null), type);
+        FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).map(f -> new FabricBlockFluidContainer(f, t -> {}, be)).orElse(null), type);
+        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> InventoryStorage.of(i, direction)).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
         TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).orElse(null), (be, direction) -> be.rfHandler.side(direction).orElse(null), type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
@@ -35,11 +42,11 @@ public class AntimatterAPIImpl {
     public static void registerTransferApiPipe(BlockEntityType<? extends TileEntityPipe<?>> type){
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityFluidPipe<?> fluidPipe)) return null;
-            return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).orElse(null);
+            return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).map(f -> new FabricBlockFluidContainer((FluidContainer) f, b -> {}, be)).orElse(null);
         }, type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityItemPipe<?> itemPipe)) return null;
-            return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).orElse(null);
+            return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).map(i -> InventoryStorage.of((Container) i, direction)).orElse(null);
         }, type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityCable<?> cable)) return null;

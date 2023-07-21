@@ -1,6 +1,7 @@
 package muramasa.antimatter.fabric;
 
 import earth.terrarium.botarium.fabric.energy.FabricBlockEnergyContainer;
+import earth.terrarium.botarium.fabric.fluid.storage.FabricBlockFluidContainer;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
 import muramasa.antimatter.Antimatter;
@@ -36,6 +37,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
@@ -77,7 +79,7 @@ public class AntimatterImpl implements ModInitializer {
                     return null;
                 }
                 if (!controller.allowsFakeTiles()) return null;
-                return controller.fluidHandler.side(direction).orElse(null);
+                return controller.fluidHandler.side(direction).map(f -> new FabricBlockFluidContainer(f, b -> {}, controller)).orElse(null);
             }, BlockFakeTile.TYPE);
             ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
                 TileEntityBasicMultiMachine<?> controller = be.getController();
@@ -85,7 +87,7 @@ public class AntimatterImpl implements ModInitializer {
                     return null;
                 }
                 if (!controller.allowsFakeTiles()) return null;
-                return controller.itemHandler.side(direction).orElse(null);
+                return controller.itemHandler.side(direction).map(i -> InventoryStorage.of(i, direction)).orElse(null);
             }, BlockFakeTile.TYPE);
             TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
                 TileEntityBasicMultiMachine<?> controller = be.getController();
