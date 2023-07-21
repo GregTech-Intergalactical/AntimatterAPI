@@ -108,11 +108,11 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
                         if (in) {
                             if (fh.getInputTanks() == null) return FluidHooks.emptyFluid();
                             FluidTank tank = fh.getInputTanks().getTank(off);
-                            return tank == null ? FluidHooks.emptyFluid() : tank.getFluid();
+                            return tank == null ? FluidHooks.emptyFluid() : tank.getStoredFluid();
                         }
                         if (fh.getOutputTanks() == null) return FluidHooks.emptyFluid();
                         FluidTank tank = fh.getOutputTanks().getTank(off);
-                        return tank == null ? FluidHooks.emptyFluid() : tank.getFluid();
+                        return tank == null ? FluidHooks.emptyFluid() : tank.getStoredFluid();
                     }).orElse(FluidHooks.emptyFluid());
                     BakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid(), tile.getLevel(), tile.getBlockPos());
 
@@ -120,11 +120,11 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
                         if (in) {
                             if (fh.getInputTanks() == null) return 0f;
                             FluidTank tank = fh.getInputTanks().getTank(off);
-                            return tank == null ? 0f : (float)tank.getFluid().getFluidAmount() / (float)tank.getCapacity();
+                            return tank == null ? 0f : (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
                         }
                         if (fh.getOutputTanks() == null) return 0f;
                         FluidTank tank = fh.getOutputTanks().getTank(off);
-                        return tank == null ? 0f : (float)tank.getFluid().getFluidAmount() / (float)tank.getCapacity();
+                        return tank == null ? 0f : (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
                     }).orElse(0f);
 
                     ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f, dir));

@@ -91,7 +91,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
     }
 
     public List<FluidHolder> getFluids() {
-        return Arrays.stream(this.tanks).map(FluidTank::getFluid).toList();
+        return Arrays.stream(this.tanks).map(FluidTank::getStoredFluid).toList();
     }
 
     public FluidTank[] getBackingTanks() {
@@ -122,7 +122,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     @Nonnull
     public FluidHolder getFluidInTank(int tank) {
-        return this.tanks[tank].getFluid();
+        return this.tanks[tank].getStoredFluid();
     }
 
     @Override
@@ -162,7 +162,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
     public long getTotalFluidAmount() {
         long amount = 0;
         for (FluidTank tank : tanks) {
-            amount += tank.getFluid().getFluidAmount();
+            amount += tank.getStoredFluid().getFluidAmount();
         }
         return amount;
     }
@@ -203,7 +203,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     public ListTag serialize() {
         ListTag nbt = new ListTag();
-        Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().serialize()));
+        Arrays.stream(tanks).forEach(t -> nbt.add(t.getStoredFluid().serialize()));
         return nbt;
     }
 
@@ -252,7 +252,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
             this.tanks.add(new FluidTank(amount, validator) {
                 @Override
                 protected void onContentsChanged() {
-                    tile.onMachineEvent(contentEvent, this.fluid);
+                    tile.onMachineEvent(contentEvent, this.storedFluid);
                 }
             });
             return this;
@@ -262,7 +262,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
             this.tanks.add(new FluidTank(amount) {
                 @Override
                 protected void onContentsChanged() {
-                    tile.onMachineEvent(contentEvent, this.fluid);
+                    tile.onMachineEvent(contentEvent, this.storedFluid);
                 }
             });
             return this;

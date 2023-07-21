@@ -5,7 +5,6 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
 import earth.terrarium.botarium.common.fluid.impl.SimpleFluidSnapshot;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.Fluids;
@@ -19,7 +18,7 @@ import java.util.function.Predicate;
 public class FluidTank implements FluidContainer, FluidContainerHandler {
     protected Predicate<FluidHolder> validator;
     @Nonnull
-    protected FluidHolder fluid = FluidHooks.emptyFluid();
+    protected FluidHolder storedFluid = FluidHooks.emptyFluid();
     protected long capacity;
     public FluidTank(long capacity)
     {
@@ -51,8 +50,8 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
     }
 
     @Nonnull
-    public FluidHolder getFluid() {
-        return fluid;
+    public FluidHolder getStoredFluid() {
+        return storedFluid;
     }
 
     public boolean isFluidValid(FluidHolder stack)
@@ -68,18 +67,18 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
     @Override
     public long insertFluid(FluidHolder fluid, boolean simulate) {
         if (validator.test(fluid)){
-            if (fluid.isEmpty()) {
+            if (this.storedFluid.isEmpty()) {
                 FluidHolder insertedFluid = fluid.copyHolder();
                 insertedFluid.setAmount(Mth.clamp(fluid.getFluidAmount(), 0, capacity));
                 if (simulate) return insertedFluid.getFluidAmount();
-                this.fluid = insertedFluid;
+                this.storedFluid = insertedFluid;
                 onContentsChanged();
                 return fluid.getFluidAmount();
             } else {
-                if (fluid.matches(fluid)) {
-                    long insertedAmount = Mth.clamp(fluid.getFluidAmount(), 0, capacity - fluid.getFluidAmount());
+                if (this.storedFluid.matches(fluid)) {
+                    long insertedAmount = Mth.clamp(fluid.getFluidAmount(), 0, capacity - this.storedFluid.getFluidAmount());
                     if (simulate) return insertedAmount;
-                    this.fluid.setAmount(fluid.getFluidAmount() + insertedAmount);
+                    this.storedFluid.setAmount(this.storedFluid.getFluidAmount() + insertedAmount);
                     onContentsChanged();
                     return insertedAmount;
                 }
@@ -92,15 +91,15 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
     public FluidHolder extractFluid(FluidHolder fluid, boolean simulate) {
         if (validator.test(fluid)) {
             FluidHolder toExtract = fluid.copyHolder();
-            if (this.fluid.isEmpty()) {
+            if (this.storedFluid.isEmpty()) {
                 return FluidHooks.emptyFluid();
-            } else if (this.fluid.matches(fluid)) {
-                long extractedAmount = Mth.clamp(fluid.getFluidAmount(), 0, this.fluid.getFluidAmount());
+            } else if (this.storedFluid.matches(fluid)) {
+                long extractedAmount = Mth.clamp(fluid.getFluidAmount(), 0, this.storedFluid.getFluidAmount());
                 toExtract.setAmount(extractedAmount);
                 if (simulate) return toExtract;
-                this.fluid.setAmount(this.fluid.getFluidAmount() - extractedAmount);
+                this.storedFluid.setAmount(this.storedFluid.getFluidAmount() - extractedAmount);
                 onContentsChanged();
-                if (this.fluid.getFluidAmount() == 0) this.fluid = FluidHooks.emptyFluid();
+                if (this.storedFluid.getFluidAmount() == 0) this.storedFluid = FluidHooks.emptyFluid();
                 return toExtract;
             }
         }
@@ -113,12 +112,12 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
 
     @Override
     public void setFluid(int slot, FluidHolder fluid) {
-        this.fluid = fluid;
+        this.storedFluid = fluid;
     }
 
     @Override
     public List<FluidHolder> getFluids() {
-        return List.of(fluid);
+        return List.of(storedFluid);
     }
 
     @Override
@@ -128,7 +127,7 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
 
     @Override
     public boolean isEmpty() {
-        return fluid.isEmpty();
+        return storedFluid.isEmpty();
     }
 
     @Override
@@ -143,7 +142,7 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
 
     @Override
     public void fromContainer(FluidContainer container) {
-        this.fluid = container.getFluids().get(0);
+        this.storedFluid = container.getFluids().get(0);
         this.capacity = container.getTankCapacity(0);
         if (container instanceof FluidTank tank) this.validator = tank.validator;
     }
@@ -177,17 +176,17 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
 
     @Override
     public void deserialize(CompoundTag nbt) {
-        this.fluid = FluidHooks.fluidFromCompound(nbt.getCompound("fluid"));
+        this.storedFluid = FluidHooks.fluidFromCompound(nbt.getCompound("fluid"));
     }
 
     @Override
     public CompoundTag serialize(CompoundTag nbt) {
-        nbt.put("fluid", fluid.serialize());
+        nbt.put("fluid", storedFluid.serialize());
         return nbt;
     }
 
     @Override
     public void clearContent() {
-        fluid = FluidHooks.emptyFluid();
+        storedFluid = FluidHooks.emptyFluid();
     }
 }

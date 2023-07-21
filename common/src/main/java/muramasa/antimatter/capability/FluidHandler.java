@@ -76,7 +76,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     @Nonnull
     @Override
     public FluidHolder getFluidInTank(int tank) {
-        return getTank(tank).getFluid();
+        return getTank(tank).getStoredFluid();
     }
 
     protected FluidTank getTank(int tank) {
