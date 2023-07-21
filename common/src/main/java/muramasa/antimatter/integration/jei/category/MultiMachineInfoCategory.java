@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("removal")
 public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInfoPage> {
     private static IGuiHelper guiHelper;
     private final IDrawable background;

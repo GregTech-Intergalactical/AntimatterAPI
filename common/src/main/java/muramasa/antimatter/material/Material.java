@@ -1,5 +1,6 @@
 package muramasa.antimatter.material;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -11,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 import tesseract.TesseractGraphWrappers;
 
@@ -244,36 +244,36 @@ public class Material implements ISharedAntimatterObject {
         return AntimatterMaterialTypes.PLASMA.get().get(this, 1).getFluid();
     }
 
-    public FluidStack getLiquid(long droplets) {
+    public FluidHolder getLiquid(long droplets) {
         if (!this.has(AntimatterMaterialTypes.LIQUID)){
             throw new RuntimeException("Material: " + this.getId() + " does not have liquid");
         }
         return AntimatterMaterialTypes.LIQUID.get().get(this, droplets);
     }
 
-    public FluidStack getGas(long droplets) {
+    public FluidHolder getGas(long droplets) {
         if (!this.has(AntimatterMaterialTypes.GAS)){
             throw new RuntimeException("Material: " + this.getId() + " does not have gas");
         }
         return AntimatterMaterialTypes.GAS.get().get(this, droplets);
     }
 
-    public FluidStack getPlasma(long droplets) {
+    public FluidHolder getPlasma(long droplets) {
         if (!this.has(AntimatterMaterialTypes.PLASMA)){
             throw new RuntimeException("Material: " + this.getId() + " does not have plasma");
         }
         return AntimatterMaterialTypes.PLASMA.get().get(this, droplets);
     }
 
-    public FluidStack getLiquid(int mb) {
+    public FluidHolder getLiquid(int mb) {
         return this.getLiquid(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
-    public FluidStack getGas(int mb) {
+    public FluidHolder getGas(int mb) {
         return this.getGas(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
-    public FluidStack getPlasma(int mb) {
+    public FluidHolder getPlasma(int mb) {
         return this.getPlasma(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 

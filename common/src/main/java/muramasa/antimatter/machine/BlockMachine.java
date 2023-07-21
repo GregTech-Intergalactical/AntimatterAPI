@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -58,14 +59,14 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidUtil;
+import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
@@ -199,37 +200,25 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return InteractionResult.SUCCESS;
                     //Has gui?
-                    if (TesseractCapUtils.getFluidHandler(tile, hit.getDirection()).map(fh -> {
-                        int capacity = stack.getItem() instanceof ItemFluidCell cell ? cell.getCapacity() : 1000;
-                        fh = tile.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(fh);
-                        FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, capacity, player, true);
-                        if (res.isSuccess() && !player.isCreative()) {
+                    if (FluidHooks.safeGetBlockFluidManager(tile, hit.getDirection()).map(fh -> {
+                        Consumer<ItemStack> consumer = s -> {
                             boolean single = stack.getCount() == 1;
                             stack.shrink(1);
                             if (single) {
-                                player.setItemInHand(hand, res.result);
+                                player.setItemInHand(hand, s);
                             } else {
-                                if (!player.addItem(res.result)) {
-                                    player.drop(res.result, true);
+                                if (!player.addItem(s)) {
+                                    player.drop(s, true);
                                 }
                             }
-
+                        };
+                        boolean success = false;
+                        if (FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), fh, consumer)){
+                            success = true;
+                        } else if (FluidPlatformUtils.emptyItemintoContainer(Utils.ca(1, stack), fh, consumer)){
+                            success = true;
                         }
-                        if (!res.isSuccess()) {
-                            res = FluidUtil.tryFillContainer(stack, fh, capacity, player, true);
-                            if (res.isSuccess() && !player.isCreative()) {
-                                boolean single = stack.getCount() == 1;
-                                stack.shrink(1);
-                                if (single) {
-                                    player.setItemInHand(hand, res.result);
-                                } else {
-                                    if (!player.addItem(res.result)) {
-                                        player.drop(res.result, true);
-                                    }
-                                }
-                            }
-                        }
-                        return res.isSuccess();
+                        return success;
                     }).orElse(false)) {
                         return InteractionResult.SUCCESS;
                     }

@@ -1,5 +1,6 @@
 package muramasa.antimatter.fluid;
 
+import earth.terrarium.botarium.common.registry.fluid.FluidProperties;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -20,7 +21,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     protected Material material;
     protected MaterialType<?> type;
 
-    public AntimatterMaterialFluid(String domain, Material material, MaterialType<?> type, AntimatterFluidAttributes.Builder builder, Block.Properties blockProperties) {
+    public AntimatterMaterialFluid(String domain, Material material, MaterialType<?> type, FluidProperties.Builder builder, Block.Properties blockProperties) {
         super(domain, type.getId() + "_" + material.getId(), builder, blockProperties);
         this.material = material;
         this.type = type;
@@ -44,18 +45,20 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
         return type;
     }
 
-    private static AntimatterFluidAttributes.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
+    private static FluidProperties.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
         if (type == AntimatterMaterialTypes.GAS) {
-            return AntimatterFluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
-                    .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(200).density(-1000).gaseous().temperature(MaterialTags.GAS_TEMPERATURE.getInt(material)).sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+            return FluidProperties.create().still(GAS_TEXTURE).flowing(GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).tintColor((70 << 24) | (material.getRGB() & 0x00ffffff))
+                    .viscosity(200).density(-1000).supportsBloating(true).temperature(MaterialTags.GAS_TEMPERATURE.getInt(material))
+                    .sounds("bucket_fill", SoundEvents.BUCKET_FILL).sounds("bucket_empty", SoundEvents.BUCKET_EMPTY);
+                    //.translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
         } else if (type == AntimatterMaterialTypes.PLASMA) {
-            return AntimatterFluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
-                    .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000).sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+            return FluidProperties.create().still(PLASMA_TEXTURE).flowing(PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).tintColor((50 << 24) | (material.getRGB() & 0x00ffffff))
+                    .viscosity(10).density(-55536).lightLevel(15).supportsBloating(true).temperature(10000)
+                    .sounds("bucket_fill", SoundEvents.BUCKET_FILL).sounds("bucket_empty", SoundEvents.BUCKET_EMPTY);
+                    //.translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
         } else {
-            return getDefaultAttributesBuilder(material.has(MaterialTags.MOLTEN)).color((155 << 24) | (material.getRGB() & 0x00ffffff))
-                    .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
+            return getDefaultAttributesBuilder(material.has(MaterialTags.MOLTEN)).tintColor((155 << 24) | (material.getRGB() & 0x00ffffff))
+                    //.translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(1000).density(1000).temperature(MaterialTags.LIQUID_TEMPERATURE.getInt(material));
         }
     }
@@ -80,6 +83,6 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private boolean isGasType(){
-        return type == AntimatterMaterialTypes.PLASMA || type == AntimatterMaterialTypes.GAS || this.getAttributes().isGaseous();
+        return type == AntimatterMaterialTypes.PLASMA || type == AntimatterMaterialTypes.GAS || this.getAttributes().supportsBloating();
     }
 }

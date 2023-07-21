@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
-import tesseract.api.fluid.FluidHolder;
+import tesseract.api.fluid.PipeFluidHolder;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -64,10 +64,10 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         super.entityInside(state, worldIn, pos, entityIn);
         if (!(entityIn instanceof LivingEntity)) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) worldIn.getBlockEntity(pos);
-        FluidHolder holder = pipe.getHolder();
+        PipeFluidHolder holder = pipe.getHolder();
         if (holder == null) return;
         long max = 0;
-        for (FluidHolder.SetHolder fluid : holder.getFluids()) {
+        for (PipeFluidHolder.SetHolder fluid : holder.getFluids()) {
             max = Math.max(max, FluidPlatformUtils.getFluidTemperature(fluid.fluid));
         }
         if (max >= (295 + 100)) {

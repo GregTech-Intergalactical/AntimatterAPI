@@ -3,11 +3,7 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.capability.Holder;
-import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
@@ -34,15 +30,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import tesseract.TesseractPlatformUtils;
 import tesseract.api.IConnectable;
 import tesseract.graph.Connectivity;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTickable<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
 
@@ -55,7 +48,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     /**
      * Capabilities
      **/
-    public final LazyOptional<PipeCoverHandler<?>> coverHandler;
+    public final Optional<PipeCoverHandler<?>> coverHandler;
 
     ///** Tesseract **/
     //private Direction direction; // when cap not initialized yet, it will help to store preset direction
@@ -71,7 +64,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         super(type.getTileType(), pos, state);
         this.size = getPipeSize(state);
         this.type = getPipeType(state);
-        this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
+        this.coverHandler = Optional.of(new PipeCoverHandler<>(this));
         this.pipeCapHolder = new Holder<>(getCapClass(), this.dispatch);
     }
 
@@ -294,25 +287,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return coverHandler.map(t -> t.blocksCapability(getCapClass(), side)).orElse(false);
     }
 
-    //For covers
-    @Nonnull
-    public <U> LazyOptional<U> getCoverCapability(@Nonnull Class<U> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
-        //if (!this.connects(side)) return LazyOptional.empty();
-        if (cap == getCapClass()) {
-            return pipeCapHolder.side(side).cast();
-        }
-        if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){
-            return pipeCapHolder.side(side).cast();
-        }
-        return LazyOptional.empty();
-    }
-
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
-            coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+            coverHandler.ifPresent(t -> t.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         if (newConnection != connection && (level != null && level.isClientSide)) {
             Utils.markTileForRenderUpdate(this);
@@ -340,7 +319,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize(new CompoundTag())));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
     }
 

@@ -33,12 +33,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -71,8 +71,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public BlockState oldState;
     private Direction facingOverride;
 
-    public final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
-            .of(() -> new ControllerComponentHandler(this));
+    public final Optional<ControllerComponentHandler> componentHandler = Optional
+            .of(new ControllerComponentHandler(this));
 
 
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
@@ -427,7 +427,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
-    public LazyOptional<ControllerComponentHandler> getComponentHandler() {
+    public Optional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 

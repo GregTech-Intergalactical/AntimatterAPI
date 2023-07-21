@@ -1,6 +1,8 @@
 package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -10,12 +12,10 @@ import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
-import tesseract.Tesseract;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
-import tesseract.api.fluid.FluidHolder;
+import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.gt.GTController;
 import tesseract.api.item.ItemController;
 
@@ -158,7 +158,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
     public static class TesseractFluidWidget extends InfoRenderWidget<TesseractFluidWidget> {
 
         public int holderPressure = 0;
-        public FluidStack stack = FluidStack.EMPTY;
+        public FluidHolder stack = FluidHooks.emptyFluid();
 
         protected TesseractFluidWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractFluidWidget> renderer) {
             super(gui, parent, renderer);
@@ -177,15 +177,15 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 return 0;
             }, a -> this.holderPressure = a, SERVER_TO_CLIENT);*/
             gui.syncFluidStack(() -> {
-                FluidHolder holder = pipe.getHolder();
+                PipeFluidHolder holder = pipe.getHolder();
                 if (holder != null) {
-                    Set<FluidHolder.SetHolder> fluids = holder.getFluids();
+                    Set<PipeFluidHolder.SetHolder> fluids = holder.getFluids();
                     if (fluids != null && fluids.size() > 0) {
                         long pressure = holder.tickPressure*20 - holder.getPressureAvailable();
                         return FluidPlatformUtils.createFluidStack(fluids.iterator().next().fluid, pressure);
                     }
                 }
-                return FluidStack.EMPTY;
+                return FluidHooks.emptyFluid();
             }, a -> this.stack = a, SERVER_TO_CLIENT);
         }
 

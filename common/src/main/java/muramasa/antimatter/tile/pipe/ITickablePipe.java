@@ -2,10 +2,11 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
-import net.minecraftforge.common.util.LazyOptional;
+
+import java.util.Optional;
 
 public interface ITickablePipe {
-    LazyOptional<PipeCoverHandler<?>> getCoverHandler();
+    Optional<PipeCoverHandler<?>> getCoverHandler();
 
     default void tick() {
         getCoverHandler().ifPresent(CoverHandler::onUpdate);

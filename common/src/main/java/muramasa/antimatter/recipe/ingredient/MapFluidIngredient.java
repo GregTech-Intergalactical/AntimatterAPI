@@ -1,13 +1,13 @@
 package muramasa.antimatter.recipe.ingredient;
 
-import net.minecraftforge.fluids.FluidStack;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import tesseract.FluidPlatformUtils;
 
 public class MapFluidIngredient extends AbstractMapIngredient {
 
-    public FluidStack stack;
+    public FluidHolder stack;
 
-    public MapFluidIngredient(FluidStack stack, boolean insideMap) {
+    public MapFluidIngredient(FluidHolder stack, boolean insideMap) {
         super(insideMap);
         this.stack = stack;
     }

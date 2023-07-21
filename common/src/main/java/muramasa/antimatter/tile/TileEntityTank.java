@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
@@ -10,7 +11,8 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import tesseract.FluidPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nullable;
 
@@ -41,10 +43,10 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
     public int drawInfo(TankMachine.TankRenderWidget instance, PoseStack stack, Font renderer, int left, int top) {
         left = left + 55;
         top = top + 24;
-        renderer.draw(stack, instance.stack.getDisplayName().getString(), left, top, 16448255);
-        StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getAmount());
+        renderer.draw(stack, FluidPlatformUtils.getFluidDisplayName(instance.stack).getString(), left, top, 16448255);
+        StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
         if (AntimatterPlatformUtils.isFabric()){
-            fluidAmount.append(" ").append(intToSuperScript((int) (instance.stack.getRealAmount() % 81L))).append("/₈₁");
+            fluidAmount.append(" ").append(intToSuperScript((int) (instance.stack.getFluidAmount() % 81L))).append("/₈₁");
         }
         renderer.draw(stack, fluidAmount.toString() + " mb", left, top + 8, 16448255);
         return 16;
