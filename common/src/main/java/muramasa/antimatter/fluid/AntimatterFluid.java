@@ -42,10 +42,11 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     public static final FluidRegistry FLUID_TYPES = new FluidRegistry(Ref.SHARED_ID);
 
     private final String domain, id;
-    protected BotariumSourceFluid source;
-    protected BotariumFlowingFluid flowing;
+    protected FlowingFluid source;
+    protected FlowingFluid flowing;
     protected Block.Properties blockProperties;
     protected FluidProperties attributes;
+    protected FluidData fluidData;
     protected LiquidBlock fluidBlock;
     protected Item containerItem = Items.AIR;
 
@@ -78,8 +79,9 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
             AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this.getFluid(), new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(CreativeModeTab.TAB_MISC)));
         } else if (registry == RegistryType.BLOCKS) {
             FluidData data = FLUID_TYPES.register(attributes);
-            this.source = new BotariumSourceFluid(data);
-            this.flowing = new BotariumFlowingFluid(data);
+            this.source = FluidUtils.createSourceFluid(data);
+            this.flowing = FluidUtils.createFlowingFluid(data);
+            data.setBucket(() -> this.containerItem);
             this.fluidBlock = new BotariumLiquidBlock(data, blockProperties);
             AntimatterAPI.register(Block.class, "block_fluid_".concat(getId()), getDomain(), fluidBlock);
         } else if (registry == RegistryType.FLUIDS) {
