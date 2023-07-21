@@ -20,17 +20,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import tesseract.api.fabric.TesseractLookups;
 import tesseract.api.fabric.wrapper.ContainerItemContextWrapper;
+import tesseract.api.fabric.wrapper.ExtendedContainerWrapper;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyItem;
 import tesseract.api.heat.IHeatHandler;
+import tesseract.api.item.ExtendedItemContainer;
 import tesseract.fabric.TesseractImpl;
 
 public class AntimatterAPIImpl {
     @SuppressWarnings("UnstableApiUsage")
     public static void registerTransferApi(BlockEntityType<? extends TileEntityMachine<?>> type){
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).map(f -> new FabricBlockFluidContainer(f, t -> {}, be)).orElse(null), type);
-        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> InventoryStorage.of(i, direction)).orElse(null), type);
+        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(ExtendedContainerWrapper::new).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
         TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).orElse(null), (be, direction) -> be.rfHandler.side(direction).orElse(null), type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
@@ -46,7 +48,7 @@ public class AntimatterAPIImpl {
         }, type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityItemPipe<?> itemPipe)) return null;
-            return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).map(i -> InventoryStorage.of((Container) i, direction)).orElse(null);
+            return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).map(i -> new ExtendedContainerWrapper((ExtendedItemContainer) i)).orElse(null);
         }, type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof TileEntityCable<?> cable)) return null;

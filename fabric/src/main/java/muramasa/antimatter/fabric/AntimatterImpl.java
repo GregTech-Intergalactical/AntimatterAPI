@@ -49,6 +49,7 @@ import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import team.reborn.energy.api.EnergyStorage;
 import tesseract.api.fabric.TesseractLookups;
+import tesseract.api.fabric.wrapper.ExtendedContainerWrapper;
 import tesseract.fabric.TesseractImpl;
 
 import java.util.Map;
@@ -87,7 +88,7 @@ public class AntimatterImpl implements ModInitializer {
                     return null;
                 }
                 if (!controller.allowsFakeTiles()) return null;
-                return controller.itemHandler.side(direction).map(i -> InventoryStorage.of(i, direction)).orElse(null);
+                return controller.itemHandler.side(direction).map(ExtendedContainerWrapper::new).orElse(null);
             }, BlockFakeTile.TYPE);
             TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
                 TileEntityBasicMultiMachine<?> controller = be.getController();
