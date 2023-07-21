@@ -50,6 +50,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     public TileEntityBasicMultiMachine<?> getController() {
         if (controller != null) return controller;
         if (controllerPos != null){
+            if (!getLevel().isLoaded(controllerPos)) return null;
             if (getLevel().getBlockEntity(controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
                 setController(basicMultiMachine);
             }
