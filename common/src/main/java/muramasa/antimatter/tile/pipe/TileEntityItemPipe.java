@@ -13,17 +13,16 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractItemCapability;
+import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemPipe;
 
 import java.util.Optional;
 
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
-        implements IItemPipe, Dispatch.Sided<IItemHandler>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
+        implements IItemPipe, Dispatch.Sided<ExtendedItemContainer>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
 
     private int holder;
 
@@ -71,17 +70,17 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public Class<?> getCapClass() {
-        return IItemHandler.class;
+        return ExtendedItemContainer.class;
     }
 
     @Override
-    public Optional<IItemHandler> forSide(Direction side) {
+    public Optional<ExtendedItemContainer> forSide(Direction side) {
         return Optional.of(new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
                                                                                             simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
     @Override
-    public Optional<? extends IItemHandler> forNullSide() {
+    public Optional<? extends ExtendedItemContainer> forNullSide() {
         return forSide(null);
     }
 

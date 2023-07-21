@@ -14,7 +14,6 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.IRecipeValidator;
-import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -608,7 +607,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 return;
             }
             if (event == ENERGY_SLOT_CHANGED) {
-                if (tile.itemHandler.map(t -> t.inventories.get(SlotType.ENERGY).getStackInSlot((int) data[0]).isEmpty()).orElse(true)) {
+                if (tile.itemHandler.map(t -> t.inventories.get(SlotType.ENERGY).getItem((int) data[0]).isEmpty()).orElse(true)) {
                     return;
                 }
             }

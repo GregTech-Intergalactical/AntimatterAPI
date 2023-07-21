@@ -69,8 +69,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
 import javax.annotation.Nonnull;
@@ -116,7 +116,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public LazyOptional<MachineRecipeHandler<U>> recipeHandler;
     public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
 
-    public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(IItemHandler.class, dispatch);
+    public Holder<ExtendedItemContainer, MachineItemHandler<T>> itemHandler = new Holder<>(ExtendedItemContainer.class, dispatch);
     public Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler = new Holder<>(FluidContainer.class, dispatch);
     public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(ICoverHandler.class, dispatch, null);
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(IEnergyHandler.class, dispatch);

@@ -60,11 +60,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.item.PlatformItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -137,7 +137,7 @@ public class Utils {
         return state.getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 
-    public static ItemStack extractAny(IItemHandler handler) {
+    public static ItemStack extractAny(PlatformItemHandler handler) {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.extractItem(i, 64, false);
             if (!stack.isEmpty()) return stack;
@@ -353,11 +353,11 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static boolean transferItems(IItemHandler from, IItemHandler to, boolean once) {
+    public static boolean transferItems(PlatformItemHandler from, PlatformItemHandler to, boolean once) {
         return transferItems(from, to, once, stack -> true);
     }
 
-    public static boolean transferItems(IItemHandler from, IItemHandler to, boolean once, Predicate<ItemStack> filter) {
+    public static boolean transferItems(PlatformItemHandler from, PlatformItemHandler to, boolean once, Predicate<ItemStack> filter) {
         boolean successful = false;
         for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
@@ -377,9 +377,20 @@ public class Utils {
         return successful;
     }
 
-    @ExpectPlatform
-    public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
-        throw new AssertionError();
+    public static ItemStack insertItem(PlatformItemHandler to, ItemStack stack, boolean simulate){
+        if (to == null || stack.isEmpty())
+            return stack;
+
+        for (int i = 0; i < to.getSlots(); i++)
+        {
+            stack = to.insertItem(i, stack, simulate);
+            if (stack.isEmpty())
+            {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        return stack;
     }
 
     /**

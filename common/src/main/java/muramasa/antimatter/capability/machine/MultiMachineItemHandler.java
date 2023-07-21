@@ -4,7 +4,7 @@ import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import tesseract.api.item.ExtendedItemContainer;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +42,9 @@ public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extend
     }
 
     private ITrackedHandler calculateInputs() {
-        List<IItemHandlerModifiable> handlers = tile.getComponents(inputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getInputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
+        List<ExtendedItemContainer> handlers = tile.getComponents(inputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getInputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getInputHandler());
-        return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
+        return new MultiTrackedItemHandler(handlers.toArray(new ExtendedItemContainer[0]));
     }
 
     protected String inputComponentString(){
@@ -56,9 +56,9 @@ public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extend
     }
 
     private ITrackedHandler calculateOutputs() {
-        List<IItemHandlerModifiable> handlers = tile.getComponents(outputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getOutputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
+        List<ExtendedItemContainer> handlers = tile.getComponents(outputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getOutputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getOutputHandler());
-        return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
+        return new MultiTrackedItemHandler(handlers.toArray(new ExtendedItemContainer[0]));
     }
 
     @Override

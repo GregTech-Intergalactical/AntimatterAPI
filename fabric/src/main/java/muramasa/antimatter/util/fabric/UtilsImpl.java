@@ -21,9 +21,6 @@ public class UtilsImpl {
     private static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
         ((BlockAccessor)block).port_lib$popExperience(level, pos, exp);
     }
-    public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
-        return ItemHandlerHelper.insertItem(to, toInsert, simulate);
-    }
 
     public static void requestModelDataRefresh(BlockEntity tile){
     }

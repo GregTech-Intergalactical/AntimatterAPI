@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import tesseract.api.item.ExtendedItemContainer;
 
 import javax.annotation.Nonnull;
 
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     final boolean settable;
 
-    public SlotFake(SlotType<SlotFake> type, IGuiHandler tile, IItemHandler stackHandler, int index, int x, int y, boolean settable) {
+    public SlotFake(SlotType<SlotFake> type, IGuiHandler tile, ExtendedItemContainer stackHandler, int index, int x, int y, boolean settable) {
         super(type, tile, stackHandler, index, x, y);
         this.settable = settable;
     }
@@ -44,8 +44,8 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     @Override
     @Nonnull
     public ItemStack remove(int amount) {
-        if (!settable || !(this.getItemHandler() instanceof FakeTrackedItemHandler)) return super.remove(amount);
-        return MachineItemHandler.extractFromInput(this.getItemHandler(), index, amount, false);
+        if (!settable || !(this.getContainer() instanceof FakeTrackedItemHandler)) return super.remove(amount);
+        return MachineItemHandler.extractFromInput(this.getContainer(), index, amount, false);
     }
 
     @Override

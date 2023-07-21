@@ -4,14 +4,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import tesseract.api.item.ContainerItemHandler;
+import tesseract.api.item.ExtendedItemContainer;
+import tesseract.api.item.IItemNode;
 
 import javax.annotation.Nonnull;
 
-public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
+public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHandler {
     protected NonNullList<ItemStack> stacks;
 
     public ItemStackHandler() {
@@ -30,27 +30,36 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
     }
 
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    @Override
+    public void setItem(int slot, @Nonnull ItemStack stack) {
         this.validateSlotIndex(slot);
         this.stacks.set(slot, stack);
         this.onContentsChanged(slot);
     }
 
-    public int getSlots() {
+    @Override
+    public int getContainerSize() {
         return this.stacks.size();
     }
 
     @Nonnull
-    public ItemStack getStackInSlot(int slot) {
+    @Override
+    public ItemStack getItem(int slot) {
         this.validateSlotIndex(slot);
         return (ItemStack)this.stacks.get(slot);
     }
 
+    @Override
+    public ExtendedItemContainer getContainer() {
+        return this;
+    }
+
     @Nonnull
+    @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
-        } else if (!this.isItemValid(slot, stack)) {
+        } else if (!this.canPlaceItem(slot, stack)) {
             return stack;
         } else {
             this.validateSlotIndex(slot);
@@ -84,6 +93,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Nonnull
+    @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) {
             return ItemStack.EMPTY;
@@ -114,6 +124,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         }
     }
 
+    @Override
     public int getSlotLimit(int slot) {
         return 64;
     }
@@ -122,11 +133,14 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         return Math.min(this.getSlotLimit(slot), stack.getMaxStackSize());
     }
 
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    @Override
+    public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) {
         return true;
     }
 
-    public CompoundTag serializeNBT() {
+
+    @Override
+    public CompoundTag serialize(CompoundTag nbt) {
         ListTag nbtTagList = new ListTag();
 
         for(int i = 0; i < this.stacks.size(); ++i) {
@@ -138,13 +152,13 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             }
         }
 
-        CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
         nbt.putInt("Size", this.stacks.size());
         return nbt;
     }
 
-    public void deserializeNBT(CompoundTag nbt) {
+    @Override
+    public void deserialize(CompoundTag nbt) {
         this.setSize(nbt.contains("Size", 3) ? nbt.getInt("Size") : this.stacks.size());
         ListTag tagList = nbt.getList("Items", 10);
 
