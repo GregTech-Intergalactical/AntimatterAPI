@@ -169,7 +169,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Override
     public BiPredicate<Integer, FluidHolder> getFilter() {
-        return null;
+        return (i, f) -> true;
     }
 
     @Override
