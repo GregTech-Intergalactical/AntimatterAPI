@@ -169,7 +169,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Override
     public BiPredicate<Integer, FluidHolder> getFilter() {
-        return (i, f) -> true;
+        return (i, f) -> FluidPlatformUtils.getFluidTemperature(f.getFluid()) <= this.getMaxTemp();
     }
 
     @Override
