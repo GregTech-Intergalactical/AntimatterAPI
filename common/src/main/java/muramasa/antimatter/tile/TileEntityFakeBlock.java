@@ -42,9 +42,9 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     }
 
     public void setController(TileEntityBasicMultiMachine<?> controller) {
+        this.controller = controller;
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        this.controller = controller;
     }
 
     public TileEntityBasicMultiMachine<?> getController() {
