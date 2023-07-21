@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.*;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.machine.BlockMachine;
@@ -41,7 +42,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandlerItem;
@@ -105,7 +105,7 @@ public class RenderHelper {
         throw new AssertionError();
     }
 
-    public static void drawFluid(PoseStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
+    public static void drawFluid(PoseStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidHolder stack) {
         if (stack == null) return;
         Fluid fluid = stack.getFluid();
         if (fluid == null) return;

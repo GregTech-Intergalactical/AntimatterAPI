@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability.machine;
 
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -82,8 +81,8 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = super.serializeNBT();
+    public CompoundTag serialize() {
+        CompoundTag nbt = super.serialize();
         nbt.putInt("burn", burnDuration);
         return nbt;
     }
@@ -100,8 +99,8 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt);
+    public void deserialize(CompoundTag nbt) {
+        super.deserialize(nbt);
         this.burnDuration = nbt.getInt("burn");
     }
 }

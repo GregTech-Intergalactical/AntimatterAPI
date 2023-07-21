@@ -6,16 +6,12 @@ import io.github.fabricators_of_create.porting_lib.crafting.NBTIngredient;
 import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
 import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.fluids.FluidStack;
-import tesseract.FluidPlatformUtils;
 
 import java.util.function.Consumer;
 
@@ -51,9 +47,9 @@ public class RecipeUtilImpl {
         }
         if (stack.hasTag()) {
             CompoundTag nbt = stack.getTag();
-            if (!nbt.contains("ForgeCaps") && stack.getCapNBT() != null){
+            /*if (!nbt.contains("ForgeCaps") && stack.getCapNBT() != null){
                 nbt.put("ForgeCaps", stack.getCapNBT());
-            }
+            }*/
             resultObj.addProperty("nbt", nbt.toString());
         }
         return resultObj;

@@ -1,6 +1,8 @@
 package muramasa.antimatter.tile.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
@@ -15,37 +17,34 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
-import tesseract.api.fluid.FluidHolder;
+import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.fluid.IFluidPipe;
 
 import java.util.List;
+import java.util.Optional;
 
-public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
+public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
-    protected LazyOptional<PipeFluidHandler> fluidHandler;
-    private FluidHolder holder;
+    protected Optional<PipeFluidHandler> fluidHandler;
+    private PipeFluidHolder holder;
 
     public TileEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         if (fluidHandler == null) {
-            fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : LazyOptional.empty();
+            fluidHandler = FluidController.SLOOSH ? Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : Optional.empty();
         }
         pipeCapHolder.set(() -> this);
     }
 
     @Override
     public void onLoad() {
-        holder = new FluidHolder(this);
+        holder = new PipeFluidHolder(this);
         super.onLoad();
     }
 
@@ -71,19 +70,18 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
-            fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+            fluidHandler.ifPresent(t -> t.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
     }
 
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serializeNBT()));
+        fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serialize(new CompoundTag())));
     }
 
     @Override
     public void onRemove() {
         fluidHandler.ifPresent(FluidHandler::onRemove);
-        fluidHandler.invalidate();
         super.onRemove();
     }
 
@@ -100,7 +98,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public FluidHolder getHolder() {
+    public PipeFluidHolder getHolder() {
         return holder;
     }
 
@@ -110,7 +108,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public int getPressure() {
+    public long getPressure() {
         return getPipeType().getPressure(getPipeSize());
     }
 
@@ -138,30 +136,30 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public Class<?> getCapClass() {
-        return IFluidHandler.class;
+        return FluidContainer.class;
     }
 
     @Override
-    public LazyOptional<? extends IFluidHandler> forSide(Direction side) {
+    public Optional<? extends FluidContainer> forSide(Direction side) {
         if (FluidController.SLOOSH) {
             if (fluidHandler == null) {
-                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
+                fluidHandler = Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
             }
         } else {
-            return LazyOptional.of(() -> new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) -> 
+            return Optional.of(new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
             this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
         }
         return fluidHandler;
     }
 
     @Override
-    public LazyOptional<? extends IFluidHandler> forNullSide() {
+    public Optional<? extends FluidContainer> forNullSide() {
         return forSide(null);
     }
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
-        renderer.draw(stack, "Pressure used: " + instance.stack.getAmount(), left, top, 16448255);
+        renderer.draw(stack, "Pressure used: " + instance.stack.getFluidAmount(), left, top, 16448255);
         renderer.draw(stack, "Pressure total: " + getPressure()*20, left, top + 8, 16448255);
         renderer.draw(stack, "Fluid: " + FluidPlatformUtils.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
         renderer.draw(stack, "(Above only in intersection)", left, top + 24, 16448255);
@@ -173,9 +171,9 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public List<String> getInfo() {
         List<String> list = super.getInfo();
         fluidHandler.ifPresent(t -> {
-            for (int i = 0; i < t.getTanks(); i++) {
-                FluidStack stack = t.getFluidInTank(i);
-                list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
+            for (int i = 0; i < t.getSize(); i++) {
+                FluidHolder stack = t.getFluidInTank(i);
+                list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mb.");
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));

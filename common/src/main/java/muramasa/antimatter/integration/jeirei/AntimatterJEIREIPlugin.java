@@ -1,5 +1,6 @@
 package muramasa.antimatter.integration.jeirei;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.Antimatter;
@@ -14,7 +15,6 @@ import muramasa.antimatter.recipe.map.IRecipeMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +72,7 @@ public class AntimatterJEIREIPlugin{
 
     //To perform a JEI lookup for fluid. Use defines direction.
 
-    public static void uses(FluidStack val, boolean USE) {
+    public static void uses(FluidHolder val, boolean USE) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             AntimatterJEIPlugin.uses(val, USE);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){

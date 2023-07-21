@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
 import earth.terrarium.botarium.common.energy.util.EnergyHooks;
+import earth.terrarium.botarium.util.Serializable;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -26,23 +27,20 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.TesseractCapUtils;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
+import tesseract.api.item.ExtendedItemContainer;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 
-public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, INBTSerializable<CompoundTag>, Dispatch.Sided<IItemHandler> {
+public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Serializable, Dispatch.Sided<ExtendedItemContainer> {
 
     protected final T tile;
     protected final Object2ObjectMap<SlotType<?>, TrackedItemHandler<T>> inventories = new Object2ObjectOpenHashMap<>(); // Use SlotType instead of MachineFlag?
@@ -65,8 +63,8 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a, b) -> false, null));
     }
 
-    public Map<SlotType<?>, IItemHandler> getAll() {
-        return (Map<SlotType<?>, IItemHandler>) (Object) inventories;
+    public Map<SlotType<?>, ExtendedItemContainer> getAll() {
+        return (Map<SlotType<?>, ExtendedItemContainer>) (Object) inventories;
     }
 
     @Override
@@ -75,17 +73,16 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = new CompoundTag();
-        this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serializeNBT()));
+    public CompoundTag serialize(CompoundTag nbt) {
+        this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serialize(new CompoundTag())));
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         this.inventories.forEach((f, i) -> {
             if (!nbt.contains(f.getId())) return;
-            i.deserializeNBT(nbt.getCompound(f.getId()));
+            i.deserialize(nbt.getCompound(f.getId()));
         });
     }
 
@@ -99,9 +96,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public List<ItemStack> getAllItems() {
         return inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).flatMap(t -> {
-            List<ItemStack> stacks = new ObjectArrayList<>(t.getSlots());
-            for (int i = 0; i < t.getSlots(); i++) {
-                stacks.add(t.getStackInSlot(i).copy());
+            List<ItemStack> stacks = new ObjectArrayList<>(t.getContainerSize());
+            for (int i = 0; i < t.getContainerSize(); i++) {
+                stacks.add(t.getItem(i).copy());
             }
             return stacks.stream();
         }).collect(Collectors.toList());
@@ -111,16 +108,16 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     }
 
-    public static ItemStack insertIntoOutput(IItemHandler handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (handler instanceof ITrackedHandler) {
-            return ((ITrackedHandler) handler).insertOutputItem(slot, stack, simulate);
+    public static ItemStack insertIntoOutput(ExtendedItemContainer handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
+        if (handler instanceof ITrackedHandler trackedHandler) {
+            return trackedHandler.insertOutputItem(slot, stack, simulate);
         }
         return handler.insertItem(slot, stack, simulate);
     }
 
-    public static ItemStack extractFromInput(IItemHandler handler, int slot, int amount, boolean simulate) {
-        if (handler instanceof ITrackedHandler) {
-            return ((ITrackedHandler) handler).extractFromInput(slot, amount, simulate);
+    public static ItemStack extractFromInput(ExtendedItemContainer handler, int slot, int amount, boolean simulate) {
+        if (handler instanceof ITrackedHandler trackedHandler) {
+            return trackedHandler.extractFromInput(slot, amount, simulate);
         }
         return handler.extractItem(slot, amount, simulate);
     }
@@ -153,15 +150,15 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     public int getInputCount() {
-        return getInputHandler().getSlots();
+        return getInputHandler().getContainerSize();
     }
 
     public int getOutputCount() {
-        return getOutputHandler().getSlots();
+        return getOutputHandler().getContainerSize();
     }
 
     public int getCellCount() {
-        return getCellInputHandler().getSlots();
+        return getCellInputHandler().getContainerSize();
     }
 
     @Nonnull
@@ -174,11 +171,11 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     public ItemStack getCellInput() {
-        return getCellInputHandler().getStackInSlot(0);
+        return getCellInputHandler().getItem(0);
     }
 
     public ItemStack getCellOutput() {
-        return getCellInputHandler().getStackInSlot(1);
+        return getCellInputHandler().getItem(1);
     }
 
     /**
@@ -186,10 +183,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
      **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
-        IItemHandlerModifiable inputs = getInputHandler();
-        for (int i = 0; i < inputs.getSlots(); i++) {
-            if (!inputs.getStackInSlot(i).isEmpty()) {
-                list.add(inputs.getStackInSlot(i).copy());
+        ExtendedItemContainer inputs = getInputHandler();
+        for (int i = 0; i < inputs.getContainerSize(); i++) {
+            if (!inputs.getItem(i).isEmpty()) {
+                list.add(inputs.getItem(i).copy());
             }
         }
         return list;
@@ -201,9 +198,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     public List<Pair<ItemStack, IEnergyHandlerItem>> getChargeableItems() {
         List<Pair<ItemStack, IEnergyHandlerItem>> list = new ObjectArrayList<>();
         if (tile.isServerSide()) {
-            IItemHandlerModifiable chargeables = getChargeHandler();
-            for (int i = 0; i < chargeables.getSlots(); i++) {
-                ItemStack item = chargeables.getStackInSlot(i);
+            ExtendedItemContainer chargeables = getChargeHandler();
+            for (int i = 0; i < chargeables.getContainerSize(); i++) {
+                ItemStack item = chargeables.getItem(i);
                 if (!item.isEmpty()) {
                     TesseractCapUtils.getWrappedEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
                 }
@@ -215,9 +212,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     public List<Pair<ItemStack, PlatformItemEnergyManager>> getRFChargeableItems() {
         List<Pair<ItemStack, PlatformItemEnergyManager>> list = new ObjectArrayList<>();
         if (tile.isServerSide()) {
-            IItemHandlerModifiable chargeables = getChargeHandler();
-            for (int i = 0; i < chargeables.getSlots(); i++) {
-                ItemStack item = chargeables.getStackInSlot(i);
+            ExtendedItemContainer chargeables = getChargeHandler();
+            for (int i = 0; i < chargeables.getContainerSize(); i++) {
+                ItemStack item = chargeables.getItem(i);
                 if (!item.isEmpty() && EnergyHooks.isEnergyItem(item)) {
                     list.add(new ObjectObjectImmutablePair<>(item, EnergyHooks.getItemEnergyManager(item)));
                 }
@@ -231,9 +228,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
      **/
     public List<ItemStack> getOutputList() {
         List<ItemStack> list = new ObjectArrayList<>();
-        IItemHandlerModifiable outputs = getOutputHandler();
-        for (int i = 0; i < outputs.getSlots(); i++) {
-            ItemStack slot = outputs.getStackInSlot(i);
+        ExtendedItemContainer outputs = getOutputHandler();
+        for (int i = 0; i < outputs.getContainerSize(); i++) {
+            ItemStack slot = outputs.getItem(i);
             if (!slot.isEmpty()) {
                 list.add(slot.copy());
             }
@@ -244,15 +241,15 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public List<ItemStack> consumeInputs(List<Ingredient> items, boolean simulate) {
         if (items == null) return Collections.emptyList();
-        IntSet skipSlots = new IntOpenHashSet(getInputHandler().getSlots());
+        IntSet skipSlots = new IntOpenHashSet(getInputHandler().getContainerSize());
         List<ItemStack> consumedItems = new ObjectArrayList<>();
 
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
             ITrackedHandler wrap = getInputHandler();
             int countToReach = RecipeIngredient.count(input);
-            for (int i = 0; i < wrap.getSlots(); i++) {
-                ItemStack item = wrap.getStackInSlot(i);
+            for (int i = 0; i < wrap.getContainerSize(); i++) {
+                ItemStack item = wrap.getItem(i);
                 if (input.test(item) && !skipSlots.contains(i)) {
                     int toConsume = Math.min(item.getCount(), Math.max(countToReach - item.getCount(), countToReach));
                     countToReach -= toConsume;
@@ -265,7 +262,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
                         break;
                     }
                 }
-                if (i == wrap.getSlots() - 1) {
+                if (i == wrap.getContainerSize() - 1) {
                     failed++;
                 }
             }
@@ -294,12 +291,12 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
      * @param outputs the outputs to add.
      */
     public void addOutputs(ItemStack... outputs) {
-        IItemHandlerModifiable outputHandler = getOutputHandler();
+        ExtendedItemContainer outputHandler = getOutputHandler();
         if (outputHandler == null || outputs == null || outputs.length == 0) {
             return;
         }
         for (ItemStack output : outputs) {
-            for (int i = 0; i < outputHandler.getSlots(); i++) {
+            for (int i = 0; i < outputHandler.getContainerSize(); i++) {
                 output = insertIntoOutput(outputHandler, i, output.copy(), false);
                 if (output.isEmpty()) {
                     break;
@@ -313,10 +310,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
      **/
     public boolean canOutputsFit(ItemStack[] a) {
         if (a == null) return true;
-        IItemHandlerModifiable outputHandler = getOutputHandler();
+        ExtendedItemContainer outputHandler = getOutputHandler();
         boolean[] results = new boolean[a.length];
         for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < outputHandler.getSlots(); j++) {
+            for (int j = 0; j < outputHandler.getContainerSize(); j++) {
                 results[i] |= insertIntoOutput(outputHandler, j, a[i], true).isEmpty();
             }
         }
@@ -332,13 +329,13 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
         //Here, cast to use stack limit
-        IItemHandlerModifiable handler = getOutputHandler();
+        ExtendedItemContainer handler = getOutputHandler();
         if (!(handler instanceof TrackedItemHandler)) {
             return 0;
         }
         for (ItemStack stack : a) {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack item = handler.getStackInSlot(i);
+            for (int i = 0; i < handler.getContainerSize(); i++) {
+                ItemStack item = handler.getItem(i);
                 if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= handler.getSlotLimit(i))) {
                     matchCount++;
                     break;
@@ -351,10 +348,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
         List<ItemStack> notConsumed = new ObjectArrayList<>();
-        IItemHandlerModifiable inputHandler = getInputHandler();
+        ExtendedItemContainer inputHandler = getInputHandler();
         for (ItemStack input : inputs) {
-            for (int i = 0; i < inputHandler.getSlots(); i++) {
-                if (Utils.equals(input, inputHandler.getStackInSlot(i))) {
+            for (int i = 0; i < inputHandler.getContainerSize(); i++) {
+                if (Utils.equals(input, inputHandler.getItem(i))) {
                     ItemStack result = extractFromInput(inputHandler, i, input.getCount(), false);
                     if (!result.isEmpty()) {
                         if (result.getCount() == input.getCount()) {
@@ -363,7 +360,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
                             notConsumed.add(Utils.ca(input.getCount() - result.getCount(), input));
                         }
                     }
-                } else if (i == inputHandler.getSlots() - 1) {
+                } else if (i == inputHandler.getContainerSize() - 1) {
                     notConsumed.add(input);
                 }
             }
@@ -373,16 +370,16 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public ItemStack[] exportAndReturnOutputs(ItemStack... outputs) {
         List<ItemStack> notExported = new ObjectArrayList<>();
-        IItemHandlerModifiable outputHandler = getOutputHandler();
+        ExtendedItemContainer outputHandler = getOutputHandler();
         for (int i = 0; i < outputs.length; i++) {
-            for (int j = 0; j < outputHandler.getSlots(); j++) {
+            for (int j = 0; j < outputHandler.getContainerSize(); j++) {
                 ItemStack result = insertIntoOutput(outputHandler, j, outputs[i].copy(), false);
                 if (result.isEmpty()) {
                     break;
                 } else {
                     outputs[i] = result;
                 }
-                if (j == outputHandler.getSlots() - 1) {
+                if (j == outputHandler.getContainerSize() - 1) {
                     notExported.add(result);
                 }
             }
@@ -391,12 +388,12 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     @Override
-    public LazyOptional<IItemHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
+    public Optional<ExtendedItemContainer> forSide(Direction side) {
+        return Optional.of(new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(ExtendedItemContainer[]::new)));
     }
 
     @Override
-    public LazyOptional<? extends IItemHandler> forNullSide() {
-        return LazyOptional.of(() -> new ROCombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
+    public Optional<? extends ExtendedItemContainer> forNullSide() {
+        return Optional.of(new ROCombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(ExtendedItemContainer[]::new)));
     }
 }

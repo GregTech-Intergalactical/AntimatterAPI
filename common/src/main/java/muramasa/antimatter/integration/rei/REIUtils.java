@@ -1,5 +1,6 @@
 package muramasa.antimatter.integration.rei;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
@@ -8,8 +9,6 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 
 import java.util.ArrayList;
@@ -24,14 +23,14 @@ public class REIUtils {
     static List<Consumer<CategoryRegistry>> EXTRA_CATEGORIES = new ArrayList<>();
     static List<Consumer<DisplayRegistry>> EXTRA_DISPLAYS = new ArrayList<>();
 
-    public static FluidStack fromREIFluidStack(dev.architectury.fluid.FluidStack from){
-        FluidStack stack = FluidPlatformUtils.createFluidStack(from.getFluid(), from.getAmount());
-        stack.setTag(from.getTag());
+    public static FluidHolder fromREIFluidStack(dev.architectury.fluid.FluidStack from){
+        FluidHolder stack = FluidPlatformUtils.createFluidStack(from.getFluid(), from.getAmount());
+        stack.setCompound(from.getTag());
         return stack;
     }
 
-    public static dev.architectury.fluid.FluidStack toREIFLuidStack(FluidStack from){
-        return dev.architectury.fluid.FluidStack.create(from.getFluid(), from.getRealAmount(), from.getTag());
+    public static dev.architectury.fluid.FluidStack toREIFLuidStack(FluidHolder from){
+        return dev.architectury.fluid.FluidStack.create(from.getFluid(), from.getFluidAmount(), from.getCompound());
     }
 
     public static <T> void addModDescriptor(List<Component> tooltip, T t) {
@@ -46,7 +45,7 @@ public class REIUtils {
         EXTRA_CATEGORIES.add(registry);
     }
 
-    public static void uses(FluidStack val, boolean USE) {
+    public static void uses(FluidHolder val, boolean USE) {
         EntryStack<?> stack = EntryStack.of(VanillaEntryTypes.FLUID, toREIFLuidStack(val));
         if (USE) ViewSearchBuilder.builder().addUsagesFor(stack).open();
         else ViewSearchBuilder.builder().addRecipesFor(stack).open();

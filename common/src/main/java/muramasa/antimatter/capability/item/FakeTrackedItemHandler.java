@@ -21,7 +21,7 @@ public class FakeTrackedItemHandler<T extends TileEntityMachine<T>> extends Trac
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        super.setStackInSlot(slot, stack.copy());
+    public void setItem(int slot, @Nonnull ItemStack stack) {
+        super.setItem(slot, stack.copy());
     }
 }

@@ -78,14 +78,14 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     }
     //Size is defined by GUI and not the NBT data.
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = super.serializeNBT();
+    public CompoundTag serialize(CompoundTag nbt) {
+        super.serialize(nbt);
         nbt.remove("Size");
         return nbt;
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) {
         return true;//validator.test(tile, stack);
     }
 }

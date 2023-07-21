@@ -76,7 +76,6 @@ public class AntimatterClientImpl implements ClientModInitializer {
         AntimatterAPI.all(AntimatterFluid.class, f -> {
             Fluid source = f.getFluid();
             Fluid flowing = f.getFlowingFluid();
-            FluidRenderHandlerRegistry.INSTANCE.register(source, flowing, new SimpleFluidRenderHandler(f.getAttributes().getStillTexture(), f.getAttributes().getFlowingTexture(), f.getAttributes().getColor()));
             BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), source, flowing);
         });
         //TODO figure this out

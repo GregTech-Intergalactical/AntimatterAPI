@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
 
+@SuppressWarnings("removal")
 public class MachineTransferHandler implements IRecipeTransferInfo<ContainerBasicMachine, IRecipe> {
     final ResourceLocation id;
     public MachineTransferHandler(ResourceLocation id){

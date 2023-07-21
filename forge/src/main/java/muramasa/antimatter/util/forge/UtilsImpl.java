@@ -22,10 +22,6 @@ public class UtilsImpl {
         block.popExperience(level, pos, exp);
     }
 
-    public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
-        return ItemHandlerHelper.insertItem(to, toInsert, simulate);
-    }
-
     public static void requestModelDataRefresh(BlockEntity tile){
         ModelDataManager.requestModelDataRefresh(tile);
     }

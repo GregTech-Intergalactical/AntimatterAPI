@@ -11,13 +11,13 @@ import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 
@@ -26,7 +26,7 @@ import java.util.List;
 public class KubeJSRecipe extends RecipeJS {
 
     public final List<FluidIngredient> fluidInput = new ObjectArrayList<>();
-    public final List<FluidStack> fluidOutput = new ObjectArrayList<>();
+    public final List<FluidHolder> fluidOutput = new ObjectArrayList<>();
 
     private int duration;
     private int special;
@@ -114,12 +114,12 @@ public class KubeJSRecipe extends RecipeJS {
         }
     }
 
-    public static JsonElement serializeStack(FluidStack stack) {
+    public static JsonElement serializeStack(FluidHolder stack) {
         JsonObject obj = new JsonObject();
         obj.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
-        obj.addProperty("amount", stack.getRealAmount());
-        if (stack.hasTag()) {
-            obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));
+        obj.addProperty("amount", stack.getFluidAmount());
+        if (stack.getCompound() != null) {
+            obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getCompound()));
         }
         return obj;
     }

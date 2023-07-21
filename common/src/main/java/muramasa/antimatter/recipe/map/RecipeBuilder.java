@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe.map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -27,7 +28,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -46,7 +46,7 @@ public class RecipeBuilder {
     protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
     protected List<Ingredient> ingredientInput = new ObjectArrayList<>();
     protected List<FluidIngredient> fluidsInput = new ObjectArrayList<>();
-    protected List<FluidStack> fluidsOutput = new ObjectArrayList<>();
+    protected List<FluidHolder> fluidsOutput = new ObjectArrayList<>();
     protected int[] chances;
     protected int duration, special;
     protected long power;
@@ -99,7 +99,7 @@ public class RecipeBuilder {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }*/
-        if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidStack[0]))) {
+        if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidHolder[0]))) {
             String id = this.id == null ? "": " Recipe ID: " + this.id;
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
             return Utils.getEmptyRecipe();
@@ -123,7 +123,7 @@ public class RecipeBuilder {
                 ingredientInput,
                 itemsOutput != null ? itemsOutput.toArray(new ItemStack[0]) : null,
                 fluidsInput != null ? fluidsInput : Collections.emptyList(),
-                fluidsOutput != null ? fluidsOutput.toArray(new FluidStack[0]) : null,
+                fluidsOutput != null ? fluidsOutput.toArray(new FluidHolder[0]) : null,
                 duration, power, special, amps
         );
         if (chances != null) recipe.addChances(chances);
@@ -150,7 +150,7 @@ public class RecipeBuilder {
                 if (ing.getTag() != null){
                     id = ing.getTag().location().toString() + "_recipe";
                 } else {
-                    List<FluidStack> list = Arrays.asList(ing.getStacks());
+                    List<FluidHolder> list = Arrays.asList(ing.getStacks());
                     if (!list.isEmpty()){
                         id = AntimatterPlatformUtils.getIdFromFluid(list.get(0).getFluid()).toString() + "_recipe";
                     } else {
@@ -224,7 +224,7 @@ public class RecipeBuilder {
         return this;
     }
 
-    public RecipeBuilder fi(FluidStack... stacks) {
+    public RecipeBuilder fi(FluidHolder... stacks) {
         fluidsInput.addAll(Arrays.stream(stacks).map(FluidIngredient::of).toList());
         return this;
     }
@@ -235,17 +235,17 @@ public class RecipeBuilder {
     }
 
 
-    public RecipeBuilder fi(List<FluidStack> stacks) {
+    public RecipeBuilder fi(List<FluidHolder> stacks) {
         fluidsInput.addAll(stacks.stream().map(FluidIngredient::of).toList());
         return this;
     }
 
-    public RecipeBuilder fo(FluidStack... stacks) {
+    public RecipeBuilder fo(FluidHolder... stacks) {
         fluidsOutput.addAll(Arrays.asList(stacks));
         return this;
     }
 
-    public RecipeBuilder fo(List<FluidStack> stacks) {
+    public RecipeBuilder fo(List<FluidHolder> stacks) {
         fluidsOutput.addAll(stacks);
         return this;
     }
@@ -356,7 +356,7 @@ public class RecipeBuilder {
                 json.add("fluid_in", array);
             }
             array = new JsonArray();
-            for (FluidStack stack : fluidsOutput){
+            for (FluidHolder stack : fluidsOutput){
                 array.add(RecipeUtil.fluidstackToJson(stack));
             }
             if (!array.isEmpty()){

@@ -32,7 +32,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -192,16 +191,6 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static FluidStack readFluidStack(FriendlyByteBuf buf) {
         throw new AssertionError();
     }
 

@@ -19,12 +19,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.Optional;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERENERGY;
@@ -32,8 +31,8 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    public final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional
-            .of(() -> new HatchComponentHandler<>((T)this));
+    public final Optional<HatchComponentHandler<T>> componentHandler = Optional
+            .of(new HatchComponentHandler<>((T)this));
 
     public TileEntityHatch(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -76,7 +75,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     }
 
     @Override
-    public LazyOptional<HatchComponentHandler<T>> getComponentHandler() {
+    public Optional<HatchComponentHandler<T>> getComponentHandler() {
         return componentHandler;
     }
 

@@ -194,7 +194,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serialize(CompoundTag nbt) {
         CompoundTag tag = new CompoundTag();
         byte[] sides = new byte[1];
         covers.forEach((s, c) -> {
@@ -208,7 +208,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {

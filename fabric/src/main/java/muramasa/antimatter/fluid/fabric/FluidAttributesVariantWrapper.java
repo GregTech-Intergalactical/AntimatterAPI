@@ -1,45 +1,47 @@
 package muramasa.antimatter.fluid.fabric;
 
-import muramasa.antimatter.fluid.AntimatterFluidAttributes;
+import earth.terrarium.botarium.common.registry.fluid.FluidProperties;
+import earth.terrarium.botarium.fabric.fluid.holder.FabricFluidHolder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 @SuppressWarnings("ALL")
-public record FluidAttributesVariantWrapper(AntimatterFluidAttributes attributes) implements FluidVariantAttributeHandler {
+public record FluidAttributesVariantWrapper(FluidProperties attributes) implements FluidVariantAttributeHandler {
     @Override
     public Component getName(FluidVariant fluidVariant) {
-        return attributes.getDisplayName(new FluidStack(fluidVariant, 1));
+        return new TranslatableComponent(Util.makeDescriptionId("fluid_type", attributes.id()));
     }
 
     @Override
     public int getLuminance(FluidVariant variant) {
-        return attributes.getLuminosity();
+        return attributes.lightLevel();
     }
 
     @Override
     public int getTemperature(FluidVariant variant) {
-        return attributes.getTemperature();
+        return attributes.temperature();
     }
 
     @Override
     public int getViscosity(FluidVariant variant, @Nullable Level world) {
-        return attributes.getViscosity();
+        return attributes.viscosity();
     }
 
     @Override
     public Optional<SoundEvent> getEmptySound(FluidVariant variant) {
-        return Optional.of(attributes.getEmptySound());
+        return Optional.of(attributes.sounds().getSound("bucket_empty"));
     }
 
     @Override
     public Optional<SoundEvent> getFillSound(FluidVariant variant) {
-        return Optional.of(attributes.getFillSound());
+        return Optional.of(attributes.sounds().getSound("bucket_fill"));
     }
 }
