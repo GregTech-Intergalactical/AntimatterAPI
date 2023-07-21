@@ -60,6 +60,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.forge.Provider;
 import tesseract.api.forge.TesseractCaps;
+import tesseract.api.forge.wrapper.ExtendedContainerWrapper;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
@@ -323,7 +324,7 @@ public class ForgeCommonEvents {
 
     private static LazyOptional<IItemHandler> fromItemHolder(Holder<ExtendedItemContainer, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
-        LazyOptional<IItemHandler> opt = LazyOptional.of(() -> new InvWrapper(holder.side(side).get()));
+        LazyOptional<IItemHandler> opt = LazyOptional.of(() -> new ExtendedContainerWrapper(holder.side(side).get()));
         holder.addListener(side, opt::invalidate);
         return opt;
     }
