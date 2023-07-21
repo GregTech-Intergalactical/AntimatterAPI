@@ -9,7 +9,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.heat.HeatTransaction;

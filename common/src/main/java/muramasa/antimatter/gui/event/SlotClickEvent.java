@@ -1,18 +1,12 @@
 package muramasa.antimatter.gui.event;
 
-import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
-import earth.terrarium.botarium.common.fluid.base.PlatformFluidItemHandler;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
-import earth.terrarium.botarium.common.item.ItemStackHolder;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,16 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import tesseract.FluidPlatformUtils;
-import tesseract.TesseractCapUtils;
 
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class SlotClickEvent implements IGuiEvent {
 

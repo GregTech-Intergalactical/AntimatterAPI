@@ -1,3 +1,4 @@
+/*
 package muramasa.antimatter.util;
 
 import net.minecraftforge.common.util.LazyOptional;
@@ -9,11 +10,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+*/
 /**
  * A class that incorporates both Java's Optional and Forge's LazyOptional.
  * <p>
  * Equals and hashCode isn't overriden!
- */
+ *//*
+
 public class LazyHolder<T> {
 
     public static <T> LazyHolder<T> of(final @Nullable Supplier<T> value) {
@@ -116,3 +119,4 @@ public class LazyHolder<T> {
     }
 
 }
+*/

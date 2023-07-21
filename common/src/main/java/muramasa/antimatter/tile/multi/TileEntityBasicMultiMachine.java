@@ -17,11 +17,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -49,8 +49,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public BlockState oldState;
     private Direction facingOverride;
 
-    public final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
-            .of(() -> new ControllerComponentHandler(this));
+    public final Optional<ControllerComponentHandler> componentHandler = Optional
+            .of(new ControllerComponentHandler(this));
 
     public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -312,7 +312,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
-    public LazyOptional<ControllerComponentHandler> getComponentHandler() {
+    public Optional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 

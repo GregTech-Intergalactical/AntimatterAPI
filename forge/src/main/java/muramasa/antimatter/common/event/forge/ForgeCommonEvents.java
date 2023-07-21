@@ -242,12 +242,12 @@ public class ForgeCommonEvents {
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
                     if (machine instanceof TileEntityBasicMultiMachine<?> multiMachine) {
                         if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && multiMachine.componentHandler.isPresent()) {
-                            return multiMachine.componentHandler.cast();
+                            return LazyOptional.of(() -> multiMachine.componentHandler.get()).cast();
                         }
                     }
                     if (machine instanceof TileEntityHatch<?> hatch) {
                         if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && hatch.componentHandler.isPresent()) {
-                            return hatch.componentHandler.cast();
+                            return LazyOptional.of(() -> hatch.componentHandler.get()).cast();
                         }
                     }
                     if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && machine.coverHandler.isPresent()) {
