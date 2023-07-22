@@ -49,7 +49,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         implements IComponent, IAlignment {
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
-    protected StructureResult result = null;
     protected boolean validStructure = false;
 
     public Long2ObjectOpenHashMap<IStructureElement<T>> structurePositions = new Long2ObjectOpenHashMap<>();
@@ -129,11 +128,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         return facingSet;
     }
 
-    @Nullable
-    public StructureResult getResult() {
-        return result;
-    }
-
     protected IAlignmentLimits getInitialAlignmentLimits() {
         return (d, r, f) -> !f.isVerticallyFliped();
     }
@@ -200,8 +194,19 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         });
         if (fail[0]) validStructure = false;
         if (validStructure){
-            if (onStructureFormed()){
+            LongList positions = LongList.of(structurePositions.keySet().toLongArray());
+            if (level instanceof TrackedDummyWorld) {
+                StructureCache.add(level, worldPosition, positions);
+                StructureCache.validate(level, worldPosition, positions, maxShares());
+                checkingStructure--;
+                return true;
+            } else if (onStructureFormed() && StructureCache.validate(this.getLevel(), this.getBlockPos(), positions, maxShares())){
                 if (isServerSide()){
+                    if (!oldValidStructure){
+                        allHandlers.forEach(s -> {
+                            s.structureCacheAddition(this);
+                        });
+                    }
                     afterStructureFormed();
                     if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
                         setMachineState(MachineState.IDLE);
@@ -209,7 +214,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                     this.recipeHandler.ifPresent(
                             t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
                     sidedSync(true);;
-                    StructureCache.add(level, getBlockPos(), LongList.of(structurePositions.keySet().toLongArray()));
+                    StructureCache.add(level, getBlockPos(), positions);
                 } else {
                     this.components.forEach((k, v) -> v.forEach(c -> {
                         Utils.markTileForRenderUpdate(c.getTile());
@@ -356,6 +361,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         validStructure = false;
         if (isServerSide()) {
             onStructureInvalidated();
+            allHandlers.forEach(StructureHandle::structureCacheRemoval);
             recipeHandler.ifPresent(
                     t -> t.onMultiBlockStateChange(false, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
             components.clear();
