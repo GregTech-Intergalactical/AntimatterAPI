@@ -13,6 +13,7 @@ import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.event.SlotClickEvent;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
@@ -53,8 +54,8 @@ public class FluidSlotWidget extends Widget {
     @Override
     public void init() {
         super.init();
-        if (this.gui.handler instanceof BlockEntity blockEntity){
-            this.gui.syncFluidStack(() -> FluidHooks.safeGetBlockFluidManager(blockEntity, null)
+        if (this.gui.handler instanceof TileEntityMachine<?> blockEntity){
+            this.gui.syncFluidStack(() -> blockEntity.fluidHandler
                     .map(t -> t.getFluidInTank(slot)).orElse(FluidHooks.emptyFluid()), stack -> this.stack = stack, SERVER_TO_CLIENT);
         }
 
