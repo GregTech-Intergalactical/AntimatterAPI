@@ -56,20 +56,25 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         consumers.add(consumer);
     }
 
-    public void addListener(Direction direction, Runnable runnable){
+    int invalidating = 0;
+
+    public boolean addListener(Direction direction, Runnable runnable){
+        if (invalidating > 0) return false;
         listeners.get(direction == null ? 6 : direction.get3DDataValue()).add(runnable);
+        return true;
     }
 
     public void invalidate(Direction side) {
-        if (side == null) {
-            listeners.get(6).forEach(Runnable::run);
-            return;
-        }
-        listeners.get(side.get3DDataValue()).forEach(Runnable::run);
+        invalidating++;
+        int index = side == null ? 6 : side.get3DDataValue();
+        listeners.get(index).forEach(Runnable::run);
+        invalidating--;
     }
 
     public void invalidate() {
+        invalidating++;
         listeners.forEach(l -> l.forEach(Runnable::run));
+        invalidating--;
     }
 
     @Nullable

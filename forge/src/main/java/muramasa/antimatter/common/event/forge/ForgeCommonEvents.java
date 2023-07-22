@@ -270,7 +270,8 @@ public class ForgeCommonEvents {
                             return fromHolder(machine.energyHandler, side).cast();
                         } else if (cap == CapabilityEnergy.ENERGY && machine.rfHandler.isPresent()){
                             LazyOptional<T> opt = LazyOptional.of(() -> new ForgeEnergyContainer<>(machine.rfHandler.side(side).orElseThrow(), machine)).cast();
-                            machine.rfHandler.addListener(side, opt::invalidate);
+                            boolean add = machine.rfHandler.addListener(side, opt::invalidate);
+                            if (!add) return LazyOptional.empty();
                             return opt;
                         }
                     }
@@ -318,28 +319,32 @@ public class ForgeCommonEvents {
     public static <T> LazyOptional<T> fromHolder(Holder<T, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
         LazyOptional<T> opt = LazyOptional.of(() -> holder.side(side).get());
-        holder.addListener(side, opt::invalidate);
+        boolean add = holder.addListener(side, opt::invalidate);
+        if (!add) return LazyOptional.empty();
         return opt;
     }
 
     private static LazyOptional<IItemHandler> fromItemHolder(Holder<ExtendedItemContainer, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
         LazyOptional<IItemHandler> opt = LazyOptional.of(() -> new ExtendedContainerWrapper(holder.side(side).get()));
-        holder.addListener(side, opt::invalidate);
+        boolean add = holder.addListener(side, opt::invalidate);
+        if (!add) return LazyOptional.empty();
         return opt;
     }
 
     private static LazyOptional<IFluidHandler> fromFluidHolder(Holder<FluidContainer, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
         LazyOptional<IFluidHandler> opt = LazyOptional.of(() -> new ForgeFluidContainer(holder.side(side).get()));
-        holder.addListener(side, opt::invalidate);
+        boolean add = holder.addListener(side, opt::invalidate);
+        if (!add) return LazyOptional.empty();
         return opt;
     }
 
     private static LazyOptional<IEnergyStorage> fromEnergyHolder(Holder<IRFNode, ?> holder, Direction side, BlockEntity block){
         if (!holder.isPresent()) return LazyOptional.empty();
         LazyOptional<IEnergyStorage> opt = LazyOptional.of(() -> new ForgeEnergyContainer<>(holder.side(side).get(), block));
-        holder.addListener(side, opt::invalidate);
+        boolean add = holder.addListener(side, opt::invalidate);
+        if (!add) return LazyOptional.empty();
         return opt;
     }
 
