@@ -12,6 +12,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -88,7 +89,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         // Remove handlers from the structure cache.
         //allHandlers.forEach(StructureHandle::deregister);
         invalidateStructure();
-        //StructureCache.remove(level, worldPosition);
     }
 
     @Override
@@ -200,10 +200,26 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         });
         if (fail[0]) validStructure = false;
         if (validStructure){
-            if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
-                setMachineState(MachineState.IDLE);
+            if (onStructureFormed()){
+                if (isServerSide()){
+                    afterStructureFormed();
+                    if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
+                        setMachineState(MachineState.IDLE);
+                    }
+                    this.recipeHandler.ifPresent(
+                            t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
+                    sidedSync(true);;
+                    StructureCache.add(level, getBlockPos(), LongList.of(structurePositions.keySet().toLongArray()));
+                } else {
+                    this.components.forEach((k, v) -> v.forEach(c -> {
+                        Utils.markTileForRenderUpdate(c.getTile());
+                    }));
+                    sidedSync(true);
+                }
+            } else {
+                validStructure = false;
             }
-            onStructureFormed();
+
         }
         if (!validStructure && !oldPositions.isEmpty()){
             oldPositions.forEach(p ->{
@@ -264,8 +280,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (level.getGameTime() % 100 == 0 && !validStructure){
             checkStructure();
         }
-        if (result != null)
-            result.tick(this);
     }
 
     public boolean allowsFakeTiles(){
@@ -276,8 +290,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public void onBlockUpdate(BlockPos pos) {
         if (checkingStructure > 0)
             return;
-        if (result != null) {
-            if (!getMachineType().getStructure(getMachineTier()).evaluatePosition(result, this, pos)) {
+        if (validStructure) {
+            long longPos = pos.asLong();
+            if (structurePositions.containsKey(longPos) && !structurePositions.get(longPos).check((T) this, this.getLevel(), pos.getX(), pos.getY(), pos.getZ())) {
                 invalidateStructure();
             }
         } else {
@@ -290,8 +305,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (this.remove)
             return;
         super.setMachineState(newState);
-        if (result != null)
-            result.updateState(this, result);
+        //result.updateState(this, result); //TODO changing state element
     }
 
     @Override
@@ -309,15 +323,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.setBlockState(p_155251_);
         BlockState newState = this.getBlockState();
         if (!old.equals(newState)) {
-
-            if (result != null) {
-                StructureCache.invalidate(this.getLevel(), getBlockPos(), result.positions);
-            }
             invalidateStructure();
-            //StructureCache.remove(level, getBlockPos());
             oldState = old;
             this.facingOverride = Utils.dirFromState(oldState);
-            //StructureCache.add(level, getBlockPos(), this.getMachineType().getStructure(getMachineTier()).allPositions(this));
             checkStructure();
             oldState = null;
             facingOverride = null;
@@ -333,7 +341,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     protected void invalidateStructure() {
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
-        if (!validStructure) return;
+        if (!validStructure) {
+            if (isServerSide() && getMachineState() != getDefaultMachineState()) {
+                resetMachine();
+            }
+            return;
+        }
         checkingStructure++;
         structurePositions.forEach((l,e) ->{
             BlockPos pos = BlockPos.of(l);
@@ -341,28 +354,18 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         });
         structurePositions.clear();
         validStructure = false;
-        if (isServerSide()) onStructureInvalidated();
-        /*if (result == null) {
-            if (isServerSide() && getMachineState() != getDefaultMachineState()) {
-                resetMachine();
-            }
-            return;
-        }
-        checkingStructure++;
-        StructureCache.invalidate(this.getLevel(), getBlockPos(), result.positions);
         if (isServerSide()) {
             onStructureInvalidated();
-            result.remove(this, result);
-            result = null;
             recipeHandler.ifPresent(
                     t -> t.onMultiBlockStateChange(false, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
-            // Hard mode, remove recipe progress.
+            components.clear();
         } else {
-            this.result.components.forEach((k, v) -> v.forEach(c -> {
+            this.components.forEach((k, v) -> v.forEach(c -> {
                 Utils.markTileForRenderUpdate(c.getTile());
             }));
-            result = null;
-        }*/
+            components.clear();
+        }
+        StructureCache.remove(level, worldPosition);
         checkingStructure--;
     }
 
