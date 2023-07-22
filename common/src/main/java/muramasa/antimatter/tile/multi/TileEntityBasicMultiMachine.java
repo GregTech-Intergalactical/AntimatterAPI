@@ -26,16 +26,22 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.*;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -165,6 +171,14 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
+    public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
+        if (!validStructure && checkingStructure == 0){
+            checkStructure();
+        }
+        return super.onInteractBoth(state, world, pos, player, hand, hit, type);
+    }
+
+    @Override
     public Direction getFacing() {
         return facingOverride != null ? facingOverride : super.getFacing();
     }
@@ -277,7 +291,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         super.serverTick(level, pos, state);
-        if (level.getGameTime() % 100 == 0 && !validStructure){
+        if (level.getGameTime() % 100 == 0 && !validStructure && checkingStructure == 0 && !AntimatterPlatformUtils.isProduction()){
             checkStructure();
         }
     }
@@ -323,6 +337,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.setBlockState(p_155251_);
         BlockState newState = this.getBlockState();
         if (!old.equals(newState)) {
+            if (checkingStructure > 0) return;
             invalidateStructure();
             oldState = old;
             this.facingOverride = Utils.dirFromState(oldState);

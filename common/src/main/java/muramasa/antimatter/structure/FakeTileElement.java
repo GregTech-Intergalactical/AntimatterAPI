@@ -53,11 +53,9 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
     public void onStructureSuccess(T machine, Level world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof TileEntityFakeBlock fakeBlock){
-            if (fakeBlock.getController() == null || !fakeBlock.getController().getBlockPos().equals(machine.getBlockPos())){
-                fakeBlock.setFacing(machine.getFacing()).setCovers(covers);
-                fakeBlock.setController(machine);
-            }
+        if (be instanceof TileEntityFakeBlock fakeBlock && StructureCache.refCount(world, pos) == 0){
+            fakeBlock.setFacing(machine.getFacing()).setCovers(covers);
+            fakeBlock.setController(machine);
         }
     }
 
@@ -83,11 +81,9 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
         BlockState state = world.getBlockState(pos);
         if (pred.evaluate(machine.getLevel(), pos, state)) {
             BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof TileEntityFakeBlock fake) {
-                return fake.getController() == null || fake.getController().getBlockPos().equals(machine.getBlockPos());
+            if (tile instanceof TileEntityFakeBlock) {
+                return StructureCache.refCount(world, pos) == 0;
             }
-            return false;
-        } else if (StructureCache.refCount(world, pos) > 0) {
             return false;
         }
         return false;

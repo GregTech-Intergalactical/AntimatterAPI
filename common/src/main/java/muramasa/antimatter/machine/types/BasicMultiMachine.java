@@ -14,6 +14,7 @@ import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -42,6 +43,9 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setClientTick();
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);
+        setTooltipInfo((machine, stack, world, tooltip, flag) -> {
+            tooltip.add(new TranslatableComponent("machine.structure.form"));
+        });
         this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
      }
 
