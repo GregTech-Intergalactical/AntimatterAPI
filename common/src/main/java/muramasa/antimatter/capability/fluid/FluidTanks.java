@@ -248,8 +248,8 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
             this.contentEvent = contentEvent;
         }
 
-        public Builder<T> tank(Predicate<FluidHolder> validator, int amount) {
-            this.tanks.add(new FluidTank(amount, validator) {
+        public Builder<T> tank(Predicate<FluidHolder> validator, int amountInMB) {
+            this.tanks.add(new FluidTank(amountInMB * TesseractGraphWrappers.dropletMultiplier, validator) {
                 @Override
                 protected void onContentsChanged() {
                     tile.onMachineEvent(contentEvent, this.storedFluid);
@@ -258,8 +258,8 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
             return this;
         }
 
-        public Builder<T> tank(int amount) {
-            this.tanks.add(new FluidTank(amount) {
+        public Builder<T> tank(int amountInMB) {
+            this.tanks.add(new FluidTank(amountInMB * TesseractGraphWrappers.dropletMultiplier) {
                 @Override
                 protected void onContentsChanged() {
                     tile.onMachineEvent(contentEvent, this.storedFluid);

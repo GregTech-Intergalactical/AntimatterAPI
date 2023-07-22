@@ -3,7 +3,6 @@ package muramasa.antimatter.machine;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
-import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
@@ -15,7 +14,6 @@ import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
@@ -33,7 +31,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -54,13 +51,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import tesseract.FluidPlatformUtils;
-import tesseract.TesseractCapUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -202,6 +197,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     //Has gui?
                     if (FluidHooks.safeGetBlockFluidManager(tile, hit.getDirection()).map(fh -> {
                         Consumer<ItemStack> consumer = s -> {
+                            if (player.isCreative()) return;
                             boolean single = stack.getCount() == 1;
                             stack.shrink(1);
                             if (single) {
@@ -215,7 +211,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         boolean success = false;
                         if (FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), fh, consumer)){
                             success = true;
-                        } else if (FluidPlatformUtils.emptyItemintoContainer(Utils.ca(1, stack), fh, consumer)){
+                        } else if (FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, stack), fh, consumer)){
                             success = true;
                         }
                         return success;

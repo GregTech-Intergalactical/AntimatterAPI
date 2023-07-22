@@ -3,9 +3,7 @@ package muramasa.antimatter.capability.machine;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
-import earth.terrarium.botarium.common.fluid.base.PlatformFluidItemHandler;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
-import earth.terrarium.botarium.common.item.ItemStackHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
@@ -84,7 +82,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 if (FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, cell), this.getCellAccessibleTanks(), predicate, consumer)){
                     success = true;
                     lastCellSlot = cellSlot;
-                } else if (FluidPlatformUtils.emptyItemintoContainer(Utils.ca(1, cell), this.getCellAccessibleTanks(), predicate, consumer)){
+                } else if (FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, cell), this.getCellAccessibleTanks(), predicate, consumer)){
                     success = true;
                     lastCellSlot = cellSlot;
                 }
