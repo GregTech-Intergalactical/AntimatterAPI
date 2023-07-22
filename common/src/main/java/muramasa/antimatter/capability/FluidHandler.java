@@ -14,15 +14,14 @@ import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.material.Fluids;
 import tesseract.FluidPlatformUtils;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 
 public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> implements IMachineHandler, IFluidNode {
     protected final T tile;
@@ -246,11 +245,18 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     @Override
     public FluidSnapshot createSnapshot() {
-        return new SimpleFluidSnapshot(this);
+        return new FluidHandlerSnapshot(this);
     }
 
     @Override
     public long extractFromSlot(FluidHolder fluidHolder, FluidHolder toInsert, Runnable snapshot) {
+        if (Objects.equals(fluidHolder.getCompound(), toInsert.getCompound()) && fluidHolder.getFluid().isSame(toInsert.getFluid())) {
+            long extracted = Mth.clamp(toInsert.getFluidAmount(), 0, fluidHolder.getFluidAmount());
+            snapshot.run();
+            fluidHolder.setAmount(fluidHolder.getFluidAmount() - extracted);
+            if(fluidHolder.getFluidAmount() == 0) fluidHolder.setFluid(Fluids.EMPTY);
+            return extracted;
+        }
         return 0;
     }
 
