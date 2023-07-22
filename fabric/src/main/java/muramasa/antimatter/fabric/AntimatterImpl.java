@@ -74,69 +74,9 @@ public class AntimatterImpl implements ModInitializer {
             CommonHandler.setup();
             AntimatterFabricWorldgen.init();
             RecipeConditions.init();
-            FluidStorage.SIDED.registerForBlockEntity((be, direction) -> {
-                TileEntityBasicMultiMachine<?> controller = be.getController();
-                if (controller == null){
-                    return null;
-                }
-                if (!controller.allowsFakeTiles()) return null;
-                return controller.fluidHandler.side(direction).map(f -> new FabricBlockFluidContainer(f, b -> {}, controller)).orElse(null);
-            }, BlockFakeTile.TYPE);
-            ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
-                TileEntityBasicMultiMachine<?> controller = be.getController();
-                if (controller == null){
-                    return null;
-                }
-                if (!controller.allowsFakeTiles()) return null;
-                return controller.itemHandler.side(direction).map(ExtendedContainerWrapper::new).orElse(null);
-            }, BlockFakeTile.TYPE);
-            TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
-                TileEntityBasicMultiMachine<?> controller = be.getController();
-                if (controller == null){
-                    return null;
-                }
-                if (!controller.allowsFakeTiles()) return null;
-                ICover coverPresent = be.getCover(direction);
-                if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
-                return controller.energyHandler.side(direction).orElse(null);
-            }, BlockFakeTile.TYPE);
-            EnergyStorage.SIDED.registerForBlockEntity((be, direction) -> {
-                TileEntityBasicMultiMachine<?> controller = be.getController();
-                if (controller == null){
-                    return null;
-                }
-                if (!controller.allowsFakeTiles()) return null;
-                ICover coverPresent = be.getCover(direction);
-                if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
-                return controller.rfHandler.side(direction).map(rf -> {
-                    return rf instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(rf, rf, be);
-                }).orElse(null);
-            }, BlockFakeTile.TYPE);
-            if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-                TesseractImpl.registerMITile((be, direction) -> {
-                    TileEntityBasicMultiMachine<?> controller = be.getController();
-                    if (controller == null){
-                        return null;
-                    }
-                    if (!controller.allowsFakeTiles()) return null;
-                    ICover coverPresent = be.getCover(direction);
-                    if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
-                    return controller.energyHandler.side(direction).orElse(null);
-                }, BlockFakeTile.TYPE);
+            if (BlockFakeTile.TYPE != null){
+                registerFakeTileLookups();
             }
-            AntimatterAPI.all(Material.class).forEach(m -> {
-                Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
-                if (map != null){
-                    map.forEach((t, i) -> {
-                        if (t instanceof MaterialTypeItem<?> typeItem){
-                            FuelRegistry.INSTANCE.add(typeItem.get(m), i);
-                        } else if (t instanceof MaterialTypeBlock<?> typeBlock && typeBlock.get() instanceof MaterialTypeBlock.IBlockGetter blockGetter){
-                            FuelRegistry.INSTANCE.add(blockGetter.get(m).asItem(), i);
-                        }
-                    });
-                }
-
-            });
             CraftingEvents.CRAFTING.register(Antimatter.INSTANCE::addCraftingLoaders);
             ProviderEvents.PROVIDERS.register(this::providers);
             ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));
@@ -161,6 +101,72 @@ public class AntimatterImpl implements ModInitializer {
                 FluidVariantAttributes.register(flowing, new FluidAttributesVariantWrapper(f.getAttributes()));
             });
         }
+    }
+
+    private void registerFakeTileLookups(){
+        FluidStorage.SIDED.registerForBlockEntity((be, direction) -> {
+            TileEntityBasicMultiMachine<?> controller = be.getController();
+            if (controller == null){
+                return null;
+            }
+            if (!controller.allowsFakeTiles()) return null;
+            return controller.fluidHandler.side(direction).map(f -> new FabricBlockFluidContainer(f, b -> {}, controller)).orElse(null);
+        }, BlockFakeTile.TYPE);
+        ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
+            TileEntityBasicMultiMachine<?> controller = be.getController();
+            if (controller == null){
+                return null;
+            }
+            if (!controller.allowsFakeTiles()) return null;
+            return controller.itemHandler.side(direction).map(ExtendedContainerWrapper::new).orElse(null);
+        }, BlockFakeTile.TYPE);
+        TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
+            TileEntityBasicMultiMachine<?> controller = be.getController();
+            if (controller == null){
+                return null;
+            }
+            if (!controller.allowsFakeTiles()) return null;
+            ICover coverPresent = be.getCover(direction);
+            if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
+            return controller.energyHandler.side(direction).orElse(null);
+        }, BlockFakeTile.TYPE);
+        EnergyStorage.SIDED.registerForBlockEntity((be, direction) -> {
+            TileEntityBasicMultiMachine<?> controller = be.getController();
+            if (controller == null){
+                return null;
+            }
+            if (!controller.allowsFakeTiles()) return null;
+            ICover coverPresent = be.getCover(direction);
+            if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
+            return controller.rfHandler.side(direction).map(rf -> {
+                return rf instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(rf, rf, be);
+            }).orElse(null);
+        }, BlockFakeTile.TYPE);
+        if (AntimatterAPI.isModLoaded("modern_industrialization")) {
+            TesseractImpl.registerMITile((be, direction) -> {
+                TileEntityBasicMultiMachine<?> controller = be.getController();
+                if (controller == null){
+                    return null;
+                }
+                if (!controller.allowsFakeTiles()) return null;
+                ICover coverPresent = be.getCover(direction);
+                if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
+                return controller.energyHandler.side(direction).orElse(null);
+            }, BlockFakeTile.TYPE);
+        }
+        AntimatterAPI.all(Material.class).forEach(m -> {
+            Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
+            if (map != null){
+                map.forEach((t, i) -> {
+                    if (t instanceof MaterialTypeItem<?> typeItem){
+                        FuelRegistry.INSTANCE.add(typeItem.get(m), i);
+                    } else if (t instanceof MaterialTypeBlock<?> typeBlock && typeBlock.get() instanceof MaterialTypeBlock.IBlockGetter blockGetter){
+                        FuelRegistry.INSTANCE.add(blockGetter.get(m).asItem(), i);
+                    }
+                });
+            }
+
+        });
     }
 
     private void providers(ProvidersEvent ev) {

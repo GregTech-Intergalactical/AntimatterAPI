@@ -61,7 +61,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode {
 
     @Override
     public long extractFromSlot(FluidHolder fluidHolder, FluidHolder toInsert, Runnable snapshot) {
-        return 0;
+        return fluidHandler.extractFromSlot(fluidHolder, toInsert, snapshot);
     }
 
     @Override
@@ -137,16 +137,21 @@ public class FluidHandlerSidedWrapper implements IFluidNode {
 
     @Override
     public void deserialize(CompoundTag nbt) {
-
+        fluidHandler.deserialize(nbt);
     }
 
     @Override
     public CompoundTag serialize(CompoundTag nbt) {
-        return null;
+        return fluidHandler.serialize(nbt);
     }
 
     @Override
     public void clearContent() {
         fluidHandler.clearContent();
+    }
+
+    @Override
+    public void readSnapshot(FluidSnapshot snapshot) {
+        fluidHandler.readSnapshot(snapshot);
     }
 }
