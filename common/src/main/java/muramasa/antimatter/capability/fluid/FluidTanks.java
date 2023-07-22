@@ -12,6 +12,8 @@ import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.fluid.FluidContainerHandler;
@@ -20,6 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.LongStream;
@@ -137,6 +140,13 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     @Override
     public long extractFromSlot(FluidHolder fluidHolder, FluidHolder toInsert, Runnable snapshot) {
+        if (Objects.equals(fluidHolder.getCompound(), toInsert.getCompound()) && fluidHolder.getFluid().isSame(toInsert.getFluid())) {
+            long extracted = Mth.clamp(toInsert.getFluidAmount(), 0, fluidHolder.getFluidAmount());
+            snapshot.run();
+            fluidHolder.setAmount(fluidHolder.getFluidAmount() - extracted);
+            if(fluidHolder.getFluidAmount() == 0) fluidHolder.setFluid(Fluids.EMPTY);
+            return extracted;
+        }
         return 0;
     }
 

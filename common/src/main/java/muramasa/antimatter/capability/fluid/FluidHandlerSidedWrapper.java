@@ -61,7 +61,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode {
 
     @Override
     public long extractFromSlot(FluidHolder fluidHolder, FluidHolder toInsert, Runnable snapshot) {
-        return 0;
+        return fluidHandler.extractFromSlot(fluidHolder, toInsert, snapshot);
     }
 
     @Override
