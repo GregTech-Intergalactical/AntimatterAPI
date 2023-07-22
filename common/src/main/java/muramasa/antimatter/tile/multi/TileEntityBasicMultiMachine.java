@@ -202,11 +202,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 return true;
             } else if (onStructureFormed() && StructureCache.validate(this.getLevel(), this.getBlockPos(), positions, maxShares())){
                 if (isServerSide()){
-                    if (!oldValidStructure){
-                        allHandlers.forEach(s -> {
-                            s.structureCacheAddition(this);
-                        });
-                    }
                     afterStructureFormed();
                     if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
                         setMachineState(MachineState.IDLE);
@@ -361,7 +356,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         validStructure = false;
         if (isServerSide()) {
             onStructureInvalidated();
-            allHandlers.forEach(StructureHandle::structureCacheRemoval);
             recipeHandler.ifPresent(
                     t -> t.onMultiBlockStateChange(false, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
             components.clear();
