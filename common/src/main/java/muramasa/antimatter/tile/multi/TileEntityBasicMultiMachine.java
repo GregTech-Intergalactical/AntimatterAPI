@@ -79,7 +79,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        extendedFacing = ExtendedFacing.of(getFacing(), Rotation.NORMAL, Flip.NONE);
+        extendedFacing = ExtendedFacing.of(getFacing(state), Rotation.NORMAL, Flip.NONE);
     }
 
     @Override
