@@ -142,7 +142,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      */
     public RecipeMap<B> setGuiData(GuiData gui, Machine<?> machine) {
         this.GUI = gui;
-        AntimatterAPI.registerJEICategory(this, this.GUI, machine, true);
+        AntimatterAPI.registerJEICategory(this, this.GUI, machine, machine.getFirstTier(), true);
         return this;
     }
 

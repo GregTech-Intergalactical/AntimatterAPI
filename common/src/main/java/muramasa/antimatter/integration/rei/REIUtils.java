@@ -7,7 +7,9 @@ import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import net.minecraft.network.chat.Component;
 import tesseract.FluidPlatformUtils;
 
@@ -51,12 +53,10 @@ public class REIUtils {
         else ViewSearchBuilder.builder().addRecipesFor(stack).open();
     }
 
-    public static void showCategory(Machine<?>... types) {
-        List<CategoryIdentifier<?>> list = new LinkedList<>();
-        for (int i = 0; i < types.length; i++) {
-            if (!types[i].has(RECIPE)) continue;
-            list.add(CategoryIdentifier.of(types[i].getRecipeMap().getLoc()));
-        }
-        ViewSearchBuilder.builder().addCategories(list).open();
+    public static void showCategory(Machine<?> type, Tier tier) {
+        if (!type.has(RECIPE)) return;
+        IRecipeMap map = type.getRecipeMap(tier);
+        if (map == null) return; //incase someone adds tier specific recipe maps without a fallback
+        ViewSearchBuilder.builder().addCategories(List.of(CategoryIdentifier.of(map.getLoc()))).open();
     }
 }

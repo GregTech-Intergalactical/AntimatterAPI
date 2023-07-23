@@ -23,6 +23,7 @@ import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
@@ -141,14 +142,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return Minecraft.getInstance().level;
     }
 
-    public static void showCategory(Machine<?>... types) {
+    public static void showCategory(Machine<?> type, Tier tier) {
         if (runtime != null) {
-            List<ResourceLocation> list = new LinkedList<>();
-            for (int i = 0; i < types.length; i++) {
-                if (!types[i].has(RECIPE)) continue;
-                list.add(types[i].getRecipeMap().getLoc());
-            }
-            runtime.getRecipesGui().showCategories(list);
+            if (!type.has(RECIPE)) return;
+            IRecipeMap map = type.getRecipeMap(tier);
+            if (map == null) return; //incase someone adds tier specific recipe maps without a fallback
+            runtime.getRecipesGui().showCategories(List.of(map.getLoc()));
         }
     }
 
@@ -201,9 +200,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         AntimatterAPI.all(Machine.class, machine -> {
-            IRecipeMap map = machine.getRecipeMap();
-            if (map == null) return;
             ((Machine<?>)machine).getTiers().forEach(t -> {
+                IRecipeMap map = machine.getRecipeMap(t);
+                if (map == null) return;
                 ItemStack stack = new ItemStack(machine.getItem(t));
                 if (!stack.isEmpty()) {
                     registration.addRecipeCatalyst(stack, map.getLoc());

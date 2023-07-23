@@ -145,9 +145,10 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             }
         });
         AntimatterAPI.all(Machine.class, machine -> {
-            IRecipeMap map = machine.getRecipeMap();
-            if (map == null) return;
+
             ((Machine<?>)machine).getTiers().forEach(t -> {
+                IRecipeMap map = machine.getRecipeMap(t);
+                if (map == null) return;
                 ItemStack stack = new ItemStack(machine.getItem(t));
                 if (!stack.isEmpty()) {
                     registry.addWorkstations(CategoryIdentifier.of(map.getLoc()), EntryStack.of(VanillaEntryTypes.ITEM, stack));

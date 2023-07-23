@@ -162,7 +162,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             }
             activeRecipe = null;
         }
-        IRecipeMap map = tile.getMachineType().getRecipeMap();
+        IRecipeMap map = tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map != null ? map.find(tile.itemHandler, tile.fluidHandler, tile.getMachineTier(), this::validateRecipe) : null;
     }
 
@@ -389,7 +389,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
             if (!tile.getMachineState().allowRecipeCheck()) return;
-            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidHolder[0]), this.tile.getMachineTier(), this::validateRecipe);
+            activeRecipe = tile.getMachineType().getRecipeMap(tile.getMachineTier()).find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidHolder[0]), this.tile.getMachineTier(), this::validateRecipe);
             if (activeRecipe == null) return;
             calculateDurations();
             lastRecipe = activeRecipe;
@@ -417,12 +417,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     public boolean accepts(ItemStack stack) {
-        IRecipeMap map = this.tile.getMachineType().getRecipeMap();
+        IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map == null || map.acceptsItem(stack);
     }
 
     public boolean accepts(FluidHolder stack) {
-        IRecipeMap map = this.tile.getMachineType().getRecipeMap();
+        IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map == null || map.acceptsFluid(stack);
     }
 
@@ -686,8 +686,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
-        this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("AR"))) : null;
-        this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("LR"))) : null;
+        this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("AR"))) : null;
+        this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("LR"))) : null;
         if (this.activeRecipe != null) calculateDurations();
     }
 

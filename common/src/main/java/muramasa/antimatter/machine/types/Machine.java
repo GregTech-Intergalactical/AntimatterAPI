@@ -86,7 +86,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Recipe Members
      **/
-    protected IRecipeMap recipeMap;
+    protected Map<String, IRecipeMap> tierRecipeMaps = new Object2ObjectOpenHashMap<>();
 
     /**
      * GUI Members
@@ -322,13 +322,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * Registers the recipemap into JEI. This can be overriden in RecipeMap::setGuiData.
      */
     public void registerJei() {
-        if (this.guiData != null && recipeMap != null) {
-            //If the recipe map has another GUI present don't register it.
-            if (recipeMap.getGui() == null) {
-                AntimatterAPI.registerJEICategory(this.recipeMap, this.guiData, this, false);
-            } else {
-                AntimatterAPI.registerJEICategoryModel(this.recipeMap, this);
-            }
+        if (this.guiData != null) {
+            tierRecipeMaps.forEach((s, r) -> {
+                //If the recipe map has another GUI present don't register it.
+                Tier t = AntimatterAPI.get(Tier.class, s);
+                if (r.getGui() == null) {
+                    AntimatterAPI.registerJEICategory(r, this.guiData, this, t, false);
+                } else {
+                    AntimatterAPI.registerJEICategoryModel(r, this, t);
+                }
+            });
+
         }
     }
 
@@ -344,10 +348,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * but it can be overriden by setGuiData in the RecipeMap.
      *
      * @param map the recipe map.
+     * @param tiers optional array of tiers this map is for
      * @return this.
      */
-    public T setMap(IRecipeMap map) {
-        this.recipeMap = map;
+    public T setMap(IRecipeMap map, Tier... tiers){
+        if (tiers.length == 0) {
+            this.tierRecipeMaps.put("", map);
+        } else {
+            for (Tier tier : tiers) {
+                this.tierRecipeMaps.put(tier.getId(), map);
+            }
+        }
         addFlags(RECIPE);
         registerJei();
         return (T) this;
@@ -489,8 +500,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return overlayModels.getOverlayModel(this, state, side);
     }
 
-    public IRecipeMap getRecipeMap() {
-        return recipeMap;
+    public IRecipeMap getRecipeMap(Tier tier) {
+        if (tierRecipeMaps.containsKey(tier.getId())){
+            return tierRecipeMaps.get(tier.getId());
+        }
+        return tierRecipeMaps.get("");
     }
 
     public T addFlags(MachineFlag... flags) {

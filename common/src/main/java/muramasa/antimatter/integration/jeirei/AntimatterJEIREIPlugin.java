@@ -62,11 +62,11 @@ public class AntimatterJEIREIPlugin{
         return REGISTRY;
     }
 
-    public static void showCategory(Machine<?>... types) {
+    public static void showCategory(Machine<?> type, Tier tier) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            AntimatterJEIPlugin.showCategory(types);
+            AntimatterJEIPlugin.showCategory(type, tier);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            REIUtils.showCategory(types);
+            REIUtils.showCategory(type, tier);
         }
     }
 

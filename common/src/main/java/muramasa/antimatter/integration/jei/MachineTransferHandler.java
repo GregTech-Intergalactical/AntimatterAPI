@@ -39,7 +39,7 @@ public class MachineTransferHandler implements IRecipeTransferInfo<ContainerBasi
         IRecipeMap rmap = AntimatterAPI.get(IRecipeMap.class, name);
         if (rmap == null) return false;
         Machine<?> machine = container.getTile().getMachineType();
-        if (machine.getRecipeMap() == null || machine.getRecipeMap() != rmap) return false;
+        if (machine.getRecipeMap(container.getTile().getMachineTier()) == null || machine.getRecipeMap(container.getTile().getMachineTier()) != rmap) return false;
         if (!recipe.hasInputItems()) return false;
         if (!container.slotMap.containsKey(SlotType.IT_IN)) return false;
         return true;
