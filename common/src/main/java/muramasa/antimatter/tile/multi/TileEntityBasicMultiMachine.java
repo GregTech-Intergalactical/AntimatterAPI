@@ -463,7 +463,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
         }
-        this.extendedFacing = ExtendedFacing.of(this.getFacing(), Rotation.byIndex(tag.getByte("rotation")), Flip.byIndex(tag.getByte("flip")));
+        this.extendedFacing = ExtendedFacing.of(extendedFacing.getDirection(), Rotation.byIndex(tag.getByte("rotation")), Flip.byIndex(tag.getByte("flip")));
     }
 
     public void addStructureHandle(StructureHandle<?> handle) {
