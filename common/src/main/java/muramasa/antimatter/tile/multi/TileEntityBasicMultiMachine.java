@@ -222,16 +222,19 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                     }
                     this.recipeHandler.ifPresent(
                             t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
-                    sidedSync(true);;
-                    StructureCache.add(level, getBlockPos(), positions);
                 } else {
                     this.components.forEach((k, v) -> v.forEach(c -> {
                         Utils.markTileForRenderUpdate(c.getTile());
                     }));
-                    sidedSync(true);
                 }
+                sidedSync(true);
+                StructureCache.add(level, getBlockPos(), positions);
             } else {
                 validStructure = false;
+                structurePositions.forEach((l, e) -> {
+                    BlockPos pos = BlockPos.of(l);
+                    e.onStructureFail((T)this, this.getLevel(), pos.getX(), pos.getY(), pos.getZ());
+                });
             }
 
         }
@@ -240,51 +243,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 p.right().onStructureFail((T) this, this.getLevel(), p.left().getX(), p.left().getY(), p.left().getZ());
             });
         }
-        /*StructureResult result = structure.evaluate(this);
-        if (result.evaluate()) {
-            if (level instanceof TrackedDummyWorld) {
-                this.result = result;
-                StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
-                StructureCache.validate(level, worldPosition, result.positions, maxShares());
-                return true;
-            } else if (StructureCache.validate(level, worldPosition, result.positions, maxShares())) {
-                this.result = result;
-                result.build(this, result);
-                if (isServerSide()) {
-                    if (onStructureFormed()) {
-                        afterStructureFormed();
-                        if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
-                            setMachineState(MachineState.IDLE);
-                        }
-                        // Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
-                        this.recipeHandler.ifPresent(
-                                t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
-                        sidedSync(true);
-                        checkingStructure--;
-                        return true;
-                    } else {
-                        invalidateStructure();
-                        checkingStructure--;
-                        return false;
-                    }
-                } else if (onStructureFormed()) {
-                    this.result.components.forEach((k, v) -> v.forEach(c -> {
-                        Utils.markTileForRenderUpdate(c.getTile());
-                    }));
-                    sidedSync(true);
-                    checkingStructure--;
-                    return true;
-                } else {
-                    invalidateStructure();
-                    checkingStructure--;
-                    return false;
-                }
-            }
-        } else {
-            // Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
-        }
-        // if we reached here something went wrong.
-        invalidateStructure();*/
         checkingStructure--;
         return validStructure;
     }
@@ -292,7 +250,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         super.serverTick(level, pos, state);
         if (level.getGameTime() % 100 == 0 && !validStructure && checkingStructure == 0 && !AntimatterPlatformUtils.isProduction()){
-            checkStructure();
+            //checkStructure();
         }
     }
 
