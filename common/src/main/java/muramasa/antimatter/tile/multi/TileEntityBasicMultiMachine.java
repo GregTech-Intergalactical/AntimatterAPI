@@ -92,7 +92,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public void onRemove() {
         super.onRemove();
         // Remove handlers from the structure cache.
-        //allHandlers.forEach(StructureHandle::deregister);
+        allHandlers.forEach(StructureHandle::deregister);
         invalidateStructure();
     }
 
@@ -153,7 +153,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             StructureLibAPI.queryAlignment(this);
         }
         // Register handlers to the structure cache.
-        //allHandlers.forEach(StructureHandle::register);
+        allHandlers.forEach(StructureHandle::register);
         // if INVALID_STRUCTURE was stored to disk don't bother rechecking on first
         // tick.
         // This is not only behavioural but if INVALID_STRUCTURE are checked then

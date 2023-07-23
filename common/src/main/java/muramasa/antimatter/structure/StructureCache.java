@@ -62,9 +62,6 @@ public class StructureCache {
         DimensionEntry e = LOOKUP.computeIfAbsent(world, w -> new DimensionEntry());
         if (!has(world, pos)) {
             boolean ok = e.validate(pos, maxAmount, structure);
-            if (ok) {
-                notifyListenersAdd(world, pos);
-            }
             return ok;
         }
         return false;
@@ -147,6 +144,7 @@ public class StructureCache {
     public static void add(Level world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world, e -> new DimensionEntry());
         entry.add(pos, structure);
+        notifyListenersAdd(world, pos);
     }
 
     /**
