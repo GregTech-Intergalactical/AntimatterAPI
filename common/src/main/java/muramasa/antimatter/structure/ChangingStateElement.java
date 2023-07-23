@@ -1,3 +1,4 @@
+/*
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.machine.MachineState;
@@ -15,13 +16,15 @@ public class ChangingStateElement extends StructureElement {
     private final BiFunction<MachineState, BlockState, BlockState> builder;
 
 
-    /**
+    */
+/**
      * ChangingStateElement allows you to vary the block state between machine texture states(Idle, Active, Invalid Structure).
      *
      * @param defaultValidator validator for INVALID_STRUCTURE.
      * @param builtValidator   validator for all other states (Idle, Active).
      * @param builder          the builder to build a blockstate to place in the world.
-     */
+     *//*
+
     public ChangingStateElement(IBlockStatePredicate defaultValidator, IBlockStatePredicate builtValidator, BiFunction<MachineState, BlockState, BlockState> builder) {
         this.regular = defaultValidator;
         this.built = builtValidator;
@@ -72,3 +75,4 @@ public class ChangingStateElement extends StructureElement {
         }
     }
 }
+*/

@@ -26,13 +26,13 @@ import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
-import muramasa.antimatter.structure.impl.MultiStructure;
 import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -58,7 +58,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 /**
@@ -544,8 +543,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public void setStructure(Function<StructureBuilder, Structure> func) {
-        getTiers().forEach(t -> setStructure(t, func));
+    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Function<StructureBuilder<U>, Structure> func) {
+        getTiers().forEach(t -> setStructure(clazz, t, func));
     }
 
     /**
@@ -554,28 +553,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
-        structures.put(tier, func.apply(new StructureBuilder()));
-    }
-
-    /**
-     * Set the multiblock structure for this machine, for all tiers.
-     * Useless if the tile is not a multiblock.
-     *
-     * @param func the function to build a structure.
-     */
-    public void setStructures(List<Structure> func) {
-        getTiers().forEach(t -> setStructures(t, func));
-    }
-
-    /**
-     * Set the multiblock structure for this machine, for one tier.
-     * Useless if the tile is not a multiblock.
-     *
-     * @param func the function to build a structure.
-     */
-    public void setStructures(Tier tier, List<Structure> func) {
-        structures.put(tier, new MultiStructure(func));
+    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Tier tier, Function<StructureBuilder<U>, Structure> func) {
+        structures.put(tier, func.apply(new StructureBuilder<>()));
     }
 
     @Environment(EnvType.CLIENT)

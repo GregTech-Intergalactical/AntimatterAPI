@@ -360,6 +360,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Direction getFacing() {
         if (this.level == null) return Direction.SOUTH;
         BlockState state = getBlockState();
+        return getFacing(state);
+    }
+
+    public Direction getFacing(BlockState state){
         if (state == AIR.defaultBlockState()) {
             return Direction.SOUTH;
         }

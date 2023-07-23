@@ -1,9 +1,6 @@
 package muramasa.antimatter.structure;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongList;
-import it.unimi.dsi.fastutil.longs.LongLists;
+import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -41,11 +38,11 @@ public class StructureCache {
             }
             DimensionEntry entry = LOOKUP.get(world);
             if (entry == null) return;
-            Object2BooleanMap<BlockPos> controllerPos = entry.get(pos);
+            LongSet controllerPos = entry.get(pos);
             if (controllerPos != null && controllerPos.size() > 0) {
-                controllerPos.forEach((p, valid) -> {
-                    if (!p.equals(pos)) {
-                        refreshController(world, p, pos);
+                controllerPos.forEach((controller) -> {
+                    if (controller != pos.asLong()) {
+                        refreshController(world, BlockPos.of(controller), pos);
                     }
                 });
             }
@@ -62,15 +59,10 @@ public class StructureCache {
      * @return if it was successfully added.
      */
     public static boolean validate(Level world, BlockPos pos, LongList structure, int maxAmount) {
-        DimensionEntry e = LOOKUP.get(world);
-        if (e != null) {
-            if (!has(world, pos)) {
-                boolean ok = e.validate(pos, maxAmount, structure);
-                if (ok) {
-                    notifyListenersAdd(world, pos);
-                }
-                return ok;
-            }
+        DimensionEntry e = LOOKUP.computeIfAbsent(world, w -> new DimensionEntry());
+        if (!has(world, pos)) {
+            boolean ok = e.validate(pos, maxAmount, structure);
+            return ok;
         }
         return false;
     }
@@ -86,8 +78,8 @@ public class StructureCache {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return 0;
 
-        Object2BooleanMap<BlockPos> e = entry.get(pos);
-        return e == null ? 0 : e.values().stream().mapToInt(t -> t ? 1 : 0).sum();
+        LongSet e = entry.get(pos);
+        return e == null ? 0 : e.size();
     }
 
     /**
@@ -103,7 +95,7 @@ public class StructureCache {
         long p = pos.asLong();
         LongList l = entry.CONTROLLER_TO_STRUCTURE.get(p);
         if (l == null || l.size() == 0) return false;
-        return entry.STRUCTURE_TO_CONTROLLER.get(l.iterator().nextLong()).getBoolean(pos);
+        return entry.STRUCTURE_TO_CONTROLLER.get(l.iterator().nextLong()).contains(p);
     }
 
     /**
@@ -111,10 +103,10 @@ public class StructureCache {
      *
      * @param world relevant world.
      * @param pos   structure position.
-     * @return a mapping of positions, where boolean is the validity state. (True = formed).
+     * @return a set of Positions in long form tof formed structures
      */
     @Nullable
-    public static Object2BooleanMap<BlockPos> get(Level world, BlockPos pos) {
+    public static LongSet get(Level world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         return entry != null ? entry.get(pos) : null;
     }
@@ -132,11 +124,12 @@ public class StructureCache {
     public static <T extends TileEntityBasicMultiMachine> T getAnyMulti(Level world, BlockPos pos, Class<T> clazz) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return null;
-        Object2BooleanMap<BlockPos> list = entry.get(pos);
+        LongSet list = entry.get(pos);
         if (list == null || list.size() == 0) return null;
-        for (Object2BooleanMap.Entry<BlockPos> e : list.object2BooleanEntrySet()) {
-            BlockEntity tile = world.getBlockEntity(e.getKey());
-            if (tile != null && clazz.isInstance(tile) && e.getBooleanValue()) return (T) tile;
+        for (long e : list) {
+            BlockPos p = BlockPos.of(e);
+            BlockEntity tile = world.getBlockEntity(p);
+            if (clazz.isInstance(tile)) return (T) tile;
         }
         return null;
     }
@@ -151,6 +144,7 @@ public class StructureCache {
     public static void add(Level world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world, e -> new DimensionEntry());
         entry.add(pos, structure);
+        notifyListenersAdd(world, pos);
     }
 
     /**
@@ -163,23 +157,7 @@ public class StructureCache {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return;
         entry.remove(pos);
-    }
-
-    /**
-     * Invalidates a multiblock, keeping it in the cache but setting it as invalid.
-     *
-     * @param world     controller world.
-     * @param pos       controller position.
-     * @param structure packed multi structure.
-     */
-    public static void invalidate(Level world, BlockPos pos, LongList structure) {
-        DimensionEntry entry = LOOKUP.get(world);
-        if (entry != null) {
-            if (has(world, pos)) {
-                notifyListenersRemove(world, pos);
-                entry.invalidate(pos, structure);
-            }
-        }
+        notifyListenersRemove(world, pos);
     }
 
     private static void refreshController(Level world, BlockPos controller, BlockPos at) {
@@ -246,7 +224,7 @@ public class StructureCache {
 
     public static class DimensionEntry {
 
-        private final Long2ObjectMap<Object2BooleanMap<BlockPos>> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
+        private final Long2ObjectMap<LongSet> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
         private final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public DimensionEntry() {
@@ -255,7 +233,7 @@ public class StructureCache {
         }
 
         @Nullable
-        public Object2BooleanMap<BlockPos> get(BlockPos pos) {
+        public LongSet get(BlockPos pos) {
             return STRUCTURE_TO_CONTROLLER.get(pos.asLong());
         }
 
@@ -265,9 +243,9 @@ public class StructureCache {
             for (long s : structure) {
                 STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
                     if (v == null) {
-                        v = new Object2BooleanOpenHashMap<>();
+                        v = new LongOpenHashSet();
                     }
-                    v.put(pos, false);
+                    v.add(pos.asLong());
                     return v;
                 });
             }
@@ -276,52 +254,13 @@ public class StructureCache {
         public boolean validate(BlockPos pos, int maxAmount, LongList structure) {
             long at = pos.asLong();
             int i = structure.stream().mapToInt(t -> {
-                Object2BooleanMap<BlockPos> map = this.STRUCTURE_TO_CONTROLLER.get((long) t);
-                if (map == null) {
-                    Antimatter.LOGGER.warn("Invalid state in StructureCache, map should not be null");//throw new RuntimeException("Invalid state in StructureCache, map should not be null");
-                    return Integer.MAX_VALUE;
+                LongSet list = this.STRUCTURE_TO_CONTROLLER.get((long)t);
+                if (list == null){
+                    return 0;
                 }
-                return map.values().stream().mapToInt(j -> j ? 1 : 0).sum();
+                return list.size();
             }).max().orElse(0);
-            if (i <= maxAmount) {
-                LongList old = this.CONTROLLER_TO_STRUCTURE.remove(at);
-                old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k, v) -> {
-                    if (v == null) return null;
-                    if (v.size() == 1) return null;
-                    v.remove(pos);
-                    return v;
-                }));
-                this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-                structure.forEach((LongConsumer) t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k, v) -> {
-                    if (v == null) {
-                        v = new Object2BooleanOpenHashMap<>();
-                    }
-                    v.put(pos, true);
-                    return v;
-                }));
-                return true;
-            }
-            return false;
-        }
-
-        public void invalidate(BlockPos pos, LongList structure) {
-            long at = pos.asLong();
-            LongList old = this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-            old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k, v) -> {
-                if (v == null) return null;
-                if (v.size() == 1) return null;
-                v.remove(pos);
-                return v;
-            }));
-            for (long s : structure) {
-                STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
-                    if (v == null) {
-                        v = new Object2BooleanOpenHashMap<>();
-                    }
-                    v.put(pos, false);
-                    return v;
-                });
-            }
+            return i <= maxAmount;
         }
 
         public void remove(BlockPos pos) {
@@ -330,8 +269,8 @@ public class StructureCache {
             for (long s : structure) {
                 STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
                     if (v == null) return null;
-                    if (v.size() == 1) return null;
-                    v.remove(pos);
+                    if (v.size() == 0) return null;
+                    v.remove(pos.asLong());
                     return v;
                 });
             }

@@ -23,9 +23,6 @@ import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.types.BasicMachine;
 import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.structure.BlockStateElement;
-import muramasa.antimatter.structure.StructureBuilder;
-import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
@@ -49,11 +46,6 @@ import static muramasa.antimatter.machine.Tier.MAX;
 public class Data {
 
     public static final Material WRENCH_MATERIAL = new Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
-
-    static {
-        StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
-        StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
-    }
 
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(ChatFormatting.AQUA + "" + ChatFormatting.ITALIC + "Development Item");
 
