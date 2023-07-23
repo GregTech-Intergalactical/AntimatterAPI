@@ -197,7 +197,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         fail[0] = false;
         components.forEach((s, l) -> {
             if (!structure.getMinMaxMap().containsKey(s)){
-                fail[0] = true;
                 return;
             }
             int min = structure.getMinMaxMap().get(s).left();
