@@ -18,8 +18,6 @@ import muramasa.antimatter.client.scene.WorldSceneRenderer;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.structure.BlockInfo;
 import muramasa.antimatter.structure.Pattern;
-import muramasa.antimatter.structure.StructureElement;
-import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;

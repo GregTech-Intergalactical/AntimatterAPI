@@ -128,23 +128,6 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
             }, e));
         });
         return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build(), offset, callback);
-        /*ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
-        int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
-        StructureElement e;
-        for (int y = 0; y < size.getY(); y++) {
-            for (int x = 0; x < size.getX(); x++) {
-                for (int z = 0; z < size.getZ(); z++) {
-                    e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
-                    if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
-                    //TODO log this and return null;
-                    if (e == null)
-                        throw new NullPointerException("StructureBuilder failed to parse slice: " + slices.get(y)[x]);
-                    if (e.excludes()) continue;
-                    elements.put(new int3(x, y, z), e);
-                }
-            }
-        }
-        return new SimpleStructure(size, elements.build(), allowedFacings);*/
     }
 
     /*public static IAntimatterObject[] getAntiObjects(Object... objects) {

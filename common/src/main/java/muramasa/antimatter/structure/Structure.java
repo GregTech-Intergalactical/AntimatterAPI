@@ -22,8 +22,6 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
     private final Map<String, Pair<Integer, Integer>> minMaxMap;
 
     private final Map<String, Pair<int2, BiFunction<Integer, int3, int3>>> partRequirements;
-
-    private final Map<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
     private final int3 offset;
     StructurePartCheckCallback<T> callback;
 
@@ -68,26 +66,13 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
 
     public abstract LongList allPositions(TileEntityBasicMultiMachine<?> tile);*/
 
-    public List<BlockPos> allShared(StructureElement element, TileEntityBasicMultiMachine<?> tile) {
-        return Collections.emptyList();
-    }
-
-    public Map<String, IRequirement> getRequirements() {
-        return requirements;
-    }
-
-    public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityBasicMultiMachine<?> tile, @Nonnull BlockPos pos) {
+    /*public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityBasicMultiMachine<?> tile, @Nonnull BlockPos pos) {
         StructureElement el = res.get(pos);
         if (el != null) {
             return el.evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), res);
         }
         return true;
-    }
-
-    public static class Point {
-        public int3 pos = new int3();
-        public StructureElement el;
-    }
+    }*/
 
     public interface StructurePartCheckCallback<T extends TileEntityBasicMultiMachine<T>> {
         boolean check(IStructureDefinition<T> structureDefinition, T tile, String part, int i, int3 newOffset);
