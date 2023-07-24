@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.architectury.fluid.FluidStack;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -14,21 +16,26 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import tesseract.FluidPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -37,6 +44,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+
+import static muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin.intToSuperScript;
 
 public class RecipeMapDisplay implements Display {
     private final CategoryIdentifier<RecipeMapDisplay> id;
@@ -72,9 +81,10 @@ public class RecipeMapDisplay implements Display {
     public static List<EntryIngredient> createFluidOutputEntries(List<FluidStack> input) {
         return input.stream().map(i -> {
             EntryStack<FluidStack> fluidStackEntryStack = EntryStacks.of(i);
-            if (AntimatterPlatformUtils.isFabric()){
-                fluidStackEntryStack.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getFluidSetting(i));
-            }
+            fluidStackEntryStack.setting(EntryStack.Settings.TOOLTIP_PROCESSOR, (entry, t) -> {
+                createFluidTooltip(t, fluidStackEntryStack.getValue());
+                return t;
+            });
             return fluidStackEntryStack;
         }).map(EntryIngredient::of).toList();
     }
@@ -82,13 +92,30 @@ public class RecipeMapDisplay implements Display {
     public static List<EntryIngredient> createFluidInputEntries(List<List<FluidStack>> input) {
         return input.stream().map(i -> {
             List<EntryStack<FluidStack>> fluidStackEntryStack = i.stream().map(EntryStacks::of).toList();
-            if (AntimatterPlatformUtils.isFabric()){
-                fluidStackEntryStack.stream().forEach(e -> {
-                    e.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getFluidSetting(e.getValue()));
+            fluidStackEntryStack.stream().forEach(e -> {
+                e.setting(EntryStack.Settings.TOOLTIP_PROCESSOR, (entry, t) -> {
+                    createFluidTooltip(t, e.getValue());
+                    return t;
                 });
-            }
+            });
             return fluidStackEntryStack;
         }).map(EntryIngredient::of).toList();
+    }
+
+    private static void createFluidTooltip(Tooltip tooltip, FluidStack stack) {
+        Tooltip.Entry component = tooltip.entries().get(2);
+        tooltip.entries().remove(2);
+        tooltip.entries().remove(1);
+        long mb = (stack.getAmount() / TesseractGraphWrappers.dropletMultiplier);
+        if (AntimatterPlatformUtils.isFabric()){
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", new TextComponent(mb + " " + intToSuperScript(stack.getAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
+        } else {
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
+        }
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
+        String liquid = FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
+        tooltip.add(component.getAsText());
     }
 
     public static List<EntryIngredient> createInputEntries(List<Ingredient> input, IRecipe recipe) {
@@ -96,6 +123,7 @@ public class RecipeMapDisplay implements Display {
             List<EntryStack<ItemStack>> entry = Arrays.stream(i.getItems()).map(EntryStacks::of).toList();
             if (i instanceof RecipeIngredient ri){
                 entry.forEach(e -> {
+                    //e.setting(EntryStack.Settings.TOOLTIP_PROCESSOR)
                     e.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> {
                         List<Component> components = new ArrayList<>();
                         if (ri.ignoreConsume()) {
@@ -135,31 +163,6 @@ public class RecipeMapDisplay implements Display {
         @Nullable
         Component tooltip = new TextComponent((fluidStack.getAmount() / 81L) + " " + intToSuperScript(fluidStack.getAmount() % 81L) + "/₈₁ mb");
         return es -> List.of(tooltip);
-    }
-
-    private static String intToSuperScript(long i){
-        String intString = String.valueOf(i);
-        StringBuilder builder = new StringBuilder();
-        for (char c : intString.toCharArray()) {
-            builder.append(charToSuperScript(c));
-        }
-        return builder.toString();
-    }
-
-    private static String charToSuperScript(char c){
-        return switch (c){
-            case '0' -> "⁰";
-            case '1' -> "¹";
-            case '2' -> "²";
-            case '3' -> "³";
-            case '4' -> "⁴";
-            case '5' -> "⁵";
-            case '6' -> "⁶";
-            case '7' -> "⁷";
-            case '8' -> "⁸";
-            case '9' -> "⁹";
-            default -> String.valueOf(c);
-        };
     }
 
     @Override

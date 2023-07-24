@@ -301,6 +301,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.mass", "Mass");
         add("antimatter.tooltip.more", "Hold Shift to show more information.");
         add("antimatter.tooltip.stacks", "Stacks");
+        add("antimatter.tooltip.fluid.amount", "Amount: %s");
+        add("antimatter.tooltip.fluid.temp", "Temperature: %s K");
+        add("antimatter.tooltip.fluid.liquid", "State: Liquid");
+        add("antimatter.tooltip.fluid.gas", "State: Gas");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
         //Is this loss?

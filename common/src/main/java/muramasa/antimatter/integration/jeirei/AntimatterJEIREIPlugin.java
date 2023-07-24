@@ -58,6 +58,31 @@ public class AntimatterJEIREIPlugin{
         }
     }
 
+    public static String intToSuperScript(long i){
+        String intString = String.valueOf(i);
+        StringBuilder builder = new StringBuilder();
+        for (char c : intString.toCharArray()) {
+            builder.append(charToSuperScript(c));
+        }
+        return builder.toString();
+    }
+
+    private static String charToSuperScript(char c){
+        return switch (c){
+            case '0' -> "⁰";
+            case '1' -> "¹";
+            case '2' -> "²";
+            case '3' -> "³";
+            case '4' -> "⁴";
+            case '5' -> "⁵";
+            case '6' -> "⁶";
+            case '7' -> "⁷";
+            case '8' -> "⁸";
+            case '9' -> "⁹";
+            default -> String.valueOf(c);
+        };
+    }
+
     public static Object2ObjectMap<ResourceLocation, RegistryValue> getREGISTRY() {
         return REGISTRY;
     }

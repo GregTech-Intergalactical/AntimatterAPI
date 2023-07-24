@@ -14,12 +14,14 @@ import muramasa.antimatter.gui.event.SlotClickEvent;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
+import static muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin.intToSuperScript;
 
 public class FluidSlotWidget extends Widget {
 
@@ -88,9 +91,15 @@ public class FluidSlotWidget extends Widget {
         RenderSystem.enableDepthTest();
         List<Component> str = new ArrayList<>();
         str.add(FluidPlatformUtils.getFluidDisplayName(this.stack));
-        str.add(new TextComponent(
-                NumberFormat.getNumberInstance(Locale.US).format(this.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mB")
-                .withStyle(ChatFormatting.GRAY));
+        long mb = (this.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
+        if (AntimatterPlatformUtils.isFabric()){
+            str.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", new TextComponent(mb + " " + intToSuperScript(this.stack.getFluidAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
+        } else {
+            str.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
+        }
+        str.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(this.stack.getFluid())).withStyle(ChatFormatting.RED));
+        String liquid = FluidPlatformUtils.isFluidGaseous(this.stack.getFluid()) ? "liquid" : "gas";
+        str.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         AntimatterJEIREIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().font, stack);
     }
