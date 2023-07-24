@@ -38,12 +38,10 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class AntimatterREIClientPlugin implements REIClientPlugin {
@@ -122,7 +120,9 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 });
             });
         }
-        AntimatterJEIREIPlugin.getItemsToHide().forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
+        List<ItemLike> list = new ArrayList<>();
+        AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
+        list.forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
     }
 
     @Override

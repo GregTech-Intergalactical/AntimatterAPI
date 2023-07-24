@@ -19,9 +19,10 @@ import net.minecraft.world.level.ItemLike;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AntimatterJEIREIPlugin{
-    private static final List<ItemLike> ITEMS_TO_HIDE = new ArrayList<>();
+    private static final List<Consumer<List<ItemLike>>> ITEMS_TO_HIDE = new ArrayList<>();
     public static class RegistryValue {
         public IRecipeMap map;
         public GuiData gui;
@@ -113,11 +114,17 @@ public class AntimatterJEIREIPlugin{
         }
     }
 
-    public static void addItemsToHide(ItemLike... itens){
-        ITEMS_TO_HIDE.addAll(Arrays.asList(itens));
+    public static void addItemsToHide(ItemLike... items){
+        addItemsToHide(l -> {
+            l.addAll(Arrays.asList(items));
+        });
     }
 
-    public static List<ItemLike> getItemsToHide() {
+    public static void addItemsToHide(Consumer<List<ItemLike>> listConsumer){
+        ITEMS_TO_HIDE.add(listConsumer);
+    }
+
+    public static List<Consumer<List<ItemLike>>> getItemsToHide() {
         return ITEMS_TO_HIDE;
     }
 }
