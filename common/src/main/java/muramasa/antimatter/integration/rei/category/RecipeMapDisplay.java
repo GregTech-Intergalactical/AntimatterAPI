@@ -25,6 +25,8 @@ import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -65,7 +67,7 @@ public class RecipeMapDisplay implements Display {
             builder.addAll(createOutputEntries(Arrays.asList(stacks), recipe));
         }
         if (recipe.getOutputFluids() != null){
-            builder.addAll(createFluidOutputEntries(Arrays.stream(recipe.getOutputFluids()).map(REIUtils::toREIFLuidStack).toList()));
+            builder.addAll(createFluidOutputEntries(Arrays.stream(recipe.getOutputFluids()).map(REIUtils::toREIFLuidStack).toList(), recipe));
         }
 
         this.output = builder.build();
@@ -74,15 +76,38 @@ public class RecipeMapDisplay implements Display {
         AtomicInteger atomicInteger = new AtomicInteger(0);
         return input.stream().map(i -> {
             int chance = recipe.hasChances() ? Objects.requireNonNull(recipe.getChances())[atomicInteger.getAndIncrement()] : 10000;
-            return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getProbabilitySetting(chance));
+            return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> {
+                List<Component> components = new ArrayList<>();
+                Component c = getProbabilityTooltip(chance);
+                if (c != null){
+                    components.add(c);
+                }
+                if (recipe.getId() != null){
+                    components.add(new TextComponent("Recipe by: ").append(new TextComponent(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                    Minecraft minecraft = Minecraft.getInstance();
+                    boolean showAdvanced = minecraft.options.advancedItemTooltips || Screen.hasShiftDown();
+                    if (showAdvanced){
+                        components.add(new TextComponent("Recipe Id: " + recipe.getId().toString()).withStyle(ChatFormatting.DARK_GRAY));
+                    }
+                }
+                return components;
+            });
         }).map(EntryIngredient::of).toList();
     }
 
-    public static List<EntryIngredient> createFluidOutputEntries(List<FluidStack> input) {
+    public static List<EntryIngredient> createFluidOutputEntries(List<FluidStack> input, IRecipe recipe) {
         return input.stream().map(i -> {
             EntryStack<FluidStack> fluidStackEntryStack = EntryStacks.of(i);
             fluidStackEntryStack.setting(EntryStack.Settings.TOOLTIP_PROCESSOR, (entry, t) -> {
                 createFluidTooltip(t, fluidStackEntryStack.getValue());
+                if (recipe.getId() != null){
+                    t.add(new TextComponent("Recipe by: ").append(new TextComponent(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                    Minecraft minecraft = Minecraft.getInstance();
+                    boolean showAdvanced = minecraft.options.advancedItemTooltips || Screen.hasShiftDown();
+                    if (showAdvanced){
+                        t.add(new TextComponent("Recipe Id: " + recipe.getId().toString()).withStyle(ChatFormatting.DARK_GRAY));
+                    }
+                }
                 return t;
             });
             return fluidStackEntryStack;
