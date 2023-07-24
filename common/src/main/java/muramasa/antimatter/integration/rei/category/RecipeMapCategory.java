@@ -2,7 +2,7 @@ package muramasa.antimatter.integration.rei.category;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
@@ -12,15 +12,8 @@ import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
-import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.drawable.IDrawableAnimated;
-import mezz.jei.api.recipe.RecipeIngredientRole;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -28,34 +21,24 @@ import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
-import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
 
@@ -212,7 +195,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
             List<SlotData<?>> finalSlots = slots;
             slotCount = slots.size();
             if (slotCount > 0) {
-                FluidStack[] fluids = display.getRecipe().hasOutputFluids() ? display.getRecipe().getOutputFluids() : null;
+                FluidHolder[] fluids = display.getRecipe().hasOutputFluids() ? display.getRecipe().getOutputFluids() : null;
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {

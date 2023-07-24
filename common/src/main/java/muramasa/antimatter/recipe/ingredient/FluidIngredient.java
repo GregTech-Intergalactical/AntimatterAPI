@@ -1,6 +1,8 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.JsonObject;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
@@ -12,8 +14,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class FluidIngredient {
-    private FluidStack[] stacks = new FluidStack[0];
+    private FluidHolder[] stacks = new FluidHolder[0];
     private TagKey<Fluid> tag;
     private long amount = 0;
     private boolean evaluated = false;
@@ -33,16 +34,16 @@ public class FluidIngredient {
     }
 
 
-    public FluidStack[] getStacks() {
+    public FluidHolder[] getStacks() {
         if (evaluated) return stacks;
         evaluated = true;
         if (tag != null) {
-            List<FluidStack> list = new ObjectArrayList<>();
+            List<FluidHolder> list = new ObjectArrayList<>();
             Registry.FLUID.getTagOrEmpty(tag).iterator().forEachRemaining(t -> {
-                FluidStack stack = new FluidStack(t.value(), this.getAmountInMB());
+                FluidHolder stack = FluidHooks.newFluidHolder(t.value(), getAmount(), null);
                 list.add(stack);
             });
-            this.stacks = list.toArray(new FluidStack[0]);
+            this.stacks = list.toArray(new FluidHolder[0]);
         }
         return stacks;
     }
@@ -62,10 +63,10 @@ public class FluidIngredient {
     public FluidIngredient copy(long droplets) {
         FluidIngredient ing = new FluidIngredient();
         ing.stacks = Arrays.stream(stacks).map(t -> {
-            FluidStack stack = t.copy();
+            FluidHolder stack = t.copyHolder();
             stack.setAmount(droplets);
             return stack;
-        }).toArray(FluidStack[]::new);
+        }).toArray(FluidHolder[]::new);
         ing.evaluated = this.evaluated;
         ing.amount = droplets;
         ing.tag = this.tag;
@@ -79,8 +80,8 @@ public class FluidIngredient {
     public void write(FriendlyByteBuf buffer) {
         getStacks();
         buffer.writeVarInt(stacks.length);
-        for (FluidStack stack : this.stacks) {
-            AntimatterPlatformUtils.writeFluidStack(stack, buffer);
+        for (FluidHolder stack : this.stacks) {
+            FluidPlatformUtils.writeToPacket(buffer, stack);
         }
     }
 
@@ -98,15 +99,15 @@ public class FluidIngredient {
 
     public static FluidIngredient of(FriendlyByteBuf buf) {
         int count = buf.readVarInt();
-        FluidStack[] stacks = new FluidStack[count];
+        FluidHolder[] stacks = new FluidHolder[count];
         for (int i = 0; i < count; i++) {
-            stacks[i] = AntimatterPlatformUtils.readFluidStack(buf);
+            stacks[i] = FluidPlatformUtils.readFromPacket(buf);
         }
         FluidIngredient ing = new FluidIngredient();
         long amount = 0;
-        for (FluidStack stack : stacks) {
-            if (stack.getRealAmount() > amount){
-                amount = stack.getRealAmount();
+        for (FluidHolder stack : stacks) {
+            if (stack.getFluidAmount() > amount){
+                amount = stack.getFluidAmount();
             }
         }
         ing.stacks = stacks;
@@ -135,27 +136,26 @@ public class FluidIngredient {
         return of(mat, amount * TesseractGraphWrappers.dropletMultiplier);
     }
 
-    public static FluidIngredient of(FluidStack stack) {
+    public static FluidIngredient of(FluidHolder stack) {
         Objects.requireNonNull(stack);
         FluidIngredient ing = new FluidIngredient();
-        ing.stacks = new FluidStack[]{stack};
-        ing.amount = stack.getRealAmount();
+        ing.stacks = new FluidHolder[]{stack};
+        ing.amount = stack.getFluidAmount();
         return ing;
     }
 
-    public List<FluidStack> drain(MachineFluidHandler<?> handler, boolean input, boolean simulate) {
+    public List<FluidHolder> drain(MachineFluidHandler<?> handler, boolean input, boolean simulate) {
         return drain(amount, handler, input, simulate);
     }
 
-    public List<FluidStack> drain(long amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
+    public List<FluidHolder> drain(long amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
         long drained = amount;
-        List<FluidStack> ret = new ObjectArrayList<>(1);
-        IFluidHandler.FluidAction action = simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
-        for (FluidStack stack : stacks) {
-            stack = stack.copy();
+        List<FluidHolder> ret = new ObjectArrayList<>(1);
+        for (FluidHolder stack : stacks) {
+            stack = stack.copyHolder();
             stack.setAmount(drained);
-            FluidStack drain = input ? handler.drainInput(stack, action) : handler.drain(stack, action);
-            drained -= drain.getRealAmount();
+            FluidHolder drain = input ? handler.drainInput(stack, simulate) : handler.extractFluid(stack, simulate);
+            drained -= drain.getFluidAmount();
             if (!drain.isEmpty()) {
                 ret.add(drain);
             }
@@ -165,6 +165,6 @@ public class FluidIngredient {
     }
 
     public long drainedAmount(long amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
-        return drain(amount, handler, input, simulate).stream().mapToLong(FluidStack::getRealAmount).sum();
+        return drain(amount, handler, input, simulate).stream().mapToLong(FluidHolder::getFluidAmount).sum();
     }
 }

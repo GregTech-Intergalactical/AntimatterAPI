@@ -1,5 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
@@ -12,7 +14,6 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.IRecipeValidator;
-import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -23,13 +24,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineState.*;
 import static muramasa.antimatter.machine.event.ContentEvent.ENERGY_SLOT_CHANGED;
@@ -64,7 +64,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     //Items used to find recipe
     protected List<ItemStack> itemInputs = Collections.emptyList();
-    protected List<FluidStack> fluidInputs = Collections.emptyList();
+    protected List<FluidHolder> fluidInputs = Collections.emptyList();
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
@@ -162,7 +162,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             }
             activeRecipe = null;
         }
-        IRecipeMap map = tile.getMachineType().getRecipeMap();
+        IRecipeMap map = tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map != null ? map.find(tile.itemHandler, tile.fluidHandler, tile.getMachineTier(), this::validateRecipe) : null;
     }
 
@@ -389,7 +389,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
             if (!tile.getMachineState().allowRecipeCheck()) return;
-            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), this.tile.getMachineTier(), this::validateRecipe);
+            activeRecipe = tile.getMachineType().getRecipeMap(tile.getMachineTier()).find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidHolder[0]), this.tile.getMachineTier(), this::validateRecipe);
             if (activeRecipe == null) return;
             calculateDurations();
             lastRecipe = activeRecipe;
@@ -417,12 +417,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     public boolean accepts(ItemStack stack) {
-        IRecipeMap map = this.tile.getMachineType().getRecipeMap();
+        IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map == null || map.acceptsItem(stack);
     }
 
-    public boolean accepts(FluidStack stack) {
-        IRecipeMap map = this.tile.getMachineType().getRecipeMap();
+    public boolean accepts(FluidHolder stack) {
+        IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map == null || map.acceptsFluid(stack);
     }
 
@@ -469,7 +469,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         long actualConsume = toConsume;
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount(actualConsume, h, true, true);
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
@@ -525,7 +525,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount((int) actualConsume, h, true, true);
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
@@ -607,7 +607,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 return;
             }
             if (event == ENERGY_SLOT_CHANGED) {
-                if (tile.itemHandler.map(t -> t.inventories.get(SlotType.ENERGY).getStackInSlot((int) data[0]).isEmpty()).orElse(true)) {
+                if (tile.itemHandler.map(t -> t.inventories.get(SlotType.ENERGY).getItem((int) data[0]).isEmpty()).orElse(true)) {
                     return;
                 }
             }
@@ -652,7 +652,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
      * NBT STUFF
      **/
 
-    public CompoundTag serializeNBT() {
+    public CompoundTag serialize() {
         CompoundTag nbt = new CompoundTag();
         ListTag item = new ListTag();
         if (itemInputs.size() > 0) {
@@ -662,7 +662,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }
         ListTag fluid = new ListTag();
         if (fluidInputs.size() > 0) {
-            fluidInputs.forEach(t -> fluid.add(t.writeToNBT(new CompoundTag())));
+            fluidInputs.forEach(t -> fluid.add(t.serialize()));
         }
         nbt.put("I", item);
         nbt.putInt("T", tickTimer);
@@ -678,26 +678,26 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return nbt;
     }
 
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         itemInputs = new ObjectArrayList<>();
         fluidInputs = new ObjectArrayList<>();
         nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));
-        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundTag) t)));
+        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidHooks.fluidFromCompound((CompoundTag) t)));
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
-        this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("AR"))) : null;
-        this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("LR"))) : null;
+        this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("AR"))) : null;
+        this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("LR"))) : null;
         if (this.activeRecipe != null) calculateDurations();
     }
 
     @Override
-    public LazyOptional<MachineRecipeHandler<?>> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public Optional<MachineRecipeHandler<?>> forSide(Direction side) {
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<MachineRecipeHandler<?>> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public Optional<MachineRecipeHandler<?>> forNullSide() {
+        return Optional.of(this);
     }
 }

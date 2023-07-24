@@ -26,13 +26,13 @@ import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
-import muramasa.antimatter.structure.impl.MultiStructure;
 import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -58,7 +58,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 /**
@@ -78,7 +77,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
-    protected ITooltipInfo tooltipFunction = (s,w,t,f) -> {};
+    protected ITooltipInfo tooltipFunction = (m, s,w,t,f) -> {};
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -87,7 +86,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Recipe Members
      **/
-    protected IRecipeMap recipeMap;
+    protected Map<String, IRecipeMap> tierRecipeMaps = new Object2ObjectOpenHashMap<>();
 
     /**
      * GUI Members
@@ -323,13 +322,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * Registers the recipemap into JEI. This can be overriden in RecipeMap::setGuiData.
      */
     public void registerJei() {
-        if (this.guiData != null && recipeMap != null) {
-            //If the recipe map has another GUI present don't register it.
-            if (recipeMap.getGui() == null) {
-                AntimatterAPI.registerJEICategory(this.recipeMap, this.guiData, this, false);
-            } else {
-                AntimatterAPI.registerJEICategoryModel(this.recipeMap, this);
-            }
+        if (this.guiData != null) {
+            tierRecipeMaps.forEach((s, r) -> {
+                //If the recipe map has another GUI present don't register it.
+                Tier t = AntimatterAPI.get(Tier.class, s);
+                if (r.getGui() == null) {
+                    AntimatterAPI.registerJEICategory(r, this.guiData, this, t, false);
+                } else {
+                    AntimatterAPI.registerJEICategoryModel(r, this, t);
+                }
+            });
+
         }
     }
 
@@ -345,10 +348,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * but it can be overriden by setGuiData in the RecipeMap.
      *
      * @param map the recipe map.
+     * @param tiers optional array of tiers this map is for
      * @return this.
      */
-    public T setMap(IRecipeMap map) {
-        this.recipeMap = map;
+    public T setMap(IRecipeMap map, Tier... tiers){
+        if (tiers.length == 0) {
+            this.tierRecipeMaps.put("", map);
+        } else {
+            for (Tier tier : tiers) {
+                this.tierRecipeMaps.put(tier.getId(), map);
+            }
+        }
         addFlags(RECIPE);
         registerJei();
         return (T) this;
@@ -404,11 +414,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setTooltipInfo(String translationKey){
-        return setTooltipInfo((s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
+        return setTooltipInfo((m, s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
     }
 
     public T setTooltipInfo(Component tooltip){
-        return setTooltipInfo((s,w,t,f) -> t.add(tooltip));
+        return setTooltipInfo((m, s,w,t,f) -> t.add(tooltip));
     }
 
     public T setTooltipInfo(ITooltipInfo info){
@@ -490,8 +500,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return overlayModels.getOverlayModel(this, state, side);
     }
 
-    public IRecipeMap getRecipeMap() {
-        return recipeMap;
+    public IRecipeMap getRecipeMap(Tier tier) {
+        if (tierRecipeMaps.containsKey(tier.getId())){
+            return tierRecipeMaps.get(tier.getId());
+        }
+        return tierRecipeMaps.get("");
     }
 
     public T addFlags(MachineFlag... flags) {
@@ -544,8 +557,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public void setStructure(Function<StructureBuilder, Structure> func) {
-        getTiers().forEach(t -> setStructure(t, func));
+    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Function<StructureBuilder<U>, Structure> func) {
+        getTiers().forEach(t -> setStructure(clazz, t, func));
     }
 
     /**
@@ -554,28 +567,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
-        structures.put(tier, func.apply(new StructureBuilder()));
-    }
-
-    /**
-     * Set the multiblock structure for this machine, for all tiers.
-     * Useless if the tile is not a multiblock.
-     *
-     * @param func the function to build a structure.
-     */
-    public void setStructures(List<Structure> func) {
-        getTiers().forEach(t -> setStructures(t, func));
-    }
-
-    /**
-     * Set the multiblock structure for this machine, for one tier.
-     * Useless if the tile is not a multiblock.
-     *
-     * @param func the function to build a structure.
-     */
-    public void setStructures(Tier tier, List<Structure> func) {
-        structures.put(tier, new MultiStructure(func));
+    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Tier tier, Function<StructureBuilder<U>, Structure> func) {
+        structures.put(tier, func.apply(new StructureBuilder<>()));
     }
 
     @Environment(EnvType.CLIENT)

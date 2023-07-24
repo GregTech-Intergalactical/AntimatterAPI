@@ -107,7 +107,7 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
 
     public void processBlocks(String domain) {
         AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onBlockModelBuild(b, this));
-        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> state(f.getFluidBlock(), getBuilder(f.getFluidBlock()).texture("particle", f.getAttributes().getStillTexture())));
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> state(f.getFluidBlock(), getBuilder(f.getFluidBlock()).texture("particle", f.getAttributes().still())));
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {

@@ -17,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
@@ -151,8 +150,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
-    public long availableAmpsInput() {
-        return super.availableAmpsInput() + this.cachedItems.stream().map(Pair::right).mapToLong(IGTNode::availableAmpsInput).sum();
+    public long availableAmpsInput(long voltage) {
+        return super.availableAmpsInput(voltage) + this.cachedItems.stream().map(Pair::right).mapToLong(node -> node.availableAmpsInput(voltage)).sum();
     }
 
     @Override
@@ -178,12 +177,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
 
     @Override
-    public LazyOptional<IEnergyHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public Optional<IEnergyHandler> forSide(Direction side) {
+        return Optional.of(this);
     }
 
     @Override
-    public LazyOptional<? extends IEnergyHandler> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public Optional<? extends IEnergyHandler> forNullSide() {
+        return Optional.of(this);
     }
 }

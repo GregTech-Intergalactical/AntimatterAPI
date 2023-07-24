@@ -12,7 +12,7 @@ public class TextureSet implements IAntimatterObject {
     public static final TextureSet METALLIC = new TextureSet(Ref.ID, "metallic");
     public static final TextureSet SHINY = new TextureSet(Ref.ID, "shiny");
     public static final TextureSet ROUGH = new TextureSet(Ref.ID, "rough");
-    public static final TextureSet MAGNETIC = new TextureSet(Ref.ID, "magnetic");
+    public static final TextureSet MAGNETIC = new TextureSet(Ref.ID, "magnetic", true);
     public static final TextureSet DIAMOND = new TextureSet(Ref.ID, "diamond");
     public static final TextureSet RUBY = new TextureSet(Ref.ID, "ruby");
     public static final TextureSet LAPIS = new TextureSet(Ref.ID, "lapis");
@@ -25,12 +25,19 @@ public class TextureSet implements IAntimatterObject {
     public static final TextureSet LIGNITE = new TextureSet(Ref.ID, "lignite");
     public static final TextureSet WOOD = new TextureSet(Ref.ID, "wood");
     public static final TextureSet REDSTONE = new TextureSet(Ref.ID, "redstone");
+    public static final TextureSet RAD = new TextureSet(Ref.ID, "rad");
 
     private String domain, id;
+    private boolean force;
 
     public TextureSet(String domain, String id) {
+        this(domain, id, false);
+    }
+
+    public TextureSet(String domain, String id, boolean force){
         this.domain = domain;
         this.id = id;
+        this.force = force;
         AntimatterAPI.register(TextureSet.class, this);
     }
 
@@ -47,10 +54,10 @@ public class TextureSet implements IAntimatterObject {
     public Texture getTexture(MaterialType<?> type, int layer) {
         StringBuilder builder = new StringBuilder();
         builder.append("material/");
-        if (!type.ignoreTextureSets()) builder.append(id).append("/");
+        if (!type.ignoreTextureSets() || force) builder.append(id).append("/");
         //TODO return different numbered overlay based on current layer
         builder.append(type.getId()).append(layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/);
-        return new Texture(type.ignoreTextureSets() ? Ref.ID : domain, builder.toString());
+        return new Texture(type.ignoreTextureSets() && !force ? Ref.ID : domain, builder.toString());
     }
 
     public String getPath() {

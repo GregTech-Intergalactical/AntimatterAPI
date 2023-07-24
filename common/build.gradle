@@ -21,14 +21,12 @@ dependencies{
     compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     implementation(project(path: ":tesseract-common", configuration: "namedElements"))
-    modImplementation("io.github.feltmc:fabricated-forge-caps:${rootProject.fabricated_forge_hash}"){
-        exclude(group: "net.fabricmc.fabric-api")
-    }
     modCompileOnly("net.fabricmc.fabric-api:fabric-transfer-api-v1:${rootProject.fabric_transfer_api_version}")
-    modCompileOnly("io.github.fabricators_of_create:Porting-Lib:1.1.310-beta+1.18.2-dev.${rootProject.port_lib_hash}"){ transitive(false) }
-    modImplementation("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
-        transitive = false
+    modImplementation("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable"){
+        exclude(group: "net.fabricmc.fabric-api")
+        exclude(group: "com.github.LlamaLad7")
     }
+    modImplementation("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")
     modImplementation("io.github.feltmc:fabricated-forge-tag-extensions:${rootProject.fabricated_forge_hash}") { transitive false }
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}"
@@ -36,6 +34,7 @@ dependencies{
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modCompileOnly("com.github.Trinsdar:ARRP:0.6.7-hotfix")
+    modImplementation("com.gtnewhorizon.structurelib:structurelib-common:${project.structurelib_version}-${project.minecraft_version}")
     modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"

@@ -1,6 +1,7 @@
 package muramasa.antimatter.integration.jei;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
@@ -22,6 +23,7 @@ import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
@@ -29,6 +31,7 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
@@ -42,7 +45,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -72,14 +75,15 @@ public class AntimatterJEIPlugin implements IModPlugin {
         runtime = jeiRuntime;
         //Remove fluid "blocks".
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BY_BLOCK.get(t.getFluidBlock()))).collect(Collectors.toList()));
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Collections.singletonList(new ItemStack(Data.PROXY_INSTANCE)));
         AntimatterAPI.all(MaterialTypeItem.class, t -> {
             if (!t.hidden()) return;
             List<ItemStack> stacks = (List<ItemStack>) t.all().stream().map(obj -> t.get((Material)obj, 1)).collect(Collectors.toList());
             if (stacks.isEmpty()) return;
             runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, stacks);
         });
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterJEIREIPlugin.getItemsToHide().stream().map(i -> i.asItem().getDefaultInstance()).toList());
+        List<ItemLike> list = new ArrayList<>();
+        AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, list.stream().map(i -> i.asItem().getDefaultInstance()).toList());
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
@@ -111,15 +115,20 @@ public class AntimatterJEIPlugin implements IModPlugin {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         if (helpers == null) helpers = registration.getJeiHelpers();
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            registration.addRecipes(RECIPE_TYPES.get(id.toString()), getRecipes(id.getPath()));
+            registration.addRecipes(RECIPE_TYPES.get(id.toString()), getRecipes(tuple.map));
         });
         MultiMachineInfoCategory.registerRecipes(registration);
     }
 
-    private List<IRecipe> getRecipes(String recipeMap){
+    private List<IRecipe> getRecipes(IRecipeMap recipeMap){
         RecipeManager manager = getRecipeManager();
         if (manager == null) return Collections.emptyList();
-        return manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap) && !r.isHidden()).toList();
+        List<IRecipe> recipes = new ArrayList<>(manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap.getId()) && !r.isHidden()).toList());
+        if (recipeMap.getProxy() != null && recipeMap instanceof RecipeMap<?> map) {
+            List<net.minecraft.world.item.crafting.Recipe<?>> proxyRecipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) manager.getAllRecipesFor(recipeMap.getProxy().loc());
+            proxyRecipes.forEach(recipe -> recipes.add(recipeMap.getProxy().handler().apply(recipe, map.RB())));
+        }
+        return recipes;
     }
 
     private RecipeManager getRecipeManager(){
@@ -136,14 +145,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return Minecraft.getInstance().level;
     }
 
-    public static void showCategory(Machine<?>... types) {
+    public static void showCategory(Machine<?> type, Tier tier) {
         if (runtime != null) {
-            List<ResourceLocation> list = new LinkedList<>();
-            for (int i = 0; i < types.length; i++) {
-                if (!types[i].has(RECIPE)) continue;
-                list.add(types[i].getRecipeMap().getLoc());
-            }
-            runtime.getRecipesGui().showCategories(list);
+            if (!type.has(RECIPE)) return;
+            IRecipeMap map = type.getRecipeMap(tier);
+            if (map == null) return; //incase someone adds tier specific recipe maps without a fallback
+            runtime.getRecipesGui().showCategories(List.of(map.getLoc()));
         }
     }
 
@@ -161,17 +168,22 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @ExpectPlatform
-    public static void uses(FluidStack val, boolean USE) {
+    public static void uses(FluidHolder val, boolean USE) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){
+    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static FluidStack getIngredient(ITypedIngredient<?> ingredient){
+    public static Object getFluidObject(FluidHolder fluidHolder){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
         throw new AssertionError();
     }
 
@@ -181,7 +193,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     public static <T> void addModDescriptor(List<Component> tooltip, T t) {
         if (t == null || helpers == null) return;
-        String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
+        Object o = t;
+        if (t instanceof FluidHolder holder) o = getFluidObject(holder);
+        String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(o).getDisplayModId(o));
         tooltip.add(new TextComponent(text));
     }
 
@@ -189,9 +203,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         AntimatterAPI.all(Machine.class, machine -> {
-            IRecipeMap map = machine.getRecipeMap();
-            if (map == null) return;
             ((Machine<?>)machine).getTiers().forEach(t -> {
+                IRecipeMap map = machine.getRecipeMap(t);
+                if (map == null) return;
                 ItemStack stack = new ItemStack(machine.getItem(t));
                 if (!stack.isEmpty()) {
                     registration.addRecipeCatalyst(stack, map.getLoc());

@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.CoverDebug;
 import muramasa.antimatter.cover.CoverDynamo;
@@ -24,9 +23,6 @@ import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.types.BasicMachine;
 import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.structure.BlockStateElement;
-import muramasa.antimatter.structure.StructureBuilder;
-import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
@@ -51,11 +47,6 @@ public class Data {
 
     public static final Material WRENCH_MATERIAL = new Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
 
-    static {
-        StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
-        StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
-    }
-
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(ChatFormatting.AQUA + "" + ChatFormatting.ITALIC + "Development Item");
 
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
@@ -69,8 +60,6 @@ public class Data {
     public static CoverFactory COVERMUFFLER = CoverFactory.builder(CoverMuffler::new).addTextures(new Texture(Ref.ID, "block/cover/muffler")).build(Ref.ID, "muffler");
     public static CoverFactory COVERDYNAMO = CoverFactory.builder(CoverDynamo::new).addTextures(new Texture(Ref.ID, "block/cover/dynamo")).build(Ref.ID, "dynamo");
     public static CoverFactory COVERENERGY = CoverFactory.builder(CoverEnergy::new).addTextures(new Texture(Ref.ID, "block/cover/energy")).build(Ref.ID, "energy");
-
-    public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", BlockBehaviour.Properties.of(Material.STONE).strength(1.0f, 1.0f).noOcclusion());
 
 
     public static MenuHandlerMachine<? extends TileEntityMachine, ? extends ContainerBasicMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_basic") {

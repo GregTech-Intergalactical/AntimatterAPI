@@ -1,14 +1,15 @@
 package muramasa.antimatter.capability;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -17,8 +18,9 @@ import java.util.function.Supplier;
 public class Holder<V, T extends Dispatch.Sided<V>> {
     private final Dispatch dispatch;
     public final Class<?> cap;
-    private final LazyOptional[] sided;
+    private final Optional[] sided;
     private List<Consumer<? super T>> consumers = new ObjectArrayList<>();
+    private final ImmutableList<Set<Runnable>> listeners;
     private Supplier<? extends T> supplier;
     private T resolved;
     private boolean flag;
@@ -27,11 +29,12 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         this.dispatch = dispatch;
         this.cap = cap;
         //7th side is null side
-        this.sided = new LazyOptional[Ref.DIRS.length + 1];
+        this.listeners = ImmutableList.of(new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
+        this.sided = new Optional[Ref.DIRS.length + 1];
         for (Direction dir : Ref.DIRS) {
-            sided[dir.get3DDataValue()] = LazyOptional.empty();
+            sided[dir.get3DDataValue()] = Optional.empty();
         }
-        sided[6] = LazyOptional.empty();
+        sided[6] = Optional.empty();
         this.flag = false;
         this.supplier = source;
         dispatch.registerHolder(this);
@@ -53,18 +56,25 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         consumers.add(consumer);
     }
 
+    int invalidating = 0;
+
+    public boolean addListener(Direction direction, Runnable runnable){
+        if (invalidating > 0) return false;
+        listeners.get(direction == null ? 6 : direction.get3DDataValue()).add(runnable);
+        return true;
+    }
+
     public void invalidate(Direction side) {
-        if (side == null) {
-            sided[6].invalidate();
-            return;
-        }
-        sided[side.get3DDataValue()].invalidate();
+        invalidating++;
+        int index = side == null ? 6 : side.get3DDataValue();
+        listeners.get(index).forEach(Runnable::run);
+        invalidating--;
     }
 
     public void invalidate() {
-        for (LazyOptional<?> opt : sided) {
-            opt.invalidate();
-        }
+        invalidating++;
+        listeners.forEach(l -> l.forEach(Runnable::run));
+        invalidating--;
     }
 
     @Nullable
@@ -84,7 +94,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         return resolved;
     }
 
-    public LazyOptional<? extends V> nullSide() {
+    public Optional<? extends V> nullSide() {
         if (resolved == null) {
             get();
         }
@@ -139,11 +149,6 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         }
     }
 
-    public <U> LazyOptional<U> lazyMap(Function<? super T, ? extends U> mapper) {
-        T value = get();
-        return value == null ? LazyOptional.empty() : LazyOptional.of(() -> mapper.apply(value));
-    }
-
     public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
         T value = get();
         return value == null ? Optional.empty() : Optional.of(mapper.apply(value));
@@ -154,15 +159,15 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         return value != null && predicate.test(value) ? Optional.of(value) : Optional.empty();
     }
 
-    public LazyOptional<? extends V> side(Direction side) {
+    public Optional<? extends V> side(Direction side) {
         if (!isPresent()) {
-            return LazyOptional.empty();
+            return Optional.empty();
         }
         if (resolved == null) {
             get();
         }
         int index = side == null ? 6 : side.get3DDataValue();
-        LazyOptional<? extends V> t = sided[index];
+        Optional<? extends V> t = sided[index];
         if (!t.isPresent()) {
             sided[index] = (t = (side == null ? nullSide() : resolved.forSide(side)));
         }

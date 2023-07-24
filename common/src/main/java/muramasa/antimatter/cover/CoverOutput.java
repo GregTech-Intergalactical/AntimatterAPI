@@ -1,5 +1,6 @@
 package muramasa.antimatter.cover;
 
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
@@ -100,9 +101,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        TesseractCapUtils.getFluidHandler(adjTile, this.side.getOpposite())
+        TesseractCapUtils.getFluidHandler(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    TesseractCapUtils.getFluidHandler(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
+                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
                 });
     }
 

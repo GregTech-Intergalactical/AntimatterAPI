@@ -13,16 +13,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 public class UtilsImpl {
 
     private static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
         ((BlockAccessor)block).port_lib$popExperience(level, pos, exp);
-    }
-    public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
-        return ItemHandlerHelper.insertItem(to, toInsert, simulate);
     }
 
     public static void requestModelDataRefresh(BlockEntity tile){

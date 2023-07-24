@@ -1,5 +1,6 @@
 package muramasa.antimatter.integration.jeirei;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.Antimatter;
@@ -14,14 +15,14 @@ import muramasa.antimatter.recipe.map.IRecipeMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AntimatterJEIREIPlugin{
-    private static final List<ItemLike> ITEMS_TO_HIDE = new ArrayList<>();
+    private static final List<Consumer<List<ItemLike>>> ITEMS_TO_HIDE = new ArrayList<>();
     public static class RegistryValue {
         public IRecipeMap map;
         public GuiData gui;
@@ -58,21 +59,46 @@ public class AntimatterJEIREIPlugin{
         }
     }
 
+    public static String intToSuperScript(long i){
+        String intString = String.valueOf(i);
+        StringBuilder builder = new StringBuilder();
+        for (char c : intString.toCharArray()) {
+            builder.append(charToSuperScript(c));
+        }
+        return builder.toString();
+    }
+
+    private static String charToSuperScript(char c){
+        return switch (c){
+            case '0' -> "⁰";
+            case '1' -> "¹";
+            case '2' -> "²";
+            case '3' -> "³";
+            case '4' -> "⁴";
+            case '5' -> "⁵";
+            case '6' -> "⁶";
+            case '7' -> "⁷";
+            case '8' -> "⁸";
+            case '9' -> "⁹";
+            default -> String.valueOf(c);
+        };
+    }
+
     public static Object2ObjectMap<ResourceLocation, RegistryValue> getREGISTRY() {
         return REGISTRY;
     }
 
-    public static void showCategory(Machine<?>... types) {
+    public static void showCategory(Machine<?> type, Tier tier) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            AntimatterJEIPlugin.showCategory(types);
+            AntimatterJEIPlugin.showCategory(type, tier);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            REIUtils.showCategory(types);
+            REIUtils.showCategory(type, tier);
         }
     }
 
     //To perform a JEI lookup for fluid. Use defines direction.
 
-    public static void uses(FluidStack val, boolean USE) {
+    public static void uses(FluidHolder val, boolean USE) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             AntimatterJEIPlugin.uses(val, USE);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
@@ -88,11 +114,17 @@ public class AntimatterJEIREIPlugin{
         }
     }
 
-    public static void addItemsToHide(ItemLike... itens){
-        ITEMS_TO_HIDE.addAll(Arrays.asList(itens));
+    public static void addItemsToHide(ItemLike... items){
+        addItemsToHide(l -> {
+            l.addAll(Arrays.asList(items));
+        });
     }
 
-    public static List<ItemLike> getItemsToHide() {
+    public static void addItemsToHide(Consumer<List<ItemLike>> listConsumer){
+        ITEMS_TO_HIDE.add(listConsumer);
+    }
+
+    public static List<Consumer<List<ItemLike>>> getItemsToHide() {
         return ITEMS_TO_HIDE;
     }
 }

@@ -64,6 +64,10 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
         return RecipeIngredient.of(getMaterialTag(m, s), count);
     }
 
+    public TagKey<Block> getBlockMaterialTag(Material m){
+        return TagUtils.getForgelikeBlockTag(String.join("", Utils.getConventionalMaterialType(this), "/", (getId().equals("raw_ore_block") ? "raw_" : ""), m.getId()));
+    }
+
     public TagKey<Item> getMaterialTag(Material m, StoneType s){
         if (!(this.get() instanceof IOreGetter)) return getMaterialTag(m);
         return TagUtils.getForgelikeItemTag(s.getId() + "_" + Utils.getConventionalMaterialType(this) + "/" + m.getId());

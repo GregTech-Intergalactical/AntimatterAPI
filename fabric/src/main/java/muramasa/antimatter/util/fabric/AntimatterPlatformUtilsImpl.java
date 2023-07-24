@@ -44,7 +44,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -171,14 +170,6 @@ public class AntimatterPlatformUtilsImpl {
         //return ForgeEventFactory.onBucketUse(player, world, stack, trace);
     }
 
-    public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {
-        FluidStack.writeToPacket(stack, buf);
-    }
-
-    public static FluidStack readFluidStack(FriendlyByteBuf buf) {
-        return FluidStack.readFromPacket(buf);
-    }
-
     //TODO
     public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
         /*if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
@@ -205,7 +196,7 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
-        return a.areCapsCompatible(b);
+        return true; //TODO figure out compat for future forge abstraction layers
     }
 
     public static Path getConfigDir(){

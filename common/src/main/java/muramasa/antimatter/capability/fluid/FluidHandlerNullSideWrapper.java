@@ -1,100 +1,121 @@
 package muramasa.antimatter.capability.fluid;
 
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
+import earth.terrarium.botarium.common.fluid.impl.SimpleFluidSnapshot;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import net.minecraft.core.Direction;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraft.nbt.CompoundTag;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class FluidHandlerNullSideWrapper implements IFluidNode {
-    IFluidHandler fluidHandler;
+    IFluidNode fluidHandler;
 
-    public FluidHandlerNullSideWrapper(IFluidHandler fluidHandler) {
+    public FluidHandlerNullSideWrapper(IFluidNode fluidHandler) {
         this.fluidHandler = fluidHandler;
     }
 
     @Override
-    public int getTanks() {
-        return fluidHandler.getTanks();
-    }
-
-    @Nonnull
-    @Override
-    public FluidStack getFluidInTank(int tank) {
-        return fluidHandler.getFluidInTank(tank);
-    }
-
-    @Override
-    public int getTankCapacity(int tank) {
-        return fluidHandler.getTankCapacity(tank);
-    }
-
-    @Override
-    public long getTankCapacityInDroplets(int tank) {
-        return fluidHandler.getTankCapacityInDroplets(tank);
-    }
-
-    @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-        return fluidHandler.isFluidValid(tank, stack);
-    }
-
-    @Override
-    public int fill(FluidStack resource, FluidAction action) {
-        return 0;
-    }
-
-    @Override
-    public long fillDroplets(FluidStack resource, FluidAction action) {
-        return 0;
-    }
-
-    @Nonnull
-    @Override
-    public FluidStack drain(FluidStack resource, FluidAction action) {
-        return FluidStack.EMPTY;
-    }
-
-    @Nonnull
-    @Override
-    public FluidStack drain(long maxDrain, FluidAction action) {
-        return FluidStack.EMPTY;
-    }
-
-    @Nonnull
-    @Override
-    public FluidStack drain(int maxDrain, FluidAction action) {
-        return FluidStack.EMPTY;
-    }
-
-    @Override
     public int getPriority(Direction direction) {
-        return fluidHandler instanceof IFluidNode node ? node.getPriority(direction) : 0;
-    }
-
-    @Override
-    public boolean canOutput() {
-        return !(fluidHandler instanceof IFluidNode node) || node.canOutput();
-    }
-
-    @Override
-    public boolean canInput() {
-        return !(fluidHandler instanceof IFluidNode node) || node.canInput();
+        return fluidHandler.getPriority(direction);
     }
 
     @Override
     public boolean canInput(Direction direction) {
-        return !(fluidHandler instanceof IFluidNode node) || node.canInput(direction);
+        return fluidHandler.canInput(direction);
     }
 
     @Override
     public boolean canOutput(Direction direction) {
-        return !(fluidHandler instanceof IFluidNode node) || node.canOutput(direction);
+        return fluidHandler.canOutput(direction);
     }
 
     @Override
-    public boolean canInput(FluidStack fluid, Direction direction) {
-        return !(fluidHandler instanceof IFluidNode node) || node.canInput(fluid, direction);
+    public boolean canInput(FluidHolder fluid, Direction direction) {
+        return fluidHandler.canInput(fluid, direction);
+    }
+
+    @Override
+    public long insertFluid(FluidHolder fluid, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public FluidHolder extractFluid(FluidHolder fluid, boolean simulate) {
+        return FluidHooks.emptyFluid();
+    }
+
+    @Override
+    public void setFluid(int slot, FluidHolder fluid) {
+
+    }
+
+    @Override
+    public List<FluidHolder> getFluids() {
+        return fluidHandler.getFluids();
+    }
+
+    @Override
+    public int getSize() {
+        return fluidHandler.getSize();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return fluidHandler.isEmpty();
+    }
+
+    @Override
+    public FluidContainer copy() {
+        return new FluidHandlerNullSideWrapper(fluidHandler);
+    }
+
+    @Override
+    public long getTankCapacity(int tankSlot) {
+        return fluidHandler.getTankCapacity(tankSlot);
+    }
+
+    @Override
+    public void fromContainer(FluidContainer container) {
+        if (container instanceof FluidHandlerNullSideWrapper wrapper) fluidHandler = wrapper.fluidHandler;
+    }
+
+    @Override
+    public long extractFromSlot(FluidHolder fluidHolder, FluidHolder toInsert, Runnable snapshot) {
+        return fluidHandler.extractFromSlot(fluidHolder, toInsert, snapshot);
+    }
+
+    @Override
+    public boolean allowsInsertion() {
+        return fluidHandler.allowsInsertion();
+    }
+
+    @Override
+    public boolean allowsExtraction() {
+        return fluidHandler.allowsExtraction();
+    }
+
+    @Override
+    public FluidSnapshot createSnapshot() {
+        return new SimpleFluidSnapshot(this);
+    }
+
+    @Override
+    public void deserialize(CompoundTag nbt) {
+
+    }
+
+    @Override
+    public CompoundTag serialize(CompoundTag nbt) {
+        return null;
+    }
+
+    @Override
+    public void clearContent() {
+        fluidHandler.clearContent();
     }
 }

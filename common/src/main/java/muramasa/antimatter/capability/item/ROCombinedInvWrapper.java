@@ -2,14 +2,13 @@ package muramasa.antimatter.capability.item;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemNode;
 
 import javax.annotation.Nonnull;
 
 public class ROCombinedInvWrapper extends CombinedInvWrapper implements IItemNode {
-    public ROCombinedInvWrapper(IItemHandlerModifiable... itemHandler) {
+    public ROCombinedInvWrapper(ExtendedItemContainer... itemHandler) {
         super(itemHandler);
     }
 
@@ -26,7 +25,7 @@ public class ROCombinedInvWrapper extends CombinedInvWrapper implements IItemNod
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    public void setItem(int slot, @Nonnull ItemStack stack) {
     }
 
     @Override
@@ -36,7 +35,7 @@ public class ROCombinedInvWrapper extends CombinedInvWrapper implements IItemNod
 
     @Override
     public boolean isEmpty(int slot) {
-        return getStackInSlot(slot).isEmpty();
+        return getItem(slot).isEmpty();
     }
 
     @Override

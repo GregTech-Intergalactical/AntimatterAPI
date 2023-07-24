@@ -2,6 +2,7 @@ package muramasa.antimatter.integration.jei.category;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -31,23 +32,28 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fluids.FluidStack;
+import tesseract.FluidPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin.intToSuperScript;
+
+@SuppressWarnings("removal")
 public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     protected static int JEI_OFFSET_X = 1, JEI_OFFSET_Y = 1;
@@ -201,9 +207,10 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
                     AntimatterJEIPlugin.addFluidIngredients(slot, Arrays.asList(fluids.get(s).getStacks()));
                     slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
+                    int finalS = s;
                     slot.addTooltipCallback((ing, list) -> {
-                        if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
-                            list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
+                        FluidHolder stack = fluids.get(finalS).getStacks()[0];
+                        createFluidTooltip(ing, list, stack);
                     });
                     inputFluids++;
                 }
@@ -213,16 +220,40 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
             slots = gui.getSlots().getSlots(SlotType.FL_OUT, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
-                FluidStack[] fluids = recipe.getOutputFluids();
+                FluidHolder[] fluids = recipe.getOutputFluids();
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.setFluidRenderer(fluids[s].getAmount(), true, 16, 16);
+                    slot.setFluidRenderer((int)fluids[s].getFluidAmount(), true, 16, 16);
                     AntimatterJEIPlugin.addFluidIngredients(slot, Collections.singletonList(fluids[s]));
+                    int finalS = s;
+                    slot.addTooltipCallback((ing, list) -> {
+                        FluidHolder stack = fluids[finalS];
+                        createFluidTooltip(ing, list, stack);
+                    });
                 }
             }
         }
     }
+
+    private void createFluidTooltip(IRecipeSlotView ing, List<Component> list, FluidHolder stack) {
+        Component component = list.get(2);
+        list.remove(2);
+        list.remove(1);
+        long mb = (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
+        if (AntimatterPlatformUtils.isFabric()){
+            list.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", new TextComponent(mb + " " + intToSuperScript(stack.getFluidAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
+        } else {
+            list.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
+        }
+        list.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
+        String liquid = FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
+        list.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
+        if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
+            list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
+        list.add(component);
+    }
+
     /*
     private static IRecipeSlotTooltipCallback itemCallback(Recipe recipe, boolean input) {
         return (a,b) ->
@@ -272,13 +303,13 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         if (recipe.hasChances()) {
             List<IRecipeSlotView> views = recipeSlotsView.getSlotViews(RecipeIngredientRole.OUTPUT);
             List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
-            for (int i = 0; i < views.size(); i++) {
-                if (recipe.getChances()[i] < 1.0) {
+            for (int i = 0; i < recipe.getChances().length; i++) {
+                if (recipe.getChances()[i] < 10000) {
                     RenderSystem.disableBlend();
                     RenderSystem.disableDepthTest();
                     stack.pushPose();
                     stack.scale(0.5f, 0.5f, 1);
-                    String ch = (recipe.getChances()[i] * 100) + "%";
+                    String ch = (recipe.getChances()[i] / 100) + "%";
                     Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
 
                     stack.popPose();

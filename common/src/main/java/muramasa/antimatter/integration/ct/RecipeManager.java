@@ -8,6 +8,7 @@ import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.recipe.handler.IRecipeHandler;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.IRecipe;
@@ -18,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.fluids.FluidStack;
 import org.openzen.zencode.java.ZenCodeType;
 
 import java.util.Arrays;
@@ -51,8 +51,8 @@ public class RecipeManager implements IRecipeManager<IRecipe>, IRecipeHandler<IR
         ResourceLocation resourceLocation = new ResourceLocation(Ref.ID, name);
         List<Ingredient> input = in == null ? Collections.emptyList() : Arrays.stream(in).map(IIngredient::asVanillaIngredient).toList();
         ItemStack[] itemOut = out == null ? IRecipeMap.EMPTY_ITEM : Arrays.stream(out).map(IItemStack::getInternal).toArray(ItemStack[]::new);
-        List<FluidIngredient> fluidIn = fIn == null ? Collections.emptyList() : Arrays.stream(fIn).map(t -> FluidIngredient.of(t.getInternal())).toList();
-        FluidStack[] fluidOut = fOut == null ? IRecipeMap.EMPTY_FLUID : Arrays.stream(fOut).map(IFluidStack::getInternal).toArray(FluidStack[]::new);
+        List<FluidIngredient> fluidIn = fIn == null ? Collections.emptyList() : Arrays.stream(fIn).map(t -> FluidIngredient.of(CrafttweakerUtils.fromIFluidStack(t))).toList();
+        FluidHolder[] fluidOut = fOut == null ? IRecipeMap.EMPTY_FLUID : Arrays.stream(fOut).map(CrafttweakerUtils::fromIFluidStack).toArray(FluidHolder[]::new);
         Recipe recipe = new Recipe(input, itemOut, fluidIn, fluidOut, duration, eu, special, amps);
         recipe.setIds(resourceLocation, map);
         CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));

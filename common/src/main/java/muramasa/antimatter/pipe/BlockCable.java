@@ -112,9 +112,9 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
-        tooltip.add(new TranslatableComponent("generic.amp").append(": ").append(new TextComponent("" + this.type.getAmps(this.size)).withStyle(ChatFormatting.GREEN)));
-        tooltip.add(new TranslatableComponent("generic.voltage").append(": ").append(new TextComponent("" + this.type.getTier().getVoltage()).withStyle(ChatFormatting.BLUE)));
-        tooltip.add(new TranslatableComponent("generic.loss").append(": ").append(new TextComponent("" + this.type.getLoss()).withStyle(ChatFormatting.BLUE)));
+        tooltip.add(new TranslatableComponent("generic.amp").append(": ").append(new TextComponent(String.valueOf(this.type.getAmps(this.size))).withStyle(ChatFormatting.GREEN)));
+        tooltip.add(new TranslatableComponent("generic.voltage").append(": ").append(new TextComponent(String.valueOf(this.type.getTier().getVoltage())).withStyle(ChatFormatting.BLUE)));
+        tooltip.add(new TranslatableComponent("generic.loss").append(": ").append(new TextComponent(String.valueOf(this.type.getLoss())).withStyle(ChatFormatting.BLUE)));
 
         if (!Screen.hasShiftDown()) {
             tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));

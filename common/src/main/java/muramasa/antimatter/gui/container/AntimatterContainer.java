@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.slot.AbstractSlot;
 import muramasa.antimatter.gui.slot.IClickableSlot;
 import muramasa.antimatter.gui.slot.SlotFake;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -21,8 +22,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import tesseract.api.item.ExtendedItemContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,9 +162,8 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
                         stack.setCount(0);
                         itemstack.setCount(j);
                         slot.setChanged();
-                        if (slot instanceof SlotItemHandler) {
-                            SlotItemHandler handler = (SlotItemHandler) slot;
-                            IItemHandler handle = handler.getItemHandler();
+                        if (slot instanceof AbstractSlot<?> abstractSlot) {
+                            ExtendedItemContainer handle = abstractSlot.getContainer();
                             if (handle instanceof TrackedItemHandler<?>) {
                                 ((TrackedItemHandler<?>) handle).onContentsChanged(slot.index);
                             }

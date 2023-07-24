@@ -70,6 +70,11 @@ public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> e
     }
 
     @Override
+    protected boolean allowExplosionsInRain() {
+        return false;
+    }
+
+    @Override
     public void onGuiEvent(IGuiEvent event, Player playerEntity) {
         if (event.getFactory() == GuiEvents.EXTRA_BUTTON) {
             final int[] data = ((GuiEvents.GuiEvent)event).data;

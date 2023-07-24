@@ -2,9 +2,12 @@ package muramasa.antimatter.client.tesr;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.RenderHelper;
@@ -27,8 +30,6 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.FluidPlatformUtils;
 
 import javax.annotation.Nonnull;
@@ -103,27 +104,27 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
                         Antimatter.LOGGER.warn("Caught exception building model" + ex);
                         continue;
                     }
-                    FluidStack fluid = tile.fluidHandler.map(fh -> {
+                    FluidHolder fluid = tile.fluidHandler.map(fh -> {
                         if (in) {
-                            if (fh.getInputTanks() == null) return FluidStack.EMPTY;
+                            if (fh.getInputTanks() == null) return FluidHooks.emptyFluid();
                             FluidTank tank = fh.getInputTanks().getTank(off);
-                            return tank == null ? FluidStack.EMPTY : tank.getFluid();
+                            return tank == null ? FluidHooks.emptyFluid() : tank.getStoredFluid();
                         }
-                        if (fh.getOutputTanks() == null) return FluidStack.EMPTY;
+                        if (fh.getOutputTanks() == null) return FluidHooks.emptyFluid();
                         FluidTank tank = fh.getOutputTanks().getTank(off);
-                        return tank == null ? FluidStack.EMPTY : tank.getFluid();
-                    }).orElse(FluidStack.EMPTY);
+                        return tank == null ? FluidHooks.emptyFluid() : tank.getStoredFluid();
+                    }).orElse(FluidHooks.emptyFluid());
                     BakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid(), tile.getLevel(), tile.getBlockPos());
 
                     float fill = tile.fluidHandler.map(fh -> {
                         if (in) {
                             if (fh.getInputTanks() == null) return 0f;
                             FluidTank tank = fh.getInputTanks().getTank(off);
-                            return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
+                            return tank == null ? 0f : (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
                         }
                         if (fh.getOutputTanks() == null) return 0f;
                         FluidTank tank = fh.getOutputTanks().getTank(off);
-                        return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
+                        return tank == null ? 0f : (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
                     }).orElse(0f);
 
                     ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f, dir));

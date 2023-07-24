@@ -22,12 +22,12 @@ public class AntimatterFluidTagProvider extends AntimatterTagProvider<Fluid> imp
     protected void processTags(String domain) {
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
             tag(getForgelikeFluidTag(f.getId()))
-                    .add(f.getFluid(), f.getFlowingFluid())
+                    .add(f.getFluid())
                     .replace(replace);
             if (f instanceof AntimatterMaterialFluid) {
                 Material m = ((AntimatterMaterialFluid) f).getMaterial();
                 tag(getForgelikeFluidTag(m.getId()))
-                        .add(f.getFluid(), f.getFlowingFluid())
+                        .add(f.getFluid())
                         .replace(replace);
             }
         });

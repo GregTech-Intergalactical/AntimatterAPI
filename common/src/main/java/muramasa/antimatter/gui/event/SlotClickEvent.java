@@ -1,26 +1,23 @@
 package muramasa.antimatter.gui.event;
 
+import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import tesseract.TesseractCapUtils;
+import tesseract.FluidPlatformUtils;
 
-import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class SlotClickEvent implements IGuiEvent {
 
@@ -55,39 +52,40 @@ public class SlotClickEvent implements IGuiEvent {
         return false;
     }
 
-    private IFluidHandler tryGetCap(IGuiHandler handler) {
+    private PlatformFluidHandler tryGetCap(IGuiHandler handler) {
         if (handler instanceof TileEntityMachine) {
             TileEntityMachine<?> machine = (TileEntityMachine<?>) handler;
             return machine.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(null);
         }
         if (handler instanceof BlockEntity be) {
-            return TesseractCapUtils.getFluidHandler(be, null).orElse(null);
+            return FluidHooks.safeGetBlockFluidManager(be, null).orElse(null);
         }
         return null;
     }
 
     @Override
     public void handle(Player player, GuiInstance instance) {
-        IFluidHandler sink = tryGetCap(instance.handler);
+        PlatformFluidHandler sink = tryGetCap(instance.handler);
         if (sink == null) return;
         ItemStack stack = player.containerMenu.getCarried();
+        if (stack.isEmpty()) return;
         if (type == SlotType.FL_IN || type == SlotType.FL_OUT) {
-            int max;
-            if (stack.getItem() instanceof ItemFluidCell) {
-                max = ((ItemFluidCell) stack.getItem()).getCapacity();
+            Consumer<ItemStack> consumer = s -> {
+                if (player.isCreative()) return;
+                boolean single = stack.getCount() == 1;
+                stack.shrink(1);
+                if (single){
+                    player.containerMenu.setCarried(s);
+                } else {
+                    if (!player.addItem(s)){
+                        player.drop(s, true);
+                    }
+                }
+            };
+            if (type == SlotType.FL_IN){
+                FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, stack), sink, consumer);
             } else {
-                max = 1000;
-            }
-            Optional<IFluidHandlerItem> iHandler = TesseractCapUtils.getFluidHandlerItem(stack);
-            boolean hasFluid = iHandler.map(t -> t.getTanks() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
-            FluidActionResult res;
-            if (hasFluid && type == SlotType.FL_IN) {
-                res = FluidUtil.tryEmptyContainerAndStow(stack, sink, new InvWrapper(player.getInventory()), max, player, true);
-            } else {
-                res = FluidUtil.tryFillContainerAndStow(stack, sink, new InvWrapper(player.getInventory()), max, player, true);
-            }
-            if (res.isSuccess() && !player.isCreative()) {
-                player.containerMenu.setCarried(res.getResult());
+                FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), sink, consumer);
             }
         }
     }

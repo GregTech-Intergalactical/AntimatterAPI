@@ -27,7 +27,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
     protected IntToLongFunction capFunc;
 
     public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps) {
-        this(type, pos, state, amps, (v) -> (512L + v * 2L));
+        this(type, pos, state, amps, (v) -> (512L + v * 8L));
     }
 
     public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps, IntToLongFunction capFunc) {

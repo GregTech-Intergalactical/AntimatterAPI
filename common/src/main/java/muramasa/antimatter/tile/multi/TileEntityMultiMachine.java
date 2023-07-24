@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.multi;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
@@ -17,9 +18,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.heat.IHeatHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     @Override
     public void afterStructureFormed() {
-        this.result.components.forEach((k, v) -> v.forEach(c -> {
+        this.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureFormed(this);
         }));
         //Handlers.
@@ -72,7 +73,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.fluidHandler.ifPresent(handle -> {
             ((MultiMachineFluidHandler<T>) handle).onStructureBuild();
         });
-        var heats = this.result.components.get("components");
+        var heats = this.components.get("components");
         if (heats != null) {
             this.heatHandlers = heats.stream().map(IComponentHandler::getHeatHandler).filter(Optional::isPresent).map(Optional::get).toList();
         } else {
@@ -82,7 +83,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     @Override
     public void onStructureInvalidated() {
-        this.result.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this)));
+        this.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this)));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>) handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>) handle).invalidate());
         this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>) handle).invalidate());

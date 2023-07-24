@@ -1,11 +1,8 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockProxy;
+import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
@@ -19,9 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,29 +25,39 @@ import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock> {
 
-    private BlockState state = Blocks.AIR.defaultBlockState();
-
-    public final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
+    private TileEntityBasicMultiMachine<?> controller = null;
     public Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
-    public List<BlockPos> controllerPos;
+    public BlockPos controllerPos;
 
-    public TileEntityFakeBlock(BlockProxy proxy, BlockPos pos, BlockState state) {
-        super(proxy.TYPE, pos, state);
+    public TileEntityFakeBlock(BlockPos pos, BlockState state) {
+        super(BlockFakeTile.TYPE, pos, state);
         coverTexturer = new Object2ObjectOpenHashMap<>();
     }
 
-    public void addController(TileEntityBasicMultiMachine<?> controller) {
+    public void setController(TileEntityBasicMultiMachine<?> controller) {
+        this.controller = controller;
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        controllers.add(controller);
+    }
+
+    public TileEntityBasicMultiMachine<?> getController() {
+        if (controller != null) return controller;
+        if (controllerPos != null){
+            if (!getLevel().isLoaded(controllerPos)) return null;
+            if (getLevel().getBlockEntity(controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+                setController(basicMultiMachine);
+            }
+            controllerPos = null;
+            return controller;
+        }
+        return null;
     }
 
     @Override
@@ -77,7 +81,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     public void removeController(TileEntityBasicMultiMachine<?> controller) {
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        controllers.remove(controller);
+        this.controller = null;
     }
 
     public TileEntityFakeBlock setCovers(Map<Direction, CoverFactory> covers) {
@@ -116,7 +120,6 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        this.state = NbtUtils.readBlockState(nbt.getCompound("B"));
         if (nbt.contains("F")) {
             this.facing = Direction.from3DDataValue(nbt.getInt("F"));
         } else {
@@ -133,9 +136,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
                 covers.put(dir, cover);
         }
         if (nbt.contains("P")) {
-            ListTag list = nbt.getList("P", 4);
-            this.controllerPos = new ObjectArrayList<>(list.size());
-            list.forEach(n -> controllerPos.add(BlockPos.of(((LongTag) n).getAsLong())));
+            this.controllerPos = BlockPos.of(nbt.getLong("P"));
         }
     }
 
@@ -153,29 +154,19 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     }
 
     private void writeTag(CompoundTag compound, boolean send) {
-        compound.put("B", NbtUtils.writeBlockState(state));
         if (facing != null) {
             compound.putInt("F", facing.ordinal());
         }
         CompoundTag n = new CompoundTag();
         this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v));
         compound.put("C", n);
-        if (!send) {
-            ListTag list = new ListTag();
-            for (TileEntityBasicMultiMachine<?> controller : controllers) {
-                list.add(LongTag.valueOf(controller.getBlockPos().asLong()));
-            }
-            compound.put("P", list);
+        if (!send && controller != null) {
+            compound.putLong("P", controller.getBlockPos().asLong());
         }
     }
 
     public BlockState getState() {
-        return state;
-    }
-
-    public TileEntityFakeBlock setState(BlockState state) {
-        this.state = state;
-        return this;
+        return Blocks.AIR.defaultBlockState();
     }
 
     @Override
@@ -188,9 +179,9 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
         covers.forEach((k, v) -> {
             list.add("Cover on " + k.getName() + ": " + v.getId());
         });
-        if (controllers.size() > 0) {
-            list.add("Controller positions: "
-                    + controllers.stream().map(t -> t.getBlockPos().toString()).reduce((k, v) -> k + ", " + v).orElse(""));
+        if (controller != null) {
+            list.add("Controller position: "
+                    + controller.getBlockPos());
         }
         return list;
     }
