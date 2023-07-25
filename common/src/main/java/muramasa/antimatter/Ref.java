@@ -37,9 +37,9 @@ public class Ref {
     /**
      * Sound Events
      **/
-    public static final SoundEvent DRILL = AntimatterAPI.register(SoundEvent.class, ID, "drill",  new SoundEvent(new ResourceLocation(ID, "drill")));
-    public static final SoundEvent WRENCH = AntimatterAPI.register(SoundEvent.class, ID, "wrench",  new SoundEvent(new ResourceLocation(ID, "wrench")));
-    public static final SoundEvent INTERRUPT = AntimatterAPI.register(SoundEvent.class, ID, "interrupt",  new SoundEvent(new ResourceLocation(ID, "interrupt")));
+    public static final SoundEvent DRILL = AntimatterAPI.register(SoundEvent.class, "drill", ID,  new SoundEvent(new ResourceLocation(ID, "drill")));
+    public static final SoundEvent WRENCH = AntimatterAPI.register(SoundEvent.class, "wrench", ID,  new SoundEvent(new ResourceLocation(ID, "wrench")));
+    public static final SoundEvent INTERRUPT = AntimatterAPI.register(SoundEvent.class, "interrupt", ID,  new SoundEvent(new ResourceLocation(ID, "interrupt")));
 
     /**
      * Global Data
