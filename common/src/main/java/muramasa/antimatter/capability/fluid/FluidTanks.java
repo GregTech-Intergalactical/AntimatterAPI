@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -224,7 +225,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
                 CompoundTag cnbt = (CompoundTag) tank;
                 if (i > tanks.length - 1)
                     break;
-                tanks[i++].setFluid(0, FluidHooks.fluidFromCompound(cnbt));
+                tanks[i++].setFluid(0, AntimatterPlatformUtils.fromTag(cnbt));
             }
         }
     }
