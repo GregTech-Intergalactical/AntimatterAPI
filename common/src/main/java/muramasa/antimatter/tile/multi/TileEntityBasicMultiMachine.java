@@ -293,7 +293,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         BlockState old = this.getBlockState();
         super.setBlockState(p_155251_);
         BlockState newState = this.getBlockState();
-        if (!old.equals(newState)) {
+        if (!getFacing(old).equals(getFacing(newState))) {
             if (checkingStructure > 0) return;
             invalidateStructure();
             oldState = old;
