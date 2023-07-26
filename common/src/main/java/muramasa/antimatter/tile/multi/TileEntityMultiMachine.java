@@ -14,9 +14,12 @@ import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
 import tesseract.api.heat.IHeatHandler;
 
@@ -250,5 +253,16 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
             return 32;
         }
         return 8;
+    }
+
+    public void explodeMultiblock() {
+        this.components.forEach((s, l) -> {
+            l.forEach(c -> {
+                if (c.getTile() instanceof TileEntityMachine<?> machine){
+                    Utils.createExplosion(this.level, machine.getBlockPos(), 6.0F, Explosion.BlockInteraction.DESTROY);
+                }
+            });
+        });
+        Utils.createExplosion(this.level, this.getBlockPos(), 6.0F, Explosion.BlockInteraction.DESTROY);
     }
 }

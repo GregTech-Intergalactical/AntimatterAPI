@@ -25,6 +25,7 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.*;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -391,6 +392,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public void onStructureInvalidated() {
         // NOOP
+    }
+
+    public Texture getTextureForHatches(Direction dir, BlockPos hatchPos){
+        Texture[] tex = this.getMachineType().getBaseTexture(this.getMachineTier());
+        if (tex.length == 1) return tex[0];
+        return tex[dir.get3DDataValue()];
     }
 
     @Override

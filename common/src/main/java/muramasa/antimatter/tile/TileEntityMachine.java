@@ -547,11 +547,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (this.getMachineType() instanceof BasicMultiMachine<?>) return null;
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
-            return a -> {
-                Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
-                if (tex.length == 1) return tex[0];
-                return tex[a.get3DDataValue()];
-            };
+            return dir -> mTile.getTextureForHatches(dir, worldPosition);
         }
         return null;
     }
