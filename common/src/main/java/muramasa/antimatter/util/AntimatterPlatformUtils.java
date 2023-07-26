@@ -28,6 +28,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,6 +42,7 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -68,6 +70,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static String getActiveNamespace(){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Map<Item, Integer> getAllBurnables(){
         throw new AssertionError();
     }
 

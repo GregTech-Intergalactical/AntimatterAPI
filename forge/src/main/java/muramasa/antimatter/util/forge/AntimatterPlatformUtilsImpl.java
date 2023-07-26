@@ -1,5 +1,7 @@
 package muramasa.antimatter.util.forge;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -16,6 +18,7 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
@@ -31,6 +34,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -62,10 +66,13 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AntimatterPlatformUtilsImpl {
+
+    private static ImmutableMap<Item, Integer> FUEL_LIST = null;
 
     public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         level.markAndNotifyBlock(arg, levelchunk, blockstate, arg2, j, k);
@@ -77,6 +84,21 @@ public class AntimatterPlatformUtilsImpl {
 
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         return ForgeHooks.getBurnTime(stack, recipeType);
+    }
+
+    public static Map<Item, Integer> getAllBurnables(){
+        if (FUEL_LIST == null){
+            ForgeHooks.updateBurns();
+            ImmutableMap.Builder<Item, Integer> builder = ImmutableMap.builder();
+            AntimatterPlatformUtils.getAllItems().forEach(i -> {
+                int burnTime = getBurnTime(i.getDefaultInstance(), null);
+                if (burnTime > 0){
+                    builder.put(i, burnTime);
+                }
+            });
+            FUEL_LIST = builder.build();
+        }
+        return FUEL_LIST;
     }
 
     public static boolean isServer(){
