@@ -275,7 +275,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
         if (getType().has(BASIC) && !getType().has(RF)) {
-            if (getTier().getVoltage() > 0) {
+            if (getTier().getVoltage() > 0 && getType().has(MachineFlag.ENERGY)) {
                 tooltip.add(new TranslatableComponent("machine.voltage.in").append(": ").append(new TextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
                 tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
             }

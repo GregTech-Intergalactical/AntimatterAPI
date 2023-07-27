@@ -9,21 +9,40 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityTank;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+
+import java.util.function.Function;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.FLUID;
 import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class TankMachine extends Machine<TankMachine> {
+    final Function<Tier, Integer> capacityPerTier;
 
     public TankMachine(String domain, String name) {
+        this(domain, name, t -> 8000 * (1 + t.getIntegerId()));
+    }
+
+    public TankMachine(String domain, String name, Function<Tier, Integer> capacityPerTier) {
         super(domain, name);
+        this.capacityPerTier = capacityPerTier;
         setTile(TileEntityTank::new);
+        setTooltipInfo((machine, stack, world, tooltip, flag) -> {
+            tooltip.add(new TranslatableComponent("machine.tank.capacity", capacityPerTier.apply(machine.getTier())));
+        });
         addFlags(ITEM, FLUID, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
         frontCovers();
         allowFrontIO();
+    }
+
+    public Function<Tier, Integer> getCapacityPerTier() {
+        return capacityPerTier;
     }
 
     @Override

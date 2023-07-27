@@ -20,7 +20,8 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
 
     public TileEntityTank(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        fluidHandler.set(() -> new MachineFluidHandler<T>((T) this) {
+        int capacity = type instanceof TankMachine tankMachine ? tankMachine.getCapacityPerTier().apply(tier) : 8000 * (1 + tier.getIntegerId());
+        fluidHandler.set(() -> new MachineFluidHandler<T>((T) this, capacity, 8000) {
             @Nullable
             @Override
             public FluidTanks getOutputTanks() {
