@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
@@ -36,7 +37,7 @@ public class CoverOutput extends CoverInput {
     public void onUpdate() {
         super.onUpdate();
         if (handler.getTile().getLevel().isClientSide) return;
-        if (handler.getTile().getLevel().getGameTime() % 100 == 0) {
+        if (handler.getTile().getLevel().getGameTime() % 50 == 0) {
             if (shouldOutputFluids())
                 processFluidOutput();
             if (shouldOutputItems())
@@ -103,7 +104,7 @@ public class CoverOutput extends CoverInput {
             return;
         TesseractCapUtils.getFluidHandler(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
+                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, Integer.MAX_VALUE * TesseractGraphWrappers.dropletMultiplier, true));
                 });
     }
 
@@ -124,9 +125,9 @@ public class CoverOutput extends CoverInput {
     @Override
     public void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
         // TODO: Tesseract stuff?
-        if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
+        if ((event == MachineEvent.ITEMS_OUTPUTTED || event == ContentEvent.ITEM_OUTPUT_CHANGED) && ejectItems) {
             processItemOutput();
-        } else if (event == MachineEvent.FLUIDS_OUTPUTTED && ejectFluids) {
+        } else if ((event == MachineEvent.FLUIDS_OUTPUTTED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && ejectFluids) {
             processFluidOutput();
         }
     }
