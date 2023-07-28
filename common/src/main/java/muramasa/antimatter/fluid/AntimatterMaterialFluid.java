@@ -57,9 +57,14 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
                     .sounds("bucket_fill", SoundEvents.BUCKET_FILL).sounds("bucket_empty", SoundEvents.BUCKET_EMPTY);
                     //.translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
         } else {
-            return getDefaultAttributesBuilder(material.has(MaterialTags.MOLTEN)).tintColor((155 << 24) | (material.getRGB() & 0x00ffffff))
+            FluidProperties.Builder b = getDefaultAttributesBuilder(material.has(MaterialTags.MOLTEN));
+            if (material.has(MaterialTags.MOLTEN)){
+                b = b.density(3000).viscosity(6000).lightLevel(15);
+            }
+            int alpha = material.has(MaterialTags.MOLTEN) ? 0xFF000000 : (155 << 24);
+            return b.tintColor(alpha | (material.getRGB() & 0x00FFFFFF))
                     //.translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(1000).density(1000).temperature(MaterialTags.LIQUID_TEMPERATURE.getInt(material));
+                    .temperature(MaterialTags.LIQUID_TEMPERATURE.getInt(material));
         }
     }
 
