@@ -61,6 +61,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -353,5 +354,14 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide() && !getType().canClientTick()) return null;
         return TileEntityTickable::commonTick;
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
+        if (!type.isAmbientTicking()) return;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof TileEntityMachine<?> machine){
+            machine.animateTick(state, level, pos, random);
+        }
     }
 }

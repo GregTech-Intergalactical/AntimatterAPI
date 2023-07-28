@@ -124,6 +124,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowVerticalFacing = false;
     protected boolean frontIO = false;
     protected boolean allowClientTicking = false;
+    protected boolean ambientTicking = false;
 
     /**
      * Rendering
@@ -449,8 +450,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowClientTicking;
     }
 
+    public boolean isAmbientTicking() {
+        return ambientTicking;
+    }
+
     public T setClientTick() {
         this.allowClientTicking = true;
+        return (T) this;
+    }
+
+    public T setAmbientTicking(){
+        this.ambientTicking = true;
         return (T) this;
     }
 

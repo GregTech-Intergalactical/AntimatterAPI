@@ -76,6 +76,7 @@ import tesseract.api.rf.IRFNode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -605,6 +606,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public final boolean allowsFrontIO() {
         return getMachineType().allowsFrontIO();
+    }
+
+    public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
+
     }
 
     @Override
