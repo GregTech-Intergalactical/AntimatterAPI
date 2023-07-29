@@ -3,6 +3,7 @@ package muramasa.antimatter.data;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.ore.VanillaStoneType;
 import muramasa.antimatter.texture.Texture;
@@ -28,6 +29,7 @@ public class AntimatterStoneTypes {
     public static StoneType BLACKSTONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "blackstone", AntimatterMaterials.Blackstone, new Texture("minecraft", "block/blackstone"), SoundType.STONE, false).setState(Blocks.BLACKSTONE));
     public static StoneType NETHERRACK = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "netherrack", AntimatterMaterials.Netherrack, new Texture("minecraft", "block/netherrack"), SoundType.NETHERRACK, false).setState(Blocks.NETHERRACK).setHardnessAndResistance(0.4F));
     public static StoneType ENDSTONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "endstone", AntimatterMaterials.Endstone, new Texture("minecraft", "block/end_stone"), SoundType.STONE, false).setState(Blocks.END_STONE).setHardnessAndResistance(3.0F, 9.0F));
+    public static StoneType BEDROCK = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "bedrock", Material.NULL, new Texture("minecraft", "block/bedrock"), SoundType.STONE, false)).setState(Blocks.BEDROCK).setHardnessAndResistance(-1.0f, 3600000.0F);
 
     public static void init(){}
 }

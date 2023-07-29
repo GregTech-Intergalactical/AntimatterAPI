@@ -85,7 +85,7 @@ public class WorldGenHelper {
   public static boolean setOre(LevelAccessor world, BlockPos pos, BlockState existing, Material material,
       MaterialType<?> type) {
     StoneType stone = STONE_MAP.get(existing);
-    if (stone == null || !stone.generateOre)
+    if (stone == null || !stone.doesGenerateOre() || stone == AntimatterStoneTypes.BEDROCK)
       return false;
     BlockState oreState = type == AntimatterMaterialTypes.ORE ? AntimatterMaterialTypes.ORE.get().get(material, stone).asState()
         : AntimatterMaterialTypes.ORE_SMALL.get().get(material, stone).asState();
@@ -124,7 +124,7 @@ public class WorldGenHelper {
   public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill, int chance) {
       if (world.getRandom().nextInt(chance) != 0) return false;
       StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
-    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null && stone.generateOre ? stone : AntimatterStoneTypes.STONE).asState();
+    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null && stone != AntimatterStoneTypes.BEDROCK && stone.doesGenerateOre() ? stone : AntimatterStoneTypes.STONE).asState();
 
     final BlockState existingBelow = world.getBlockState(pos.below());
     if (existingBelow.isAir() || !existingBelow.getMaterial().isSolid())

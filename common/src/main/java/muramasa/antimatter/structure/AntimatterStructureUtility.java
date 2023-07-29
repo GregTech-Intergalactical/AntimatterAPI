@@ -2,7 +2,9 @@ package muramasa.antimatter.structure;
 
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.HatchMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +14,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class AntimatterStructureUtility {
     public static <T extends TileEntityBasicMultiMachine<T>> IStructureElement<T> ofHatch(HatchMachine machine){
         return ofHatch(machine, (t, world, pos, machine1, handler) -> {
+            t.addComponent(machine1.getComponentId(), handler);
+            return true;
+        });
+    }
+
+    public static <T extends TileEntityBasicMultiMachine<T>> IStructureElement<T> ofHatchMinTier(HatchMachine machine, Tier minTier){
+        return ofHatch(machine, (t, world, pos, machine1, handler) -> {
+            if (!(handler.getTile() instanceof TileEntityMachine<?> machineTile)) return false;
+            if (machineTile.getMachineTier().getVoltage() < minTier.getVoltage()){
+                return false;
+            }
             t.addComponent(machine1.getComponentId(), handler);
             return true;
         });
