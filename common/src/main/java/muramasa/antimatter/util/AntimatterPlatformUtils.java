@@ -2,6 +2,8 @@ package muramasa.antimatter.util;
 
 import com.mojang.math.Matrix4f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
@@ -12,6 +14,8 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -24,6 +28,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,6 +42,7 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -64,6 +70,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static String getActiveNamespace(){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Map<Item, Integer> getAllBurnables(){
         throw new AssertionError();
     }
 
@@ -152,6 +163,29 @@ public class AntimatterPlatformUtils {
 
     public static Fluid getFluidFromID(String domain, String id){
         return getFluidFromID(new ResourceLocation(domain, id));
+    }
+
+    public static FluidHolder fromTag(CompoundTag tag){
+        if (AntimatterPlatformUtils.isForge()){
+            if (tag == null) {
+                return FluidHooks.emptyFluid();
+            }
+            if (!tag.contains("FluidName", Tag.TAG_STRING)) {
+                return FluidHooks.fluidFromCompound(tag);
+            }
+
+            ResourceLocation fluidName = new ResourceLocation(tag.getString("FluidName"));
+            Fluid fluid = getFluidFromID(fluidName);
+            if (fluid == null) {
+                return FluidHooks.emptyFluid();
+            }
+            FluidHolder stack = FluidHooks.newFluidHolder(fluid, tag.getInt("Amount"), null);
+            if (tag.contains("Tag", Tag.TAG_COMPOUND)) {
+                stack.setCompound(tag.getCompound("Tag"));
+            }
+            return stack;
+        }
+        return FluidHooks.fluidFromCompound(tag);
     }
 
     @ExpectPlatform

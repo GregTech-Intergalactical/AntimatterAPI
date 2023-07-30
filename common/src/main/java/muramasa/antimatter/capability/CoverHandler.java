@@ -79,9 +79,9 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
             Utils.markTileForNBTSync(tile);
         } else {
             Utils.markTileForRenderUpdate(tile);
-            tile.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.0f,
-                    1.0f);
         }
+        tile.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.0f,
+                1.0f);
     }
 
     protected void buildLookup(CoverFactory oldCover, CoverFactory newCover, Direction dir) {
@@ -172,9 +172,9 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         if (!onlyRemove && !player.isCreative())
             player.drop(oldCover.getDroppedStack(), false);
         if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH) {
-            player.playNotifySound(SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
+            player.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
         } else {
-            player.playNotifySound(Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
+            player.getLevel().playSound(null, tile.getBlockPos(), Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
         return true;
     }

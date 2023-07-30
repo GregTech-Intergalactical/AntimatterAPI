@@ -96,7 +96,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         if (!AntimatterConfig.CLIENT.SHOW_ALL_ORES){
             AntimatterMaterialTypes.ORE.all().forEach(m -> {
                 AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.generateOre){
+                    if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.doesGenerateOre()){
                         Block ore = AntimatterMaterialTypes.ORE.get().get(m, s).asBlock();
                         if (ore instanceof BlockOre){
                             rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
@@ -114,7 +114,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         if (!AntimatterConfig.CLIENT.SHOW_ROCKS){
             AntimatterMaterialTypes.ROCK.all().forEach(m -> {
                 AntimatterAPI.all(StoneType.class, s -> {
-                    if (s.generateOre) {
+                    if (s.doesGenerateOre()) {
                         rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, AntimatterMaterialTypes.ROCK.get().get(m, s).asStack()));
                     }
                 });

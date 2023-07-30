@@ -61,6 +61,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -275,7 +276,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
         if (getType().has(BASIC) && !getType().has(RF)) {
-            if (getTier().getVoltage() > 0) {
+            if (getTier().getVoltage() > 0 && getType().has(MachineFlag.ENERGY)) {
                 tooltip.add(new TranslatableComponent("machine.voltage.in").append(": ").append(new TextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
                 tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
             }
@@ -353,5 +354,14 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide() && !getType().canClientTick()) return null;
         return TileEntityTickable::commonTick;
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
+        if (!type.isAmbientTicking()) return;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof TileEntityMachine<?> machine){
+            machine.animateTick(state, level, pos, random);
+        }
     }
 }

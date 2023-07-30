@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 public class ExampleItem extends ItemBasic<ExampleItem> implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     public ExampleItem(String domain, String id, Properties properties) {
-        super(domain, id, properties);
+        super(domain, id, "", properties);
     }
 
     @Override

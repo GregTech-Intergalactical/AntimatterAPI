@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -162,7 +163,7 @@ public class StructureCache {
 
     private static void refreshController(Level world, BlockPos controller, BlockPos at) {
         BlockEntity tile = world.getBlockEntity(controller);
-        if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(at);
+        if (tile instanceof TileEntityMachine<?> machine) machine.onBlockUpdate(at);
     }
 
     /**

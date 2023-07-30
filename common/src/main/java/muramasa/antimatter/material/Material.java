@@ -15,7 +15,9 @@ import net.minecraft.world.level.material.Fluid;
 import org.apache.commons.lang3.tuple.Pair;
 import tesseract.TesseractGraphWrappers;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Ref.U;
@@ -24,6 +26,7 @@ import static muramasa.antimatter.material.TextureSet.NONE;
 public class Material implements ISharedAntimatterObject {
 
     public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE));
+    final Set<MaterialType<?>> types = new HashSet<>();
     /**
      * Basic Members
      **/
@@ -149,6 +152,10 @@ public class Material implements ISharedAntimatterObject {
      **/
     public Component getDisplayName() {
         return displayName == null ? displayName = new TranslatableComponent("material." + getId()) : displayName;
+    }
+
+    public Set<MaterialType<?>> getTypes() {
+        return types;
     }
 
     public int getRGB() {

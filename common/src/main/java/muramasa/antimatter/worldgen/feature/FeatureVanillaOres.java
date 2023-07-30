@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
@@ -272,7 +273,7 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
                                     MaterialType<?> type) {
 
         StoneType stone = WorldGenHelper.STONE_MAP.get(existing);
-        if (stone == null || !stone.generateOre)
+        if (stone == null || !stone.doesGenerateOre() || stone == AntimatterStoneTypes.BEDROCK)
             return null;
         BlockState oreState = type.get() instanceof MaterialTypeBlock.IOreGetter getter ? getter.get(material, stone).asState()
                 : type.get() instanceof MaterialTypeBlock.IBlockGetter getter ? getter.get(material).asState() : null;

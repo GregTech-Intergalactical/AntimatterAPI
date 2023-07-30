@@ -18,15 +18,20 @@ import java.util.Set;
 
 public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    protected String domain, id, tooltip = "";
+    protected String domain, id, tooltip = "", subDir = "";
     protected boolean enabled = true;
     protected Set<ItemTag> tags = new ObjectOpenHashSet<>();
 
-    public ItemBasic(String domain, String id, Properties properties) {
+    public ItemBasic(String domain, String id, String subDir, Properties properties) {
         super(properties);
         this.domain = domain;
         this.id = id;
+        this.subDir = subDir;
         AntimatterAPI.register(getClass(), this);
+    }
+
+    public ItemBasic(String domain, String id, Properties properties) {
+        this(domain, id, "", properties);
     }
 
     public ItemBasic(String domain, String id, Class clazz, Properties properties) {
@@ -37,7 +42,11 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
     }
 
     public ItemBasic(String domain, String id) {
-        this(domain, id, new Properties().tab(Ref.TAB_ITEMS));
+        this(domain, id, "", new Properties().tab(Ref.TAB_ITEMS));
+    }
+
+    public ItemBasic(String domain, String id, String subDir) {
+        this(domain, id, subDir, new Properties().tab(Ref.TAB_ITEMS));
     }
 
     public T tip(String tooltip) {
@@ -91,6 +100,6 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(domain, "item/basic/" + getId())};
+        return new Texture[]{new Texture(domain, "item/basic/" + subDir + getId())};
     }
 }

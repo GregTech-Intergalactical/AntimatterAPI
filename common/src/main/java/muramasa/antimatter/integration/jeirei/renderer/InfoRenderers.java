@@ -16,7 +16,7 @@ public class InfoRenderers {
         @Override
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
-            String power = "Duration: " + recipe.getDuration() + " ticks";
+            String power = "Duration: " + recipe.getDuration() + " ticks (" + (recipe.getDuration() / 20.0f) + " s)";
             String euT = "EU/t: " + recipe.getPower();
             String total = "Total: " + recipe.getPower() * recipe.getDuration() + " EU";
             String temperature = "Temperature: " + recipe.getSpecialValue() + " K";
@@ -38,7 +38,7 @@ public class InfoRenderers {
     public static final IRecipeInfoRenderer BASIC_RENDERER = new IRecipeInfoRenderer() {
         @Override
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
-            renderString(stack, "Duration: " + recipe.getDuration() + " ticks", fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
+            renderString(stack, "Duration: " + recipe.getDuration() + " ticks (" + (recipe.getDuration() / 20.0f) + " s)", fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
         }
 
         @Override
@@ -53,7 +53,7 @@ public class InfoRenderers {
     public static final IRecipeInfoRenderer DEFAULT_RENDERER = new IRecipeInfoRenderer() {
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
-            String power = "Duration: " + recipe.getDuration() + " ticks";
+            String power = "Duration: " + recipe.getDuration() + " ticks (" + (recipe.getDuration() / 20.0f) + " s)";
             String euT = "EU/t: " + recipe.getPower();
             String amps = "Amps: " + recipe.getAmps();
             String total = "Total: " + recipe.getPower() * recipe.getDuration() + " EU";
@@ -75,7 +75,7 @@ public class InfoRenderers {
     public static final IRecipeInfoRenderer RF_RENDERER = new IRecipeInfoRenderer() {
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
-            String power = "Duration: " + recipe.getDuration() + " ticks";
+            String power = "Duration: " + recipe.getDuration() + " ticks (" + (recipe.getDuration() / 20.0f) + " s)";
             String euT = "RF/t: " + recipe.getPower();
             String total = "Total: " + recipe.getPower() * recipe.getDuration() + " RF";
             renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
@@ -107,7 +107,7 @@ public class InfoRenderers {
     public static final IRecipeInfoRenderer STEAM_RENDERER = new IRecipeInfoRenderer() {
         @Override
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
-            String power = "Duration: " + recipe.getDuration() + " ticks";
+            String power = "Duration: " + recipe.getDuration() + " ticks (" + (recipe.getDuration() / 20.0f) + " s)";
             String euT = "Steam: ";
             String total = "Total steam: " + recipe.getDuration() * recipe.getPower() + " mb";
             renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);

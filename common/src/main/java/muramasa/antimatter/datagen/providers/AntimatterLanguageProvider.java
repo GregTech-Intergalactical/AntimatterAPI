@@ -294,6 +294,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("machine.voltage.in", "Voltage IN");
         add("machine.voltage.out", "Voltage OUT");
         add("machine.power.capacity", "Capacity");
+        add("machine.tank.capacity", "Stores %sMb of fluid");
         add("machine.structure.form", "Right click structure to form it after placing blocks");
         add("generic.amp", "Amperage");
         add("antimatter.tooltip.formula", "Hold Shift to show formula.");

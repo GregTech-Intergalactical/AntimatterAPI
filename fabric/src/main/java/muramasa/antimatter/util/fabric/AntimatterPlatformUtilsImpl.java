@@ -21,6 +21,7 @@ import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -49,6 +50,7 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -65,6 +67,10 @@ public class AntimatterPlatformUtilsImpl {
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         Integer burn = FuelRegistry.INSTANCE.get(stack.getItem());
         return burn == null ? 0 : burn;
+    }
+
+    public static Map<Item, Integer> getAllBurnables(){
+        return ((FuelRegistryImpl)FuelRegistry.INSTANCE).getFuelTimes();
     }
 
     public static boolean isProduction(){

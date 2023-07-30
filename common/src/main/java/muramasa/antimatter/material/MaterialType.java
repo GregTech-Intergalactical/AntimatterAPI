@@ -15,7 +15,6 @@ import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
@@ -151,6 +150,16 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         splitName = false;
         this.tagMap.put(this, tagFromString(Utils.getConventionalMaterialType(this)));
         return this;
+    }
+
+    @Override
+    public void add(Material... m) {
+        for (Material m2 : m) {
+            if (m2.enabled) {
+                all().add(m2);
+                m2.types.add(this);
+            }
+        }
     }
 
     @Override

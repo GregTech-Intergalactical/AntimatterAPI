@@ -247,7 +247,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
             list.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
         }
         list.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
-        String liquid = FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
+        String liquid = !FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
         list.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
             list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));

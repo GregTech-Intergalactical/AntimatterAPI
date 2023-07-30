@@ -138,7 +138,7 @@ public class RecipeMapDisplay implements Display {
             tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
         }
         tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
-        String liquid = FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
+        String liquid = !FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
         tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         tooltip.add(component.getAsText());
     }
