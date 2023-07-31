@@ -57,11 +57,11 @@ public class IOWidget extends Widget {
         if (this.isEnabled() && isInside(mouseX, mouseY)) {
             boolean clicked = false;
             if (hasItem && isInside(18, 0, 18, 18, mouseX, mouseY)){
-                gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.ITEM_EJECT, Screen.hasShiftDown() ? 1 : 0, id));
+                gui.sendPacket(gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.ITEM_EJECT, Screen.hasShiftDown() ? 1 : 0, id)));
                 clicked = true;
             }
             if (hasFluid && isInside(0, 0, 18, 18, mouseX, mouseY)){
-                gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.FLUID_EJECT, Screen.hasShiftDown() ? 1 : 0, id));
+                gui.sendPacket(gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.FLUID_EJECT, Screen.hasShiftDown() ? 1 : 0, id)));
                 clicked = true;
             }
             if (clicked){
