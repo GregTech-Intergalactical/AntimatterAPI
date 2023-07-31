@@ -1,13 +1,11 @@
 package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -28,14 +26,14 @@ public class ProgressWidget extends Widget {
     public ProgressWidget(GuiInstance instance, IGuiElement parent) {
         super(instance, parent);
         GuiData gui = instance.handler.getGui();
-        this.direction = gui.dir;
-        this.uv = new int4(gui.getProgressSize().x, 0, gui.getProgressSize().x, gui.getProgressSize().y);
-        this.barFill = gui.barFill;
-        setX(gui.getProgressPos().x + 6);
-        setY(gui.getProgressPos().y + 6);
-        setW(gui.getProgressSize().x);
-        setH(gui.getProgressSize().y);
-        texture = gui.getProgressTexture();
+        this.direction = gui.getMachineData().getDir();
+        this.uv = new int4(gui.getMachineData().getProgressSize().x, 0, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
+        this.barFill = gui.getMachineData().doesBarFill();
+        setX(gui.getMachineData().getProgressPos().x + 6);
+        setY(gui.getMachineData().getProgressPos().y + 6);
+        setW(gui.getMachineData().getProgressSize().x);
+        setH(gui.getMachineData().getProgressSize().y);
+        texture = gui.getMachineData().getProgressTexture(((TileEntityMachine<?>)instance.handler).getMachineTier());
     }
 
     @Override
@@ -90,9 +88,9 @@ public class ProgressWidget extends Widget {
                 length = progressTime;
             }
         }
-        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w);
+        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w, uv.w * 2, uv.z);
         if (progress > 0) {
-            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width);
+            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width, uv.w * 2, uv.z);
         }
     }
 

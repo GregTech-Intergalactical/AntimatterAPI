@@ -27,10 +27,10 @@ public class IOWidget extends Widget {
     private boolean itemState = false;
     private boolean fluidState = false;
 
-    protected IOWidget(GuiInstance instance, IGuiElement parent, int x, int y) {
+    protected IOWidget(GuiInstance instance, IGuiElement parent) {
         super(instance, parent);
-        this.setX(instance.handler.getGui().getIoPos().x);
-        this.setY(instance.handler.getGui().getIoPos().y);
+        this.setX(instance.handler.getGui().getMachineData().getIoPos().x);
+        this.setY(instance.handler.getGui().getMachineData().getIoPos().y);
         this.setW(36);
         this.setH(18);
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
@@ -45,10 +45,10 @@ public class IOWidget extends Widget {
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         if (hasItem){
-            drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX() + 18, realY(), itemState ? 18 : 0, 18, 18, 18);
+            drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX() + 18, realY(), itemState ? 18 : 0, 18, 18, 18,36, 36);
         }
         if (hasFluid){
-            drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX(), realY(), fluidState ? 18 : 0, 0, 18, 18);
+            drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX(), realY(), fluidState ? 18 : 0, 0, 18, 18,36, 36);
         }
     }
 
@@ -91,7 +91,7 @@ public class IOWidget extends Widget {
         this.fluidState = item;
     }
 
-    public static WidgetSupplier build(int x, int y, int w, int h) {
-        return builder((a, b) -> new IOWidget(a, b, x, y));
+    public static WidgetSupplier build(int x, int y) {
+        return builder(IOWidget::new);
     }
 }

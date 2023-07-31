@@ -20,10 +20,8 @@ public class GuiData {
 
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
-    public BarDir dir = BarDir.LEFT;
-    public boolean barFill = true;
-    protected int2 progressSize = new int2(20, 18), progressPos = new int2(72, 18), ioPos = new int2(7, 62);
-    protected ResourceLocation progressTexture = new ResourceLocation(Ref.ID, "textures/gui/progress_bars/default.png");
+
+    protected MachineWidgetData machineWidgetData = new MachineWidgetData(this);
 
     private final int buttons = 0;
     private ISlotProvider<?> slots;
@@ -78,20 +76,8 @@ public class GuiData {
         return area;
     }
 
-    public int2 getProgressSize() {
-        return progressSize;
-    }
-
-    public ResourceLocation getProgressTexture() {
-        return progressTexture;
-    }
-
-    public int2 getProgressPos() {
-        return progressPos;
-    }
-
-    public int2 getIoPos() {
-        return ioPos;
+    public MachineWidgetData getMachineData() {
+        return machineWidgetData;
     }
 
     /*public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
@@ -113,36 +99,8 @@ public class GuiData {
         return this;
     }
 
-    public GuiData setProgressLocation(String name){
-        this.progressTexture = new ResourceLocation(loc.getNamespace(), "textures/gui/progress_bars/" + name + ".png");
-        return this;
-    }
-
-    public GuiData setProgressSize(int length, int width){
-        this.progressSize = new int2(length, width);
-        return this;
-    }
-
-    public GuiData setProgressPos(int x, int y){
-        this.progressPos = new int2(x, y);
-        return this;
-    }
-
-    public GuiData setIoPos(int x, int y){
-        this.ioPos = new int2(x, y);
-        return this;
-    }
-
     public GuiData setOverrideLocation(ResourceLocation override) {
         this.override = override;
         return this;
-    }
-
-    public void setDir(BarDir dir) {
-        this.dir = dir;
-    }
-
-    public void setBarFill(boolean barFill) {
-        this.barFill = barFill;
     }
 }

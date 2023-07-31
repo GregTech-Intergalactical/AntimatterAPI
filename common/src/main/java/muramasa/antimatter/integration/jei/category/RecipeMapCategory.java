@@ -27,7 +27,6 @@ import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.IRecipe;
-import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -74,10 +73,10 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         this.type = type;
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
-        int4 area = gui.getArea(), progress = new int4(gui.getProgressSize().x, 0, gui.getProgressSize().x, gui.getProgressSize().y);
+        int4 area = gui.getArea(), progress = new int4(gui.getMachineData().getProgressSize().x, 0, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(0, (map.getInfoRenderer().getRows() <= 0 ? 0 : 7 + (10 *map.getInfoRenderer().getRows())), 0, 0).build();
-        progressBar = guiHelper.drawableBuilder(gui.getProgressTexture(), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.dir), !gui.barFill);
-        progressBackground = guiHelper.drawableBuilder(gui.getProgressTexture(), 0, 0, progress.z, progress.w).build();
+        progressBar = guiHelper.drawableBuilder(gui.getMachineData().getProgressTexture(this.guiTier), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.getMachineData().getDir()), !gui.getMachineData().doesBarFill());
+        progressBackground = guiHelper.drawableBuilder(gui.getMachineData().getProgressTexture(this.guiTier), 0, 0, progress.z, progress.w).build();
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack) {
@@ -293,10 +292,10 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
     @Override
     public void draw(IRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
         if (progressBackground != null){
-            progressBackground.draw(stack, gui.getProgressPos().x + gui.getArea().x, gui.getProgressPos().y + gui.getArea().y);
+            progressBackground.draw(stack, gui.getMachineData().getProgressPos().x + gui.getArea().x, gui.getMachineData().getProgressPos().y + gui.getArea().y);
         }
         if (progressBar != null)
-            progressBar.draw(stack, gui.getProgressPos().x + gui.getArea().x, gui.getProgressPos().y + gui.getArea().y);
+            progressBar.draw(stack, gui.getMachineData().getProgressPos().x + gui.getArea().x, gui.getMachineData().getProgressPos().y + gui.getArea().y);
         infoRenderer.render(stack, recipe, Minecraft.getInstance().font, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z / 2);
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
         //Draw chance overlay.

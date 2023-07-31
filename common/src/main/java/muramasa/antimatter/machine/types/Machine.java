@@ -551,8 +551,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setGuiProgressBarForJEI(BarDir dir, boolean barFill){
-        guiData.setDir(dir);
-        guiData.setBarFill(barFill);
+        guiData.getMachineData().setDir(dir);
+        guiData.getMachineData().setBarFill(barFill);
         return (T) this;
     }
 

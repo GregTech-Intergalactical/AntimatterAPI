@@ -297,6 +297,15 @@ public abstract class Widget implements IGuiElement {
         GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
     }
 
+    @Environment(EnvType.CLIENT)
+    protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY, int textureHeight, int textureWidth) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, loc);
+        //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
+        GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY,  textureHeight, textureWidth);
+    }
+
     public static WidgetSupplier builder(BiFunction<GuiInstance, IGuiElement, Widget> source) {
         return new WidgetSupplier(source);
     }

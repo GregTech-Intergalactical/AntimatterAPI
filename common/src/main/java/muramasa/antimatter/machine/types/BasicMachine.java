@@ -30,10 +30,10 @@ public class BasicMachine extends Machine<BasicMachine> {
             t.addWidget(WidgetSupplier.build((a, b) -> TextWidget.build(((AntimatterContainerScreen<?>) b).getTitle().getString(), 4210752).build(a, b)).setPos(9, 5).clientSide());
             if (has(RECIPE)) {
                 t.addWidget(ProgressWidget.build())
-                        .addWidget(MachineStateWidget.build().setPos(84, 46).setWH(8, 8));
+                        .addWidget(MachineStateWidget.build());
             }
             if ((has(ITEM) || has(FLUID)))
-                t.addWidget(IOWidget.build(9, 63, 16, 16).onlyIf(u -> u.handler.getClass() == TileEntityMachine.class));
+                t.addWidget(IOWidget.build(9, 63).onlyIf(u -> u.handler.getClass() == TileEntityMachine.class));
         });
     }
 }

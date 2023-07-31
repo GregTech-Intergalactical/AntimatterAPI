@@ -55,8 +55,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
         loc = CategoryIdentifier.of(map.getLoc());
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName();
-        int4 progress = new int4(gui.getProgressSize().x, 0, gui.getProgressSize().x, gui.getProgressSize().y);
-        progressBar = new Parameters(gui.getProgressTexture(), gui.getProgressPos().x + 6, gui.getProgressPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.dir, gui.barFill);
+        int4 progress = new int4(gui.getMachineData().getProgressSize().x, 0, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
+        progressBar = new Parameters(gui.getMachineData().getProgressTexture(this.guiTier), gui.getMachineData().getProgressPos().x + 6, gui.getMachineData().getProgressPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.getMachineData().getDir(), gui.getMachineData().doesBarFill());
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack stack) {
