@@ -25,6 +25,6 @@ public class SlotWidget extends Widget {
 
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        drawTexture(matrixStack, slot.getTexture(), realY(), realY(), 0, 0, 18, 18);
+        drawTexture(matrixStack, slot.getTexture(), realX(), realY(), 0, 0, 18, 18, 18, 18);
     }
 }
