@@ -38,7 +38,7 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
      * Adds a slot for ANY with special texture
      **/
     default T add(SlotType<?> type, int x, int y, ResourceLocation textureName) {
-        return add("", new SlotData<>(type, x, y, new ResourceLocation(textureName.getNamespace(), "textures/gui/slots" + textureName.getPath() + ".png")));
+        return add("", new SlotData<>(type, x, y, new ResourceLocation(textureName.getNamespace(), "textures/gui/slots/" + textureName.getPath() + ".png")));
     }
 
 
@@ -47,7 +47,7 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
      * Adds a slot for the given Tier with special texture
      **/
     default T add(Tier tier, SlotType<?> type, int x, int y, ResourceLocation textureName) {
-        return add(tier.getId(), new SlotData<>(type, x, y, new ResourceLocation(textureName.getNamespace(), "textures/gui/slots" + textureName.getPath() + ".png")));
+        return add(tier.getId(), new SlotData<>(type, x, y, new ResourceLocation(textureName.getNamespace(), "textures/gui/slots/" + textureName.getPath() + ".png")));
     }
 
     /**
