@@ -88,36 +88,44 @@ public class CoverOutput extends CoverInput {
         return nbt;
     }
 
+    int processing = 0;
     protected void processItemOutput() {
+
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
+        if (processing > 0) return;
+        processing++;
         TesseractCapUtils.getItemHandler(adjTile, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
                     TesseractCapUtils.getItemHandler(handler.getTile(), this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
                 });
+        processing--;
     }
 
     protected void processFluidOutput() {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
+        if (processing > 0) return;
+        processing++;
         TesseractCapUtils.getFluidHandler(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
                 .ifPresent(adjHandler -> {
                     FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, Integer.MAX_VALUE * TesseractGraphWrappers.dropletMultiplier, true));
                 });
+        processing--;
     }
 
     @Override
     public void onGuiEvent(IGuiEvent event, Player player) {
         if (event.getFactory() == GuiEvents.ITEM_EJECT) {
             ejectItems = !ejectItems;
-            processItemOutput();
+            if (ejectItems) processItemOutput();
             Utils.markTileForNBTSync(handler.getTile());
         }
         if (event.getFactory() == GuiEvents.FLUID_EJECT) {
             ejectFluids = !ejectFluids;
-            processFluidOutput();
+            if (ejectFluids) processFluidOutput();
             Utils.markTileForNBTSync(handler.getTile());
         }
     }
