@@ -133,9 +133,9 @@ public class CoverOutput extends CoverInput {
     @Override
     public void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
         // TODO: Tesseract stuff?
-        if ((event == MachineEvent.ITEMS_OUTPUTTED || event == ContentEvent.ITEM_OUTPUT_CHANGED) && ejectItems) {
+        if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
             processItemOutput();
-        } else if ((event == MachineEvent.FLUIDS_OUTPUTTED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && ejectFluids) {
+        } else if (event == MachineEvent.FLUIDS_OUTPUTTED && ejectFluids) {
             processFluidOutput();
         }
     }
