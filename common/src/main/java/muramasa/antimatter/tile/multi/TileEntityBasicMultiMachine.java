@@ -55,7 +55,7 @@ import java.util.Set;
  * Allows a MultiMachine to handle GUI recipes, instead of using Hatches
  **/
 public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T>
-        implements IComponent, IAlignment {
+        implements IAlignment {
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
     protected boolean validStructure = false;
@@ -79,9 +79,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
      */
     public BlockState oldState;
     private Direction facingOverride;
-
-    public final Optional<ControllerComponentHandler> componentHandler = Optional
-            .of(new ControllerComponentHandler(this));
 
 
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
@@ -420,11 +417,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (!validStructure)
             return MachineState.INVALID_STRUCTURE;
         return MachineState.IDLE;
-    }
-
-    @Override
-    public Optional<ControllerComponentHandler> getComponentHandler() {
-        return componentHandler;
     }
 
     @Override
