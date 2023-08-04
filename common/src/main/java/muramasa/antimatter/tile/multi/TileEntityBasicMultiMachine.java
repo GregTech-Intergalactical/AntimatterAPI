@@ -23,6 +23,7 @@ import muramasa.antimatter.client.scene.TrackedDummyWorld;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.*;
@@ -315,11 +316,13 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         super.onMachineEvent(event, data);
-        components.values().forEach(l -> l.forEach(i -> {
-            if (i.getTile() instanceof TileEntityHatch<?> hatch) {
-                hatch.onMachineEvent(event, data);
-            }
-        }));
+        if (event == MachineEvent.FLUIDS_OUTPUTTED || event == MachineEvent.ITEMS_OUTPUTTED) {
+            components.values().forEach(l -> l.forEach(i -> {
+                if (i.getTile() instanceof TileEntityHatch<?> hatch) {
+                    hatch.onMachineEvent(event, data);
+                }
+            }));
+        }
     }
 
     protected void invalidateStructure() {

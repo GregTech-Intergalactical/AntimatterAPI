@@ -88,13 +88,8 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
             componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList())
                     .forEach(controller -> {
                         switch ((ContentEvent) event) {
-                            case ITEM_INPUT_CHANGED:
-                            case ITEM_OUTPUT_CHANGED:
-                            case ITEM_CELL_CHANGED:
-                            case FLUID_INPUT_CHANGED:
-                            case FLUID_OUTPUT_CHANGED:
-                                controller.onMachineEvent(event, data);
-                                break;
+                            case ITEM_INPUT_CHANGED, ITEM_OUTPUT_CHANGED, ITEM_CELL_CHANGED, FLUID_INPUT_CHANGED, FLUID_OUTPUT_CHANGED ->
+                                    controller.onMachineEvent(event, data);
                         }
                     });
         } else if (event instanceof MachineEvent) {
