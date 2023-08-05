@@ -326,10 +326,10 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
         if (!validStructure) {
-            if (isServerSide() && getMachineState() != getDefaultMachineState()) {
-                resetMachine();
-            }
             return;
+        }
+        if (isServerSide() && getMachineState() != getDefaultMachineState()) {
+            resetMachine();
         }
         checkingStructure++;
         structurePositions.forEach((l,e) ->{
