@@ -17,8 +17,10 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nonnull;
@@ -72,6 +74,11 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                 }
             });
         }
+    }
+
+    @Override
+    public boolean wrenchMachine(Player player, BlockHitResult res, boolean crouch) {
+        return setFacing(player, Utils.getInteractSide(res)) && setOutputFacing(player, Utils.getInteractSide(res));
     }
 
     @Override
