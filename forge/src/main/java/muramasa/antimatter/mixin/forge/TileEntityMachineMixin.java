@@ -116,16 +116,16 @@ public abstract class TileEntityMachineMixin<T extends TileEntityMachine<T>> ext
             return itemHandlerLazyOptional[index].cast();
         }
         if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY){
-            if (energyHandler.isPresent()){
-                if (energyHandlerLazyOptional[index] == null){
-                    energyHandlerLazyOptional[index] = fromHolder(energyHandler, side);
-                }
-                return energyHandlerLazyOptional[index].cast();
-            } else if (cap == CapabilityEnergy.ENERGY && rfHandler.isPresent()){
+            if (cap == CapabilityEnergy.ENERGY && rfHandler.isPresent()){
                 if (rfHandlerLazyOptional[index] == null){
                     rfHandlerLazyOptional[index] = fromEnergyHolder(rfHandler, side);
                 }
                 return rfHandlerLazyOptional[index].cast();
+            } else if (energyHandler.isPresent()){
+                if (energyHandlerLazyOptional[index] == null){
+                    energyHandlerLazyOptional[index] = fromHolder(energyHandler, side);
+                }
+                return energyHandlerLazyOptional[index].cast();
             }
         }
         return super.getCapability(cap, side);
