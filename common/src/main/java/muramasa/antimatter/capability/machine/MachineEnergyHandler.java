@@ -122,6 +122,23 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         return ok;
     }
 
+    public boolean extractInternal(long power, boolean simulate){
+        GTTransaction transaction = tile.energyHandler.map(eh -> eh.extract(GTTransaction.Mode.INTERNAL)).orElse(null);
+        if (transaction != null && transaction.isValid()) {
+            if (simulate) {
+                return transaction.eu >= power;
+            } else if (transaction.eu >= power) {
+                transaction.addData(power, Utils.sink());
+                transaction.commit();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public long getEnergy() {
         if (canChargeItem()) {
