@@ -328,7 +328,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (activeRecipe.getPower() > 0) {
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
-                    tile.energyHandler.ifPresent(e -> e.extractInternal(getPower(), simulate));
+                    return tile.energyHandler.map(e -> e.extractInternal(getPower(), simulate)).orElse(false);
                 } else {
                     return consumeGeneratorResources(simulate);
                 }
