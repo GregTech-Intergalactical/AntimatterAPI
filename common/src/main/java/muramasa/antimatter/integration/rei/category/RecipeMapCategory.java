@@ -55,7 +55,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
         loc = CategoryIdentifier.of(map.getLoc());
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName();
-        int4 progress = new int4(gui.getMachineData().getProgressSize().x, 0, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
+        int4 progress = new int4(0, gui.getMachineData().getProgressSize().y, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
         progressBar = new Parameters(gui.getMachineData().getProgressTexture(this.guiTier), gui.getMachineData().getProgressPos().x + 6, gui.getMachineData().getProgressPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.getMachineData().getDir(), gui.getMachineData().doesBarFill());
         Object icon = map.getIcon();
         if (icon != null) {
@@ -87,9 +87,16 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     public List<Widget> setupDisplay(RecipeMapDisplay display, Rectangle bounds) {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(Widgets.createRecipeBase(bounds));
-        /*widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-            drawTexture(matrices, gui.getTexture(guiTier, "machine"), bounds.x + 3, bounds.y + 3, gui.getArea().x + 1, gui.getArea().y + 1, bounds.getWidth() - 6, bounds.getHeight() - 6);
-        }));*/
+        widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+            int ySize = Math.min(bounds.getHeight() - 6, 79);
+            int extraPixels = (bounds.getHeight() - 6) - ySize;
+            drawTexture(matrices, gui.getTexture(guiTier, "machine"), bounds.x + 3, bounds.y + 3, gui.getArea().x + 1, gui.getArea().y + 1, bounds.getWidth() - 6, ySize, 256, 256);
+            if (extraPixels > 0){
+                for (int i = 0; i < extraPixels; i++){
+                    drawTexture(matrices, gui.getTexture(guiTier, ""), bounds.x + 3, bounds.y + 3 + ySize + i, gui.getArea().x + 1, gui.getArea().y + 1, bounds.getWidth() - 6, 1, 256, 256);
+                }
+            }
+        }));
         widgets.addAll(setupSlots(display, bounds));
         double recipeMillis = (double) display.getRecipe().getDuration() * 50;
         if (recipeMillis < 250)
@@ -106,7 +113,6 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     }
 
     private List<Widget> setupSlots(RecipeMapDisplay display, Rectangle bounds){
-        ResourceLocation slotTextures = new ResourceLocation(Ref.ID, "textures/gui/button/gui_slots.png");
         List<Widget> widgets = new ArrayList<>();
         List<List<ItemStack>> inputs = display.getRecipe().hasInputItems() ? display.getRecipe().getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
         List<ItemStack> outputs = display.getRecipe().hasOutputItems() ? Arrays.stream(display.getRecipe().getOutputItems(false)).toList() : Collections.emptyList();
@@ -122,7 +128,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 0, 18, 18);
+                        drawTexture(matrices, finalSlots.get(finalSlot).getTexture(), finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18, 18, 18);
                     }));
                     if (inputs.size() > 0){
                         if (s < inputs.size()){
@@ -150,7 +156,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 0, 18, 18);
+                        drawTexture(matrices, finalSlots.get(finalSlot).getTexture(), finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18, 18, 18);
                     }));
                     if (outputs.size() > 0){
                         if (s < outputs.size()){
@@ -172,7 +178,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 36, 18, 18);
+                        drawTexture(matrices, finalSlots.get(finalSlot).getTexture(), finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18, 18, 18);
                     }));
                     if (fluids.size() > 0){
                         if (s < fluids.size()){
@@ -199,7 +205,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 36, 18, 18);
+                        drawTexture(matrices, finalSlots.get(finalSlot).getTexture(), finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18, 18, 18);
                     }));
                     if (fluids != null && fluids.length > 0){
                         if (s < fluids.length){
@@ -259,18 +265,18 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 length = progressTime;
             }
         }
-        drawTexture(matrices, params.texture, realX,  realY, 0, 0, params.length, params.width);
+        drawTexture(matrices, params.texture, realX,  realY, 0, 0, params.length, params.width, params.length, params.width * 2);
         if (percent > 0) {
-            drawTexture(matrices, params.texture, realX,  realY, xLocation, yLocation, length, width);
+            drawTexture(matrices, params.texture, realX,  realY, xLocation, yLocation, length, width, params.length, params.width * 2);
         }
     }
 
-    private static void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
+    private static void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY, int textureHeight, int textureWidth) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
-        GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
+        GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY, textureHeight, textureWidth);
     }
 
     public record Parameters(ResourceLocation texture, int x, int y, int length, int width, int posX, int posY, BarDir dir, boolean fill){
