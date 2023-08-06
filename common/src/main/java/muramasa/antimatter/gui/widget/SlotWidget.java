@@ -16,7 +16,13 @@ public class SlotWidget extends Widget {
         this.setY(slot.getY() - 1);
         this.setH(18);
         this.setW(18);
+        this.setDepth(-1);
         this.slot = slot;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return false;
     }
 
     public static WidgetSupplier build(SlotData<?> slot) {

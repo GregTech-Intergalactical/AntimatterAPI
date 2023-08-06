@@ -33,18 +33,17 @@ public class GuiData {
 
     public GuiData(String domain, String id) {
         this.loc = new ResourceLocation(domain, id);
+        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/machine_basic.png"));
     }
 
     public GuiData(String domain, String id, MenuHandler menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
-        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/machine_basic.png"));
     }
 
     public GuiData(IAntimatterObject type, MenuHandler menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
-        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/machine_basic.png"));
     }
 
     public GuiData setSlots(ISlotProvider<?> slots) {

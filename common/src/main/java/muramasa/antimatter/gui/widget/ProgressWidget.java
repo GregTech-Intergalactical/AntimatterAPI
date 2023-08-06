@@ -88,9 +88,9 @@ public class ProgressWidget extends Widget {
                 length = progressTime;
             }
         }
-        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w, uv.w, uv.z * 2);
+        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w, uv.z, uv.w * 2);
         if (progress > 0) {
-            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width, uv.w, uv.z * 2);
+            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width, uv.z, uv.w * 2);
         }
     }
 

@@ -25,7 +25,7 @@ public class BackgroundWidget extends Widget {
         this.guiXSize = guiXSize;
         this.guiYSize = guiYSize;
         this.loc = loc;
-        setDepth(-1);
+        setDepth(-2);
     }
 
     @Override
