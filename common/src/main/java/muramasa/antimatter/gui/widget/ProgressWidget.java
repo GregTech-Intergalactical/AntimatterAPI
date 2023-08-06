@@ -27,7 +27,7 @@ public class ProgressWidget extends Widget {
         super(instance, parent);
         GuiData gui = instance.handler.getGui();
         this.direction = gui.getMachineData().getDir();
-        this.uv = new int4(gui.getMachineData().getProgressSize().x, 0, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
+        this.uv = new int4(0, gui.getMachineData().getProgressSize().y, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
         this.barFill = gui.getMachineData().doesBarFill();
         setX(gui.getMachineData().getProgressPos().x + 6);
         setY(gui.getMachineData().getProgressPos().y + 6);
@@ -88,9 +88,9 @@ public class ProgressWidget extends Widget {
                 length = progressTime;
             }
         }
-        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w, uv.w * 2, uv.z);
+        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w, uv.w, uv.z * 2);
         if (progress > 0) {
-            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width, uv.w * 2, uv.z);
+            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width, uv.w, uv.z * 2);
         }
     }
 

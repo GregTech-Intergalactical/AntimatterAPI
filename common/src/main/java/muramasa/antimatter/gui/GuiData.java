@@ -38,13 +38,13 @@ public class GuiData {
     public GuiData(String domain, String id, MenuHandler menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
-        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/basic.png"));
+        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/machine_basic.png"));
     }
 
     public GuiData(IAntimatterObject type, MenuHandler menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
-        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/basic.png"));
+        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/machine_basic.png"));
     }
 
     public GuiData setSlots(ISlotProvider<?> slots) {
@@ -67,6 +67,7 @@ public class GuiData {
     }
 
     public ResourceLocation getTexture(Tier tier, String type) {
+        if (override != null) return override;
        if (backgroundTextures.containsKey(tier.getId())) return backgroundTextures.get(tier.getId());
        return backgroundTextures.get("");
     }
@@ -93,8 +94,9 @@ public class GuiData {
         return enablePlayerSlots;
     }
 
-    public void setEnablePlayerSlots(boolean enablePlayerSlots) {
+    public GuiData setEnablePlayerSlots(boolean enablePlayerSlots) {
         this.enablePlayerSlots = enablePlayerSlots;
+        return this;
     }
 
     public GuiData setArea(int x, int y, int z, int w) {
