@@ -17,8 +17,10 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nonnull;
@@ -75,6 +77,11 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     }
 
     @Override
+    public boolean wrenchMachine(Player player, BlockHitResult res, boolean crouch) {
+        return setFacing(player, Utils.getInteractSide(res)) && setOutputFacing(player, Utils.getInteractSide(res));
+    }
+
+    @Override
     public Optional<HatchComponentHandler<T>> getComponentHandler() {
         return componentHandler;
     }
@@ -88,13 +95,8 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
             componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList())
                     .forEach(controller -> {
                         switch ((ContentEvent) event) {
-                            case ITEM_INPUT_CHANGED:
-                            case ITEM_OUTPUT_CHANGED:
-                            case ITEM_CELL_CHANGED:
-                            case FLUID_INPUT_CHANGED:
-                            case FLUID_OUTPUT_CHANGED:
-                                controller.onMachineEvent(event, data);
-                                break;
+                            case ITEM_INPUT_CHANGED, ITEM_OUTPUT_CHANGED, ITEM_CELL_CHANGED, FLUID_INPUT_CHANGED, FLUID_OUTPUT_CHANGED ->
+                                    controller.onMachineEvent(event, data);
                         }
                     });
         } else if (event instanceof MachineEvent) {

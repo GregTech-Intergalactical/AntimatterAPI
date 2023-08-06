@@ -17,14 +17,10 @@ import net.minecraftforge.fml.common.Mod;
 public class AntimatterCaps {
     public static final BiMap<Class<?>, Capability<?>> CAP_MAP = HashBiMap.create();
     public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<MachineRecipeHandler<?>> RECIPE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 
     @SubscribeEvent
     public static void register(RegisterCapabilitiesEvent ev) {
         ev.register(ICoverHandler.class);
-        ev.register(IComponentHandler.class);
-        ev.register(MachineRecipeHandler.class);
     }
 }

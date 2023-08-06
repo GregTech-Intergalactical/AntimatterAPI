@@ -14,12 +14,4 @@ public class AntimatterCapUtilsImpl {
     public static Optional<ICoverHandler<?>> getCoverHandler(BlockEntity blockEntity, Direction side){
         return blockEntity.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).map(r -> r);
     }
-
-    public static Optional<IComponentHandler> getComponentHandler(BlockEntity blockEntity, Direction side){
-        return blockEntity.getCapability(AntimatterCaps.COMPONENT_HANDLER_CAPABILITY, side).map(r -> r);
-    }
-
-    public static Optional<MachineRecipeHandler<?>> getRecipeHandler(BlockEntity blockEntity, Direction side){
-        return blockEntity.getCapability(AntimatterCaps.RECIPE_HANDLER_CAPABILITY, side).map(r -> r);
-    }
 }

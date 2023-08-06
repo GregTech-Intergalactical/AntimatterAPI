@@ -34,8 +34,6 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
-    public BlockPos controllerPos;
-
     public TileEntityFakeBlock(BlockPos pos, BlockState state) {
         super(BlockFakeTile.TYPE, pos, state);
         coverTexturer = new Object2ObjectOpenHashMap<>();
@@ -48,16 +46,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     }
 
     public TileEntityBasicMultiMachine<?> getController() {
-        if (controller != null) return controller;
-        if (controllerPos != null){
-            if (!getLevel().isLoaded(controllerPos)) return null;
-            if (getLevel().getBlockEntity(controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
-                setController(basicMultiMachine);
-            }
-            controllerPos = null;
-            return controller;
-        }
-        return null;
+        return controller;
     }
 
     @Override
@@ -136,7 +125,12 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
                 covers.put(dir, cover);
         }
         if (nbt.contains("P")) {
-            this.controllerPos = BlockPos.of(nbt.getLong("P"));
+            BlockPos pos = BlockPos.of(nbt.getLong("P"));
+            if (!getLevel().isLoaded(pos)) return;
+            if (getLevel().getBlockEntity(pos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+                setController(basicMultiMachine);
+            }
+
         }
     }
 

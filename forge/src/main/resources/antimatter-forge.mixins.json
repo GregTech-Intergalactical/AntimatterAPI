@@ -1,20 +1,23 @@
 {
-  "required": true,
-  "package": "muramasa.antimatter.mixin.forge",
-  "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "GameDataMixin",
-    "MaterialSerializerMixin",
+  "required" : true,
+  "package" : "muramasa.antimatter.mixin.forge",
+  "compatibilityLevel" : "JAVA_17",
+  "mixins" : [
     "AntimatterRecipeSerializerMixin",
-    "RecipeIngredientMixin",
-    "PropertyIngredientMixin",
+    "CapabilityManagerMixin",
     "ContainerShapedSerializerMixin",
     "ContainerShapelessSerializerMixin",
-    "CapabilityManagerMixin"
+    "GameDataMixin",
+    "MaterialSerializerMixin",
+    "PropertyIngredientMixin",
+    "RecipeIngredientMixin",
+    "TileEntityFakeBlockMixin",
+    "TileEntityMachineMixin",
+    "TileEntityPipeMixin"
   ],
   "client" : [
     "client.IAntimatterBakedModelMixin",
     "client.SimpleBakedModel$BuilderAccessor"
   ],
-  "minVersion": "0.8"
+  "minVersion" : "0.8"
 }

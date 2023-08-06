@@ -3,6 +3,7 @@ package muramasa.antimatter.tool.behaviour;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.client.RenderHelper;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
@@ -43,10 +44,10 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
         if (tile instanceof TileEntityPipe) {
             return ((TileEntityPipe) tile).canConnect(dir.get3DDataValue());
         }
-        if (tile instanceof TileEntityMachine) {
-            Direction direction = ((TileEntityMachine) tile).getOutputFacing();
-            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching())
-                direction = ((TileEntityMachine) tile).getFacing();
+        if (tile instanceof TileEntityMachine<?> machine) {
+            Direction direction = machine.getOutputFacing();
+            if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) || machine.getMachineType().getOutputCover() == ICover.emptyFactory)
+                direction = machine.getFacing();
             return direction != null && direction == dir;
         }
         if (tile instanceof HopperBlockEntity hopperBlockEntity){

@@ -328,21 +328,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (activeRecipe.getPower() > 0) {
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
-                    long power = getPower();
-                    GTTransaction transaction = tile.energyHandler.map(eh -> eh.extract(GTTransaction.Mode.INTERNAL)).orElse(null);
-                    if (transaction != null && transaction.isValid()) {
-                        if (simulate) {
-                            return transaction.eu >= power;
-                        } else if (transaction.eu >= power) {
-                            transaction.addData(power, Utils.sink());
-                            transaction.commit();
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
+                    return tile.energyHandler.map(e -> e.extractInternal(getPower(), simulate)).orElse(false);
                 } else {
                     return consumeGeneratorResources(simulate);
                 }

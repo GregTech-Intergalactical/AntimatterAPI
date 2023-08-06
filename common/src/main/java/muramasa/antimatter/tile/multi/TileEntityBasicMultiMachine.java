@@ -22,6 +22,8 @@ import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.*;
@@ -53,7 +55,7 @@ import java.util.Set;
  * Allows a MultiMachine to handle GUI recipes, instead of using Hatches
  **/
 public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T>
-        implements IComponent, IAlignment {
+        implements IAlignment {
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
     protected boolean validStructure = false;
@@ -77,9 +79,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
      */
     public BlockState oldState;
     private Direction facingOverride;
-
-    public final Optional<ControllerComponentHandler> componentHandler = Optional
-            .of(new ControllerComponentHandler(this));
 
 
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
@@ -311,14 +310,26 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     }
 
+    @Override
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+        super.onMachineEvent(event, data);
+        if (event == MachineEvent.FLUIDS_OUTPUTTED || event == MachineEvent.ITEMS_OUTPUTTED) {
+            components.values().forEach(l -> l.forEach(i -> {
+                if (i.getTile() instanceof TileEntityHatch<?> hatch) {
+                    hatch.onMachineEvent(event, data);
+                }
+            }));
+        }
+    }
+
     protected void invalidateStructure() {
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
         if (!validStructure) {
-            if (isServerSide() && getMachineState() != getDefaultMachineState()) {
-                resetMachine();
-            }
             return;
+        }
+        if (isServerSide() && getMachineState() != getDefaultMachineState()) {
+            resetMachine();
         }
         checkingStructure++;
         structurePositions.forEach((l,e) ->{
@@ -406,11 +417,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (!validStructure)
             return MachineState.INVALID_STRUCTURE;
         return MachineState.IDLE;
-    }
-
-    @Override
-    public Optional<ControllerComponentHandler> getComponentHandler() {
-        return componentHandler;
     }
 
     @Override

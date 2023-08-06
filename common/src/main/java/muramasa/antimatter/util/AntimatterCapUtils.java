@@ -15,14 +15,4 @@ public class AntimatterCapUtils {
     public static Optional<ICoverHandler<?>> getCoverHandler(BlockEntity blockEntity, Direction side){
         throw new AssertionError();
     }
-
-    @ExpectPlatform
-    public static Optional<IComponentHandler> getComponentHandler(BlockEntity blockEntity, Direction side){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static Optional<MachineRecipeHandler<?>> getRecipeHandler(BlockEntity blockEntity, Direction side){
-        throw new AssertionError();
-    }
 }
