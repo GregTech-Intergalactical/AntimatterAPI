@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.machine.Tier;
@@ -8,6 +9,8 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Map;
 
 //@Environment(EnvType.CLIENT)
 public class GuiData {
@@ -17,6 +20,8 @@ public class GuiData {
 
     protected MenuHandler<?> menuHandler;
     protected ImmutableMap<Tier, Tier> guiTiers;
+
+    protected Map<String, ResourceLocation> backgroundTextures = new Object2ObjectOpenHashMap<>();
 
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
@@ -33,11 +38,13 @@ public class GuiData {
     public GuiData(String domain, String id, MenuHandler menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
+        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/basic.png"));
     }
 
     public GuiData(IAntimatterObject type, MenuHandler menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
+        this.backgroundTextures.put("", new ResourceLocation(Ref.ID, "textures/gui/background/basic.png"));
     }
 
     public GuiData setSlots(ISlotProvider<?> slots) {
@@ -60,12 +67,8 @@ public class GuiData {
     }
 
     public ResourceLocation getTexture(Tier tier, String type) {
-        if (override != null) return override;
-        if (guiTiers != null && guiTiers.get(tier) != null) {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + guiTiers.get(tier).getId() + ".png");
-        } else {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
-        }
+       if (backgroundTextures.containsKey(tier.getId())) return backgroundTextures.get(tier.getId());
+       return backgroundTextures.get("");
     }
 
     public ResourceLocation getLoc() {
@@ -101,6 +104,15 @@ public class GuiData {
 
     public GuiData setOverrideLocation(ResourceLocation override) {
         this.override = override;
+        return this;
+    }
+
+    public GuiData setBackgroundTexture(String textureName){
+        this.backgroundTextures.put("", new ResourceLocation(loc.getNamespace(), "textures/gui/background/" + textureName + ".png"));
+        return this;
+    }
+    public GuiData setBackgroundTexture(Tier tier, String textureName){
+        this.backgroundTextures.put(tier.getId(), new ResourceLocation(loc.getNamespace(), "textures/gui/background/" + textureName + ".png"));
         return this;
     }
 }
