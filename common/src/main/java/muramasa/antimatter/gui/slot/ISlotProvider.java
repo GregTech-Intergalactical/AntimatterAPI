@@ -131,6 +131,12 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
         return slots != null ? slots : new ObjectArrayList<>();
     }
 
+    default List<SlotData<?>> getRecipeSlots(Tier tier) {
+        List<SlotData<?>> slots = getSlotLookup().get(tier.getId());
+        if (slots == null) slots = getSlotLookup().get("");
+        return slots != null ? slots.stream().filter(s -> s.getType() == SlotType.FL_IN || s.getType() == SlotType.FL_OUT || s.getType() == SlotType.IT_OUT || s.getType() == SlotType.IT_IN).toList() : new ObjectArrayList<>();
+    }
+
     default List<SlotData<?>> getSlots(SlotType<?> type, Tier tier) {
         List<SlotData<?>> types = new ObjectArrayList<>();
         List<SlotData<?>> slots = getSlotLookup().get(tier.getId());
