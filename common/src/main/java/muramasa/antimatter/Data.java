@@ -107,6 +107,7 @@ public class Data {
             .noCovers();
 
     public static void init(Side side) {
+        CREATIVE_GENERATOR.getGui().setBackgroundTexture("creative_generator");
         if (side.isClient()){
             CREATIVE_GENERATOR.addGuiCallback(t -> {
                 t.addButton(10, 18, 14, 14, APAD_LEFT)
