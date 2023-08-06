@@ -41,7 +41,7 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (Widget widget : menu.source().getWidgets(mouseX, mouseY)) {
-            if (!widget.isEnabled()) continue;
+            if (!widget.isEnabled() || widget.depth() < 0) continue;
             if (widget.mouseClicked(mouseX, mouseY, button)) {
                 return true;
             }
@@ -60,7 +60,7 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         for (Widget wid : menu.source().getWidgets(mouseX, mouseY)) {
-            if (!wid.isEnabled()) continue;
+            if (!wid.isEnabled() || wid.depth() < 0) continue;
             if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
@@ -69,7 +69,7 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         for (Widget wid : menu.source().getWidgets(mouseX, mouseY)) {
-            if (!wid.isEnabled()) continue;
+            if (!wid.isEnabled() || wid.depth() < 0) continue;
             if (wid.mouseReleased(mouseX, mouseY, button)) return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);

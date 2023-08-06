@@ -20,11 +20,6 @@ public class SlotWidget extends Widget {
         this.slot = slot;
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return false;
-    }
-
     public static WidgetSupplier build(SlotData<?> slot) {
         return builder((a, b) -> new SlotWidget(a, b, slot));
     }
