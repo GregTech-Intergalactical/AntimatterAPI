@@ -122,6 +122,12 @@ public abstract class Widget implements IGuiElement {
         return ((mouseX >= realX && mouseX <= realX + getW()) && (mouseY >= realY && mouseY <= realY + getH()));
     }
 
+    public boolean isInside(int x, int y, int w, int h, double mouseX, double mouseY) {
+        int realX = realX() + x;
+        int realY = realY() + y;
+        return ((mouseX >= realX && mouseX <= realX + w) && (mouseY >= realY && mouseY <= realY + h));
+    }
+
     @Environment(EnvType.CLIENT)
     protected void renderTooltip(PoseStack matrixStack, Component text, double mouseX, double mouseY) {
         this.gui.screen.renderComponentTooltip(matrixStack, Collections.singletonList(text), (int)mouseX,(int) mouseY);
@@ -289,6 +295,15 @@ public abstract class Widget implements IGuiElement {
         RenderSystem.setShaderTexture(0, loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
         GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
+    }
+
+    @Environment(EnvType.CLIENT)
+    protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY, int textureHeight, int textureWidth) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, loc);
+        //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
+        GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY,  textureHeight, textureWidth);
     }
 
     public static WidgetSupplier builder(BiFunction<GuiInstance, IGuiElement, Widget> source) {

@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
@@ -71,6 +72,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     @Override
     public String handlerDomain() {
         return getPipeType().domain;
+    }
+
+    @Override
+    public GuiData getGui() {
+        return null;
     }
 
     //@Override

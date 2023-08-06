@@ -8,6 +8,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.Tier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,29 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
         return add("", new SlotData<>(type, x, y));
     }
 
+
+
     /**
      * Adds a slot for the given Tier
      **/
     default T add(Tier tier, SlotType<?> type, int x, int y) {
         return add(tier.getId(), new SlotData<>(type, x, y));
+    }
+
+    /**
+     * Adds a slot for ANY with special texture
+     **/
+    default T add(SlotType<?> type, int x, int y, ResourceLocation textureName) {
+        return add("", new SlotData<>(type, x, y, new ResourceLocation(textureName.getNamespace(), "textures/gui/slots/" + textureName.getPath() + ".png")));
+    }
+
+
+
+    /**
+     * Adds a slot for the given Tier with special texture
+     **/
+    default T add(Tier tier, SlotType<?> type, int x, int y, ResourceLocation textureName) {
+        return add(tier.getId(), new SlotData<>(type, x, y, new ResourceLocation(textureName.getNamespace(), "textures/gui/slots/" + textureName.getPath() + ".png")));
     }
 
     /**
@@ -110,6 +129,12 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
         List<SlotData<?>> slots = getSlotLookup().get(tier.getId());
         if (slots == null) slots = getSlotLookup().get("");
         return slots != null ? slots : new ObjectArrayList<>();
+    }
+
+    default List<SlotData<?>> getRecipeSlots(Tier tier) {
+        List<SlotData<?>> slots = getSlotLookup().get(tier.getId());
+        if (slots == null) slots = getSlotLookup().get("");
+        return slots != null ? slots.stream().filter(s -> s.getType() == SlotType.FL_IN || s.getType() == SlotType.FL_OUT || s.getType() == SlotType.IT_OUT || s.getType() == SlotType.IT_IN).toList() : new ObjectArrayList<>();
     }
 
     default List<SlotData<?>> getSlots(SlotType<?> type, Tier tier) {

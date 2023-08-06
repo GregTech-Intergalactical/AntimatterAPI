@@ -19,14 +19,12 @@ import muramasa.antimatter.client.tesr.Caches;
 import muramasa.antimatter.client.tesr.MachineTESR;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
-import muramasa.antimatter.gui.SlotData;
-import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.event.SlotClickEvent;
 import muramasa.antimatter.gui.widget.FluidSlotWidget;
+import muramasa.antimatter.gui.widget.SlotWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -199,6 +197,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         int index = 0;
+        for (SlotData<?> slot : this.getMachineType().getSlots(this.getMachineTier())) {
+            instance.addWidget(SlotWidget.build(slot));
+        }
         for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_IN, getMachineTier())) {
             instance.addWidget(FluidSlotWidget.build(index++, slot));
         }
@@ -211,6 +212,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Override
     public ResourceLocation getGuiTexture() {
         return getMachineType().getGui().getTexture(this.getMachineTier(), "machine");
+    }
+
+    @Override
+    public GuiData getGui() {
+        return getMachineType().getGui();
     }
 
     /**

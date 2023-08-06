@@ -1,14 +1,16 @@
 package muramasa.antimatter.machine.types;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.BarDir;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
-import muramasa.antimatter.gui.widget.IOWidget;
-import muramasa.antimatter.gui.widget.MachineStateWidget;
-import muramasa.antimatter.gui.widget.ProgressWidget;
-import muramasa.antimatter.gui.widget.TextWidget;
-import muramasa.antimatter.gui.widget.WidgetSupplier;
+import muramasa.antimatter.gui.widget.*;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.world.inventory.Slot;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
@@ -27,11 +29,11 @@ public class BasicMachine extends Machine<BasicMachine> {
         addGuiCallback(t -> {
             t.addWidget(WidgetSupplier.build((a, b) -> TextWidget.build(((AntimatterContainerScreen<?>) b).getTitle().getString(), 4210752).build(a, b)).setPos(9, 5).clientSide());
             if (has(RECIPE)) {
-                t.addWidget(ProgressWidget.build(BarDir.LEFT, true))
-                        .addWidget(MachineStateWidget.build().setPos(84, 46).setWH(8, 8));
+                t.addWidget(ProgressWidget.build())
+                        .addWidget(MachineStateWidget.build());
             }
             if ((has(ITEM) || has(FLUID)))
-                t.addWidget(IOWidget.build(9, 63, 16, 16).onlyIf(u -> u.handler.getClass() == TileEntityMachine.class));
+                t.addWidget(IOWidget.build(9, 63).onlyIf(u -> u.handler.getClass() == TileEntityMachine.class));
         });
     }
 }

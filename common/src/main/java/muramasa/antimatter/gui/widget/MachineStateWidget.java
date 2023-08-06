@@ -6,20 +6,29 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TextComponent;
 
 public class MachineStateWidget extends Widget {
     /* Location in most machine textures. */
     protected final int4 state = new int4(176, 56, 8, 8);
+    protected int2 location;
     /* If the container contains recipe flag. */
     protected final boolean isRecipe;
+    protected final Tier tier;
     /* Synced machine state. */
     //protected MachineState machineState = MachineState.IDLE;
 
     protected MachineStateWidget(GuiInstance gui, IGuiElement parent) {
         super(gui, parent);
+        this.tier = ((TileEntityMachine<?>) gui.handler).getMachineTier();
+        this.setX(gui.handler.getGui().getMachineData().getMachineStatePos().x);
+        this.setY(gui.handler.getGui().getMachineData().getMachineStatePos().y);
+        this.setW(gui.handler.getGui().getMachineData().getMachineStateSize().x);
+        this.setH(gui.handler.getGui().getMachineData().getMachineStateSize().y);
         this.isRecipe = ((TileEntityMachine<?>) gui.handler).has(MachineFlag.RECIPE);
     }
 
@@ -36,7 +45,9 @@ public class MachineStateWidget extends Widget {
         MachineState machineState = ((TileEntityMachine<?>) gui.handler).getMachineState();
         if (isRecipe) {
             if (machineState == MachineState.POWER_LOSS) {
-                drawTexture(matrixStack, this.gui.handler.getGuiTexture(), realX(), realY(), this.state.x, this.state.y, this.state.z, this.state.w);
+                drawTexture(matrixStack, this.gui.handler.getGui().getMachineData().getMachineStateTexture(tier), realX(), realY(), getW(), 0, getW(), getH(), getW() * 2, getH());
+            } else {
+                drawTexture(matrixStack, this.gui.handler.getGui().getMachineData().getMachineStateTexture(tier), realX(), realY(), 0, 0, getW(), getH(), getW() * 2, getH());
             }
         }
     }

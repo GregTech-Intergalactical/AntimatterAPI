@@ -2,15 +2,13 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
-import muramasa.antimatter.gui.BarDir;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
-import muramasa.antimatter.gui.Widget;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
@@ -18,20 +16,24 @@ import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIEN
 public class ProgressWidget extends Widget {
     public final BarDir direction;
     public final boolean barFill;
+
+    ResourceLocation texture;
     private final int4 uv;
     private int progress = 0;
     private int maxProgress = 0;
     private float percent = 0.0F;
 
-    public ProgressWidget(GuiInstance instance, IGuiElement parent, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
+    public ProgressWidget(GuiInstance instance, IGuiElement parent) {
         super(instance, parent);
-        this.direction = dir;
-        this.uv = loc;
-        this.barFill = barFill;
-        setX(x);
-        setY(y);
-        setW(width);
-        setH(height);
+        GuiData gui = instance.handler.getGui();
+        this.direction = gui.getMachineData().getDir();
+        this.uv = new int4(0, gui.getMachineData().getProgressSize().y, gui.getMachineData().getProgressSize().x, gui.getMachineData().getProgressSize().y);
+        this.barFill = gui.getMachineData().doesBarFill();
+        setX(gui.getMachineData().getProgressPos().x + 6);
+        setY(gui.getMachineData().getProgressPos().y + 6);
+        setW(gui.getMachineData().getProgressSize().x);
+        setH(gui.getMachineData().getProgressSize().y);
+        texture = gui.getMachineData().getProgressTexture(((TileEntityMachine<?>)instance.handler).getMachineTier());
     }
 
     @Override
@@ -42,8 +44,8 @@ public class ProgressWidget extends Widget {
         gui.syncInt(() -> ((ContainerMachine<?>) gui.container).getTile().recipeHandler.map(rec -> rec.getActiveRecipe() == null ? 0 : rec.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i, SERVER_TO_CLIENT);
     }
 
-    public static WidgetSupplier build(BarDir dir, boolean barFill) {
-        return builder((a, b) -> new ProgressWidget(a, b, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
+    public static WidgetSupplier build() {
+        return builder(ProgressWidget::new);
     }
 
     @Override
@@ -86,8 +88,9 @@ public class ProgressWidget extends Widget {
                 length = progressTime;
             }
         }
+        drawTexture(matrixStack, texture, realX(), realY(), 0, 0, uv.z, uv.w, uv.z, uv.w * 2);
         if (progress > 0) {
-            drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(), realY(), xLocation, yLocation, length, width);
+            drawTexture(matrixStack, texture, realX(), realY(), xLocation, yLocation, length, width, uv.z, uv.w * 2);
         }
     }
 

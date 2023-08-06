@@ -1,13 +1,17 @@
 package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.util.int4;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -16,65 +20,67 @@ import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIEN
 import static muramasa.antimatter.machine.MachineFlag.FLUID;
 import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
-public class IOWidget extends AbstractSwitchWidget {
-    @Nullable
-    protected ButtonWidget item;
-    @Nullable
-    protected ButtonWidget fluid;
-    private static final int4 fluidLoc = new int4(176, 18, 18, 18), itemLoc = new int4(176, 36, 18, 18);
+public class IOWidget extends Widget {
 
+    private boolean hasItem = false;
+    private boolean hasFluid = false;
     private boolean itemState = false;
     private boolean fluidState = false;
 
-    protected IOWidget(GuiInstance instance, IGuiElement parent, int x, int y, int w, int h) {
-        super(instance, parent, new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, false);
-        this.setX(x);
-        this.setY(y);
-        this.setW(w);
-        this.setH(h);
+    protected IOWidget(GuiInstance instance, IGuiElement parent) {
+        super(instance, parent);
+        this.setX(instance.handler.getGui().getMachineData().getIoPos().x);
+        this.setY(instance.handler.getGui().getMachineData().getIoPos().y);
+        this.setW(36);
+        this.setH(18);
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
         if (m.getTile().getMachineType().has(ITEM)) {
-            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvents.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
-            item.setEnabled(false);
-            item.setStateHandler(wid -> itemState);
-            item.setDepth(depth() + 1);
+            hasItem = true;
         }
         if (m.getTile().getMachineType().has(FLUID)) {
-            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvents.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
-            fluid.setStateHandler(wid -> fluidState);
-            fluid.setEnabled(false);
-            fluid.setDepth(depth() + 1);
+            hasFluid = true;
         }
     }
 
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        if (item != null && item.isEnabled()) item.render(matrixStack, mouseX, mouseY, partialTicks);
-        if (fluid != null && fluid.isEnabled()) fluid.render(matrixStack, mouseX, mouseY, partialTicks);
+        if (hasItem){
+            drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX() + 18, realY(), itemState ? 18 : 0, 18, 18, 18,36, 36);
+        }
+        if (hasFluid){
+            drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX(), realY(), fluidState ? 18 : 0, 0, 18, 18,36, 36);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.isEnabled() && isInside(mouseX, mouseY)) {
+            boolean clicked = false;
+            if (hasItem && isInside(18, 0, 18, 18, mouseX, mouseY)){
+                gui.sendPacket(gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.ITEM_EJECT, Screen.hasShiftDown() ? 1 : 0, id)));
+                clicked = true;
+            }
+            if (hasFluid && isInside(0, 0, 18, 18, mouseX, mouseY)){
+                gui.sendPacket(gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.FLUID_EJECT, Screen.hasShiftDown() ? 1 : 0, id)));
+                clicked = true;
+            }
+            if (clicked){
+                this.clickSound(Minecraft.getInstance().getSoundManager());
+                this.onClick(mouseX, mouseY, button);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void init() {
         super.init();
         ContainerMachine<?> m = (ContainerMachine<?>) gui.container;
-        if (item != null)
+        if (hasItem)
             gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput) t.getOutputCover()).shouldOutputItems()).orElse(false)), this::setItem, SERVER_TO_CLIENT);
-        if (fluid != null)
+        if (hasFluid)
             gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput) t.getOutputCover()).shouldOutputFluids()).orElse(false)), this::setFluid, SERVER_TO_CLIENT);
-    }
-
-    @Override
-    public void updateSize() {
-        super.updateSize();
-        if (item != null) item.updateSize();
-        if (fluid != null) fluid.updateSize();
-    }
-
-    private static void handler(AbstractSwitchWidget widget, boolean state) {
-        IOWidget wid = (IOWidget) widget;
-        if (wid.item != null) wid.item.setEnabled(state);
-        if (wid.fluid != null) wid.fluid.setEnabled(state);
     }
 
     private void setItem(boolean item) {
@@ -85,7 +91,7 @@ public class IOWidget extends AbstractSwitchWidget {
         this.fluidState = item;
     }
 
-    public static WidgetSupplier build(int x, int y, int w, int h) {
-        return builder((a, b) -> new IOWidget(a, b, x, y, w, h));
+    public static WidgetSupplier build(int x, int y) {
+        return builder(IOWidget::new);
     }
 }
