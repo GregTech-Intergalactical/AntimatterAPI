@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 
-public class FakeTrackedItemHandler<T extends TileEntityMachine<T>> extends TrackedItemHandler<T> {
+public class FakeTrackedItemHandler<T extends IGuiHandler> extends TrackedItemHandler<T> {
     public FakeTrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent) {
         super(tile, size, output, input, validator, contentEvent);
     }

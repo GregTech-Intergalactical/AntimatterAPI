@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundTag;
@@ -9,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 
-public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStackHandler implements ITrackedHandler {
+public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler implements ITrackedHandler {
 
     private final T tile;
     private final ContentEvent contentEvent;
@@ -41,8 +43,13 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
 
     @Override
     public void onContentsChanged(int slot) {
-        tile.setChanged();
-        tile.onMachineEvent(contentEvent, slot);
+        if (tile instanceof TileEntityMachine<?> machine){
+            machine.setChanged();
+            machine.onMachineEvent(contentEvent, slot);
+        } else if (tile instanceof ICover cover){
+            cover.source().getTile().setChanged();
+        }
+
     }
 
     @Nonnull

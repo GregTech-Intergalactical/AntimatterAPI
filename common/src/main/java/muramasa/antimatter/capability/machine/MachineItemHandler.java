@@ -43,7 +43,7 @@ import static muramasa.antimatter.machine.MachineFlag.GUI;
 public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Serializable, Dispatch.Sided<ExtendedItemContainer> {
 
     protected final T tile;
-    protected final Object2ObjectMap<SlotType<?>, TrackedItemHandler<T>> inventories = new Object2ObjectOpenHashMap<>(); // Use SlotType instead of MachineFlag?
+    protected final Object2ObjectMap<SlotType<?>, TrackedItemHandler<T>> inventories = new Object2ObjectOpenHashMap<>();
 
     public MachineItemHandler(T tile) {
         this.tile = tile;

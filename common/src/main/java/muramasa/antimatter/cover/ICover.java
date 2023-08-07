@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
@@ -32,10 +33,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import tesseract.api.item.ExtendedItemContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -117,6 +121,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return true;
     }
 
+    default Map<SlotType<?>, ExtendedItemContainer> getAll(){
+        return null;
+    }
+
     default int getWeakPower() {
         return 0;
     }
@@ -165,6 +173,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
     default ItemStack getDroppedStack() {
         return getItem();
+    }
+
+    default void addInfoFromStack(ItemStack stack){
+
     }
 
     default boolean isEqual(ICover cover) {

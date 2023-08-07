@@ -157,6 +157,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
     public boolean placeCover(Player player, Direction side, ItemStack stack, ICover cover) {
         if (!get(side).isEmpty() || !set(side, cover, true))
             return false;
+        cover.addInfoFromStack(stack);
         if (!player.isCreative())
             stack.shrink(1);
         return true;

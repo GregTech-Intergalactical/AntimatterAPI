@@ -1,14 +1,22 @@
 package muramasa.antimatter.cover;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
+import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.gui.widget.CoverModeHandlerWidget;
+import muramasa.antimatter.gui.widget.SlotWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
@@ -21,14 +29,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import tesseract.api.item.ExtendedItemContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
@@ -42,6 +53,8 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     public final GuiData gui;
     public final Direction side;
     private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
+
+    protected Object2ObjectMap<SlotType<?>, TrackedItemHandler<?>> inventories = null;
 
     @Override
     public ResourceLocation getModel(String type, Direction dir) {
@@ -68,14 +81,46 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         if (factory.hasGui()) {
             this.gui = new GuiData(this, factory.getMenuHandler());
             gui.setEnablePlayerSlots(true);
+            gui.setSlots(ISlotProvider.DEFAULT());
             this.addGuiCallback(t -> {
                 t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight()));
                 if (BaseCover.this instanceof ICoverModeHandler){
                     t.addWidget(CoverModeHandlerWidget.build());
                 }
+                List<SlotData<?>> slots = tier == null ? gui.getSlots().getAnySlots() : gui.getSlots().getSlots(tier);
+                slots.forEach(s ->{
+                    t.addWidget(SlotWidget.build(s));
+                });
             });
         } else {
             this.gui = null;
+        }
+    }
+
+    @Override
+    public void onPlace() {
+        setInventory();
+    }
+
+    private void setInventory(){
+        if (factory.hasGui()){
+            if (inventories == null){
+                inventories = new Object2ObjectOpenHashMap<>();
+            }
+            List<SlotData<?>> slots = tier == null ? gui.getSlots().getAnySlots() : gui.getSlots().getSlots(tier);
+            Map<SlotType<?>, List<SlotData<?>>> map = slots.stream().collect(Collectors.groupingBy(SlotData::getType));
+            slots.forEach(s ->{
+                for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
+                    SlotType<?> type = entry.getKey();
+                    int count = gui.getSlots().getCount(tier, entry.getKey());
+                    if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY) {
+                        inventories.put(type, new FakeTrackedItemHandler<>(this, count, type.output, type.input, type.tester, type.ev));
+                    } else {
+                        inventories.put(type, new TrackedItemHandler<>(this, count, type.output, type.input, type.tester, type.ev));
+                    }
+
+                }
+            });
         }
     }
 
@@ -87,6 +132,36 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     @Override
     public List<Consumer<GuiInstance>> getCallbacks() {
         return this.guiCallbacks;
+    }
+
+    @Override
+    public Map<SlotType<?>, ExtendedItemContainer> getAll() {
+        return (Map<SlotType<?>, ExtendedItemContainer>) (Object) inventories;
+    }
+
+    @Override
+    public ItemStack getDroppedStack() {
+        ItemStack stack =  ICover.super.getDroppedStack();
+        if (inventories != null && getFactory().hasGui()){
+            CompoundTag nbt = new CompoundTag();
+            this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serialize(new CompoundTag())));
+            stack.getOrCreateTag().put("coverInventories", nbt);
+        }
+        return stack;
+    }
+
+    @Override
+    public void addInfoFromStack(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("coverInventories")){
+            CompoundTag nbt = tag.getCompound("coverInventories");
+            if (inventories != null && getFactory().hasGui()){
+                this.inventories.forEach((f, i) -> {
+                    if (!nbt.contains(f.getId())) return;
+                    i.deserialize(nbt.getCompound(f.getId()));
+                });
+            }
+        }
     }
 
     @Override
@@ -123,7 +198,13 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public void deserialize(CompoundTag nbt) {
-
+        if (getFactory().hasGui()){
+            setInventory();
+            this.inventories.forEach((f, i) -> {
+                if (!nbt.contains(f.getId())) return;
+                i.deserialize(nbt.getCompound(f.getId()));
+            });
+        }
     }
 
     @Override
@@ -138,7 +219,11 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public CompoundTag serialize() {
-        return new CompoundTag();
+        CompoundTag nbt = new CompoundTag();
+        if (inventories != null && getFactory().hasGui()){
+            this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serialize(new CompoundTag())));
+        }
+        return nbt;
     }
 
     @Override
