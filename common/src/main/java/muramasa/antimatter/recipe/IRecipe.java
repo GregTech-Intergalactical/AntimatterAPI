@@ -81,6 +81,8 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     boolean isHidden();
 
+    boolean isFake();
+
     Set<RecipeTag> getTags();
 
     Map<ItemStack, Integer> getChancesWithStacks();

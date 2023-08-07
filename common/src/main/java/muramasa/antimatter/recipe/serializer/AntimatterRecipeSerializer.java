@@ -15,6 +15,7 @@ import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,6 +44,12 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
     @Override
     public Recipe fromJson(ResourceLocation recipeId, JsonObject json) {
         try {
+            String mapId = json.get("map").getAsString();
+            RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, mapId);
+            if (map == null) throw new IllegalStateException("Recipe map: " + mapId + " is unknown");
+            if (map.getRecipeSerializer() != null){
+                return map.getRecipeSerializer().fromJson(recipeId, json);
+            }
             List<Ingredient> list = new ObjectArrayList<>();
             if (json.has("item_in")) {
                 JsonArray array = json.getAsJsonArray("item_in");
@@ -78,6 +85,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
                 r.addChances(chances.stream().mapToInt(i -> i).toArray());
             }
             r.setHidden(json.get("hidden").getAsBoolean());
+            r.setFake(json.get("fake").getAsBoolean());
             if (json.has("tags")){
                 JsonArray array = json.getAsJsonArray("tags");
                 Set<RecipeTag> tags = Streams.stream(array).map(e -> {
@@ -86,7 +94,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
                 }).collect(Collectors.toSet());
                 r.addTags(tags);
             }
-            r.setIds(recipeId, json.get("map").getAsString());
+            r.setIds(recipeId, mapId);
             return r;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
@@ -138,6 +146,11 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
     @Nullable
     @Override
     public Recipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+        String mapId = buffer.readUtf();
+        RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, mapId);
+        if (map != null && map.getRecipeSerializer() != null){
+            return map.getRecipeSerializer().fromNetwork(recipeId, buffer);
+        }
         int size = buffer.readInt();
         List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
@@ -177,7 +190,8 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         int dur = buffer.readInt();
         int special = buffer.readInt();
         int amps = buffer.readInt();
-        String map = buffer.readUtf();
+        boolean hidden = buffer.readBoolean();
+        boolean fake = buffer.readBoolean();
 
         Recipe r = new Recipe(
                 ings,
@@ -191,12 +205,20 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         );
         if (chances.length > 0)
             r.addChances(chances);
-        r.setIds(recipeId, map);
+        r.setIds(recipeId, mapId);
+        r.setHidden(hidden);
+        r.setFake(fake);
         return r;
     }
 
     @Override
     public void toNetwork(FriendlyByteBuf buffer, Recipe recipe) {
+        buffer.writeUtf(recipe.mapId);
+        RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, recipe.mapId);
+        if (map != null && map.getRecipeSerializer() != null){
+            map.getRecipeSerializer().toNetwork(buffer, recipe);
+            return;
+        }
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
             recipe.getInputItems().forEach(t -> RecipeUtil.write(buffer, t));
@@ -221,6 +243,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         buffer.writeInt(recipe.getDuration());
         buffer.writeInt(recipe.getSpecialValue());
         buffer.writeInt(recipe.getAmps());
-        buffer.writeUtf(recipe.mapId);
+        buffer.writeBoolean(recipe.isHidden());
+        buffer.writeBoolean(recipe.isFake());
     }
 }

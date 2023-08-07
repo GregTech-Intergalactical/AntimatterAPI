@@ -51,7 +51,7 @@ public class RecipeBuilder {
     protected int duration, special;
     protected long power;
     protected int amps;
-    protected boolean hidden;
+    protected boolean hidden, fake;
     protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     protected ResourceLocation id;
     protected boolean recipeMapOnly = false;
@@ -128,6 +128,7 @@ public class RecipeBuilder {
         );
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
+        recipe.setFake(fake);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
         return recipe;
     }
@@ -285,6 +286,11 @@ public class RecipeBuilder {
         return this;
     }
 
+    public RecipeBuilder fake(){
+        fake = true;
+        return this;
+    }
+
     public RecipeBuilder recipeMapOnly(){
         recipeMapOnly = true;
         return this;
@@ -334,6 +340,11 @@ public class RecipeBuilder {
         }
         @Override
         public void serializeRecipeData(JsonObject json) {
+            json.addProperty("map", recipeMap.getId());
+            if (recipeMap.getRecipeSerializer() != null){
+                recipeMap.getRecipeSerializer().toJson(id, json, RecipeBuilder.this);
+                return;
+            }
             JsonArray array = new JsonArray();
             for (Ingredient ingredient : ingredientInput) {
                 array.add(ingredient.toJson());
@@ -376,6 +387,7 @@ public class RecipeBuilder {
                 json.add("chances", array);
             }
             json.addProperty("hidden", hidden);
+            json.addProperty("fake", fake);
             array = new JsonArray();
             for (RecipeTag tag : tags){
                 array.add(tag.getLoc().toString());
@@ -383,7 +395,6 @@ public class RecipeBuilder {
             if (!array.isEmpty()){
                 json.add("tags", array);
             }
-            json.addProperty("map", recipeMap.getId());
         }
 
         @Override

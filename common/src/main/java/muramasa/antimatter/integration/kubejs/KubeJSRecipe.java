@@ -13,8 +13,10 @@ import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
@@ -32,7 +34,7 @@ public class KubeJSRecipe extends RecipeJS {
     private int special;
     private long power;
     private int amps;
-    private boolean hidden;
+    private boolean hidden, fake;
     private final List<Integer> chances = new ObjectArrayList<>();
     private String map;
 
@@ -71,6 +73,7 @@ public class KubeJSRecipe extends RecipeJS {
         duration = ((Number) listJS.get(5)).intValue();
         power = ((Number) listJS.get(6)).longValue();
         hidden = false;
+        fake = false;
         if (listJS.size() > 7) {
             amps = ((Number) listJS.get(7)).intValue();
             special = ((Number) listJS.get(8)).intValue();
@@ -90,6 +93,11 @@ public class KubeJSRecipe extends RecipeJS {
 
     @Override
     public void deserialize() {
+        this.map = GsonHelper.getAsString(json, "map");
+        RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, this.map);
+        if (map != null && map.getRecipeSerializer() != null){
+            //return map.getRecipeSerializer().fromJson(id, json);
+        }
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_in", new JsonArray())) {
             this.inputItems.add(RecipeIngredientJS.fromJson(e));
         }
@@ -106,8 +114,8 @@ public class KubeJSRecipe extends RecipeJS {
         this.special = GsonHelper.getAsInt(json, "special", 0);
         this.power = GsonHelper.getAsInt(json, "eu");
         this.amps = GsonHelper.getAsInt(json, "amps", 1);
-        this.map = GsonHelper.getAsString(json, "map");
         this.hidden = GsonHelper.getAsBoolean(json, "hidden");
+        this.fake = GsonHelper.getAsBoolean(json, "fake");
 
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "chances", new JsonArray())) {
             this.chances.add(e.getAsInt());
@@ -170,5 +178,6 @@ public class KubeJSRecipe extends RecipeJS {
         this.json.addProperty("special", this.special);
         this.json.addProperty("hidden", this.hidden);
         this.json.addProperty("map", this.map);
+        this.json.addProperty("fake", this.fake);
     }
 }

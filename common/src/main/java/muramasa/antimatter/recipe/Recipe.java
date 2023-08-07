@@ -39,7 +39,7 @@ public class Recipe implements IRecipe {
     private final long power;
     private final int amps;
     private int[] chances;
-    private boolean hidden;
+    private boolean hidden, fake;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     private Map<ItemStack, Integer> itemsWithChances = null;
     public ResourceLocation id;
@@ -87,6 +87,10 @@ public class Recipe implements IRecipe {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public void setFake(boolean fake){
+        this.fake = fake;
     }
 
     public void addTags(Set<RecipeTag> tags) {
@@ -232,6 +236,11 @@ public class Recipe implements IRecipe {
 
     public boolean isHidden() {
         return hidden;
+    }
+
+    @Override
+    public boolean isFake() {
+        return fake;
     }
 
     public Set<RecipeTag> getTags() {

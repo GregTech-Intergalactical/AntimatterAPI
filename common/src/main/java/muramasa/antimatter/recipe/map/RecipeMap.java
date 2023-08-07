@@ -15,6 +15,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.*;
+import muramasa.antimatter.recipe.serializer.CustomRecipeSerializer;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
@@ -53,6 +54,9 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     private Tier guiTier;
     @Nullable
     private Proxy PROXY;
+
+    @Nullable
+    private CustomRecipeSerializer recipeSerializer;
 
     @Nullable
     private Object icon;
@@ -98,9 +102,19 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return this;
     }
 
+    public RecipeMap<B> setSerializer(CustomRecipeSerializer recipeSerializer){
+        this.recipeSerializer = recipeSerializer;
+        return this;
+    }
+
     @Nullable
     public Object getIcon() {
         return this.icon;
+    }
+
+    @Nullable
+    public CustomRecipeSerializer getRecipeSerializer() {
+        return recipeSerializer;
     }
 
     @Nonnull
@@ -426,7 +440,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                 // Either return recipe or continue branch.
                 IRecipe r = result.map(left -> {
                     for (IRecipe recipe : left) {
-                        if (canHandle.test(recipe)) {
+                        if (canHandle.test(recipe) && !recipe.isFake()) {
                             return recipe;
                         }
                     }
