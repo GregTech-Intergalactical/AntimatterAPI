@@ -44,7 +44,7 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                 List<ItemStack> outputs = recipe.outputs;
                 boolean isOutput = displayScreen.getIngredientsToNotice().isEmpty();
                 List<EntryStack<?>> list = isOutput ? displayScreen.getResultsToNotice() : displayScreen.getIngredientsToNotice();
-                if (list.size() > 1) return lastView;
+                if (list.size() != 1) return lastView;
                 EntryStack<?> e = list.get(0);
                 if (e.getType() != VanillaEntryTypes.ITEM) return lastView;
                 EntryStack<ItemStack> entryStack = e.cast();
