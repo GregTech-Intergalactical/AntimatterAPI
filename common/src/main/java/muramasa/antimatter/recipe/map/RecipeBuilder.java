@@ -28,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -198,6 +199,11 @@ public class RecipeBuilder {
 
     public IRecipe add(String id, long duration) {
         return add(id, duration, 0, this.special);
+    }
+
+    public RecipeBuilder ii(ItemLike... stacks) {
+        ingredientInput.addAll(Arrays.stream(stacks).map(Ingredient::of).toList());
+        return this;
     }
 
     public RecipeBuilder ii(Ingredient... stacks) {
