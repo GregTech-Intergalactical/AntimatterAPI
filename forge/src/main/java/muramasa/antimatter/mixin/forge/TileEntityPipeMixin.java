@@ -62,23 +62,23 @@ public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEnt
         if (!connects(side)) return LazyOptional.empty();
         if (!pipeCapHolder.isPresent()) return LazyOptional.empty();
         if (cap == CapabilityEnergy.ENERGY && getCapClass() == IRFNode.class) {
-            if (pipeCaps[side.get3DDataValue()] == null){
+            if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromEnergyHolder(pipeCapHolder, side).cast();
             }
         }
         if (cap == FLUID_HANDLER_CAPABILITY && getCapClass() == FluidContainer.class){
-            if (pipeCaps[side.get3DDataValue()] == null){
+            if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromFluidHolder(pipeCapHolder, side).cast();
             }
         }
         if (cap == ITEM_HANDLER_CAPABILITY && getCapClass() == ExtendedItemContainer.class){
-            if (pipeCaps[side.get3DDataValue()] == null){
+            if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromItemHolder(pipeCapHolder, side).cast();
             }
         }
         try {
             if (cap == AntimatterCaps.CAP_MAP.get(getCapClass())){
-                if (pipeCaps[side.get3DDataValue()] == null){
+                if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                     pipeCaps[side.get3DDataValue()] = fromHolder(pipeCapHolder, side);
                 }
             }

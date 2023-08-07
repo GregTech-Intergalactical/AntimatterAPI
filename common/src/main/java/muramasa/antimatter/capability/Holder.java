@@ -68,12 +68,16 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         invalidating++;
         int index = side == null ? 6 : side.get3DDataValue();
         listeners.get(index).forEach(Runnable::run);
+        listeners.get(index).clear();
         invalidating--;
     }
 
     public void invalidate() {
         invalidating++;
-        listeners.forEach(l -> l.forEach(Runnable::run));
+        listeners.forEach(l -> {
+            l.forEach(Runnable::run);
+            l.clear();
+        });
         invalidating--;
     }
 

@@ -98,31 +98,31 @@ public abstract class TileEntityMachineMixin<T extends TileEntityMachine<T>> ext
     private <U> LazyOptional<U> getCap(@NotNull Capability<U> cap, @Nullable Direction side) {
         int index = side == null ? 6 : side.get3DDataValue();
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) {
-            if (coverHandlerLazyOptional[index] == null){
+            if (coverHandlerLazyOptional[index] == null || !coverHandlerLazyOptional[index].isPresent()){
                 coverHandlerLazyOptional[index] = fromHolder(coverHandler, side);
             }
             return coverHandlerLazyOptional[index].cast();
         }
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) {
-            if (fluidHandlerLazyOptional[index] == null){
+            if (fluidHandlerLazyOptional[index] == null || !fluidHandlerLazyOptional[index].isPresent()){
                 fluidHandlerLazyOptional[index] = fromFluidHolder(fluidHandler, side);
             }
             return fluidHandlerLazyOptional[index].cast();
         }
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
-            if (itemHandlerLazyOptional[index] == null){
+            if (itemHandlerLazyOptional[index] == null || !itemHandlerLazyOptional[index].isPresent()){
                 itemHandlerLazyOptional[index] = fromItemHolder(itemHandler, side);
             }
             return itemHandlerLazyOptional[index].cast();
         }
         if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY){
             if (cap == CapabilityEnergy.ENERGY && rfHandler.isPresent()){
-                if (rfHandlerLazyOptional[index] == null){
+                if (rfHandlerLazyOptional[index] == null || !rfHandlerLazyOptional[index].isPresent()){
                     rfHandlerLazyOptional[index] = fromEnergyHolder(rfHandler, side);
                 }
                 return rfHandlerLazyOptional[index].cast();
             } else if (energyHandler.isPresent()){
-                if (energyHandlerLazyOptional[index] == null){
+                if (energyHandlerLazyOptional[index] == null || !energyHandlerLazyOptional[index].isPresent()){
                     energyHandlerLazyOptional[index] = fromHolder(energyHandler, side);
                 }
                 return energyHandlerLazyOptional[index].cast();
