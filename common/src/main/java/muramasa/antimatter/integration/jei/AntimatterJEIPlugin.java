@@ -126,7 +126,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
         List<IRecipe> recipes = new ArrayList<>(manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap.getId()) && !r.isHidden()).toList());
         if (recipeMap.getProxy() != null && recipeMap instanceof RecipeMap<?> map) {
             List<net.minecraft.world.item.crafting.Recipe<?>> proxyRecipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) manager.getAllRecipesFor(recipeMap.getProxy().loc());
-            proxyRecipes.forEach(recipe -> recipes.add(recipeMap.getProxy().handler().apply(recipe, map.RB())));
+            proxyRecipes.forEach(recipe -> {
+                IRecipe recipe1 = recipeMap.getProxy().handler().apply(recipe, map.RB());
+                if (recipe1 != null){
+                    recipes.add(recipe1);
+                }
+            });
         }
         return recipes;
     }
