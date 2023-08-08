@@ -310,6 +310,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
             List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
             for (int i = 0; i < recipe.getChances().length; i++) {
                 if (recipe.getChances()[i] < 10000) {
+                    if (i >= slots.size()) break;
                     RenderSystem.disableBlend();
                     RenderSystem.disableDepthTest();
                     stack.pushPose();
