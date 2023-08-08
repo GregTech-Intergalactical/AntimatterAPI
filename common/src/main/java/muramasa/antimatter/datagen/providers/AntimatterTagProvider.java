@@ -17,6 +17,7 @@ import net.minecraft.tags.TagKey;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
@@ -26,12 +27,15 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
     public static Object2ObjectOpenHashMap<ResourceLocation, JsonObject> TAGS_GLOBAL = new Object2ObjectOpenHashMap<>();
 
+    public static Object2ObjectOpenHashMap<Registry<?>, Map<ResourceLocation, List<Object>>> TAGS_TO_REMOVE = new Object2ObjectOpenHashMap<>();
+
     public AntimatterTagProvider(Registry<T> registry, String providerDomain, String providerName, String prefix) {
         this.builders = Maps.newLinkedHashMap();
         this.registry = registry;
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.prefix = prefix;
+        TAGS_TO_REMOVE.computeIfAbsent(registry, r -> new Object2ObjectOpenHashMap<>());
     }
 
     @Override

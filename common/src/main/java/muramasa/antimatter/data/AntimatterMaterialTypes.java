@@ -248,6 +248,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.GEAR.dependents(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD);
         AntimatterMaterialTypes.GEM_EXQUISITE.dependents(GEM_FLAWLESS, GEM_FLAWED, GEM_CHIPPED, GEM_POLISHED, GEM_BRITTLE, GEM);
 
+        AntimatterMaterialTypes.WIRE_FINE.setIgnoreTextureSets();
         AntimatterMaterialTypes.DUST_TINY.setHidden();
         AntimatterMaterialTypes.DUST_SMALL.setHidden();
         AntimatterMaterialTypes.DRILLBIT.unSplitName().setIgnoreTextureSets();
