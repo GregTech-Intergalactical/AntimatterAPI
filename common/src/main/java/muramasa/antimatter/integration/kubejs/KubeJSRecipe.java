@@ -41,6 +41,10 @@ public class KubeJSRecipe extends RecipeJS {
     @Override
     public void create(ListJS listJS) {
         this.map = (String) listJS.get(0);
+        RecipeMap<?> rMap = AntimatterAPI.get(RecipeMap.class, this.map);
+        if (rMap == null){
+            throw new IllegalArgumentException("Unknown recipe map");
+        }
         if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
             if (inputItem instanceof MapJS map){
                 this.inputItems.add(RecipeIngredientJS.fromJson(map.toJson()));
