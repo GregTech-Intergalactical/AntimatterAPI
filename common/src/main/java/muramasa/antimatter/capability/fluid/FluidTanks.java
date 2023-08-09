@@ -77,9 +77,15 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     public int getFirstAvailableTank(FluidHolder stack, boolean drain) {
         int firstAvailable = -1;
+        int firstEmpty = -1;
         for (int i = 0; i < tanks.length; i++) {
             FluidTank tank = this.tanks[i];
-            if (tank.isEmpty()) {
+            if (!drain){
+                if (tank.isEmpty() && firstEmpty == -1){
+                    firstEmpty = i;
+                }
+            }
+            if (tank.getStoredFluid().matches(stack)) {
                 firstAvailable = i;
                 break;
             } else if ((drain && !tank.extractFluid(stack, true).isEmpty())
@@ -87,6 +93,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
                 return i;
             }
         }
+        if (firstAvailable == -1) return firstEmpty;
         return firstAvailable;
     }
 
@@ -189,12 +196,9 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     @Override
     public long insertFluid(FluidHolder fluid, boolean simulate) {
-        for (int i = 0; i < tanks.length; i++) {
-            long fill = getTank(i).insertFluid(fluid, simulate);
-            if (fill > 0)
-                return fill;
-        }
-        return 0;
+        int tank = getFirstAvailableTank(fluid, true);
+        if (tank == -1) return 0;
+        return getTank(tank).insertFluid(fluid, simulate);
     }
 
     @Override
