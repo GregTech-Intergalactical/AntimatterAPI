@@ -246,6 +246,8 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         for (Map.Entry<Character, Object> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof ItemLike l) {
                 incompleteBuilder = incompleteBuilder.key(entry.getKey(), l);
+            } else if (entry.getValue() instanceof ItemStack stack){
+                incompleteBuilder = incompleteBuilder.key(entry.getKey(), stack.getItem());
             } else if (entry.getValue() instanceof TagKey tagKey) {
                 try {
                     //Wrap the tag using tag manager.
