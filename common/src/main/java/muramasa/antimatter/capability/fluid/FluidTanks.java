@@ -196,7 +196,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
     @Override
     public long insertFluid(FluidHolder fluid, boolean simulate) {
-        int tank = getFirstAvailableTank(fluid, true);
+        int tank = getFirstAvailableTank(fluid, false);
         if (tank == -1) return 0;
         return getTank(tank).insertFluid(fluid, simulate);
     }
