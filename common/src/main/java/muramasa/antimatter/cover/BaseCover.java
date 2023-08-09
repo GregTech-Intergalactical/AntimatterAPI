@@ -138,6 +138,9 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     public Map<SlotType<?>, ExtendedItemContainer> getAll() {
         return (Map<SlotType<?>, ExtendedItemContainer>) (Object) inventories;
     }
+    public ExtendedItemContainer getInventory(SlotType<?> type){
+        return inventories.get(type);
+    }
 
     @Override
     public ItemStack getDroppedStack() {
