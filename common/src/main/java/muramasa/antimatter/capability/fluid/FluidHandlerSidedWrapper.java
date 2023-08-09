@@ -71,9 +71,15 @@ public class FluidHandlerSidedWrapper implements IFluidNode {
 
     @Override
     public long insertFluid(FluidHolder resource, boolean simulate) {
-        if (coverHandler != null && coverHandler.get(side).blocksInput(FluidContainer.class, side)) {
-            return 0;
+        if (coverHandler != null) {
+            if (coverHandler.get(side).blocksInput(FluidContainer.class, side)) {
+                return 0;
+            }
+            FluidHolder copy = resource.copyHolder();
+            coverHandler.onTransfer(copy, side, side.getOpposite(), simulate);
+            if (copy.isEmpty()) return 0;
         }
+
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)) {
             return 0;
         }
