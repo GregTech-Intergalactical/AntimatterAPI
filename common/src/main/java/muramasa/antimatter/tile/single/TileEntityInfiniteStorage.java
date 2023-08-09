@@ -173,7 +173,8 @@ public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> e
     }
 
     public static class InfiniteStorageWidget extends InfoRenderWidget<InfiniteStorageWidget> {
-        public int amperage = 0, voltage = 0;
+        public int amperage = 0;
+        public long voltage = 0;
         protected InfiniteStorageWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<InfiniteStorageWidget> renderer) {
             super(gui, parent, renderer);
         }
@@ -183,7 +184,7 @@ public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> e
             super.init();
             TileEntityInfiniteStorage<?> m = (TileEntityInfiniteStorage<?>) gui.handler;
             gui.syncInt(() -> Math.toIntExact(m.energyHandler.map(EnergyHandler::getOutputAmperage).orElse(0L)), i -> amperage = i, SERVER_TO_CLIENT);
-            gui.syncInt(() -> Math.toIntExact(m.energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0L)), i -> voltage = i, SERVER_TO_CLIENT);
+            gui.syncLong(() -> m.energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0L), i -> voltage = i, SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {

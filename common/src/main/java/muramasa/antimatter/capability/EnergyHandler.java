@@ -17,7 +17,7 @@ public class EnergyHandler implements IEnergyHandler {
 
     protected GTConsumer.State state = new GTConsumer.State(this);
 
-    public EnergyHandler(long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+    public EnergyHandler(long energy, long capacity, long voltageIn, long voltageOut, int amperageIn, int amperageOut) {
         this.energy = energy;
         this.capacity = capacity;
         this.voltageIn = voltageIn;

@@ -20,7 +20,7 @@ public class InfoRenderers {
             String euT = "EU/t: " + recipe.getPower();
             String total = "Total: " + recipe.getPower() * recipe.getDuration() + " EU";
             String temperature = "Temperature: " + recipe.getSpecialValue() + " K";
-            Tier tier = Tier.getTier((int) (recipe.getPower() / recipe.getAmps()));
+            Tier tier = Tier.getTier((recipe.getPower() / recipe.getAmps()));
             String formattedText = " (" + tier.getId().toUpperCase() + ")";
             renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
             renderString(stack, euT, fontRenderer, 5, 10, guiOffsetX, guiOffsetY);
@@ -57,7 +57,7 @@ public class InfoRenderers {
             String euT = "EU/t: " + recipe.getPower();
             String amps = "Amps: " + recipe.getAmps();
             String total = "Total: " + recipe.getPower() * recipe.getDuration() + " EU";
-            Tier tier = Tier.getTier((int) (recipe.getPower() / recipe.getAmps()));
+            Tier tier = Tier.getTier((recipe.getPower() / recipe.getAmps()));
             String formattedText = " (" + tier.getId().toUpperCase() + ")";
             renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
             renderString(stack, euT, fontRenderer, 5, 10, guiOffsetX, guiOffsetY);

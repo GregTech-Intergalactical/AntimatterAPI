@@ -20,7 +20,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
 
     protected TesseractItemContext context;
 
-    public ItemEnergyHandler(TesseractItemContext context, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+    public ItemEnergyHandler(TesseractItemContext context, long capacity, long voltageIn, long voltageOut, int amperageIn, int amperageOut) {
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.maxEnergy = capacity;
         this.context = context;

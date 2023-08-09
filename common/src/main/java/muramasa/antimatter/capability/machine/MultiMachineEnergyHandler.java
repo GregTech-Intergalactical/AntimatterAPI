@@ -137,7 +137,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
     public Tier getAccumulatedPower() {
         if (inputs == null) return Tier.ULV;
         long voltage = Arrays.stream(inputs).mapToLong(t -> (long) t.getInputVoltage() * t.getInputAmperage()).sum();
-        Tier tier = Tier.getTier((int) voltage);
-        return voltage >= tier.getVoltage() ? tier : Tier.getTier((int) (voltage >> 2));
+        Tier tier = Tier.getTier(voltage);
+        return voltage >= tier.getVoltage() ? tier : Tier.getTier((voltage >> 2));
     }
 }

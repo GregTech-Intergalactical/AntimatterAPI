@@ -19,7 +19,7 @@ public class RFHandler implements IRFNode {
     protected long energy;
     protected long maxIn, maxOut;
 
-    public RFHandler(long energy, long capacity, int maxIn, int maxOut) {
+    public RFHandler(long energy, long capacity, long maxIn, long maxOut) {
         this.energy = energy;
         this.capacity = capacity;
         this.maxIn = maxIn;

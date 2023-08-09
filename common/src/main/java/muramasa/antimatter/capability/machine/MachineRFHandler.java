@@ -30,7 +30,7 @@ public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler 
 
     protected int offsetInsert = 0;
     protected int offsetExtract = 0;
-    public MachineRFHandler(T tile, long energy, long capacity, int maxIn, int maxOut) {
+    public MachineRFHandler(T tile, long energy, long capacity, long maxIn, long maxOut) {
         super(energy, capacity, maxIn, maxOut);
         this.tile = tile;
     }

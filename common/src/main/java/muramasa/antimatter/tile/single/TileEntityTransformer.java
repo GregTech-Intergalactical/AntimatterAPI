@@ -18,23 +18,26 @@ import tesseract.api.gt.IEnergyHandler;
 
 import java.util.List;
 import java.util.function.IntToLongFunction;
+import java.util.function.LongFunction;
+import java.util.function.ToLongFunction;
 
 import static muramasa.antimatter.data.AntimatterDefaultTools.SOFT_HAMMER;
 
 public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends TileEntityMachine<T> {
 
-    protected int voltage, amperage;
-    protected IntToLongFunction capFunc;
+    protected long voltage;
+    protected int amperage;
+    protected LongFunction<Long> capFunc;
 
     public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps) {
         this(type, pos, state, amps, (v) -> (512L + v * 8L));
     }
 
-    public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps, IntToLongFunction capFunc) {
+    public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps, LongFunction<Long> capFunc) {
         super(type, pos, state);
         this.amperage = amps;
         this.capFunc = capFunc;
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, capFunc.apply(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4) {
             @Override
             public boolean canOutput(Direction direction) {
                 return isDefaultMachineState() == (tile.getFacing().get3DDataValue() != direction.get3DDataValue());

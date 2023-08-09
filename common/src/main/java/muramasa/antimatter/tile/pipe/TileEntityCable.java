@@ -67,7 +67,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    public int getVoltage() {
+    public long getVoltage() {
         return ((Cable<?>) getPipeType()).getTier().getVoltage();
     }
 

@@ -35,7 +35,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     protected int offsetInsert = 0;
     protected int offsetExtract = 0;
 
-    public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+    public MachineEnergyHandler(T tile, long energy, long capacity, long voltageIn, long voltageOut, int amperageIn, int amperageOut) {
         super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.capacty = capacity;
         this.tile = tile;

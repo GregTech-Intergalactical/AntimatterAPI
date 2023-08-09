@@ -197,7 +197,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                     break;
                 }
             }*/
-            int tempoverclock = (this.tile.getPowerLevel().getVoltage() / Ref.V[tier]);
+            long tempoverclock = (this.tile.getPowerLevel().getVoltage() / Ref.V[tier]);
             while (tempoverclock > 1) {
                 tempoverclock >>= 2;
                 oc++;
@@ -529,7 +529,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return false;
     }
 
-    protected long calculateGeneratorConsumption(int volt, IRecipe r) {
+    protected long calculateGeneratorConsumption(long volt, IRecipe r) {
         long power = r.getPower();
         long amount = r.getInputFluids().get(0).getAmount();
         if (currentProgress > 0 && amount == 1) {

@@ -106,7 +106,7 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
         renderer.draw(stack, "VOLT: " + widget.voltage, left + 43, top + 40, 16448255);
         renderer.draw(stack, "TIER: " + Tier.getTier(widget.voltage < 0 ? -widget.voltage : widget.voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
         renderer.draw(stack, "AMP: " + widget.amperage, left + 43, top + 56, 16448255);
-        renderer.draw(stack, "SUM: " + (long) (widget.amperage * widget.voltage), left + 43, top + 64, 16448255);
+        renderer.draw(stack, "SUM: " + (widget.amperage * widget.voltage), left + 43, top + 64, 16448255);
         return 72;
     }
 
@@ -117,7 +117,8 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
     }
 
     public static class DigitalTransformerWidget extends InfoRenderWidget<DigitalTransformerWidget> {
-        public int amperage = 0, voltage = 0;
+        public int amperage = 0;
+        public long voltage = 0;
 
         protected DigitalTransformerWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<DigitalTransformerWidget> renderer) {
             super(gui, parent, renderer);
@@ -128,7 +129,7 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
             super.init();
             TileEntityDigitalTransformer<?> m = (TileEntityDigitalTransformer<?>) gui.handler;
             gui.syncInt(() -> m.amperage, i -> amperage = i, SERVER_TO_CLIENT);
-            gui.syncInt(() -> m.voltage, i -> voltage = i, SERVER_TO_CLIENT);
+            gui.syncLong(() -> m.voltage, i -> voltage = i, SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {
