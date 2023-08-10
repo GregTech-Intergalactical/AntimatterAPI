@@ -15,7 +15,6 @@ import tesseract.api.gt.IEnergyHandlerItem;
  */
 public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerItem {
 
-    protected boolean discharge = true;
     protected long maxEnergy;
 
     protected TesseractItemContext context;
@@ -33,7 +32,6 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
         CompoundTag energyTag = nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA);
         if (energyTag.contains(Ref.KEY_ITEM_ENERGY)) this.energy = energyTag.getLong(Ref.KEY_ITEM_ENERGY);
         if (energyTag.contains(Ref.KEY_ITEM_MAX_ENERGY)) this.energy = energyTag.getLong(Ref.KEY_ITEM_MAX_ENERGY);
-        if (energyTag.contains(Ref.KEY_ITEM_DISCHARGE_MODE)) this.discharge = energyTag.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
     @Override
@@ -69,13 +67,6 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
         CompoundTag energyTag = nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA);
         if (!energyTag.contains(Ref.KEY_ITEM_MAX_ENERGY)) return true;
         return energyTag.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
-    }
-
-    public boolean chargeModeSwitch() {
-        boolean discharge = !canDischarge();
-        CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
-        energyTag.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, discharge);
-        return discharge;
     }
 
     @Override
@@ -142,7 +133,6 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
     public CompoundTag serialize(CompoundTag nbt) {
         nbt.putLong(Ref.KEY_ITEM_ENERGY, this.energy);
         nbt.putLong(Ref.KEY_ITEM_MAX_ENERGY, this.maxEnergy);
-        nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
         return nbt;
     }
 
@@ -150,7 +140,6 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
     public void deserialize(CompoundTag nbt) {
         this.energy = nbt.contains(Ref.KEY_ITEM_ENERGY_OLD) ? nbt.getLong(Ref.KEY_ITEM_ENERGY_OLD) : nbt.getLong(Ref.KEY_ITEM_ENERGY);
         this.maxEnergy = nbt.getLong(Ref.KEY_ITEM_MAX_ENERGY);
-        this.discharge = nbt.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
         //context.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).merge(nbt);
     }
 }

@@ -99,23 +99,24 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         return InteractionResultHolder.pass(stack);
     }
 
+    private boolean canDischarge(ItemStack stack) {
+        CompoundTag nbt = stack.getTag();
+        if (!nbt.contains(Ref.TAG_ITEM_ENERGY_DATA)) return true;
+        CompoundTag energyTag = nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA);
+        if (!energyTag.contains(Ref.KEY_ITEM_DISCHARGE_MODE)) return true;
+        return energyTag.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
+    }
+
+    public boolean chargeModeSwitch(ItemStack stack) {
+        boolean discharge = !canDischarge(stack);
+        CompoundTag energyTag = stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+        energyTag.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, discharge);
+        return discharge;
+    }
+
     private static Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
         Optional<IEnergyHandlerItem> itemHandler = TesseractCapUtils.getEnergyHandlerItem(stack);
         return itemHandler.map(e -> (ItemEnergyHandler)e);
-    }
-
-    /**
-     * Switches the discharge mode for an item.
-     * False does nothing, true disables discharge.
-     *
-     * @param stack the stack to switch.
-     */
-    private boolean chargeModeSwitch(ItemStack stack) {
-        return getCastedHandler(stack).map(itemEnergyHandler -> {
-            boolean switchMode = itemEnergyHandler.chargeModeSwitch();
-            stack.setTag(itemEnergyHandler.getContainer().getTag());
-            return switchMode;
-        }).orElse(true);
     }
 
     @Override
