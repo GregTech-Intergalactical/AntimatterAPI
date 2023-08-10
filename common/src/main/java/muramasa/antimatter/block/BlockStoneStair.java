@@ -30,7 +30,8 @@ public class BlockStoneStair extends StairBlock implements ISharedAntimatterObje
     public BlockStoneStair(CobbleStoneType type, String suffix, Block baseState) {
         super(baseState.defaultBlockState(), getProps(type));
         domain = type.getDomain();
-        id = type.getId() + "_" + suffix + "_stairs";
+        String s = suffix.isEmpty() ? "" : "_";
+        id = type.getId() + s + suffix + "_stairs";
         this.suffix = suffix;
         this.type = type;
         AntimatterAPI.register(getClass(), this);

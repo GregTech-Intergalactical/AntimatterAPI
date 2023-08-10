@@ -141,6 +141,9 @@ public class ForgeCommonEvents {
             } else if (id.contains("vanilla_basalt")){
                 replacement = id.replace("vanilla_basalt", "basalt");
             }
+            if (id.contains("__")){
+                replacement = replacement.isEmpty() ? id.replace("__", "_") : replacement.replace("__", "_");
+            }
             if (!replacement.isEmpty()) {
                 Block replacementBlock = AntimatterAPI.get(Block.class, replacement, Ref.SHARED_ID);
                 if (replacementBlock != null){

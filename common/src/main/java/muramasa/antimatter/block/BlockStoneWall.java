@@ -25,7 +25,8 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
     public BlockStoneWall(CobbleStoneType type, String suffix) {
         super(getProps(type));
         domain = type.getDomain();
-        id = type.getId() + "_" + suffix + "_wall";
+        String s = suffix.isEmpty() ? "" : "_";
+        id = type.getId() + s + suffix + "_wall";
         this.suffix = suffix;
         this.type = type;
         AntimatterAPI.register(getClass(), this);
