@@ -43,8 +43,6 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> INGOT_HOT = new MaterialTypeItem<>("ingot_hot", 2, true, U);
     public static MaterialTypeItem<?> NUGGET = new MaterialTypeItem<>("nugget", 2, true, Ref.U9);
     public static MaterialTypeItem<?> GEM = new MaterialTypeItem<>("gem", 2, true, U);
-    public static MaterialTypeItem<?> GEM_BRITTLE = new MaterialTypeItem<>("gem_brittle", 2, true, U);
-    public static MaterialTypeItem<?> GEM_POLISHED = new MaterialTypeItem<>("gem_polished", 2, true, U);
     public static MaterialTypeItem<?> GEM_EXQUISITE = new MaterialTypeItem<>("gem_exquisite", 2, true, U);
     public static MaterialTypeItem<?> GEM_FLAWLESS = new MaterialTypeItem<>("gem_flawless", 2, true, U);
     public static MaterialTypeItem<?> GEM_FLAWED = new MaterialTypeItem<>("gem_flawed", 2, true, U);
@@ -246,7 +244,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.DUST.dependents(AntimatterMaterialTypes.DUST_SMALL, AntimatterMaterialTypes.DUST_TINY);
         AntimatterMaterialTypes.GEAR_SMALL.dependents(AntimatterMaterialTypes.PLATE);
         AntimatterMaterialTypes.GEAR.dependents(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD);
-        AntimatterMaterialTypes.GEM_EXQUISITE.dependents(GEM_FLAWLESS, GEM_FLAWED, GEM_CHIPPED, GEM_POLISHED, GEM_BRITTLE, GEM);
+        AntimatterMaterialTypes.GEM_EXQUISITE.dependents(GEM_FLAWLESS, GEM_FLAWED, GEM_CHIPPED,  GEM);
 
         AntimatterMaterialTypes.WIRE_FINE.setIgnoreTextureSets();
         AntimatterMaterialTypes.DUST_TINY.setHidden();
