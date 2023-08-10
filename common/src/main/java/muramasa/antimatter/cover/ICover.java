@@ -50,6 +50,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
     }
 
+    default boolean canPlace(){
+        return true;
+    }
+
     @Nonnull
     default Component getDisplayName() {
         return new TextComponent(Utils.underscoreToUpperCamel(this.getId()));

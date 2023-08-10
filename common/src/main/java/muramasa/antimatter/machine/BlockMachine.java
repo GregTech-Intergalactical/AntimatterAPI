@@ -193,7 +193,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             }
                         }
                     }
-                    boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
+                    boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(h -> h.onInteract(player, hand, Utils.getInteractSide(hit), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return InteractionResult.SUCCESS;
                     //Has gui?
                     if (FluidHooks.safeGetBlockFluidManager(tile, hit.getDirection()).map(fh -> {

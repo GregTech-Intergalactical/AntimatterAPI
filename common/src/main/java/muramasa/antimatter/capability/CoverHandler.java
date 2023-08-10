@@ -60,6 +60,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
     }
 
     public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
+        if (!stack.canPlace()) return false;
         covers.put(side, stack); // Emplace newCover, calls onPlace!
         buildLookup(old.getFactory(), stack.getFactory(), side);
         old.onRemove();

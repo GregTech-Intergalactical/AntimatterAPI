@@ -6,6 +6,8 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
+import muramasa.antimatter.capability.fluid.FluidHandlerSidedWrapper;
+import muramasa.antimatter.capability.fluid.PipeFluidHandlerSidedWrapper;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -33,12 +35,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     protected Optional<PipeFluidHandler> fluidHandler;
     private PipeFluidHolder holder;
+    Direction lastSide;
 
     public TileEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        if (fluidHandler == null) {
-            fluidHandler = FluidController.SLOOSH ? Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : Optional.empty();
-        }
+        fluidHandler = FluidController.SLOOSH ? Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), 1, 0)) : Optional.empty();
         pipeCapHolder.set(() -> this);
     }
 
@@ -128,6 +129,10 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         return TesseractCapUtils.getFluidHandler(level, getBlockPos().relative(dir), dir.getOpposite()).isPresent();
     }
 
+    public void setLastSide(Direction lastSide) {
+        this.lastSide = lastSide;
+    }
+
     @Override
     protected void serverTick(Level level, BlockPos pos, BlockState state) {
         super.serverTick(level, pos, state);
@@ -142,14 +147,14 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public Optional<? extends FluidContainer> forSide(Direction side) {
         if (FluidController.SLOOSH) {
-            if (fluidHandler == null) {
-                fluidHandler = Optional.of(new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
+            if (fluidHandler.isEmpty()) {
+                fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), 1, 0));
             }
+            return Optional.of(new PipeFluidHandlerSidedWrapper(fluidHandler.get(), this, side));
         } else {
-            return Optional.of(new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
-            this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
+            return Optional.of(new PipeFluidHandlerSidedWrapper(new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
+            this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))), this, side));
         }
-        return fluidHandler;
     }
 
     @Override

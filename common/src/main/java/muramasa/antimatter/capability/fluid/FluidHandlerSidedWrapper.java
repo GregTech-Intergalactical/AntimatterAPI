@@ -8,17 +8,18 @@ import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.FluidHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import tesseract.api.fluid.FluidContainerHandler;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FluidHandlerSidedWrapper implements IFluidNode {
-    protected FluidHandler<?> fluidHandler;
+    protected IFluidNode fluidHandler;
     protected Direction side;
     CoverHandler<?> coverHandler;
 
-    public FluidHandlerSidedWrapper(FluidHandler<?> fluidHandler, CoverHandler<?> coverHandler, Direction side) {
+    public FluidHandlerSidedWrapper(IFluidNode fluidHandler, CoverHandler<?> coverHandler, Direction side) {
         this.fluidHandler = fluidHandler;
         this.coverHandler = coverHandler;
         this.side = side;
@@ -31,7 +32,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return fluidHandler.isEmpty();
     }
 
     @Override

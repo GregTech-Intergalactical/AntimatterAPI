@@ -244,6 +244,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (type == null) {
                 return InteractionResult.PASS;
             }
+            boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(h -> h.onInteract(player, hand, Utils.getInteractSide(hit), type)).orElse(false);
+            if (coverInteract) return InteractionResult.SUCCESS;
             if (type == AntimatterDefaultTools.CROWBAR) {
                 if (!player.isCrouching()) {
                     if (AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {

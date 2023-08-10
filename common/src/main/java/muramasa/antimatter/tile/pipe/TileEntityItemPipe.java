@@ -2,6 +2,7 @@ package muramasa.antimatter.tile.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
+import muramasa.antimatter.capability.item.SidedCombinedInvWrapper;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
@@ -75,8 +76,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public Optional<ExtendedItemContainer> forSide(Direction side) {
-        return Optional.of(new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
-                                                                                            simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
+        return Optional.of(new SidedCombinedInvWrapper(side, coverHandler.orElse(null), new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
+                                                                                                                  simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate)))));
     }
 
     @Override

@@ -21,8 +21,14 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (coverHandler != null && coverHandler.get(side).blocksInput(ExtendedItemContainer.class, side))
-            return stack;
+        if (coverHandler != null) {
+            if (coverHandler.get(side).blocksInput(ExtendedItemContainer.class, side)) {
+                return stack;
+            }
+            ItemStack copy = stack.copy();
+            coverHandler.onTransfer(stack, side, side, simulate);
+            if (copy.isEmpty()) return stack;
+        }
         return super.insertItem(slot, stack, simulate);
     }
 
