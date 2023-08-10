@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import it.unimi.dsi.fastutil.Pair;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -35,14 +36,33 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
             @Override
             public void onUpdate() {
                 super.onUpdate();
-                long energyToInsert = (cachedItems.size() > 0 && (this.energy % cachedItems.size()) == 0) ? this.energy / cachedItems.size() : this.energy;
-                cachedItems.forEach(h ->{
-                    long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.right().getCapacity() - h.right().getEnergy()));
-                    if (toAdd > 0 && Utils.addEnergy(h.right(), toAdd)){
-                        h.left().setTag(h.right().getContainer().getTag());
-                        this.energy -= toAdd;
-                    }
-                });
+                if (this.energy > 0 && !cachedItems.isEmpty()){
+                    long energyToInsert = this.energy % cachedItems.size() == 0 ? this.energy / cachedItems.size() : this.energy;
+                    cachedItems.forEach(h ->{
+                        long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.right().getCapacity() - h.right().getEnergy()));
+                        if (toAdd > 0 && Utils.addEnergy(h.right(), toAdd)){
+                            h.left().setTag(h.right().getContainer().getTag());
+                            this.energy -= toAdd;
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public long getInputAmperage() {
+                if (cachedItems != null && !cachedItems.isEmpty()){
+                    return cachedItems.stream().map(Pair::right).mapToLong(IGTNode::getInputAmperage).sum();
+                }
+                return super.getInputAmperage();
+            }
+
+            @Override
+            public long getOutputAmperage() {
+                if (cachedItems != null && !cachedItems.isEmpty()){
+                    return cachedItems.stream().map(Pair::right).mapToLong(IGTNode::getOutputAmperage).sum();
+                }
+                return super.getOutputAmperage();
             }
         });
     }

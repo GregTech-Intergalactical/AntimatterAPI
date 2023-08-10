@@ -90,16 +90,46 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     public boolean addEnergy(GTTransaction.TransferData data) {
         int loss = canInput() && canOutput() ? 1 : 0;
         data.setLoss(loss);
-        //int amps = (int) Math.min((getCapacity() - getEnergy()) / getInputVoltage(), data.getAmps(true));
-        //GTTransaction internal = new GTTransaction(data.getEnergy(amps, true), (t) -> {});
-
-        int j = 0;
-        boolean ok = super.addEnergy(data);
-        for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
+        if (cachedItems.isEmpty()){
+            return super.addEnergy(data);
+        }
+        int amps = (int) Math.min((getCapacity() - getEnergy()) / getInputVoltage(), data.getAmps(true));
+        GTTransaction internal = new GTTransaction(data.getEnergy(amps, true), (t) -> {});
+        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT && !checkVoltage(data)) return false;
+        data.useAmps(true, amps);
+        long euPerBattery = internal.eu / cachedItems.size();
+        boolean ok = false;
+        //GTTransaction.TransferData leftover = new GTTransaction.TransferData(internal, internal.eu % cachedItems.size());
+        long leftover = internal.eu % cachedItems.size();
+        for (int i = 0; i < cachedItems.size(); i++){
             IEnergyHandlerItem handler = cachedItems.get(i).right();
-            if (handler.addEnergy(data)) {
+            GTTransaction.TransferData addData = new GTTransaction.TransferData(internal, euPerBattery);
+            if (handler.addEnergy(addData)){
+                //handler.addEnergy(leftover);
                 cachedItems.get(i).left().setTag(handler.getContainer().getTag());
-                offsetInsert = (offsetInsert + 1) % cachedItems.size();
+                ok = true;
+            }
+            if (addData.getEu() > 0) leftover+= addData.getEu();
+        }
+        int unsuccessful = 0;
+        int i = 0;
+        while (leftover > 0){
+            IEnergyHandlerItem handler = cachedItems.get(i).right();
+            GTTransaction.TransferData addData = new GTTransaction.TransferData(internal, 1);
+            if (handler.addEnergy(addData)){
+                cachedItems.get(i).left().setTag(handler.getContainer().getTag());
+                leftover--;
+                unsuccessful = 0;
+            } else {
+                unsuccessful++;
+            }
+            i++;
+            if (i == cachedItems.size()) i = 0;
+            if (unsuccessful == cachedItems.size()) break;
+        }
+
+        if (leftover > 0){
+            if (super.addEnergy(new GTTransaction.TransferData(internal, leftover))){
                 ok = true;
             }
         }
@@ -166,10 +196,10 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         }
     }
 
-    @Override
+    /*@Override
     public long availableAmpsOutput() {
         return super.availableAmpsOutput() + this.cachedItems.stream().map(Pair::right).mapToLong(IGTNode::availableAmpsOutput).sum();
-    }
+    }*/
 
     /*@Override
     public long availableAmpsInput(long voltage) {
