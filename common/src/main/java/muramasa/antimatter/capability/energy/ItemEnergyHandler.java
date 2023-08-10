@@ -58,14 +58,14 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
 
     @Override
     public boolean canOutput() {
-        return canDischarge() && voltageOut > 0 /*&& getTagEnergy() >= voltageOut*/;
+        return /*canDischarge() &&*/ voltageOut > 0 /*&& getTagEnergy() >= voltageOut*/;
     }
 
     private boolean canDischarge() {
         CompoundTag nbt = this.context.getTag();
         if (!nbt.contains(Ref.TAG_ITEM_ENERGY_DATA)) return true;
         CompoundTag energyTag = nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA);
-        if (!energyTag.contains(Ref.KEY_ITEM_MAX_ENERGY)) return true;
+        if (!energyTag.contains(Ref.KEY_ITEM_DISCHARGE_MODE)) return true;
         return energyTag.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
