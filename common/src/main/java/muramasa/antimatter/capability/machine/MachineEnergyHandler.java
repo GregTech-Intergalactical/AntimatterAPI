@@ -88,6 +88,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     @Override
     public boolean addEnergy(GTTransaction.TransferData data) {
+        int loss = canInput() && canOutput() ? 1 : 0;
+        data.setLoss(loss);
+        //int amps = (int) Math.min((getCapacity() - getEnergy()) / getInputVoltage(), data.getAmps(true));
+        //GTTransaction internal = new GTTransaction(data.getEnergy(amps, true), (t) -> {});
+
         int j = 0;
         boolean ok = super.addEnergy(data);
         for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
@@ -166,10 +171,10 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         return super.availableAmpsOutput() + this.cachedItems.stream().map(Pair::right).mapToLong(IGTNode::availableAmpsOutput).sum();
     }
 
-    @Override
+    /*@Override
     public long availableAmpsInput(long voltage) {
         return super.availableAmpsInput(voltage) + this.cachedItems.stream().map(Pair::right).mapToLong(node -> node.availableAmpsInput(voltage)).sum();
-    }
+    }*/
 
     @Override
     public boolean canInput(Direction direction) {
