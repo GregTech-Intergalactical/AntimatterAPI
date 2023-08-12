@@ -52,12 +52,12 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                 }
 
                 @Override
-                protected boolean checkVoltage(GTTransaction.TransferData data) {
+                protected boolean checkVoltage(long voltage) {
                     boolean flag = true;
                     if (type.getOutputCover() == COVERDYNAMO) {
-                        flag = data.getVoltage() <= getOutputVoltage();
+                        flag = voltage <= getOutputVoltage();
                     } else if (type.getOutputCover() == COVERENERGY) {
-                        flag = data.getVoltage() <= getInputVoltage();
+                        flag = voltage <= getInputVoltage();
                     }
                     if (!flag) {
                         Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.BREAK);

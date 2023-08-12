@@ -51,10 +51,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
@@ -113,7 +110,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Energy data
      **/
-    protected float efficiency = 1;
+    protected ToIntFunction<Tier> efficiency = t -> 100 - (5 * t.getIntegerId());
     //How many amps this machine requires.
     protected int amps = 1;
 
@@ -184,6 +181,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public T amps(int amps) {
         this.amps = amps;
+        return (T) this;
+    }
+
+    public T efficiency(ToIntFunction<Tier> function){
+        this.efficiency = function;
         return (T) this;
     }
 
@@ -464,8 +466,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public double getMachineEfficiency() {
-        return efficiency;
+    public int getMachineEfficiency(Tier tier) {
+        return efficiency.applyAsInt(tier);
     }
 
     public T custom() {

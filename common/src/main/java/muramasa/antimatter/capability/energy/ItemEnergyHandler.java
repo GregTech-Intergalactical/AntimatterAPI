@@ -84,44 +84,17 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
     }
 
     @Override
-    public boolean addEnergy(GTTransaction.TransferData data) {
-        if (!this.canInput()) return false;
-        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
-            boolean ok = checkVoltage(data);
-            if (!ok) {
-                return false;
-            }
-            long amps = Math.min(data.getAmps(true), this.availableAmpsInput(data.getVoltage()));
-            amps = Math.min(amps, (this.getCapacity() - this.getEnergy()) / this.getInputVoltage());
-            long energy = data.getEnergy(amps, true);
-            this.setEnergy(getEnergy() + energy);
-            data.useAmps(true, amps);
-            this.getState().receive(false, amps);
-            return amps > 0;
-        } else {
-            long toAdd = Math.min(data.getEu(), this.getCapacity() - this.getEnergy());
-            long energy = data.drainEu(toAdd);
-            this.setEnergy(getEnergy() + energy);
-            return toAdd > 0;
-        }
+    public long insertEu(long voltage, boolean simulate) {
+        long toAdd = Math.min(voltage, this.getCapacity() - this.getEnergy());
+        if (!simulate) this.setEnergy(getEnergy() + toAdd);
+        return toAdd;
     }
 
     @Override
-    public boolean extractEnergy(GTTransaction.TransferData data) {
-        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
-            long amps = Math.min(data.getAmps(false), this.availableAmpsOutput());
-            amps = Math.min(amps, this.getEnergy() / this.getOutputVoltage());
-            long energy = data.getEnergy(amps, false);
-            this.setEnergy(this.getEnergy() - energy);
-            this.getState().extract(false, amps);
-            data.useAmps(false, amps);
-            return amps > 0;
-        } else {
-            long toDrain = Math.min(data.getEu(), this.getEnergy());
-            long energy = data.drainEu(toDrain);
-            this.setEnergy(this.getEnergy() - energy);
-            return toDrain > 0;
-        }
+    public long extractEu(long voltage, boolean simulate) {
+        long toDrain = Math.min(voltage, this.getEnergy());
+        if (!simulate) this.setEnergy(this.getEnergy() - toDrain);
+        return toDrain;
     }
 
     @Override

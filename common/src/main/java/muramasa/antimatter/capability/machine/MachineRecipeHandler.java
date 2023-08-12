@@ -5,6 +5,7 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
+import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
@@ -25,7 +26,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.gt.GTTransaction;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -328,21 +331,14 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (activeRecipe.getPower() > 0) {
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
-                    return tile.energyHandler.map(e -> e.extractInternal(getPower(), simulate)).orElse(false);
+                    return tile.energyHandler.map(e -> e.extractEu(getPower(), simulate) >= getPower()).orElse(false);
                 } else {
                     return consumeGeneratorResources(simulate);
                 }
             } else if (tile.rfHandler.isPresent()){
                 if (!generator) {
                     long power = getPower();
-                    long availableEnergy = tile.rfHandler.map(eh -> eh.getStoredEnergy()).orElse(0L);
-                    if (availableEnergy > 0 && availableEnergy >= power){
-                        if (!simulate){
-                            tile.rfHandler.ifPresent(eh -> eh.setEnergy(availableEnergy - power));
-                        }
-                        return true;
-                    }
-                    return false;
+                    return tile.rfHandler.map(e -> e.extractEnergy(power, simulate) >= power).orElse(false);
                 } else {
                     return consumeRFGeneratorResources(simulate);
                 }
@@ -482,63 +478,36 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (!activeRecipe.hasInputFluids()) {
             throw new RuntimeException("Missing fuel in active generator recipe!");
         }
-        long toConsume = calculateGeneratorConsumption(tile.getMachineTier().getVoltage(), activeRecipe);
-        long inserted;
-        if (toConsume == 0)
-            inserted = (long) ((double) activeRecipe.getPower() / activeRecipe.getInputFluids().get(0).getAmount() * tile.getMachineType().getMachineEfficiency());
-        else
-            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids().get(0).getAmount() * tile.getMachineType().getMachineEfficiency());
-
-        final long t = inserted;
-        GTTransaction transaction = new GTTransaction(t, Utils.sink());
-        if (!tile.energyHandler.map(eh -> eh.insert(transaction)).orElse(false)) {
-            return false;
-        }
-        //Check leftover eu.
-        long actual = t - transaction.eu;
-        //If there isn't enough room for an entire run reduce output.
-        //E.g. if recipe is 24 eu per MB then you have to run 2x to match 48 eu/t
-        //but eventually it will be too much so reduce output.
-        if (actual < inserted && toConsume == 0) return false;
-        while (actual < inserted && actual > 0) {
-            toConsume--;
-            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids().get(0).getAmount() * tile.getMachineType().getMachineEfficiency());
-            actual = Math.min(inserted, transaction.eu);
-        }
-        //If nothing to insert.
-        if (actual == 0) return false;
-        //because lambda don't like primitives
-        final long actualConsume = toConsume;
-        //make sure there are fluids avaialble
-        if (actualConsume == 0 || tile.fluidHandler.map(h -> {
-            FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            long amount = in.drainedAmount((int) actualConsume, h, true, true);
-            if (amount == actualConsume) {
-                if (!simulate)
-                    in.drain(amount, h, true, false);
+        long toConsume = consumedFluidPerOperation(activeRecipe);
+        long toInsert = calculateGeneratorProduction(activeRecipe);
+        MachineEnergyHandler<?> handler = tile.energyHandler.orElse(null);
+        if (handler == null) return false;
+        FluidHolder mFluid = tile.fluidHandler.map(f -> f.getInputTanks().getTank(0).getStoredFluid()).orElse(FluidHooks.emptyFluid());
+        if (mFluid.isEmpty()) return false;
+        long fluidAmount = mFluid.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier;
+        if (toInsert > 0 && toConsume > 0 && fluidAmount > toConsume) {
+            long tFluidAmountToUse = Math.min(fluidAmount / toConsume, (handler.getCapacity() - handler.getEnergy()) / toInsert);
+            if (tFluidAmountToUse > 0 && handler.insertInternal(tFluidAmountToUse * toInsert, true) == tFluidAmountToUse * toInsert) {
+                if (tile.getLevel().getGameTime() % 10 == 0 && !simulate){
+                    handler.insertInternal(tFluidAmountToUse * toInsert, false);
+                    tile.fluidHandler.ifPresent(f -> f.drainInput(Utils.ca(tFluidAmountToUse * toConsume * TesseractGraphWrappers.dropletMultiplier, mFluid), false));
+                }
                 return true;
             }
-            return false;
-        }).orElse(false)) {
-            //insert power!
-            if (!simulate) {
-                transaction.commit();
-            }
-            return true;
         }
         return false;
     }
 
-    protected long calculateGeneratorConsumption(long volt, IRecipe r) {
-        long power = r.getPower();
-        long amount = r.getInputFluids().get(0).getAmount();
-        if (currentProgress > 0 && amount == 1) {
-            return 0;
-        }
-        double offset = (volt / ((double) power / (double) amount));
-        if (r.getDuration() > 1)
-            offset /= r.getDuration();
-        return Math.max(1, (long) (Math.ceil(offset)));
+    protected long calculateGeneratorProduction(IRecipe r){
+        return ( r.getPower() * getEfficiency() * consumedFluidPerOperation(r)) / 100;
+    }
+
+    public int consumedFluidPerOperation(IRecipe r){
+        return r.getInputFluids().get(0).getAmountInMB();
+    }
+
+    protected int getEfficiency() {
+        return tile.getMachineType().getMachineEfficiency(tile.getMachineTier());
     }
 
     protected long calculateGeneratorConsumption(IRecipe r) {

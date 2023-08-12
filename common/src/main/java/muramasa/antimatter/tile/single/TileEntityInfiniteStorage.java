@@ -31,14 +31,13 @@ public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> e
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, Long.MAX_VALUE, Long.MAX_VALUE, 0, 32, 0, 4) {
 
             @Override
-            public GTTransaction extract(GTTransaction.Mode mode) {
-                return new GTTransaction(availableAmpsOutput(), this.getOutputVoltage(), this::extractEnergy);
+            public long extractEu(long voltage, boolean simulate) {
+                return Math.min(voltage, getOutputVoltage());
             }
 
             @Override
-            public boolean extractEnergy(GTTransaction.TransferData data) {
-                getState().receive(false, data.getAmps(false));
-                return true;
+            public long extractAmps(long voltage, long amps, boolean simulate) {
+                return amps;
             }
 
             @Override

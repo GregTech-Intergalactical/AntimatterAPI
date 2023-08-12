@@ -108,30 +108,35 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
     }
 
     @Override
-    public boolean extractEnergy(GTTransaction.TransferData data) {
-        boolean ok = super.extractEnergy(data);
-        if (data.transaction.mode == GTTransaction.Mode.INTERNAL) {
-            for (MachineEnergyHandler<?> handler : inputs) {
-                ok |= handler.extractEnergy(data);
-            }
+    public long extractEu(long voltage, boolean simulate) {
+        long extracted = 0;
+        long toExtract = Math.min(voltage, getEnergy());
+        for (MachineEnergyHandler<?> handler : outputs) {
+            long extract = handler.extractEu(toExtract, simulate);
+            extracted+= extract;
+            toExtract-= extract;
+            if (toExtract <= 0) break;
         }
-        return ok;
+        if (toExtract > 0){
+            extracted+= super.extractEu(voltage, simulate);
+        }
+        return extracted;
     }
 
     @Override
-    public boolean addEnergy(GTTransaction.TransferData data) {
-        boolean ok = super.addEnergy(data);
-        if (data.transaction.mode == GTTransaction.Mode.INTERNAL) {
-            for (MachineEnergyHandler<?> handler : outputs) {
-                ok |= handler.addEnergy(data);
-            }
+    public long insertInternal(long voltage, boolean simulate) {
+        long inserted = 0;
+        long toInsert = Math.min(voltage, getCapacity() - getEnergy());
+        for (MachineEnergyHandler<?> handler : outputs) {
+            long insert = handler.insertInternal(toInsert, simulate);
+            inserted+= insert;
+            toInsert-= insert;
+            if (toInsert <= 0) break;
         }
-        return ok;
-    }
-
-    @Override
-    public boolean insert(GTTransaction transaction) {
-        return super.insert(transaction);
+        if (toInsert > 0){
+            inserted+= super.insertInternal(voltage, simulate);
+        }
+        return inserted;
     }
 
     public Tier getAccumulatedPower() {

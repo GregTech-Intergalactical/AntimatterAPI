@@ -401,10 +401,12 @@ public class Utils {
      * @return if energy was inserted
      */
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        GTTransaction extracted = from.extract(GTTransaction.Mode.TRANSMIT);
-        if (extracted.isValid()) {
-            if (to.insert(extracted)) {
-                extracted.commit();
+        long amps = from.extractAmps(from.getOutputVoltage(), from.availableAmpsOutput(), true);
+        if (amps > 0){
+            long insertAmps = to.insertAmps(from.getOutputVoltage(), amps, true);
+            if (insertAmps > 0){
+                from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), insertAmps, false), false);
+                return true;
             }
         }
         return false;
@@ -447,17 +449,7 @@ public class Utils {
     }
 
     public static boolean addEnergy(IEnergyHandler to, long eu) {
-        GTTransaction transaction = new GTTransaction(eu, Utils.sink());
-        to.insert(transaction);
-        transaction.commit();
-        return transaction.commitSuccessfull();
-    }
-
-    public static boolean extractEnergy(IEnergyHandler from, long eu) {
-        GTTransaction transaction = from.extract(GTTransaction.Mode.INTERNAL);
-        transaction.addData(eu, Utils.sink());
-        transaction.commit();
-        return transaction.getData().get(0).getEu() > 0;
+        return to.insertEu(eu, false) > 0;
     }
 
     /**
@@ -469,13 +461,12 @@ public class Utils {
      * @return number of amps
      */
     public static boolean transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss) {
-        GTTransaction extracted = from.extract(GTTransaction.Mode.TRANSMIT);
-        if (extracted.isValid()) {
-            if (to.insert(extracted)) {
-                for (GTTransaction.TransferData data : extracted.getData()) {
-                    data.setLoss(loss);
-                }
-                extracted.commit();
+        long amps = from.extractAmps(from.getOutputVoltage() - loss, from.availableAmpsOutput(), true);
+        if (amps > 0){
+            long insertAmps = to.insertAmps(from.getOutputVoltage() - loss, amps, true);
+            if (insertAmps > 0){
+                from.extractAmps(from.getOutputVoltage() - loss, to.insertAmps(from.getOutputVoltage() - loss, insertAmps, false), false);
+                return true;
             }
         }
         return false;

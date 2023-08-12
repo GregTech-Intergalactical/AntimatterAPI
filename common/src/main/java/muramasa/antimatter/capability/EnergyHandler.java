@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IGTNode;
 
 
 public class EnergyHandler implements IEnergyHandler {
@@ -30,7 +31,7 @@ public class EnergyHandler implements IEnergyHandler {
      * Tesseract IGTNode Implementations
      **/
 
-    protected boolean checkVoltage(GTTransaction.TransferData data) {
+    protected boolean checkVoltage(long voltage) {
         return true;
     }
 
@@ -55,43 +56,38 @@ public class EnergyHandler implements IEnergyHandler {
     }
 
     @Override
-    public boolean extractEnergy(GTTransaction.TransferData data) {
-        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
-            long amps = Math.min(data.getAmps(false), this.availableAmpsOutput());
-            amps = Math.min(amps, this.energy / this.getOutputVoltage());
-            this.energy -= data.getEnergy(amps, false);
-            this.getState().extract(false, amps);
-            data.useAmps(false, amps);
-            return amps > 0;
-        } else {
-            long toDrain = Math.min(data.getEu(), this.energy);
-            this.energy -= data.drainEu(toDrain);
-            return toDrain > 0;
-        }
-    }
-
-    protected void overVolt() {
-
+    public long extractEu(long voltage, boolean simulate) {
+        long toDrain = Math.min(voltage, this.energy);
+        if (!simulate) this.energy -= toDrain;
+        return toDrain;
     }
 
     @Override
-    public boolean addEnergy(GTTransaction.TransferData data) {
-        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
-            boolean ok = checkVoltage(data);
-            if (!ok) {
-                return false;
-            }
-            long amps = Math.min(data.getAmps(true), this.availableAmpsInput(data.getVoltage()));
-            amps = Math.min(amps, (this.capacity - this.energy) / this.getInputVoltage());
-            this.energy += data.getEnergy(amps, true);
-            data.useAmps(true, amps);
-            this.getState().receive(false, amps);
-            return amps > 0;
-        } else {
-            long toAdd = Math.min(data.getEu(), this.capacity - this.energy);
-            this.energy += data.drainEu(toAdd);
-            return toAdd > 0;
-        }
+    public long insertEu(long voltage, boolean simulate) {
+        if (voltage < 0) return 0;
+        if (!simulate && !checkVoltage(voltage)) return voltage;
+        long toAdd = Math.min(voltage, this.capacity - this.energy);
+        if (!simulate) this.energy += toAdd;
+        return toAdd;
+    }
+
+    public long insertInternal(long voltage, boolean simulate) {
+        if (voltage < 0) return 0;
+        long toAdd = Math.min(voltage, this.capacity - this.energy);
+        if (!simulate) this.energy += toAdd;
+        return toAdd;
+    }
+
+    @Override
+    public long insertAmps(long voltage, long amps, boolean simulate) {
+        if (voltage < 0 || amps < 0) return 0;
+        if (!simulate && !checkVoltage(voltage)) return amps;
+        amps = Math.min(amps, this.availableAmpsInput(voltage));
+        amps = Math.min(amps, (this.getCapacity() - this.getEnergy()) / this.getInputVoltage());
+        return IEnergyHandler.super.insertAmps(voltage, amps, simulate);
+    }
+
+    protected void overVolt() {
     }
 
     @Override

@@ -302,13 +302,13 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         int multipliedDamage = amount * 100;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
-            Utils.extractEnergy(h, multipliedDamage);
+            h.extractEu(multipliedDamage, false);
             stack.setTag(h.getContainer().getTag());
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, currentEnergy - multipliedDamage); // Otherwise take energy off of tool if energy is larger than multiplied damage
             return 0; // Nothing is taken away from main durability
         } else { // Lastly, set energy to 0 and take leftovers off of tool durability itself
             int leftOver = (int) (multipliedDamage - currentEnergy);
-            Utils.extractEnergy(h, currentEnergy);
+            h.extractEu(currentEnergy, false);
             stack.setTag(h.getContainer().getTag());
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
             return Math.max(1, leftOver / 100);

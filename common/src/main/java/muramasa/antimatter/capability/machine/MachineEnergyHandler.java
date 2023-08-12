@@ -67,8 +67,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
-    protected boolean checkVoltage(GTTransaction.TransferData data) {
-        if (data.getVoltage() > this.getInputVoltage()) {
+    protected boolean checkVoltage(long voltage) {
+        if (voltage > this.getInputVoltage()) {
             if (AntimatterConfig.GAMEPLAY.MACHINES_EXPLODE) {
                 Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.DESTROY);
             } else {
@@ -87,38 +87,61 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
-    public boolean addEnergy(GTTransaction.TransferData data) {
+    public long insertAmps(long voltage, long amps, boolean simulate) {
+        if (voltage < 0 || amps < 0) return 0;
         int loss = canInput() && canOutput() ? 1 : 0;
-        data.setLoss(loss);
+        amps = Math.min((getCapacity() - getEnergy()) / getInputVoltage(), amps);
+        voltage -= loss;
+        if (!simulate && !checkVoltage(voltage)) return amps;
+
         if (cachedItems.isEmpty()){
-            return super.addEnergy(data);
+            return super.insertAmps(voltage, amps, simulate);
         }
-        int amps = (int) Math.min((getCapacity() - getEnergy()) / getInputVoltage(), data.getAmps(true));
-        GTTransaction internal = new GTTransaction(data.getEnergy(amps, true), (t) -> {});
-        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT && !checkVoltage(data)) return false;
-        data.useAmps(true, amps);
-        long euPerBattery = internal.eu / cachedItems.size();
-        boolean ok = false;
-        //GTTransaction.TransferData leftover = new GTTransaction.TransferData(internal, internal.eu % cachedItems.size());
-        long leftover = internal.eu % cachedItems.size();
+        long energy = voltage * amps;
+        insertInternal(energy, simulate);
+        return amps;
+    }
+
+    @Override
+    public long insertEu(long voltage, boolean simulate) {
+        if (voltage < 0) return 0;
+        int loss = canInput() && canOutput() ? 1 : 0;
+        voltage -= loss;
+        if (!simulate && !checkVoltage(voltage)) return voltage;
+        if (cachedItems.isEmpty()){
+            long superInsert = super.insertEu(voltage, simulate);
+            if (superInsert > 0 && !simulate){
+                tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED);
+            }
+            return superInsert;
+        }
+        return insertInternal(voltage, simulate);
+    }
+
+    public long insertInternal(long energy, boolean simulate) {
+        if (cachedItems.isEmpty()) return super.insertInternal(energy, simulate);
+        long euPerBattery = energy / cachedItems.size();
+        long leftover = energy % cachedItems.size();
+        long euInserted = 0;
         for (int i = 0; i < cachedItems.size(); i++){
             IEnergyHandlerItem handler = cachedItems.get(i).right();
-            GTTransaction.TransferData addData = new GTTransaction.TransferData(internal, euPerBattery);
-            if (handler.addEnergy(addData)){
-                //handler.addEnergy(leftover);
-                cachedItems.get(i).left().setTag(handler.getContainer().getTag());
-                ok = true;
+            long inserted = handler.insertEu(euPerBattery, simulate);
+            if (inserted > 0){
+                euInserted += inserted;
+                if (!simulate){
+                    cachedItems.get(i).left().setTag(handler.getContainer().getTag());
+                }
             }
-            if (addData.getEu() > 0) leftover+= addData.getEu();
+            if (euPerBattery - inserted > 0) leftover+= euPerBattery - inserted;
         }
         int unsuccessful = 0;
         int i = 0;
         while (leftover > 0){
-            IEnergyHandlerItem handler = cachedItems.get(i).right();
-            GTTransaction.TransferData addData = new GTTransaction.TransferData(internal, 1);
-            if (handler.addEnergy(addData)){
-                cachedItems.get(i).left().setTag(handler.getContainer().getTag());
+            IEnergyHandlerItem handler = cachedItems.get(i).right();;
+            if (handler.insertEu(1, simulate) > 0){
+                if (!simulate) cachedItems.get(i).left().setTag(handler.getContainer().getTag());
                 leftover--;
+                euInserted++;
                 unsuccessful = 0;
             } else {
                 unsuccessful++;
@@ -127,51 +150,66 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
             if (i == cachedItems.size()) i = 0;
             if (unsuccessful == cachedItems.size()) break;
         }
-
         if (leftover > 0){
-            if (super.addEnergy(new GTTransaction.TransferData(internal, leftover))){
-                ok = true;
-            }
+            long insert = super.insertInternal(leftover, simulate);
+            euInserted += insert;
         }
-        if (ok) {
+        if (euInserted > 0){
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED);
         }
-        return ok;
+        return euInserted;
     }
 
     @Override
-    public boolean extractEnergy(GTTransaction.TransferData data) {
-        boolean ok = super.extractEnergy(data);
-        int j = 0;
-        for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
-            IEnergyHandlerItem handler = cachedItems.get(i).right();
-            if (handler.extractEnergy(data)) {
-                cachedItems.get(i).left().setTag(handler.getContainer().getTag());
-                offsetExtract = (offsetExtract + 1) % cachedItems.size();
-                ok = true;
+    public long extractEu(long voltage, boolean simulate) {
+        if (cachedItems.isEmpty()){
+            long superExtract = super.extractEu(voltage, simulate);
+            if (superExtract > 0 && !simulate){
+                tile.onMachineEvent(MachineEvent.ENERGY_DRAINED);
             }
+            return superExtract;
         }
-        if (ok) {
+        long superExtract = super.extractEu(voltage, simulate);
+        voltage-= superExtract;
+        long toExtract = Math.min(voltage, getEnergy());
+        long euPerBattery = toExtract / cachedItems.size();
+        long leftover = toExtract % cachedItems.size();
+        long euExtracted = superExtract;
+        for (int i = 0; i < cachedItems.size(); i++){
+            IEnergyHandlerItem handler = cachedItems.get(i).right();
+            long extracted = handler.extractEu(euPerBattery, simulate);
+            if (extracted > 0){
+                euExtracted += extracted;
+                if (!simulate){
+                    cachedItems.get(i).left().setTag(handler.getContainer().getTag());
+                }
+            }
+            if (euPerBattery - extracted > 0) leftover+= euPerBattery - extracted;
+        }
+        int unsuccessful = 0;
+        int i = 0;
+        while (leftover > 0){
+            IEnergyHandlerItem handler = cachedItems.get(i).right();;
+            if (handler.extractEu(1, simulate) > 0){
+                if (!simulate) cachedItems.get(i).left().setTag(handler.getContainer().getTag());
+                leftover--;
+                euExtracted++;
+                unsuccessful = 0;
+            } else {
+                unsuccessful++;
+            }
+            i++;
+            if (i == cachedItems.size()) i = 0;
+            if (unsuccessful == cachedItems.size()) break;
+        }
+        if (leftover > 0){
+            long extract = super.extractEu(leftover, simulate);
+            euExtracted += extract;
+        }
+        if (euExtracted > 0 && !simulate){
             tile.onMachineEvent(MachineEvent.ENERGY_DRAINED);
         }
-        return ok;
-    }
-
-    public boolean extractInternal(long power, boolean simulate){
-        GTTransaction transaction = tile.energyHandler.map(eh -> eh.extract(GTTransaction.Mode.INTERNAL)).orElse(null);
-        if (transaction != null && transaction.isValid()) {
-            if (simulate) {
-                return transaction.eu >= power;
-            } else if (transaction.eu >= power) {
-                transaction.addData(power, Utils.sink());
-                transaction.commit();
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return euExtracted;
     }
 
     @Override
