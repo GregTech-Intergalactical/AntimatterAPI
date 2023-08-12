@@ -109,7 +109,7 @@ public final class AntimatterRegistration {
                     i.setRegistryName(d, id);
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
-            registerTools(domain, e.getRegistry());
+            if (domain.equals(Ref.SHARED_ID)) registerTools(domain, e.getRegistry());
         } else if (e.getRegistry() == ForgeRegistries.BLOCK_ENTITIES) {
             AntimatterAPI.all(BlockEntityType.class, domain, (t, d, i) -> {
                 if (t.getRegistryName() == null) t.setRegistryName(d, i);
@@ -176,7 +176,7 @@ public final class AntimatterRegistration {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void registerTools(String domain, IForgeRegistry registry) {
-        AntimatterAPI.all(AntimatterToolType.class, domain, t -> {
+        AntimatterAPI.all(AntimatterToolType.class, t -> {
             if (t.isPowered()) {
                 for (IAntimatterTool i : t.instantiatePoweredTools(domain)) {
                     if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
@@ -188,7 +188,6 @@ public final class AntimatterRegistration {
                 registry.register(i.getItem());
             }
         });
-        if (!domain.equals(Ref.SHARED_ID)) return;
         AntimatterAPI.all(AntimatterArmorType.class, t -> {
             List<IAntimatterArmor> i = t.instantiateTools();
             i.forEach(a -> {

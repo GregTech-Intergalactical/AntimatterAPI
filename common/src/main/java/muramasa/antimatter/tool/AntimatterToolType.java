@@ -330,11 +330,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     /* GETTERS */
 
     public ItemStack getToolStack(Material primary, Material secondary) {
-        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id, getDomain())).asItemStack(primary, secondary);
-    }
-
-    public String getDomain() {
-        return domain;
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, secondary);
     }
 
     @Override

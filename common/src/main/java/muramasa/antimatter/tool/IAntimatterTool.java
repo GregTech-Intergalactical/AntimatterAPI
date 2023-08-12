@@ -8,10 +8,7 @@ import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IModelProvider;
-import muramasa.antimatter.registration.ITextureProvider;
+import muramasa.antimatter.registration.*;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Camera;
@@ -51,9 +48,13 @@ import java.util.*;
 
 import static muramasa.antimatter.material.Material.NULL;
 
-public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods, IEnergyItem {
+public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods, IEnergyItem {
 
     AntimatterToolType getAntimatterToolType();
+
+    default String getTextureDomain(){
+        return Ref.ID;
+    }
 
     default Material getPrimaryMaterial(ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
@@ -341,12 +342,12 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default Texture[] getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getAntimatterToolType().getOverlayLayers();
-        textures.add(new Texture(getDomain(), "item/tool/".concat(getAntimatterToolType().getId())));
+        textures.add(new Texture(getTextureDomain(), "item/tool/".concat(getAntimatterToolType().getId())));
         if (layers == 1)
-            textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterToolType().getId())));
+            textures.add(new Texture(getTextureDomain(), "item/tool/overlay/".concat(getAntimatterToolType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getAntimatterToolType().getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(getTextureDomain(), String.join("", "item/tool/overlay/", getAntimatterToolType().getId(), "_", Integer.toString(i))));
             }
         }
         return textures.toArray(new Texture[textures.size()]);
