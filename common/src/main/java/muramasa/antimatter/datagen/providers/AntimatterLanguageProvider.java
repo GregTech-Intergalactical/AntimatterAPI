@@ -17,11 +17,7 @@ import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.item.ItemMultiTextureBattery;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialItem;
-import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.material.MaterialTypeBlock;
-import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.CobbleStoneType;
@@ -54,6 +50,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static muramasa.antimatter.data.AntimatterMaterials.Wood;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterLanguageProvider implements DataProvider, IAntimatterProvider {
@@ -243,6 +240,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             });
             AntimatterAPI.all(MaterialItem.class).forEach(item -> {
                 MaterialType<?> type = item.getType();
+                String dust = item.getMaterial().has(MaterialTags.RUBBERTOOLS) ? " Pulp" : " Dust";
                 if (type == AntimatterMaterialTypes.ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
                 else if (type == AntimatterMaterialTypes.CRUSHED)
                     add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
@@ -251,13 +249,13 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 else if (type == AntimatterMaterialTypes.CRUSHED_REFINED)
                     add(item, String.join("", "Refined ", getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.DUST_TINY)
-                    add(item, String.join("", "Tiny ", getLocalizedType(item.getMaterial()), " Dust"));
+                    add(item, String.join("", "Tiny ", getLocalizedType(item.getMaterial()), dust));
                 else if (type == AntimatterMaterialTypes.DUST_SMALL)
-                    add(item, String.join("", "Small ", getLocalizedType(item.getMaterial()), " Dust"));
+                    add(item, String.join("", "Small ", getLocalizedType(item.getMaterial()), dust));
                 else if (type == AntimatterMaterialTypes.DUST_IMPURE)
-                    add(item, String.join("", "Impure ", getLocalizedType(item.getMaterial()), " Dust"));
+                    add(item, String.join("", "Impure ", getLocalizedType(item.getMaterial()), dust));
                 else if (type == AntimatterMaterialTypes.DUST_PURE)
-                    add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), " Dust"));
+                    add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), dust));
                 else if (type == AntimatterMaterialTypes.RAW_ORE)
                     add(item, String.join("", "Raw ", getLocalizedType(item.getMaterial())));
                 else if (type == AntimatterMaterialTypes.ITEM_CASING)
@@ -271,7 +269,11 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                             add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
                         else
                             add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[1], " ", split[0]));
-                    } else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[0]));
+                    } else {
+                        String plateReplacement = item.getMaterial() == Wood ? "Plank" : "Sheet";
+                        if (item.getMaterial().has(MaterialTags.RUBBERTOOLS)) split[0] = split[0].replace("Dust", "Pulp").replace("Nugget", "Chip").replace("Ingot", "Bar").replace("Plate", plateReplacement);
+                        add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[0]));
+                    }
                 }
             });
             AntimatterAPI.all(IAntimatterArmor.class, t -> {
