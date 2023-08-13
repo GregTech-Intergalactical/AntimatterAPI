@@ -48,7 +48,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Glowstone).asDust();
         event.setMaterial(AntimatterMaterials.Sugar).asDust();
         event.setMaterial(AntimatterMaterials.Bone).addHandleStat(12, 0.0F);
-        event.setMaterial(AntimatterMaterials.Wood).asDust(AntimatterMaterialTypes.PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), AntimatterDefaultTools.SOFT_HAMMER).addHandleStat(12, 0.0F);
+        event.setMaterial(AntimatterMaterials.Wood).asDust(AntimatterMaterialTypes.PLATE, MaterialTags.RUBBERTOOLS).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), AntimatterDefaultTools.SOFT_HAMMER).addHandleStat(12, 0.0F);
         event.setMaterial(AntimatterMaterials.Blaze).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
 
         event.setMaterial(AntimatterMaterials.Flint).asDust(AntimatterMaterialTypes.GEM, MaterialTags.FLINT).addTools(1.25F, Tiers.STONE.getSpeed(), 128, 1, of(Enchantments.FIRE_ASPECT, 1), AntimatterDefaultTools.PICKAXE, AntimatterDefaultTools.AXE, AntimatterDefaultTools.SHOVEL, AntimatterDefaultTools.SWORD, AntimatterDefaultTools.HOE, AntimatterDefaultTools.MORTAR, AntimatterDefaultTools.KNIFE);

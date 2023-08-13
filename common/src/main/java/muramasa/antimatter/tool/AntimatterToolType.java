@@ -8,8 +8,10 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
@@ -28,10 +30,7 @@ import org.apache.commons.lang3.reflect.ConstructorUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -45,7 +44,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
     private final List<Component> tooltip = new ObjectArrayList<>();
-    private boolean powered, repairable, blockBreakability, hasContainer;
+    private boolean powered, repairable, blockBreakability, hasContainer, simple, hasSecondary;
     private long baseMaxEnergy;
     private int[] energyTiers;
     private final int useDurability, attackDurability, craftingDurability;
@@ -98,6 +97,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.forgeTag = TagUtils.getForgelikeItemTag("tools/".concat(id));
         this.useAction = UseAnim.NONE;
         this.toolClass = MaterialTool.class;
+        this.simple = true;
+        hasSecondary = true;
         if (vanillaType) {
             this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation("minecraft","mineable/".concat(id)));
         } else {
@@ -146,8 +147,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         Item.Properties properties = prepareInstantiation(domain);
         boolean isSword = toolClass == MaterialSword.class;
         for (int energyTier : energyTiers) {
-            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties, energyTier));
-            else poweredTools.add(new MaterialTool(domain, this, properties, energyTier));
+            if (isSword) poweredTools.add(new MaterialSword(domain, this, AntimatterItemTier.NULL, properties, energyTier));
+            else poweredTools.add(new MaterialTool(domain, this, AntimatterItemTier.NULL, properties, energyTier));
         }
         return poweredTools;
     }
@@ -156,8 +157,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
         boolean isSword = toolClass == MaterialSword.class;
         for (int energyTier : energyTiers) {
-            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties.get(), energyTier));
-            else poweredTools.add(new MaterialTool(domain, this, properties.get(), energyTier));
+            if (isSword) poweredTools.add(new MaterialSword(domain, this, AntimatterItemTier.NULL, properties.get(), energyTier));
+            else poweredTools.add(new MaterialTool(domain, this, AntimatterItemTier.NULL, properties.get(), energyTier));
         }
         return poweredTools;
     }
@@ -165,14 +166,28 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     /**
      * Instantiates a MaterialTool
      */
-    public IAntimatterTool instantiateTools(String domain) {
-        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, prepareInstantiation(domain));
-        return new MaterialTool(domain, this, prepareInstantiation(domain));
+    public List<IAntimatterTool> instantiateTools(String domain) {
+        return instantiateTools(domain, () -> prepareInstantiation(domain));
     }
 
-    public IAntimatterTool instantiateTools(String domain, Supplier<Item.Properties> properties) {
-        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, properties.get());
-        return new MaterialTool(domain, this, properties.get());
+    private IAntimatterTool instantiateTool(String domain, AntimatterItemTier tier, Supplier<Item.Properties> properties) {
+        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, tier, properties.get());
+        return new MaterialTool(domain, this, tier, properties.get());
+    }
+
+    public List<IAntimatterTool> instantiateTools(String domain, Supplier<Item.Properties> properties) {
+        List<IAntimatterTool> tools = new ArrayList<>();
+        if (simple){
+            MaterialTags.TOOLS.getAll().forEach((m, t) -> {
+                if (primaryMaterialRequirement != null && !m.has(primaryMaterialRequirement)) return;
+                if (t.toolTypes().contains(this)){
+                    tools.add(instantiateTool(domain, AntimatterItemTier.getOrCreate(m, hasSecondary ? AntimatterMaterials.Wood : Material.NULL), properties));
+                }
+            });
+        } else {
+            tools.add(instantiateTool(domain, AntimatterItemTier.NULL, properties));
+        }
+        return tools;
     }
 
     protected Item.Properties prepareInstantiation(String domain) {
@@ -219,6 +234,17 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.powered = true;
         this.baseMaxEnergy = baseMaxEnergy;
         this.energyTiers = energyTiers;
+        this.simple = false;
+        return this;
+    }
+
+    public AntimatterToolType setSimple(boolean simple){
+        this.simple = simple;
+        return this;
+    }
+
+    public AntimatterToolType setHasSecondary(boolean hasSecondary){
+        this.hasSecondary = hasSecondary;
         return this;
     }
 
@@ -330,7 +356,13 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     /* GETTERS */
 
     public ItemStack getToolStack(Material primary, Material secondary) {
+        String id = simple ? primary.getId() + "_" + this.id : this.id;
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, secondary);
+    }
+
+    public ItemStack getToolStack(Material primary) {
+        String id = simple ? primary.getId() + "_" + this.id : this.id;
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, Material.NULL);
     }
 
     @Override
@@ -356,6 +388,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public boolean isPowered() {
         return powered;
+    }
+
+    public boolean isSimple() {
+        return simple;
     }
 
     public boolean hasContainer() {

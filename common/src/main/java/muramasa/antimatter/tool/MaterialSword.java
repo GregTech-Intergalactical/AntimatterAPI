@@ -48,35 +48,34 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
 
     protected String domain;
     protected AntimatterToolType type;
+    protected AntimatterItemTier itemTier;
 
     protected int energyTier;
     protected long maxEnergy;
 
-    public MaterialSword(String domain, AntimatterToolType type, Properties properties) {
+    public MaterialSword(String domain, AntimatterToolType type, AntimatterItemTier tier, Properties properties) {
         super(AntimatterItemTier.NULL, 0, type.getBaseAttackSpeed(), properties);  // 0 as base attack as it adds
         this.domain = domain;
         this.type = type;
+        this.itemTier = tier;
         this.energyTier = -1;
         this.maxEnergy = -1;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
-    public MaterialSword(String domain, AntimatterToolType type, Properties properties, int energyTier) {
+    public MaterialSword(String domain, AntimatterToolType type, AntimatterItemTier tier, Properties properties, int energyTier) {
         super(AntimatterItemTier.NULL, (int) type.getBaseAttackDamage(), type.getBaseAttackSpeed(), properties);
         this.domain = domain;
         this.type = type;
+        this.itemTier = tier;
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     @Override
-    public String getDomain() {
-        return domain;
-    }
-
-    @Override
     public String getId() {
+        if (type.isSimple()) return type.isPowered() ? String.join("_", itemTier.getPrimary().getId(), type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : String.join("_", itemTier.getPrimary().getId(),type.getId());;
         return type.isPowered() ? String.join("_", type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : type.getId();
     }
 
@@ -85,6 +84,12 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     public AntimatterToolType getAntimatterToolType() {
         return type;
     }
+
+    @Override
+    public AntimatterItemTier getAntimatterItemTier() {
+        return itemTier;
+    }
+
     /**
      * Returns -1 if its not a powered tool
      **/

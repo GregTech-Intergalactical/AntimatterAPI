@@ -137,12 +137,13 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
                 }
             }
             processSubtags();
+            AntimatterAPI.all(IAntimatterTool.class, tool -> {
+                this.tag(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
+                this.tag(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
+            });
         }
 
-        AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
-            this.tag(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
-            this.tag(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
-        });
+
         this.copy(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe")), TagUtils.getItemTag(new ResourceLocation(Ref.ID, "item_pipe")));
         this.tag(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
     }

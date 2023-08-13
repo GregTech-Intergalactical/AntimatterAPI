@@ -97,8 +97,7 @@ public class AntimatterItemTier implements Tier {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        AntimatterItemTier tier = (AntimatterItemTier) obj;
+        if (!(obj instanceof AntimatterItemTier tier)) return false;
         return primary == tier.getPrimary() && secondary == tier.getSecondary();
     }
 

@@ -118,12 +118,8 @@ public class AntimatterRegistration {
 
     public static void registerTools(String domain) {
         AntimatterAPI.all(AntimatterToolType.class, t -> {
-            if (t.isPowered()) {
-                for (IAntimatterTool i : t.instantiatePoweredTools(domain)) {
-                    Registry.register(Registry.ITEM, new ResourceLocation(domain, i.getId()), i.getItem());
-                }
-            } else {
-                IAntimatterTool i = t.instantiateTools(domain);
+            List<IAntimatterTool> tools = t.isPowered() ? t.instantiatePoweredTools(domain) : t.instantiateTools(domain);
+            for (IAntimatterTool i : tools) {
                 Registry.register(Registry.ITEM, new ResourceLocation(domain, i.getId()), i.getItem());
             }
         });

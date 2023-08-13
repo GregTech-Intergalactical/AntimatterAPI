@@ -58,23 +58,26 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     protected final String domain;
     protected final AntimatterToolType type;
+    protected final AntimatterItemTier itemTier;
 
     protected final int energyTier;
     protected final long maxEnergy;
 
-    public MaterialTool(String domain, AntimatterToolType type, Properties properties) {
-        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getToolType(), properties);
+    public MaterialTool(String domain, AntimatterToolType type, AntimatterItemTier tier, Properties properties) {
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getToolType(), properties);
         this.domain = domain;
         this.type = type;
+        this.itemTier = tier;
         this.energyTier = -1;
         this.maxEnergy = -1;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
-    public MaterialTool(String domain, AntimatterToolType type, Properties properties, int energyTier) {
-        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getToolType(), properties);
+    public MaterialTool(String domain, AntimatterToolType type, AntimatterItemTier tier, Properties properties, int energyTier) {
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getToolType(), properties);
         this.domain = domain;
         this.type = type;
+        this.itemTier = tier;
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier;
         AntimatterAPI.register(IAntimatterTool.class, this);
@@ -87,6 +90,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public String getId() {
+        if (type.isSimple()) return type.isPowered() ? String.join("_", itemTier.getPrimary().getId(), type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : String.join("_", itemTier.getPrimary().getId(),type.getId());;
         return type.isPowered() ? String.join("_", type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : type.getId();
     }
 
@@ -94,6 +98,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     @Override
     public AntimatterToolType getAntimatterToolType() {
         return type;
+    }
+
+    @Override
+    public AntimatterItemTier getAntimatterItemTier() {
+        return itemTier;
     }
 
     /*

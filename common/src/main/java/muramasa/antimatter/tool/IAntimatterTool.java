@@ -52,20 +52,24 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
 
     AntimatterToolType getAntimatterToolType();
 
+    AntimatterItemTier getAntimatterItemTier();
+
     default String getTextureDomain(){
         return Ref.ID;
     }
 
     default Material getPrimaryMaterial(ItemStack stack) {
-        return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+        if (getAntimatterToolType().isSimple()) return getAntimatterItemTier().getPrimary();
+        return Material.get(getOrCreateDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
     }
 
     default Material getSecondaryMaterial(ItemStack stack) {
-        return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
+        if (getAntimatterToolType().isSimple()) return getAntimatterItemTier().getSecondary();
+        return Material.get(getOrCreateDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
     }
 
     default DyeColor getDyeColor(ItemStack stack){
-        CompoundTag data = getDataTag(stack);
+        CompoundTag data = getOrCreateDataTag(stack);
         if (data.contains(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR)){
             Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getMaterialColor().col == data.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR)).findFirst();
             return color.orElse(DyeColor.WHITE);
@@ -74,8 +78,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     }
 
     default Material[] getMaterials(ItemStack stack) {
-        CompoundTag tag = getDataTag(stack);
-        return new Material[]{Material.get(tag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(tag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL))};
+        return new Material[]{getPrimaryMaterial(stack), getSecondaryMaterial(stack)};
     }
 
     default Item getItem() {
@@ -111,38 +114,44 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     }
 
     default CompoundTag getDataTag(ItemStack stack) {
+        return stack.getTagElement(Ref.TAG_TOOL_DATA);
+    }
+
+    default CompoundTag getOrCreateDataTag(ItemStack stack) {
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
-        return dataTag != null ? dataTag : validateTag(stack, NULL, NULL, 0, 10000);
+        return dataTag != null ? dataTag : validateTag(stack, getAntimatterItemTier().getPrimary(), getAntimatterItemTier().getSecondary(), 0, 10000);
     }
 
     default Tier getTier(ItemStack stack) {
-        CompoundTag dataTag = getDataTag(stack);
+        CompoundTag dataTag = getOrCreateDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
-        Item item = (Item) this;
+        Item item = getItem();
         ItemStack stack = new ItemStack(item);
-        validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
-        if (!primary.has(MaterialTags.TOOLS) || (!secondary.has(MaterialTags.HANDLE) && secondary != NULL)){
+        if (!getAntimatterToolType().isSimple() || getAntimatterToolType().isPowered()) validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
+        if (!primary.has(MaterialTags.TOOLS)){
             return stack;
         }
-        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.get(primary).toolEnchantment(), handleEnchants = MaterialTags.HANDLE.get(secondary).toolEnchantment();
+        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.get(primary).toolEnchantment();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             //return stack;
         }
-        if (!handleEnchants.isEmpty()) {
+        /*if (!handleEnchants.isEmpty()) {
             handleEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
-        }
+        }*/
         return stack;
     }
 
     default CompoundTag validateTag(ItemStack stack, Material primary, Material secondary, long startingEnergy, long maxEnergy) {
         CompoundTag dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
-        dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
-        dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
+        if (!getAntimatterToolType().isSimple()){
+            dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
+            dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
+        }
         if (!getAntimatterToolType().isPowered()) return dataTag;
         validateEnergyTag(stack, startingEnergy, maxEnergy);
         return dataTag;
@@ -176,7 +185,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
                 stack.setTag(h.getContainer().getTag());
                 list.add(stack);
             }
-        } else list.add(asItemStack(NULL, NULL));
+        } else list.add(asItemStack(getAntimatterItemTier().getPrimary(), getAntimatterItemTier().getSecondary()));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -184,7 +193,8 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         //TODO change this to object %s system for other lang compat
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary", primary.getDisplayName().getString()));
+        if (!getAntimatterToolType().isSimple())
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary", primary.getDisplayName().getString()));
         if (secondary != NULL)
             tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary", secondary.getDisplayName().getString()));
         DyeColor color = getDyeColor(stack);
