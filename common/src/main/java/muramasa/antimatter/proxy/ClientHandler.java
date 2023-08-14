@@ -18,6 +18,7 @@ import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
@@ -77,6 +78,7 @@ public class ClientHandler implements IProxyHandler {
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup() {
         MaterialType.buildTooltips();
+        AntimatterAPI.all(Material.class, Material::setChemicalFormula);
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> {
             Set<ResourceLocation> registered = new ObjectOpenHashSet<>();

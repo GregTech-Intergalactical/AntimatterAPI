@@ -90,7 +90,7 @@ public class AntimatterDynamics {
 
     public static void addResourcePacks(Consumer<PackResources> function){
         if (initialized){
-            AntimatterAPI.all(Material.class, Material::setChemicalFormula);
+
         }
         function.accept(DYNAMIC_RESOURCE_PACK);
     }
