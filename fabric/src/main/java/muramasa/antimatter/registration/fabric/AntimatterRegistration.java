@@ -56,7 +56,7 @@ public class AntimatterRegistration {
     public static void onRegister(final String domain) {
         if (domain.equals(Ref.ID)) {
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
+            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).filter(IAntimatterRegistrar::isEnabled).toList();
             MaterialEvent event = new MaterialEvent();
             MaterialDataInit.onMaterialEvent(event);
             list.forEach(r -> r.onMaterialEvent(event));
