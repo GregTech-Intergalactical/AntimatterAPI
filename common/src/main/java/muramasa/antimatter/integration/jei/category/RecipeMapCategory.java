@@ -205,7 +205,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
                     AntimatterJEIPlugin.addFluidIngredients(slot, Arrays.asList(fluids.get(s).getStacks()));
-                    slot.setFluidRenderer(fluids.get(s).getAmount(), true, 16, 16);
+                    slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
                     int finalS = s;
                     slot.addTooltipCallback((ing, list) -> {
                         FluidHolder stack = fluids.get(finalS).getStacks()[0];
@@ -223,7 +223,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.setFluidRenderer(fluids[s].getFluidAmount(), true, 16, 16);
+                    slot.setFluidRenderer((int)fluids[s].getFluidAmount(), true, 16, 16);
                     AntimatterJEIPlugin.addFluidIngredients(slot, Collections.singletonList(fluids[s]));
                     int finalS = s;
                     slot.addTooltipCallback((ing, list) -> {
