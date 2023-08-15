@@ -123,6 +123,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     }
 
     default Tier getTier(ItemStack stack) {
+        if (getAntimatterToolType().isSimple()) return getAntimatterItemTier();
         CompoundTag dataTag = getOrCreateDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
         return tier.orElseGet(() -> resolveTierTag(dataTag));
