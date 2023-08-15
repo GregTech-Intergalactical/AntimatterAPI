@@ -201,10 +201,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getId().equals("branch_cutter")) {
-            return Math.round((float) getTier(stack).getUses() / 4);
-        }
-        return getTier(stack).getUses();
+        return (int) (getTier(stack).getUses() * getAntimatterToolType().getDurabilityMultiplier());
     }
 
     @Override

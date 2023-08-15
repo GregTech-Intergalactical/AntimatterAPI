@@ -48,12 +48,14 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private long baseMaxEnergy;
     private int[] energyTiers;
     private final int useDurability, attackDurability, craftingDurability;
+    private float durabilityMultiplier = 1;
     private int baseQuality, overlayLayers;
     private final float baseAttackDamage, baseAttackSpeed;
     private CreativeModeTab itemGroup;
     protected TagKey<Item> tag, forgeTag; // Set?
     private UseAnim useAction;
     private Class<? extends IAntimatterTool> toolClass;
+    private IToolSupplier toolSupplier = null;
     @Nullable
     private SoundEvent useSound;
     @Nullable
@@ -143,22 +145,14 @@ public class AntimatterToolType implements ISharedAntimatterObject {
      * Instantiates powered MaterialTools
      */
     public List<IAntimatterTool> instantiatePoweredTools(String domain) {
-        List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
         Item.Properties properties = prepareInstantiation(domain);
-        boolean isSword = toolClass == MaterialSword.class;
-        for (int energyTier : energyTiers) {
-            if (isSword) poweredTools.add(new MaterialSword(domain, this, AntimatterItemTier.NULL, properties, energyTier));
-            else poweredTools.add(new MaterialTool(domain, this, AntimatterItemTier.NULL, properties, energyTier));
-        }
-        return poweredTools;
+        return instantiatePoweredTools(domain, () -> properties);
     }
 
     public List<IAntimatterTool> instantiatePoweredTools(String domain, Supplier<Item.Properties> properties) {
         List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
-        boolean isSword = toolClass == MaterialSword.class;
         for (int energyTier : energyTiers) {
-            if (isSword) poweredTools.add(new MaterialSword(domain, this, AntimatterItemTier.NULL, properties.get(), energyTier));
-            else poweredTools.add(new MaterialTool(domain, this, AntimatterItemTier.NULL, properties.get(), energyTier));
+            poweredTools.add(instantiatePoweredTool(domain, AntimatterItemTier.NULL, properties, energyTier));
         }
         return poweredTools;
     }
@@ -170,7 +164,14 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return instantiateTools(domain, () -> prepareInstantiation(domain));
     }
 
-    private IAntimatterTool instantiateTool(String domain, AntimatterItemTier tier, Supplier<Item.Properties> properties) {
+    protected IAntimatterTool instantiatePoweredTool(String domain, AntimatterItemTier tier, Supplier<Item.Properties> properties, int energyTier) {
+        if (toolSupplier != null) return toolSupplier.create(domain, this, tier, properties.get(), energyTier);
+        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, tier, properties.get(), energyTier);
+        return new MaterialTool(domain, this, tier, properties.get(), energyTier);
+    }
+
+    protected IAntimatterTool instantiateTool(String domain, AntimatterItemTier tier, Supplier<Item.Properties> properties) {
+        if (toolSupplier != null) return toolSupplier.create(domain, this, tier, properties.get());
         if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, tier, properties.get());
         return new MaterialTool(domain, this, tier, properties.get());
     }
@@ -293,6 +294,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
+    public AntimatterToolType setToolSupplier(IToolSupplier toolSupplier) {
+        this.toolSupplier = toolSupplier;
+        return this;
+    }
+
     public boolean getBlockBreakability() {
         return blockBreakability;
     }
@@ -321,6 +327,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public AntimatterToolType setRepairability(boolean repairable) {
         this.repairable = repairable;
+        return this;
+    }
+
+    public AntimatterToolType setDurabilityMultiplier(float durabilityMultiplier){
+        this.durabilityMultiplier = durabilityMultiplier;
         return this;
     }
 
@@ -434,6 +445,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return craftingDurability;
     }
 
+    public float getDurabilityMultiplier() {
+        return durabilityMultiplier;
+    }
+
     public int getOverlayLayers() {
         return overlayLayers;
     }
@@ -484,5 +499,13 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Nullable
     public MaterialTypeItem<?> getMaterialTypeItem() {
         return materialTypeItem;
+    }
+
+    public interface IToolSupplier{
+        IAntimatterTool create(String domain, AntimatterToolType toolType, AntimatterItemTier tier, Item.Properties properties);
+
+        default IAntimatterTool create(String domain, AntimatterToolType toolType, AntimatterItemTier tier, Item.Properties properties, int energyTier){
+            return create(domain, toolType, tier, properties);
+        }
     }
 }
