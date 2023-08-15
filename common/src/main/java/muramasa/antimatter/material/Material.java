@@ -6,7 +6,9 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.item.ItemFluidCell;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -282,6 +284,14 @@ public class Material implements ISharedAntimatterObject {
 
     public FluidHolder getPlasma(int mb) {
         return this.getPlasma(mb * TesseractGraphWrappers.dropletMultiplier);
+    }
+
+    public FluidIngredient getFluidTag(long droplets){
+        return FluidIngredient.of(TagUtils.getForgelikeFluidTag(this.getId()), droplets);
+    }
+
+    public FluidIngredient getFluidTag(int mb){
+        return FluidIngredient.of(TagUtils.getForgelikeFluidTag(this.getId()), mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
     /**

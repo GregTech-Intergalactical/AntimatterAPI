@@ -124,6 +124,14 @@ public class FluidIngredient {
         return ing;
     }
 
+    public static FluidIngredient of(TagKey<Fluid> tag, long droplets) {
+        Objects.requireNonNull(tag);
+        FluidIngredient ing = new FluidIngredient();
+        ing.tag = tag;
+        ing.amount = droplets;
+        return ing;
+    }
+
     public static FluidIngredient of(Material mat, long droplets) {
         return of(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", mat.getId()), droplets);
     }
