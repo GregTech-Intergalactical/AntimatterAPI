@@ -3,6 +3,7 @@ package muramasa.antimatter.integration.jei.forge;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.forge.fluid.ForgeFluidHolder;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
@@ -23,7 +24,7 @@ public class AntimatterJEIPluginImpl {
                 return new ITypedIngredient<>() {
                     @Override
                     public IIngredientType<FluidStack> getType() {
-                        return VanillaTypes.FLUID;
+                        return ForgeTypes.FLUID_STACK;
                     }
 
                     @Override
@@ -33,7 +34,7 @@ public class AntimatterJEIPluginImpl {
 
                     @Override
                     public <V> Optional<V> getIngredient(IIngredientType<V> ingredientType) {
-                        if (ingredientType == VanillaTypes.FLUID) return ((Optional<V>) Optional.of(v));
+                        if (ingredientType == ForgeTypes.FLUID_STACK) return ((Optional<V>) Optional.of(v));
                         return Optional.empty();
                     }
                 };
@@ -62,10 +63,10 @@ public class AntimatterJEIPluginImpl {
     }
 
     public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
-        builder.addIngredients(VanillaTypes.FLUID, stacks.stream().map(ForgeFluidHolder::toStack).toList());
+        builder.addIngredients(ForgeTypes.FLUID_STACK, stacks.stream().map(ForgeFluidHolder::toStack).toList());
     }
 
     public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
-        return new ForgeFluidHolder(ingredient.getIngredient(VanillaTypes.FLUID).get());
+        return new ForgeFluidHolder(ingredient.getIngredient(ForgeTypes.FLUID_STACK).get());
     }
 }

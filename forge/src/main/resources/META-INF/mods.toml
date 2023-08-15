@@ -36,6 +36,12 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
     versionRange="[1605,)"
     ordering="AFTER"
     side="BOTH"
+[[dependencies.antimatter]]
+    modId="jei"
+    mandatory=false
+    versionRange="[9.7,)"
+    ordering="AFTER"
+    side="BOTH"
 [[mods]]
 modId="antimatter_shared"
 version="${version}"
