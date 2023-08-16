@@ -105,8 +105,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public long insertEu(long voltage, boolean simulate) {
         if (voltage < 0) return 0;
-        int loss = canInput() && canOutput() ? 1 : 0;
-        voltage -= loss;
         if (!simulate && !checkVoltage(voltage)) return voltage;
         if (cachedItems.isEmpty()){
             long superInsert = super.insertEu(voltage, simulate);
