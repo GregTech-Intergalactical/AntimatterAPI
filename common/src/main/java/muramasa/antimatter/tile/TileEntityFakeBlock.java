@@ -31,6 +31,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     private TileEntityBasicMultiMachine<?> controller = null;
     public Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
+    private BlockPos controllerPos = null;
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
@@ -51,6 +52,12 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
 
     @Override
     public void serverTick(Level level, BlockPos pos, BlockState state) {
+        if (controllerPos != null){
+            if (level.getBlockEntity(pos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+                setController(basicMultiMachine);
+            }
+            controllerPos = null;
+        }
         covers.forEach((s, c) -> {
             if (c.ticks()) {
                 c.onUpdate();
@@ -125,12 +132,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
                 covers.put(dir, cover);
         }
         if (nbt.contains("P")) {
-            BlockPos pos = BlockPos.of(nbt.getLong("P"));
-            if (!getLevel().isLoaded(pos)) return;
-            if (getLevel().getBlockEntity(pos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
-                setController(basicMultiMachine);
-            }
-
+            controllerPos = BlockPos.of(nbt.getLong("P"));
         }
     }
 
