@@ -111,7 +111,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
     public long extractEu(long voltage, boolean simulate) {
         long extracted = 0;
         long toExtract = Math.min(voltage, getEnergy());
-        for (MachineEnergyHandler<?> handler : outputs) {
+        for (MachineEnergyHandler<?> handler : inputs) {
             long extract = handler.extractEu(toExtract, simulate);
             extracted+= extract;
             toExtract-= extract;
