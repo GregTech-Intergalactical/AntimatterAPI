@@ -79,7 +79,7 @@ public class Tools {
                }
                if (t.toolTypes().contains(HAMMER)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, HAMMER.getToolStack(m),
-                           of('R', ROD.getMaterialTag(Wood), 'P', plateGem), "PP ", "PPR", "PP ");
+                           of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "PP ", "PPR", "PP ");
                }
                if (t.toolTypes().contains(SOFT_HAMMER) && m.has(RUBBERTOOLS)){
                    TagKey<Item> ingotGem1 = m == Wood ? ItemTags.PLANKS : m.has(GEM) ? GEM.getMaterialTag(m) : INGOT.getMaterialTag(m);
