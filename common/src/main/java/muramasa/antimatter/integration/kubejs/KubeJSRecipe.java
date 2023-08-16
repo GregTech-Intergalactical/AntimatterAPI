@@ -102,16 +102,16 @@ public class KubeJSRecipe extends RecipeJS {
         if (map != null && map.getRecipeSerializer() != null){
             //return map.getRecipeSerializer().fromJson(id, json);
         }
-        for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_in", new JsonArray())) {
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "inputItems", new JsonArray())) {
             this.inputItems.add(RecipeIngredientJS.fromJson(e));
         }
-        for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_out", new JsonArray())) {
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "outputItems", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));
         }
-        for (JsonElement e : GsonHelper.getAsJsonArray(json, "fluid_in", new JsonArray())) {
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "inputFluids", new JsonArray())) {
             this.fluidInput.add(AntimatterRecipeSerializer.getFluidIngredient(e));
         }
-        for (JsonElement e : GsonHelper.getAsJsonArray(json, "fluid_out", new JsonArray())) {
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "outputFluids", new JsonArray())) {
             this.fluidOutput.add(AntimatterRecipeSerializer.getStack(e));
         }
         this.duration = GsonHelper.getAsInt(json, "duration");
@@ -154,22 +154,22 @@ public class KubeJSRecipe extends RecipeJS {
         if (inputItems.size() > 0) {
             JsonArray arr = new JsonArray();
             inputItems.forEach(t -> arr.add(t.toJson()));
-            this.json.add("item_in", arr);
+            this.json.add("inputItems", arr);
         }
         if (outputItems.size() > 0) {
             JsonArray arr = new JsonArray();
             outputItems.forEach(t -> arr.add(t.toResultJson()));
-            this.json.add("item_out", arr);
+            this.json.add("outputItems", arr);
         }
         if (fluidInput.size() > 0) {
             JsonArray arr = new JsonArray();
             fluidInput.forEach(t -> arr.add(serializeFluid(t)));
-            this.json.add("fluid_in", arr);
+            this.json.add("inputFluids", arr);
         }
         if (fluidOutput.size() > 0) {
             JsonArray arr = new JsonArray();
             fluidOutput.forEach(t -> arr.add(serializeStack(t)));
-            this.json.add("fluid_out", arr);
+            this.json.add("outputFluids", arr);
         }
         if (chances.size() > 0) {
             JsonArray arr = new JsonArray();

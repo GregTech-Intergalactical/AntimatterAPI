@@ -51,26 +51,26 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
                 return map.getRecipeSerializer().fromJson(recipeId, json);
             }
             List<Ingredient> list = new ObjectArrayList<>();
-            if (json.has("item_in")) {
-                JsonArray array = json.getAsJsonArray("item_in");
+            if (json.has("inputItems")) {
+                JsonArray array = json.getAsJsonArray("inputItems");
                 for (JsonElement element : array) {
                     list.add(RecipeIngredient.fromJson(element));
                 }
             }
             ItemStack[] outputs = null;
-            if (json.has("item_out")) {
-                outputs = Streams.stream(json.getAsJsonArray("item_out")).map(t -> RecipeUtil.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
+            if (json.has("outputItems")) {
+                outputs = Streams.stream(json.getAsJsonArray("outputItems")).map(t -> RecipeUtil.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
             }
             List<FluidIngredient> fluidInputs = new ObjectArrayList<>();
-            if (json.has("fluid_in")) {
-                JsonArray array = json.getAsJsonArray("fluid_in");
+            if (json.has("inputFluids")) {
+                JsonArray array = json.getAsJsonArray("inputFluids");
                 for (JsonElement element : array) {
                     fluidInputs.add(getFluidIngredient(element));
                 }
             }
             FluidHolder[] fluidOutputs = null;
-            if (json.has("fluid_out")) {
-                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(AntimatterRecipeSerializer::getStack).toArray(FluidHolder[]::new);
+            if (json.has("outputFluids")) {
+                fluidOutputs = Streams.stream(json.getAsJsonArray("outputFluids")).map(AntimatterRecipeSerializer::getStack).toArray(FluidHolder[]::new);
             }
             long eut = json.get("eu").getAsLong();
             int duration = json.get("duration").getAsInt();

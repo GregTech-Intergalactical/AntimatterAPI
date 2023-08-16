@@ -356,28 +356,28 @@ public class RecipeBuilder {
                 array.add(ingredient.toJson());
             }
             if (!array.isEmpty()){
-                json.add("item_in", array);
+                json.add("inputItems", array);
             }
             array = new JsonArray();
             for (ItemStack stack : itemsOutput){
                 array.add(RecipeUtil.itemstackToJson(stack));
             }
             if (!array.isEmpty()){
-                json.add("item_out", array);
+                json.add("outputItems", array);
             }
             array = new JsonArray();
             for (FluidIngredient f : fluidsInput) {
                 array.add(f.toJson());
             }
             if (!array.isEmpty()){
-                json.add("fluid_in", array);
+                json.add("inputFluids", array);
             }
             array = new JsonArray();
             for (FluidHolder stack : fluidsOutput){
                 array.add(RecipeUtil.fluidstackToJson(stack));
             }
             if (!array.isEmpty()){
-                json.add("fluid_out", array);
+                json.add("outputFluids", array);
             }
             array = new JsonArray();
             json.addProperty("eu", power);

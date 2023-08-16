@@ -96,7 +96,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
             array.add(ingredient.toJson());
         }
         if (!array.isEmpty()){
-            json.add("item_in", array);
+            json.add("inputItems", array);
         }
         array = new JsonArray();
         if (this.getOutputItems(false) != null){
@@ -105,14 +105,14 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
             }
         }
         if (!array.isEmpty()){
-            json.add("item_out", array);
+            json.add("outputItems", array);
         }
         array = new JsonArray();
         for (FluidIngredient f : this.getInputFluids()) {
             array.add(f.toJson());
         }
         if (!array.isEmpty()){
-            json.add("fluid_in", array);
+            json.add("inputFluids", array);
         }
         array = new JsonArray();
         if (this.getOutputFluids() != null){
@@ -121,7 +121,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
             }
         }
         if (!array.isEmpty()){
-            json.add("fluid_out", array);
+            json.add("outputFluids", array);
         }
         array = new JsonArray();
         json.addProperty("eu", this.getPower());

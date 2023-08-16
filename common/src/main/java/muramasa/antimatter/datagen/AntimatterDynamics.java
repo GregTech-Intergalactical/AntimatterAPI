@@ -89,9 +89,6 @@ public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void addResourcePacks(Consumer<PackResources> function){
-        if (initialized){
-
-        }
         function.accept(DYNAMIC_RESOURCE_PACK);
     }
 
