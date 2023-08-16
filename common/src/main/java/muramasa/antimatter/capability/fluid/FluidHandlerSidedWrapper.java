@@ -14,7 +14,7 @@ import tesseract.api.fluid.IFluidNode;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class FluidHandlerSidedWrapper implements IFluidNode {
+public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandler {
     protected IFluidNode fluidHandler;
     protected Direction side;
     CoverHandler<?> coverHandler;
@@ -68,6 +68,11 @@ public class FluidHandlerSidedWrapper implements IFluidNode {
     @Override
     public boolean isFluidValid(int tank, @Nonnull FluidHolder stack) {
         return fluidHandler.isFluidValid(tank, stack);
+    }
+
+    @Override
+    public FluidContainer getFluidContainer() {
+        return this;
     }
 
     @Override
