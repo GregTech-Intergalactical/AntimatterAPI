@@ -304,7 +304,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
-        return AntimatterAPI.get(BlockMachine.class, this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
+        return AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
     }
 
     /**

@@ -3,6 +3,8 @@ package muramasa.antimatter.util.forge;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;
+import com.terraformersmc.terraform.utils.TerraformFlammableBlockRegistry;
+import com.terraformersmc.terraform.utils.TerraformFuelRegistry;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -84,6 +86,14 @@ public class AntimatterPlatformUtilsImpl {
 
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         return ForgeHooks.getBurnTime(stack, recipeType);
+    }
+
+    public static void setBurnTime(Item item, int burnTime){
+        TerraformFuelRegistry.addFuel(item, burnTime);
+    }
+
+    public static void setFlammability(Block block, int burn, int spread){
+        TerraformFlammableBlockRegistry.addFlammableBlock(block, burn, spread);
     }
 
     public static Map<Item, Integer> getAllBurnables(){

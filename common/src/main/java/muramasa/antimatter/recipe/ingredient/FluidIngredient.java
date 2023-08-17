@@ -33,6 +33,11 @@ public class FluidIngredient {
 
     }
 
+    public boolean matches(FluidHolder fluidHolder){
+        List<FluidHolder> list = Arrays.stream(getStacks()).filter(f -> f.matches(fluidHolder)).toList();
+        return !list.isEmpty();
+    }
+
 
     public FluidHolder[] getStacks() {
         if (evaluated) return stacks;

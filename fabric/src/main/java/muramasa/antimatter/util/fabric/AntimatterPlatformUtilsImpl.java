@@ -20,6 +20,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
@@ -67,6 +68,14 @@ public class AntimatterPlatformUtilsImpl {
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         Integer burn = FuelRegistry.INSTANCE.get(stack.getItem());
         return burn == null ? 0 : burn;
+    }
+
+    public static void setBurnTime(Item item, int burnTime){
+        FuelRegistry.INSTANCE.add(item, burnTime);
+    }
+
+    public static void setFlammability(Block block, int burn, int spread){
+        FlammableBlockRegistry.getDefaultInstance().add(block, burn, spread);
     }
 
     public static Map<Item, Integer> getAllBurnables(){

@@ -20,7 +20,7 @@ import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.material.SubTag;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
@@ -35,6 +35,7 @@ import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
@@ -44,6 +45,8 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Map;
 
 //import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 
@@ -145,6 +148,19 @@ public class Antimatter extends AntimatterMod {
             AntimatterWorldGenerator.init();
         } else if (event == RegistrationEvent.DATA_READY) {
             CauldronInteractions.init();
+            AntimatterAPI.all(Material.class).forEach(m -> {
+                Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
+                if (map != null){
+                    map.forEach((t, i) -> {
+                        if (t instanceof MaterialTypeItem<?> typeItem){
+                            AntimatterPlatformUtils.setBurnTime(typeItem.get(m), i);
+                        } else if (t instanceof MaterialTypeBlock<?> typeBlock && typeBlock.get() instanceof MaterialTypeBlock.IBlockGetter blockGetter){
+                            AntimatterPlatformUtils.setBurnTime(blockGetter.get(m).asItem(), i);
+                        }
+                    });
+                }
+
+            });
         } else if (event == RegistrationEvent.CLIENT_DATA_INIT){
             AntimatterModelManager.init();
             ClientData.init();

@@ -26,13 +26,9 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.MULTI;
+import static muramasa.antimatter.machine.Tier.NONE;
 
 public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
-
-    public BlockMachine getBlockState(Tier tier) {
-        if (tileType == null) return null;
-        return AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain());
-    }
 
     public BasicMultiMachine(String domain, String name) {
         super(domain, name);

@@ -63,16 +63,6 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 }
                 return ctx;
             }
-
-            //Forge method
-            public int getBurnTime(ItemStack stack,  @Nullable RecipeType<?> recipeType){
-                Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(material);
-                if (map != null){
-                    Integer burnTime = map.get(type);
-                    if (burnTime != null) return burnTime;
-                }
-                return -1;
-            }
         };
 
     }

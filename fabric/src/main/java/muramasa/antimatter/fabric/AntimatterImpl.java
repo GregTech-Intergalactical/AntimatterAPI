@@ -154,19 +154,6 @@ public class AntimatterImpl implements ModInitializer {
                 return controller.energyHandler.side(direction).orElse(null);
             }, BlockFakeTile.TYPE);
         }
-        AntimatterAPI.all(Material.class).forEach(m -> {
-            Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
-            if (map != null){
-                map.forEach((t, i) -> {
-                    if (t instanceof MaterialTypeItem<?> typeItem){
-                        FuelRegistry.INSTANCE.add(typeItem.get(m), i);
-                    } else if (t instanceof MaterialTypeBlock<?> typeBlock && typeBlock.get() instanceof MaterialTypeBlock.IBlockGetter blockGetter){
-                        FuelRegistry.INSTANCE.add(blockGetter.get(m).asItem(), i);
-                    }
-                });
-            }
-
-        });
     }
 
     private void providers(ProvidersEvent ev) {

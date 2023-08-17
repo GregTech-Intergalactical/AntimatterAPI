@@ -28,7 +28,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,6 +59,16 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static void setBurnTime(Item item, int burnTime){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static void setFlammability(Block block, int burn, int spread){
         throw new AssertionError();
     }
 
