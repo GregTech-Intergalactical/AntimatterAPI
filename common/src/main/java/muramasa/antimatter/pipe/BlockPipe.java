@@ -29,6 +29,7 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -62,6 +63,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder.SIMPLE;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, EntityBlock, IColorHandler, SimpleWaterloggedBlock, ISharedAntimatterObject {
@@ -76,15 +78,24 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
-        this(prefix, type, size, modelId, type.getMaterial() == AntimatterMaterials.Wood ? Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(1.0f, 3.0f).noOcclusion() : Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
+        this(prefix, type, size, modelId, type.getMaterial() == AntimatterMaterials.Wood ? Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(1.0f, 3.0f) : Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).requiresCorrectToolForDrops());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId, Properties properties) {
-        super(type.domain, prefix + "_" + size.getId(), properties);
+        super(type.domain, prefix + "_" + size.getId(), size.ordinal() < 6 ? properties.noOcclusion() : properties);
+
         this.type = type;
         this.size = size;
         side = new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_side");
-        faces = new Texture[]{new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_vtiny"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_tiny"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_small"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_normal"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_large"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_huge")};
+        faces = new Texture[]{
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_vtiny"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_tiny"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_small"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_normal"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_large"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_huge"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_quadruple"),
+                new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_nonuple")};
         AntimatterAPI.register(BlockPipe.class, this);
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(TICKING, false));
         this.modelId = modelId;
@@ -92,6 +103,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     private void buildShapes() {
+        if (size.ordinal() > 5) return;
         recursiveShapeBuild(0, (byte) 0);
         shapes.put(getPipeID(0, 0), Shapes.create(size.getAABB()));
     }
@@ -288,6 +300,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (size.ordinal() > 5) return Shapes.block();
         if (context instanceof EntityCollisionContext cont && cont.getEntity() instanceof Player player) {
             if (Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.SCREWDRIVER)) {
                 return Shapes.block();
@@ -347,7 +360,11 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getSide()).texture("overlay", getFace());
+        if (size.ordinal() > 5){
+            prov.getBuilder(item).parent(new ResourceLocation(SIMPLE)).texture("all", getSide()).texture("north", getFace());
+        } else {
+            prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getSide()).texture("overlay", getFace());
+        }
     }
 
     @Override
@@ -363,6 +380,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     public AntimatterBlockModelBuilder getPipeConfig(AntimatterBlockModelBuilder builder) {
+        if (size.ordinal() > 5) return getPipeConfigForFullBlock(builder);
         builder.model(getModelLoc("base", 0), of("all", getSide(), "overlay", getFace()));
         builder.staticConfigId("pipe");
         builder.particle(getFace());
@@ -450,6 +468,98 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
         //All Shapes (6 Connections)
         builder.config(getPipeID(63, 0), getModelLoc("all", 0), c -> c.tex(of("all", getSide(), "overlay", getFace())));
+
+        return builder.loader(AntimatterModelManager.LOADER_PIPE);
+    }
+
+    public AntimatterBlockModelBuilder getPipeConfigForFullBlock(AntimatterBlockModelBuilder builder) {
+        builder.model(SIMPLE, of("all", getFace()));
+        builder.staticConfigId("pipe");
+        builder.particle(getFace());
+
+        //Default Shape (0 Connections)
+        builder.config(getPipeID(0, 0), SIMPLE, c -> c.tex(of("all", getFace())));
+
+        //Single Shapes (1 Connections)
+        builder.config(getPipeID(1, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace())).rot(-90, 0, 0));
+        builder.config(getPipeID(2, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace())).rot(90, 0, 0));
+        builder.config(getPipeID(4, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace())));
+        builder.config(getPipeID(8, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace())).rot(0, 180, 0));
+        builder.config(getPipeID(16, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace())).rot(0, 90, 0));
+        builder.config(getPipeID(32, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace())).rot(0, -90, 0));
+
+        //Line Shapes (2 Connections)
+        builder.config(getPipeID(3, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace())).rot(90, 0, 0));
+        builder.config(getPipeID(12, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace())));
+        builder.config(getPipeID(48, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace())).rot(0, 90, 0));
+
+        //Elbow Shapes (2 Connections)
+        builder.config(getPipeID(5, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, 0, -90));
+        builder.config(getPipeID(6, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, 0, 90));
+        builder.config(getPipeID(9, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, 180, -90));
+        builder.config(getPipeID(10, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, 180, 90));
+        builder.config(getPipeID(17, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(90, 180, 0));
+        builder.config(getPipeID(18, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(-90, 180, 0));
+        builder.config(getPipeID(20, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, 90, 0));
+        builder.config(getPipeID(24, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, -180, 0));
+        builder.config(getPipeID(33, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(-90, 0, 0));
+        builder.config(getPipeID(34, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(90, 0, 0));
+        builder.config(getPipeID(36, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())));
+        builder.config(getPipeID(40, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace())).rot(0, -90, 0));
+
+        //Side Shapes (3 Connections)
+        builder.config(getPipeID(7, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(-90, 0, 0));
+        builder.config(getPipeID(11, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(90, 0, 0));
+        builder.config(getPipeID(13, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 0, 180));
+        builder.config(getPipeID(14, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())));
+        builder.config(getPipeID(19, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(90, 0, 90));
+        builder.config(getPipeID(28, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 0, 90));
+        builder.config(getPipeID(35, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(90, 0, -90));
+        builder.config(getPipeID(44, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 0, -90));
+        builder.config(getPipeID(49, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 90, 180));
+        builder.config(getPipeID(50, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 90, 0));
+        builder.config(getPipeID(52, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 90, -90));
+        builder.config(getPipeID(56, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "south", getFace(), "up", getFace())).rot(0, 90, 90));
+
+        //Corner Shapes (3 Connections)
+        builder.config(getPipeID(21, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, 0, 180));
+        builder.config(getPipeID(22, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, 90, 0));
+        builder.config(getPipeID(25, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, -270, 180));
+        builder.config(getPipeID(26, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, 180, 0));
+        builder.config(getPipeID(41, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, -180, 180));
+        builder.config(getPipeID(42, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, -90, 0));
+        builder.config(getPipeID(37, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())).rot(0, -90, 180));
+        builder.config(getPipeID(38, 0), SIMPLE, c -> c.tex(of("all", getSide(), "north", getFace(), "east", getFace(), "up", getFace())));
+
+        //Arrow Shapes (4 Connections)
+        builder.config(getPipeID(23, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, 0, 90));
+        builder.config(getPipeID(27, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, -270, 90));
+        builder.config(getPipeID(29, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, 90, 180));
+        builder.config(getPipeID(30, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, 90, 0));
+        builder.config(getPipeID(39, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, -90, 90));
+        builder.config(getPipeID(43, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, -180, 90));
+        builder.config(getPipeID(45, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, -90, 180));
+        builder.config(getPipeID(46, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, -90, 0));
+        builder.config(getPipeID(53, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(180, 180, 0));
+        builder.config(getPipeID(54, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())));
+        builder.config(getPipeID(57, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(180, 0, 0));
+        builder.config(getPipeID(58, 0), SIMPLE, c -> c.tex(of("all", getFace(), "south", getSide(), "down", getSide())).rot(0, 180, 0));
+
+        //Cross Shapes (4 Connections)
+        builder.config(getPipeID(15, 0), SIMPLE, c -> c.tex(of("all", getFace(), "up", getSide(), "down", getSide())).rot(0, 0, 90));
+        builder.config(getPipeID(51, 0), SIMPLE, c -> c.tex(of("all", getFace(), "up", getSide(), "down", getSide())).rot(90, 0, 0));
+        builder.config(getPipeID(60, 0), SIMPLE, c -> c.tex(of("all", getFace(), "up", getSide(), "down", getSide())));
+
+        //Five Shapes (5 Connections)
+        builder.config(getPipeID(31, 0), SIMPLE, c -> c.tex(of("all", getFace(), "down", getSide())).rot(0, 0, 90));
+        builder.config(getPipeID(47, 0), SIMPLE, c -> c.tex(of("all", getFace(), "down", getSide())).rot(0, 0, -90));
+        builder.config(getPipeID(55, 0), SIMPLE, c -> c.tex(of("all", getFace(), "down", getSide())).rot(-90, 0, 0));
+        builder.config(getPipeID(59, 0), SIMPLE, c -> c.tex(of("all", getFace(), "down", getSide())).rot(90, 0, 0));
+        builder.config(getPipeID(61, 0), SIMPLE, c -> c.tex(of("all", getFace(), "down", getSide())).rot(180, 0, 0));
+        builder.config(getPipeID(62, 0), SIMPLE, c -> c.tex(of("all", getFace(), "down", getSide())));
+
+        //All Shapes (6 Connections)
+        builder.config(getPipeID(63, 0), SIMPLE, c -> c.tex(of("all", getFace())));
 
         return builder.loader(AntimatterModelManager.LOADER_PIPE);
     }

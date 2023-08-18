@@ -24,7 +24,7 @@ import java.util.function.Function;
 
 public class AntimatterBlockModelBuilder extends AntimatterModelBuilder<AntimatterBlockModelBuilder>{
 
-    protected static final String SIMPLE = Ref.ID.concat(":block/preset/simple");
+    public static final String SIMPLE = Ref.ID.concat(":block/preset/simple");
     protected static final String LAYERED = Ref.ID.concat(":block/preset/layered");
 
     protected final List<Consumer<Object>> properties = new ObjectArrayList<>();

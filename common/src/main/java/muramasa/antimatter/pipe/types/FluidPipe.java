@@ -22,7 +22,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         this.maxTemp = maxTemp;
         this.gasProof = gasProof;
         material.flags(MaterialTags.FLUIDPIPE);
-        sizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
+        sizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE, PipeSize.QUADRUPLE, PipeSize.NONUPLE);
     }
 
     @Override
@@ -49,10 +49,14 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     }
 
     public int getCapacity(PipeSize size) {
+        if (size == PipeSize.NONUPLE) return getCapacity(PipeSize.SMALL);
+        if (size == PipeSize.QUADRUPLE) return getCapacity(PipeSize.NORMAL);
         return caps[size.ordinal()];
     }
 
     public int getPressure(PipeSize size) {
+        if (size == PipeSize.NONUPLE) return getPressure(PipeSize.SMALL);
+        if (size == PipeSize.QUADRUPLE) return getPressure(PipeSize.NORMAL);
         return pressures[size.ordinal()];
     }
 

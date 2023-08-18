@@ -14,12 +14,14 @@ public enum PipeSize implements IAntimatterObject {
     SMALL(4),
     NORMAL(8),
     LARGE(12),
-    HUGE(16);
+    HUGE(16),
+    QUADRUPLE(0),
+    NONUPLE(0);
 
     public static final PipeSize[] VALUES;
 
     static {
-        VALUES = values();
+        VALUES = new PipeSize[]{VTINY, TINY, SMALL, NORMAL, LARGE, HUGE};
     }
 
     private final int cableThickness;
@@ -28,7 +30,7 @@ public enum PipeSize implements IAntimatterObject {
     PipeSize(int cableThickness) {
         this.cableThickness = cableThickness;
         float offset = 0.0625f * ordinal();
-        AABB = new AABB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
+        AABB = cableThickness == 0 ? new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) : new AABB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
     }
 
     @Override

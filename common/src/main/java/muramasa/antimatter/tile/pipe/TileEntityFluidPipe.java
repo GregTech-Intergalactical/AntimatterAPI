@@ -13,6 +13,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
+import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
@@ -39,7 +40,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     public TileEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        fluidHandler = FluidController.SLOOSH ? Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), 1, 0)) : Optional.empty();
+        int count = getPipeSize() == PipeSize.QUADRUPLE ? 4 : getPipeSize() == PipeSize.NONUPLE ? 9 : 1;
+        fluidHandler = FluidController.SLOOSH ? Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), count, 0)) : Optional.empty();
         pipeCapHolder.set(() -> this);
     }
 
