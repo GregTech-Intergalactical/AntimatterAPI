@@ -25,6 +25,7 @@ import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -68,6 +69,10 @@ public class AntimatterPlatformUtilsImpl {
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         Integer burn = FuelRegistry.INSTANCE.get(stack.getItem());
         return burn == null ? 0 : burn;
+    }
+
+    public static int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
+        return FlammableBlockRegistry.getDefaultInstance().get(state.getBlock()).getBurnChance();
     }
 
     public static void setBurnTime(Item item, int burnTime){

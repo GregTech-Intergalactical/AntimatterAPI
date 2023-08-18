@@ -88,6 +88,10 @@ public class AntimatterPlatformUtilsImpl {
         return ForgeHooks.getBurnTime(stack, recipeType);
     }
 
+    public static int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
+        return state.getFlammability(level, pos, face);
+    }
+
     public static void setBurnTime(Item item, int burnTime){
         TerraformFuelRegistry.addFuel(item, burnTime);
     }

@@ -14,6 +14,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -59,6 +60,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
         throw new AssertionError();
     }
 
