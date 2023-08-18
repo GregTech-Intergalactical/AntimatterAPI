@@ -17,6 +17,7 @@ import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.item.IFluidItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.FluidPipeTicker;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -52,6 +53,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -82,6 +84,15 @@ public class ForgeCommonEvents {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
         CommonEvents.onItemCrafted(e.getInventory(), e.getPlayer());
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.WorldTickEvent event){
+        if (event.side == LogicalSide.SERVER){
+            if (event.phase == TickEvent.Phase.START){
+                FluidPipeTicker.onServerWorldTick(event.world);
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

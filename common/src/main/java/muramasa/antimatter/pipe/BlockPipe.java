@@ -22,6 +22,8 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityTickable;
+import muramasa.antimatter.tile.pipe.TileEntityCable;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterCapUtils;
@@ -34,6 +36,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -57,6 +61,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import tesseract.TesseractGraphWrappers;
+import tesseract.api.gt.GTController;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -233,6 +239,29 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         onNeighborChange(stateIn, worldIn, currentPos, facingPos);
         return stateIn;
+    }
+
+    public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
+        super.entityInside(state, worldIn, pos, entityIn);
+        if (worldIn.isClientSide) return;
+        if (entityIn instanceof LivingEntity entity) {
+            if (worldIn.getBlockEntity(pos) instanceof TileEntityFluidPipe<?> fluidPipe) {
+                long temp = fluidPipe.getCurrentTemperature();
+                applyTemperatureDamage(entity, temp, 1.0f, 1.0f);
+            }
+        }
+    }
+
+    public static boolean applyTemperatureDamage(Entity entity, long temperature, float multiplier, float cap) {
+        if (temperature > 320) {
+            entity.hurt(DamageSource.HOT_FLOOR, Math.max(1, Math.min(cap, (multiplier * (temperature - 300)) / 50.0F)));
+            return true;
+        }
+        if (temperature < 260) {
+            entity.hurt(DamageSource.FREEZE, Math.max(1, Math.min(cap, (multiplier * (270 - temperature)) / 25.0F)));
+            return true;
+        }
+        return false;
     }
 
     @Nonnull

@@ -15,13 +15,17 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
+import muramasa.antimatter.pipe.FluidPipeTicker;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
@@ -41,8 +45,9 @@ import java.util.Optional;
 public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
     protected Optional<PipeFluidHandler> fluidHandler;
+    public static byte[] SBIT = {1, 2, 4, 8, 16, 32};
     private PipeFluidHolder holder;
-    Direction[] lastSide;
+    byte[] lastSide;
     long transferredAmount = 0;
     long mTemperature = 293;
 
@@ -51,30 +56,40 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         int count = getPipeSize() == PipeSize.QUADRUPLE ? 4 : getPipeSize() == PipeSize.NONUPLE ? 9 : 1;
         fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), count, 0));
         pipeCapHolder.set(() -> this);
-        lastSide = new Direction[count];
+        lastSide = new byte[count];
+        for (int i = 0; i < count; i++){
+            lastSide[i] = 0;
+        }
     }
 
     @Override
     public void onLoad() {
         holder = new PipeFluidHolder(this);
         super.onLoad();
+        if (even(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ())) {
+            FluidPipeTicker.SERVER_TICK_PRE.add(this);
+        } else {
+            FluidPipeTicker.SERVER_TICK_PR2.add(this);
+        }
+    }
+
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
     }
 
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        TesseractGraphWrappers.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
-
 
     @Override
     protected void register() {
-        TesseractGraphWrappers.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return TesseractGraphWrappers.FLUID.remove(getLevel(), getBlockPos().asLong());
+        return true;
     }
 
 
@@ -83,17 +98,30 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         super.load(tag);
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
             fluidHandler.ifPresent(t -> t.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+        ListTag tags = tag.getList("lastSide", Tag.TAG_BYTE);
+        for (int i = 0; i < tags.size(); i++){
+            lastSide[i] = ((ByteTag)tags.get(i)).getAsByte();
+        }
+        mTemperature = tag.getLong("temperature");
     }
 
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serialize(new CompoundTag())));
+        ListTag tags = new ListTag();
+        for (int i = 0; i < lastSide.length; i++){
+            tags.add(ByteTag.valueOf(lastSide[i]));
+        }
+        tag.put("lastSide", tags);
+        tag.putLong("temperature", mTemperature);
     }
 
     @Override
     public void onRemove() {
         fluidHandler.ifPresent(FluidHandler::onRemove);
+        FluidPipeTicker.SERVER_TICK_PR2.remove(this);
+        FluidPipeTicker.SERVER_TICK_PRE.remove(this);
         super.onRemove();
     }
 
@@ -129,6 +157,17 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         return getPipeType().getTemperature();
     }
 
+    @SuppressWarnings("ConstantValue")
+    public long getCurrentTemperature(){
+        return fluidHandler.map(f -> {
+            long currentTemp = 0;
+            for (int i = 0; i < f.getSize(); i++){
+                currentTemp = Math.max(FluidPlatformUtils.getFluidTemperature(f.getFluidInTank(i).getFluid()), currentTemp);
+            }
+            return currentTemp;
+        }).orElse(0L);
+    }
+
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.get3DDataValue());
@@ -141,7 +180,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     public void setLastSide(Direction lastSide, int tank) {
-        this.lastSide[tank] = lastSide;
+        this.lastSide[tank] |= SBIT[lastSide.get3DDataValue()];
     }
 
     @Override
@@ -150,7 +189,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         this.getHolder().tick(getLevel().getGameTime());
     }
 
-    public void onServerTickPre(Level level, BlockPos pos, BlockState state, boolean aFirst) {
+    private boolean mHasToAddTimer = true;
+
+    public void onUnregisterPre() {mHasToAddTimer = true;}
+
+    public void onServerTickPre(Level level, BlockPos pos, boolean aFirst) {
         transferredAmount = 0;
 
         PlatformFluidHandler adjacentFluidHandlers[] = new PlatformFluidHandler[6];
@@ -197,20 +240,12 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
             if (!tTank.getStoredFluid().isEmpty()) distribute(level, tTank, i, adjacentFluidHandlers);
 
-            lastSide[i] = null;
+            lastSide[i] = 0;
         }
     }
 
     @SuppressWarnings("rawtypes")
     public void distribute(Level level, FluidTank aTank, int i, PlatformFluidHandler[] fluidHandlers) {
-        // Top Priority is filling Cauldrons and other specialties.
-        for (Direction tSide : Direction.values()) {
-            if (fluidHandlers[tSide.get3DDataValue()] != null) {
-                // Covers let distribution happen, right?
-
-
-            }
-        }
         // Check if we are empty.
         if (aTank.isEmpty()) return;
         // Compile all possible Targets into one List.
@@ -224,7 +259,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         for (Direction tSide : Direction.values()) {
 
             // Don't you dare flow backwards!
-            if (tSide == lastSide[i]) continue;
+            if ((lastSide[i] & SBIT[tSide.get3DDataValue()]) != 0) continue;
             // Are we even connected to this Side? (Only gets checked due to the Cover check being slightly expensive)
             if (!connects(tSide)) continue;
             // Covers let distribution happen, right?
@@ -236,7 +271,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
             long insert = fluidHandlers[tSide.get3DDataValue()].insertFluid(aTank.getStoredFluid().copyWithAmount(Integer.MAX_VALUE), true);
             if (insert > 0) {
                 if (fluidHandlers[tSide.get3DDataValue()] instanceof PipeFluidHandlerSidedWrapper){
-                    tTanks.add(level.random.nextInt(tTanks.size()+1), fluidHandlers[tSide.get3DDataValue()]);
+                    tPipes.add(level.random.nextInt(tTanks.size()+1), fluidHandlers[tSide.get3DDataValue()]);
                 } else {
                     // Add to a random Position in the List.
                     tTanks.add(level.random.nextInt(tTanks.size()+1), fluidHandlers[tSide.get3DDataValue()]);
@@ -252,18 +287,18 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         // Amount to distribute normally.
         tAmount = divup(tAmount, tTargetCount);
         // Distribute to Pipes first.
-        for (PlatformFluidHandler tPipe : tPipes) transferredAmount += tPipe.extractFluid(tPipe.add(aTank.amount(tAmount-tPipe.amount()), aTank.get()));
+        for (PlatformFluidHandler tPipe : tPipes) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tPipe.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
         // Check if we are empty.
         if (aTank.isEmpty()) return;
         // Distribute to Tanks afterwards.
-        for (DelegatorTileEntity tTank : tTanks) transferredAmount += aTank.remove(FL.fill(tTank, aTank.get(tAmount), T));
+        for (PlatformFluidHandler tTank : tTanks) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tTank.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
         // Check if we are empty.
         if (aTank.isEmpty()) return;
         // No Targets? Nothing to do then.
         if (tPipes.isEmpty()) return;
         // And then if there still is pressure, distribute to Pipes again.
-        tAmount = (aTank.amount() - mCapacity/2) / tPipes.size();
-        if (tAmount > 0) for (FluidTankGT tPipe : tPipes) transferredAmount += aTank.remove(tPipe.add(aTank.amount(tAmount), aTank.get()));
+        tAmount = (aTank.getStoredFluid().getFluidAmount() - aTank.getCapacity()/2) / tPipes.size();
+        if (tAmount > 0) for (PlatformFluidHandler tPipe : tPipes) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tPipe.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
     }
 
     /** Divides but rounds up. */
