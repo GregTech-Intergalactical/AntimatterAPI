@@ -40,6 +40,12 @@ public class Pipes {
         });
         AntimatterAPI.all(FluidPipe.class, f -> {
             Material m = f.getMaterial();
+            if (f.getSizes().contains(PipeSize.QUADRUPLE) && f.getSizes().contains(PipeSize.NORMAL)){
+                provider.addItemRecipe(consumer, Ref.ID, "", "antimatter_pipes", "has_wrench", in, f.getBlock(PipeSize.QUADRUPLE), of('P', f.getBlock(PipeSize.NORMAL)), "PP", "PP");
+            }
+            if (f.getSizes().contains(PipeSize.NONUPLE) && f.getSizes().contains(PipeSize.SMALL)){
+                provider.addItemRecipe(consumer, Ref.ID, "", "antimatter_pipes", "has_wrench", in, f.getBlock(PipeSize.NONUPLE), of('P', f.getBlock(PipeSize.SMALL)), "PPP", "PPP", "PPP");
+            }
             if (!m.has(PLATE) || m == AntimatterMaterials.Wood) return;
             if (f.getSizes().contains(PipeSize.TINY)){
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_pipe_fluid_tiny", "antimatter_pipes", "has_wrench", in, new ItemStack(f.getBlock(PipeSize.TINY), 12), of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PLATE.getMaterialTag(m)), "PPP", "H W", "PPP");
