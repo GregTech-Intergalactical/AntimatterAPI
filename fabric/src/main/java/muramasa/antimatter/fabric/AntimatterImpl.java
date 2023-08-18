@@ -83,7 +83,7 @@ public class AntimatterImpl implements ModInitializer {
             ProviderEvents.PROVIDERS.register(this::providers);
             ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));
             ItemCraftedCallback.EVENT.register(((player, crafted, container) -> CommonEvents.onItemCrafted(container, player)));
-            ServerTickEvents.START_WORLD_TICK.register(FluidPipeTicker::onServerWorldTick);
+            ServerTickEvents.START_SERVER_TICK.register(FluidPipeTicker::onServerWorldTick);
             CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonEvents.tagsEvent());
             //TODO figure out variables to insert
             BlockPlaceCallback.EVENT.register(context -> {

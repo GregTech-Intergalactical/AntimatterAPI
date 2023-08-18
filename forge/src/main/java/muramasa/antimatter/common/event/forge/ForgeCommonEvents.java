@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -58,6 +59,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.forge.Provider;
@@ -87,11 +89,9 @@ public class ForgeCommonEvents {
     }
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.WorldTickEvent event){
-        if (event.side == LogicalSide.SERVER){
-            if (event.phase == TickEvent.Phase.START){
-                FluidPipeTicker.onServerWorldTick(event.world);
-            }
+    public static void onServerTick(TickEvent.ServerTickEvent event){
+        if (event.phase == TickEvent.Phase.START){
+            FluidPipeTicker.onServerWorldTick(ServerLifecycleHooks.getCurrentServer());
         }
     }
 
