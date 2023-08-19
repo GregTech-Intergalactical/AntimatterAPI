@@ -159,11 +159,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         // This is not only behavioural but if INVALID_STRUCTURE are checked then
         // maxShares
         // might misbehave.
-        Structure<?> s = getMachineType().getStructure(getMachineTier());
-        if (s == null) {
-            super.onFirstTick();
-            return;
-        }
         if (!validStructure && shouldCheckFirstTick) {
             checkStructure();
         }
