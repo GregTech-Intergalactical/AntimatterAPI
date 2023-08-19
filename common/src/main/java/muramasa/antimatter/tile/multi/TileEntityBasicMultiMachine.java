@@ -71,7 +71,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     protected boolean shouldCheckFirstTick = true;
     // Number of calls into checkStructure, invalidateStructure. if > 0 ignore
     // callbacks from structurecache.
-    private int checkingStructure = 0;
+    protected int checkingStructure = 0;
     /**
      * Used whenever a machine might be rotated and is checking structure, since the
      * facing is changed before checkStructure()
