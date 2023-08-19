@@ -160,12 +160,12 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @SuppressWarnings("ConstantValue")
     public long getCurrentTemperature(){
         return fluidHandler.map(f -> {
-            long currentTemp = 0;
+            long currentTemp = -1;
             for (int i = 0; i < f.getSize(); i++){
                 currentTemp = Math.max(FluidPlatformUtils.getFluidTemperature(f.getFluidInTank(i).getFluid()), currentTemp);
             }
-            return currentTemp;
-        }).orElse(0L);
+            return currentTemp == -1 ? 293L : currentTemp;
+        }).orElse(293L);
     }
 
     @Override
