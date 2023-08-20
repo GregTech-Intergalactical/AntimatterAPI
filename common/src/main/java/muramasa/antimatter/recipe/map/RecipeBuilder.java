@@ -313,15 +313,25 @@ public class RecipeBuilder {
         return this;
     }
 
-    public void clearInputs(){
+    public RecipeBuilder clearItemInputs(){
         ingredientInput = new ObjectArrayList<>();
-        fluidsInput = new ObjectArrayList<>();
+        return this;
     }
 
-    public void clearOutputs(){
+    public RecipeBuilder clearItemOutputs(){
         itemsOutput = new ObjectArrayList<>();
-        fluidsOutput = new ObjectArrayList<>();
         chances = null;
+        return this;
+    }
+
+    public RecipeBuilder clearFluidInputs(){
+        fluidsInput = new ObjectArrayList<>();
+        return this;
+    }
+
+    public RecipeBuilder clearFluidOutputs(){
+        fluidsOutput = new ObjectArrayList<>();
+        return this;
     }
 
     public void clear() {
