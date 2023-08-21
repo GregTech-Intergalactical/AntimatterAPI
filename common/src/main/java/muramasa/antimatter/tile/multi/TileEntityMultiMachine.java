@@ -3,7 +3,6 @@ package muramasa.antimatter.tile.multi;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;

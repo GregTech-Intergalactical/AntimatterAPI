@@ -18,7 +18,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
@@ -359,6 +358,15 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         List<IComponentHandler> list = components.get(id);
         return list != null ? list : Collections.emptyList();
     }
+
+    public List<IComponentHandler> getComponentsByHandlerId(String id) {
+        List<IComponentHandler> list = new ArrayList<>();
+        components.forEach((s, l) -> l.forEach(c -> {
+            if (c.getIdForHandlers().equals(id)) list.add(c);
+        }));
+        return list;
+    }
+
 
     public void addComponent(String elementId, IComponentHandler component) {
         List<IComponentHandler> existing = components.get(component.getId());

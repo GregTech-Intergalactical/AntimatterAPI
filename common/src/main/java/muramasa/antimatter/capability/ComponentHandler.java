@@ -8,6 +8,7 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -17,13 +18,19 @@ import java.util.Set;
 public class ComponentHandler<T extends TileEntityBase<T>> implements IComponentHandler {
 
     protected String componentId;
+    protected String idForHandlers;
     protected T componentTile;
 
     protected Set<TileEntityMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
 
-    public ComponentHandler(String componentId, T componentTile) {
+    public ComponentHandler(String componentId, String idForHandlers, T componentTile) {
         this.componentId = componentId;
+        this.idForHandlers = idForHandlers;
         this.componentTile = componentTile;
+    }
+
+    public ComponentHandler(String componentId, T componentTile) {
+        this(componentId, componentId, componentTile);
     }
 
     @Nonnull
@@ -38,22 +45,27 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
         return componentTile;
     }
 
+    @Override
+    public @NotNull String getIdForHandlers() {
+        return idForHandlers;
+    }
+
     @Nonnull
     @Override
     public Optional<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? Optional.of((((TileEntityMachine<?>) componentTile).itemHandler.get())) : Optional.empty();
+        return componentTile instanceof TileEntityMachine<?> machine ? machine.itemHandler.map(h -> h) : Optional.empty();
     }
 
     @Nonnull
     @Override
     public Optional<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? Optional.of((((TileEntityMachine<?>) componentTile).fluidHandler.get())) : Optional.empty();
+        return componentTile instanceof TileEntityMachine<?> machine ?  machine.fluidHandler.map(f -> f) : Optional.empty();
     }
 
     @Nonnull
     @Override
     public Optional<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? Optional.of((((TileEntityMachine<?>) componentTile).energyHandler.get())) : Optional.empty();
+        return componentTile instanceof TileEntityMachine<?> machine ? machine.energyHandler.map(e -> e) : Optional.empty();
     }
 
     @Override

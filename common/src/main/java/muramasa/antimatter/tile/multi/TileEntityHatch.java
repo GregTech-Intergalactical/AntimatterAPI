@@ -9,6 +9,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.machine.types.HatchMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -33,11 +34,14 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    public final Optional<HatchComponentHandler<T>> componentHandler = Optional
-            .of(new HatchComponentHandler<>((T)this));
+    public final Optional<HatchComponentHandler<T>> componentHandler;
+    public final HatchMachine hatchMachine;
 
-    public TileEntityHatch(Machine<?> type, BlockPos pos, BlockState state) {
+    public TileEntityHatch(HatchMachine type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        this.hatchMachine = type;
+        componentHandler = Optional
+                .of(new HatchComponentHandler<>((T)this));
         if (type.has(ENERGY)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
                     type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,

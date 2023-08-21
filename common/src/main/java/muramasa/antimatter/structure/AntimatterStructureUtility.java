@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class AntimatterStructureUtility {
     public static <T extends TileEntityBasicMultiMachine<T>> IStructureElement<T> ofHatch(HatchMachine machine){
         return ofHatch(machine, (t, world, pos, machine1, handler) -> {
-            t.addComponent(machine1.getComponentId(), handler);
+            t.addComponent(machine1.getId(), handler);
             return true;
         });
     }
@@ -25,7 +25,7 @@ public class AntimatterStructureUtility {
             if (machineTile.getMachineTier().getVoltage() < minTier.getVoltage()){
                 return false;
             }
-            t.addComponent(machine1.getComponentId(), handler);
+            t.addComponent(machine1.getId(), handler);
             return true;
         });
     }
@@ -39,7 +39,7 @@ public class AntimatterStructureUtility {
                 if (tile instanceof IComponent component) {
                     if (component.getComponentHandler().isPresent()) {
                         IComponentHandler componentHandler = component.getComponentHandler().orElse(null);
-                        if (machine.getComponentId().equals(componentHandler.getId())) {
+                        if (machine.getId().equals(componentHandler.getId())) {
                             return callback.test(t, world, pos, machine, componentHandler);
                         }
                         return false;

@@ -78,28 +78,28 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
 
     public StructureBuilder<T> min(int min, HatchMachine... machines){
         for (HatchMachine machine : machines) {
-            minMaxMap.put(machine.getComponentId(), Pair.of(min, Integer.MAX_VALUE));
+            minMaxMap.put(machine.getId(), Pair.of(min, Integer.MAX_VALUE));
         }
         return this;
     }
 
     public StructureBuilder<T> exact(int exact, HatchMachine... machines){
         for (HatchMachine machine : machines) {
-            minMaxMap.put(machine.getComponentId(), Pair.of(exact, exact));
+            minMaxMap.put(machine.getId(), Pair.of(exact, exact));
         }
         return this;
     }
 
     public StructureBuilder<T> minMax(int min, int max, HatchMachine... machines){
         for (HatchMachine machine : machines) {
-            minMaxMap.put(machine.getComponentId(), Pair.of(min, max));
+            minMaxMap.put(machine.getId(), Pair.of(min, max));
         }
         return this;
     }
 
     public StructureBuilder<T> max(int max, HatchMachine... machines){
         for (HatchMachine machine : machines) {
-            minMaxMap.put(machine.getComponentId(), Pair.of(0, max));
+            minMaxMap.put(machine.getId(), Pair.of(0, max));
         }
         return this;
     }

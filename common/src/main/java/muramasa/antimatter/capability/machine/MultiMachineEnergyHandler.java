@@ -38,19 +38,19 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
     }
 
     private void cacheInputs() {
-        this.inputs = tile.getComponents(inputComponentString()).stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().get())).toArray(MachineEnergyHandler<?>[]::new);
+        this.inputs = tile.getComponentsByHandlerId(inputComponentString()).stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().get())).toArray(MachineEnergyHandler<?>[]::new);
     }
 
     protected String inputComponentString(){
-        return "hatch_energy";
+        return "energy";
     }
 
     protected String outputComponentString(){
-        return "hatch_dynamo";
+        return "dynamo";
     }
 
     private void cacheOutputs() {
-        this.outputs = tile.getComponents(outputComponentString()).stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().get())).toArray(MachineEnergyHandler<?>[]::new);
+        this.outputs = tile.getComponentsByHandlerId(outputComponentString()).stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().get())).toArray(MachineEnergyHandler<?>[]::new);
     }
 
     private IEnergyHandler anyHandler() {

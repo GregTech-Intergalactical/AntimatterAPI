@@ -21,6 +21,8 @@ public interface IComponentHandler {
 
     BlockEntity getTile();
 
+    String getIdForHandlers();
+
     Optional<MachineItemHandler<?>> getItemHandler();
 
     Optional<MachineFluidHandler<?>> getFluidHandler();
