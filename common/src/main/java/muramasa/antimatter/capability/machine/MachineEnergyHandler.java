@@ -90,6 +90,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     public long insertAmps(long voltage, long amps, boolean simulate) {
         if (voltage < 0 || amps < 0) return 0;
         int loss = canInput() && canOutput() ? 1 : 0;
+        if (getInputVoltage() == 0) return 0;
         amps = Math.min((getCapacity() - getEnergy()) / getInputVoltage(), amps);
         voltage -= loss;
         if (!simulate && !checkVoltage(voltage)) return amps;
