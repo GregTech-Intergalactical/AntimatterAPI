@@ -162,7 +162,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         return fluidHandler.map(f -> {
             long currentTemp = -1;
             for (int i = 0; i < f.getSize(); i++){
-                currentTemp = Math.max(FluidPlatformUtils.getFluidTemperature(f.getFluidInTank(i).getFluid()), currentTemp);
+                FluidHolder fluid = f.getFluidInTank(i);
+                if (fluid.isEmpty()){
+                    continue;
+                }
+                currentTemp = Math.max(FluidPlatformUtils.getFluidTemperature(fluid.getFluid()), currentTemp);
             }
             return currentTemp == -1 ? 293L : currentTemp;
         }).orElse(293L);
