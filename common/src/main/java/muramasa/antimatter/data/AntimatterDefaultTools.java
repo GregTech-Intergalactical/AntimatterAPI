@@ -43,7 +43,7 @@ public class AntimatterDefaultTools {
     public static final AntimatterToolType KNIFE = new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F, false).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setRepairability(false);
     public static final AntimatterToolType PLUNGER = new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F, false).setUseSound(SoundEvents.BUCKET_EMPTY).setHasSecondary(false).setRepairability(false);
     public static final AntimatterToolType CHAINSAW = new AntimatterToolType(Ref.ID, "chainsaw", 2, 1, 5, 3.0F, -2.0F, false).setUseAction(UseAnim.BLOCK).setPowered(100000, 1, 2, 3).setMaterialType(CHAINSAWBIT).addEffectiveMaterials(WOOD, PLANT, REPLACEABLE_PLANT, BAMBOO, LEAVES).addTags("axe", "saw");
-    public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F, false).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addEffectiveMaterials(STONE, DIRT, SAND, GRASS).setOverlayLayers(2);
+    public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F, false).setPowered(100000, 1, 2, 3).setToolSpeedMultiplier(12.0f).setUseSound(Ref.DRILL).addEffectiveMaterials(STONE).setOverlayLayers(2);
     public static final AntimatterArmorType HELMET = new AntimatterArmorType(Ref.ID, "helmet", 40, 0, 0.0F, 0.0F, EquipmentSlot.HEAD);
     public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 0, 0.0F, 0.0F, EquipmentSlot.CHEST);
     public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 0, 0.0F, 0.0F, EquipmentSlot.LEGS);
@@ -59,7 +59,7 @@ public class AntimatterDefaultTools {
         PICKAXE.addBehaviour(BehaviourTorchPlacing.INSTANCE);
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE);
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1, "3x3"), BehaviourTorchPlacing.INSTANCE);
-        JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2, "1x0x2"));
+        JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 1, 1, "3x3"));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
         KNIFE.addBehaviour(BehaviourPumpkinCarving.INSTANCE);
         if (side == Side.CLIENT) {

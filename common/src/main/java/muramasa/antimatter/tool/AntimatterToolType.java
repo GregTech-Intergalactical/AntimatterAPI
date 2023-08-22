@@ -49,6 +49,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private int[] energyTiers;
     private final int useDurability, attackDurability, craftingDurability;
     private float durabilityMultiplier = 1;
+    private float miningSpeedMultiplier = 1.0f;
     private int baseQuality, overlayLayers;
     private final float baseAttackDamage, baseAttackSpeed;
     private CreativeModeTab itemGroup;
@@ -315,6 +316,13 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
+    public AntimatterToolType setToolSpeedMultiplier(float multiplier){
+        if (multiplier < 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have negative Speed Multiplier!");
+        this.miningSpeedMultiplier = multiplier;
+        return this;
+    }
+
 
     public AntimatterToolType setUseSound(SoundEvent sound) {
         this.useSound = sound;
@@ -447,6 +455,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public float getDurabilityMultiplier() {
         return durabilityMultiplier;
+    }
+
+    public float getMiningSpeedMultiplier() {
+        return miningSpeedMultiplier;
     }
 
     public int getOverlayLayers() {

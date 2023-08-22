@@ -166,7 +166,7 @@ public class Tools {
                                of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "P", "P", "R");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SWORD.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FPH", " R ", " R ");
+                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FPH", " P ", " R ");
                    }
                }
 
