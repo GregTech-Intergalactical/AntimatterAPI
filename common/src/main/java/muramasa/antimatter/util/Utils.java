@@ -405,7 +405,7 @@ public class Utils {
         if (amps > 0){
             long insertAmps = to.insertAmps(from.getOutputVoltage(), amps, true);
             if (insertAmps > 0){
-                from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), insertAmps, false), false);
+                from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), amps, false), false);
                 return true;
             }
         }
