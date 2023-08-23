@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
@@ -157,6 +158,14 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED);
         }
         return euInserted;
+    }
+
+    @Override
+    public long extractAmps(long voltage, long amps, boolean simulate) {
+        if (amps < 0) {
+            Antimatter.LOGGER.info(amps + " Amps at: " + tile.getBlockPos() + ", Simulate: " + simulate);
+        }
+        return super.extractAmps(voltage, amps, simulate);
     }
 
     @Override
