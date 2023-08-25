@@ -129,7 +129,11 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             if (t.getAntimatterToolType().isPowered()) {
                 add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
             } else {
-                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+                if (t.getAntimatterToolType().isSimple()){
+                    add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + Utils.getLocalizedType(t.getAntimatterToolType()));
+                } else {
+                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+                }
             }
 
         });
@@ -143,7 +147,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     str = s.getSize().getCableThickness() + "x";
                 }
                 //String strd = s.getType().getId().split("_")[0];
-                add(s, StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1), " ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId()), " ", Utils.lowerUnderscoreToUpperSpaced(s.getType().getType())));
+                add(s, StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1), " ", Utils.getLocalizedType(s.getType().getMaterial()), " ", Utils.lowerUnderscoreToUpperSpaced(s.getType().getType())));
             });
             AntimatterAPI.all(Material.class).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
             AntimatterAPI.all(BlockOre.class, o -> {
@@ -277,7 +281,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 }
             });
             AntimatterAPI.all(IAntimatterArmor.class, t -> {
-                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+                add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getMat()) + " " + Utils.getLocalizedType(t.getAntimatterArmorType()));
             });
             customTranslations();
             pipeTranslations();
