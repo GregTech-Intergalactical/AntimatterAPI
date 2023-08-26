@@ -7,6 +7,7 @@ import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
+import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
 import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.PipeFluidHandlerSidedWrapper;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
@@ -344,6 +345,9 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public Optional<? extends FluidContainer> forSide(Direction side) {
         if (fluidHandler.isEmpty()) {
             fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), 1, 0));
+        }
+        if (side == null){
+            return Optional.of(new FluidHandlerNullSideWrapper(fluidHandler.get()));
         }
         return Optional.of(new PipeFluidHandlerSidedWrapper(fluidHandler.get(), this, side));
         /*if (FluidController.SLOOSH) {

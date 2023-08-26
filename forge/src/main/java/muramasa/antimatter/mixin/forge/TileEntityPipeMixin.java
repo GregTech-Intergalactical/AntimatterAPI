@@ -9,6 +9,7 @@ import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,7 +50,7 @@ public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEnt
     abstract Class<?> getCapClass();
 
     @Unique
-    protected LazyOptional[] pipeCaps = new LazyOptional[6];
+    protected LazyOptional[] pipeCaps = new LazyOptional[7];
     public TileEntityPipeMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -57,18 +58,21 @@ public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEnt
     @NotNull
     @Override
     public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
+        if (side == null && !(((Object)this) instanceof TileEntityFluidPipe<?>)) return LazyOptional.empty();
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return LazyOptional.of(() -> coverHandler.get()).cast();
-        if (!connects(side)) return LazyOptional.empty();
+        if (side != null && !connects(side)) return LazyOptional.empty();
         if (!pipeCapHolder.isPresent()) return LazyOptional.empty();
+        if (cap == FLUID_HANDLER_CAPABILITY && getCapClass() == FluidContainer.class){
+            int index = side == null ? 6 : side.get3DDataValue();
+            if (pipeCaps[index] == null || !pipeCaps[index].isPresent()){
+                pipeCaps[index] = fromFluidHolder(pipeCapHolder, side).cast();
+            }
+            return pipeCaps[index].cast();
+        }
+        if (side == null) return LazyOptional.empty();
         if (cap == CapabilityEnergy.ENERGY && getCapClass() == IRFNode.class) {
             if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromEnergyHolder(pipeCapHolder, side).cast();
-            }
-        }
-        if (cap == FLUID_HANDLER_CAPABILITY && getCapClass() == FluidContainer.class){
-            if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
-                pipeCaps[side.get3DDataValue()] = fromFluidHolder(pipeCapHolder, side).cast();
             }
         }
         if (cap == ITEM_HANDLER_CAPABILITY && getCapClass() == ExtendedItemContainer.class){

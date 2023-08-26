@@ -47,7 +47,7 @@ public class AntimatterAPIImpl {
             return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).map(f -> new FabricBlockFluidContainer((FluidContainer) f, b -> {}, be)).orElse(null);
         }, type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
-            if (!(be instanceof TileEntityItemPipe<?> itemPipe)) return null;
+            if (direction == null || !(be instanceof TileEntityItemPipe<?> itemPipe)) return null;
             return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).map(i -> new ExtendedContainerWrapper((ExtendedItemContainer) i)).orElse(null);
         }, type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
@@ -68,7 +68,7 @@ public class AntimatterAPIImpl {
             if (!(be instanceof TileEntityHeatPipe<?> heatPipe)) return null;
             return (IHeatHandler) heatPipe.getPipeCapHolder().side(direction).orElse(null);
         }, type);
-        AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.map(c -> c).orElse(null), type);
+        AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.orElse(null), type);
     }
 
     public static void registerItemTransferAPI(Item item){
