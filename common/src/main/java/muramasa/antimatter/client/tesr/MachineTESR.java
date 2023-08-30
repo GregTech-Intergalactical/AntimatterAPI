@@ -89,7 +89,7 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
 
         if (bakedModel instanceof MachineBakedModel model) {
             for (Direction dir : Ref.DIRS) {
-                BakedModel ibm = model.getModel(tile.getBlockState(), dir, tile.getMachineState());
+                BakedModel ibm = model.getModel(tile.getBlockState(), dir, tile.getMachineState().getTextureState());
                 if (!(ibm instanceof BakedMachineSide toRender)) continue;
                 for (Map.Entry<String, BakedModel> customPart : toRender.customParts()) {
                     String[] parts = customPart.getKey().split(":");
