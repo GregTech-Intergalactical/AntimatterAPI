@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class UtilsImpl {
 
-    private static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
+    public static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
         ((BlockAccessor)block).port_lib$popExperience(level, pos, exp);
     }
 

@@ -18,7 +18,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class UtilsImpl {
 
-    private static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
+    public static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
         block.popExperience(level, pos, exp);
     }
 
