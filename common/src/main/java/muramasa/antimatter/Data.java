@@ -31,7 +31,9 @@ import muramasa.antimatter.tile.single.TileEntityInfiniteStorage;
 import muramasa.antimatter.tool.enchantment.ElectricEnchantment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.enchantment.DamageEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.material.Material;
@@ -54,7 +56,15 @@ public class Data {
 
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
+    public static final MobType CREEPER = new MobType();
+
     public static Enchantment ENERGY_EFFICIENCY = AntimatterAPI.register(Enchantment.class, "energy_efficiency", Ref.ID, new ElectricEnchantment(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.BREAKABLE, EquipmentSlot.MAINHAND));
+    public static Enchantment IMPLOSION = AntimatterAPI.register(Enchantment.class, "implosion", Ref.ID, new DamageEnchantment(Enchantment.Rarity.UNCOMMON, 2, EquipmentSlot.MAINHAND){
+        @Override
+        public float getDamageBonus(int level, MobType type) {
+            return type == CREEPER ? (float)level * 2.5F : 0.0F;
+        }
+    });
 
     public static CoverFactory COVEROUTPUT = CoverFactory.builder(CoverOutput::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "output");
     public static CoverFactory COVERHEAT = CoverFactory.builder(CoverHeat::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "heat");
