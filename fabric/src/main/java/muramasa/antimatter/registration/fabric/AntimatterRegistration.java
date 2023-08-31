@@ -38,6 +38,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -93,6 +94,9 @@ public class AntimatterRegistration {
         });
         AntimatterAPI.all(SoundEvent.class, domain, (t, d, i) -> {
             Registry.register(Registry.SOUND_EVENT, new ResourceLocation(d, i), t);
+        });
+        AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {
+            Registry.register(Registry.ENCHANTMENT, new ResourceLocation(d, i), en);
         });
         //TODO porting lib compat
         AntimatterAPI.all(IAntimatterIngredientSerializer.class, domain, (s, d, i) -> {

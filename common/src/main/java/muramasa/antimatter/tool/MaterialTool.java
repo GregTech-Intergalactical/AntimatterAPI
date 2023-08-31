@@ -333,7 +333,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
         }
-        return type.isPowered() ? enchantment != Enchantments.UNBREAKING : enchantment.category.canEnchant(stack.getItem());
+        return (!type.isPowered() || (enchantment != Enchantments.UNBREAKING && enchantment != Enchantments.MENDING)) && enchantment.category.canEnchant(stack.getItem());
     }
 
     public boolean hasContainerItem(ItemStack stack) {

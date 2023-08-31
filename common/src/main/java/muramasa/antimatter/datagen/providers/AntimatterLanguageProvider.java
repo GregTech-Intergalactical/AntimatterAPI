@@ -124,6 +124,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             Collection<Tier> tiers = i.getTiers();
             tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(t == Tier.NONE ? "" : " (%s)")));
         });
+        AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {
+            add("enchantment." + d + "." + i, lowerUnderscoreToUpperSpaced(i));
+        });
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
             if (t.getAntimatterToolType().isPowered()) {

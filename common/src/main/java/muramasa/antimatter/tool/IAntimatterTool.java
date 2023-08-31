@@ -2,6 +2,7 @@ package muramasa.antimatter.tool;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.*;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
@@ -311,7 +312,10 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             return amount;
         }
         long currentEnergy = h.getEnergy();
-        int multipliedDamage = amount * 100;
+        Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
+        int energyEfficiency = enchants.getOrDefault(Data.ENERGY_EFFICIENCY, 0);
+        int energyUse = energyEfficiency == 0 ? 100 : energyEfficiency == 1 ? 75 : energyEfficiency == 2 ? 50 : energyEfficiency == 3 ? 25 : 100;
+        int multipliedDamage = amount * energyUse;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
             h.extractEu(multipliedDamage, false);

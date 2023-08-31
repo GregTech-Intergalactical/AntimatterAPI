@@ -25,6 +25,7 @@ import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -32,6 +33,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -167,6 +169,11 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
                 if (t.asFeature().getRegistryName() == null) t.asFeature().setRegistryName(d, i);
                 ((IForgeRegistry) e.getRegistry()).register(t.asFeature());
+            });
+        } else if (e.getRegistry() == ForgeRegistries.ENCHANTMENTS){
+            AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {
+                if (en.getRegistryName() == null) en.setRegistryName(d, i);
+                ((IForgeRegistry) e.getRegistry()).register(en);
             });
         }
         if (!domain.equals(Ref.ID)){
