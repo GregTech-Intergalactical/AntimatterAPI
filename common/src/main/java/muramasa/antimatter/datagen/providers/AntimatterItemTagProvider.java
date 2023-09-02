@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
@@ -47,7 +48,7 @@ import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> implements IAntimatterProvider {
     private final boolean replace;
-    private final Function<TagKey<Block>, Tag.Builder> blockTags;
+    private final Function<TagKey<Block>, AntimatterTagBuilder<Block>> blockTags;
 
     public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, AntimatterBlockTagProvider p) {
         super(Registry.ITEM, providerDomain, providerName, "items");
@@ -164,9 +165,9 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
     }
 
     protected void copy(TagKey<Block> blockTag, TagKey<Item> itemTag) {
-        Tag.Builder builder = this.getOrCreateRawBuilder(itemTag);
-        Tag.Builder builder2 = this.blockTags.apply(blockTag);
-        Stream<Tag.BuilderEntry> stream = builder2.getEntries();
+        AntimatterTagBuilder<Item> builder = this.getOrCreateRawBuilder(itemTag);
+        AntimatterTagBuilder<Block> builder2 = this.blockTags.apply(blockTag);
+        Stream<Tag.BuilderEntry> stream = builder2.builder.getEntries();
         Objects.requireNonNull(builder);
         stream.forEach(builder::add);
     }

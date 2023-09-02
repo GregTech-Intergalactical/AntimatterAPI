@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
 import net.devtech.arrp.json.tags.JTag;
 import net.minecraft.core.Registry;
 import net.minecraft.data.HashCache;
@@ -16,16 +17,19 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     private final String providerDomain, providerName, prefix;
-    protected final Map<ResourceLocation, Tag.Builder> builders;
+    protected final Map<ResourceLocation, AntimatterTagBuilder<T>> builders;
     protected final Registry<T> registry;
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
     public static Object2ObjectOpenHashMap<ResourceLocation, JsonObject> TAGS_GLOBAL = new Object2ObjectOpenHashMap<>();
+
+    public Object2ObjectMap<ResourceLocation, List<T>> OBJECTS_TO_REMOVE = new Object2ObjectOpenHashMap<>();
 
     public static Object2ObjectOpenHashMap<Registry<?>, Map<ResourceLocation, List<Object>>> TAGS_TO_REMOVE = new Object2ObjectOpenHashMap<>();
 
@@ -40,10 +44,14 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
 
     @Override
     public void run() {
-        Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
+        Map<ResourceLocation, AntimatterTagBuilder<T>> b = new HashMap<>(this.builders);
         this.builders.clear();
         processTags(providerDomain);
         builders.forEach(this::addTag);
+        builders.forEach((r, builder) -> {
+            List<T> list = OBJECTS_TO_REMOVE.computeIfAbsent(r, r2 -> new ArrayList<>());
+            list.addAll(builder.removeElements);
+        });
         builders.putAll(b);
     }
 
@@ -64,13 +72,12 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
         return providerName;
     }
 
-    protected TagsProvider.TagAppender<T> tag(TagKey<T> tag) {
-        Tag.Builder builder = this.getOrCreateRawBuilder(tag);
-        return new TagsProvider.TagAppender<>(builder, registry, providerDomain);
+    protected AntimatterTagBuilder<T> tag(TagKey<T> tag) {
+        return getOrCreateRawBuilder(tag);
     }
 
-    protected Tag.Builder getOrCreateRawBuilder(TagKey<T> tag) {
-        return this.builders.computeIfAbsent(tag.location(), (location) -> new Tag.Builder());
+    protected AntimatterTagBuilder<T> getOrCreateRawBuilder(TagKey<T> tag) {
+        return this.builders.computeIfAbsent(tag.location(), (location) -> new AntimatterTagBuilder<>(new Tag.Builder(), registry, providerDomain));
     }
 
     // Must append 's' in the identifier
@@ -95,7 +102,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
 
     // Must append 's' in the identifier
     // Appends data to the tag.
-    public void addTag(ResourceLocation loc, Tag.Builder obj) {
+    public void addTag(ResourceLocation loc, AntimatterTagBuilder<T> obj) {
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null) {
