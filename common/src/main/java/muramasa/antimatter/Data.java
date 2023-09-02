@@ -16,7 +16,6 @@ import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.MenuHandlerPipe;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.gui.container.ContainerHatch;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.container.ContainerMultiMachine;
 import muramasa.antimatter.item.DebugScannerItem;
@@ -25,7 +24,6 @@ import muramasa.antimatter.machine.types.BasicMachine;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tile.single.TileEntityInfiniteStorage;
 import muramasa.antimatter.tool.enchantment.ElectricEnchantment;
@@ -103,18 +101,6 @@ public class Data {
         @Override
         public String screenID() {
             return "multi";
-        }
-    };
-
-    public static MenuHandlerMachine<? extends TileEntityHatch, ? extends ContainerHatch> HATCH_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_hatch") {
-        @Override
-        public ContainerHatch getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
-            return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch<?>) tile, playerInv, this, windowId) : null;
-        }
-
-        @Override
-        public String screenID() {
-            return "hatch";
         }
     };
 
