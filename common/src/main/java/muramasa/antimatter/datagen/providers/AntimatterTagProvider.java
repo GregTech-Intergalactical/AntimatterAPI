@@ -45,10 +45,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     public void run() {
         Map<ResourceLocation, AntimatterTagBuilder<T>> b = new HashMap<>(this.builders);
         this.builders.clear();
-        try {
-            processTags(providerDomain);
-        } catch (NoSuchMethodError ignored){
-        }
+        processTags(providerDomain);
         builders.forEach(this::addTag);
         builders.forEach((r, builder) -> {
             if (builder.removeElements.isEmpty()) return;
