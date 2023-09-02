@@ -30,7 +30,8 @@
     "PlayerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
-    "SimpleReloadInstanceMixin"
+    "SimpleReloadInstanceMixin",
+    "TagLoaderMixin"
   ],
   "minVersion": "0.8"
 }

@@ -11,7 +11,6 @@ import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
 import net.devtech.arrp.json.tags.JTag;
 import net.minecraft.core.Registry;
 import net.minecraft.data.HashCache;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
@@ -29,9 +28,9 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
     public static Object2ObjectOpenHashMap<ResourceLocation, JsonObject> TAGS_GLOBAL = new Object2ObjectOpenHashMap<>();
 
-    public Object2ObjectMap<ResourceLocation, List<T>> OBJECTS_TO_REMOVE = new Object2ObjectOpenHashMap<>();
+    public Object2ObjectMap<ResourceLocation, List<T>> TAGS_TO_REMOVE = new Object2ObjectOpenHashMap<>();
 
-    public static Object2ObjectOpenHashMap<Registry<?>, Map<ResourceLocation, List<Object>>> TAGS_TO_REMOVE = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<Registry<?>, Map<ResourceLocation, List<Object>>> TAGS_TO_REMOVE_GLOBAL = new Object2ObjectOpenHashMap<>();
 
     public AntimatterTagProvider(Registry<T> registry, String providerDomain, String providerName, String prefix) {
         this.builders = Maps.newLinkedHashMap();
@@ -39,17 +38,21 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.prefix = prefix;
-        TAGS_TO_REMOVE.computeIfAbsent(registry, r -> new Object2ObjectOpenHashMap<>());
+        TAGS_TO_REMOVE_GLOBAL.computeIfAbsent(registry, r -> new Object2ObjectOpenHashMap<>());
     }
 
     @Override
     public void run() {
         Map<ResourceLocation, AntimatterTagBuilder<T>> b = new HashMap<>(this.builders);
         this.builders.clear();
-        processTags(providerDomain);
+        try {
+            processTags(providerDomain);
+        } catch (NoSuchMethodError ignored){
+        }
         builders.forEach(this::addTag);
         builders.forEach((r, builder) -> {
-            List<T> list = OBJECTS_TO_REMOVE.computeIfAbsent(r, r2 -> new ArrayList<>());
+            if (builder.removeElements.isEmpty()) return;
+            List<T> list = TAGS_TO_REMOVE.computeIfAbsent(r, r2 -> new ArrayList<>());
             list.addAll(builder.removeElements);
         });
         builders.putAll(b);
@@ -126,6 +129,11 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
                 global.forEach(local::add);
             }
             TAGS_GLOBAL.put(fixed, v);
+        });
+        TAGS_TO_REMOVE.forEach((k, v) -> {
+            Map<ResourceLocation, List<Object>> map = TAGS_TO_REMOVE_GLOBAL.computeIfAbsent(registry, r -> new Object2ObjectOpenHashMap<>());
+            List<Object> list = map.computeIfAbsent(k, k2 -> new ArrayList<>());
+            list.addAll(v);
         });
     }
 

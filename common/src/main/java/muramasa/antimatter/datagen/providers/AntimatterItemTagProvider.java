@@ -120,7 +120,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
             });
             AntimatterAPI.all(MaterialItem.class, item -> {
                 TagKey<Item> type = item.getType().getTag();
-                TagsProvider.TagAppender<Item> provider = this.tag(type);
+                AntimatterTagBuilder<Item> provider = this.tag(type);
                 provider.add(item).replace(replace);
                 this.tag(item.getTag()).add(item).replace(replace);
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
