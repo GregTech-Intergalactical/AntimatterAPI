@@ -238,6 +238,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.BOLT.dependents(AntimatterMaterialTypes.ROD);
         AntimatterMaterialTypes.RING.dependents(AntimatterMaterialTypes.ROD);
         AntimatterMaterialTypes.ROD_LONG.dependents(ROD);
+        AntimatterMaterialTypes.ROD.dependents(ROD_LONG);
         AntimatterMaterialTypes.CRUSHED.dependents(AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE);
         AntimatterMaterialTypes.DUST_PURE.dependents(AntimatterMaterialTypes.DUST);
         AntimatterMaterialTypes.DUST_IMPURE.dependents(AntimatterMaterialTypes.DUST_PURE);
