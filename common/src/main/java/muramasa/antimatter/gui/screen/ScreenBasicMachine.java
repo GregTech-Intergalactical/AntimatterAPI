@@ -10,10 +10,6 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends ContainerBasicMachine<T>> extends ScreenMachine<T, U> {
 
-    private final static ButtonOverlay FLUID = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
-    private final static ButtonOverlay ITEM = new ButtonOverlay("item_eject", 177, 37, 16, 16);
-    private AbstractWidget item, fluid;
-
     public ScreenBasicMachine(U container, Inventory inv, Component name) {
         super(container, inv, name);
     }

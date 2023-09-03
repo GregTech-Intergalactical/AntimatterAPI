@@ -57,19 +57,18 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
         boolean mouseOver = isInside(mouseX, mouseY);
         if (body == null) {
             ButtonBody body = isSwitched() ? on : off;
-            int xTex = body.getX();
-            int yTex = body.getY();
-            if (mouseOver) {
-                xTex += body.getX2();
-                yTex += body.getY2();
+            int xTex = 0;
+            int yTex = 0;
+            if (mouseOver) {;
+                yTex += body.getH();
             }
-            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), body.getW(), body.getH() * 2);
         } else {
-            int xTex = body.getX();
-            int yTex = body.getY();
+            int xTex = 0;
+            int yTex = 0;
             float f = isSwitched() ? 1.0F : mouseOver ? 0.75F : 0.5F;
             RenderSystem.setShaderColor(f, f, f, 1.0F);
-            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), body.getW(), body.getH());
         }
         RenderSystem.enableDepthTest();
     }

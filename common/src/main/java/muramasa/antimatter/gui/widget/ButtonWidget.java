@@ -28,12 +28,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ButtonWidget extends Widget {
-
-    protected final ResourceLocation res;
-    @Nullable
-    protected final ResourceLocation bodyLoc;
-    @Nullable
-    protected final int4 resLoc;
     @Nullable
     protected final ButtonBody body;
     @Nullable
@@ -48,14 +42,11 @@ public class ButtonWidget extends Widget {
     protected Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
 
-    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ButtonBody body, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, @Nullable Consumer<ButtonWidget> onPress) {
+    public ButtonWidget(GuiInstance instance, IGuiElement parent, @Nullable ButtonBody body, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, @Nullable Consumer<ButtonWidget> onPress) {
         super(instance, parent);
-        this.res = res;
         this.body = body;
         this.overlayOff = overlayOff;
         this.overlayOn = overlayOn;
-        this.resLoc = null;
-        this.bodyLoc = null;
         this.onPress = onPress;
     }
 
@@ -107,18 +98,19 @@ public class ButtonWidget extends Widget {
 
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+        if (body == null && overlayOn == null && overlayOff == null) return;
         Minecraft minecraft = Minecraft.getInstance();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, res);
+
         RenderSystem.disableDepthTest();
         if (body != null) {
-            int xTex = body.getX();
-            int yTex = body.getY();
+            RenderSystem.setShaderTexture(0, body.getTexture());
+            int xTex = 0;
+            int yTex = 0;
             if (isInside(mouseX, mouseY)) {
-                xTex += body.getX2();
-                yTex += body.getY2();
+                yTex += body.getH();
             }
-            ScreenWidget.blit(matrixStack, realX(), realY(), this.getW(), this.getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(matrixStack, realX(), realY(), this.getW(), this.getH(), xTex, yTex, body.getW(), body.getH(), body.getW(), body.getH() * 2);
         }
         boolean isActive = activeHandler == null || activeHandler.apply(this);
         float color = isActive ? 1.0f : pressed ? 0.75f : 0.5f;
@@ -132,10 +124,8 @@ public class ButtonWidget extends Widget {
             overlay = overlayOff;
         }
         if (overlay != null) {
-            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
-        } else if (this.bodyLoc != null) {
-            RenderSystem.setShaderTexture(0, this.bodyLoc);
-            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), resLoc.x, resLoc.y, resLoc.z, resLoc.w, 256, 256);
+            RenderSystem.setShaderTexture(0, overlay.getTexture());
+            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), 0, 0, overlay.getW(), overlay.getH(), overlay.getW(), overlay.getH());
         }
         RenderSystem.enableDepthTest();
         RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -145,7 +135,7 @@ public class ButtonWidget extends Widget {
         }
     }
 
-    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
+    /*public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
         super(instance, parent);
         this.res = res;
         this.body = null;
@@ -154,33 +144,33 @@ public class ButtonWidget extends Widget {
         this.resLoc = loc;
         this.bodyLoc = bodyLoc;
         this.onPress = onPress;
-    }
+    }*/
 
-    public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
+    /*public static WidgetSupplier build(ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
         return builder((a, b) -> new ButtonWidget(a, b, res, body, overlay, null, onPress)).clientSide();
     }
 
-    public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlayOn, ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
+    public static WidgetSupplier build(ButtonBody body, ButtonOverlay overlayOn, ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
         return builder((a, b) -> new ButtonWidget(a, b, res, body, overlayOn, overlayOff, onPress)).clientSide();
-    }
+    }*/
 
-    public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
+    /*public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
         return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, null, onPress)).clientSide();
-    }
+    }*/
 
-    public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
+    /*public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
         return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
-    }
+    }*/
 
-    public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlayOn, ButtonOverlay overlayOff, IGuiEvent.IGuiEventFactory ev, int id) {
+    /*public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlayOn, ButtonOverlay overlayOff, IGuiEvent.IGuiEventFactory ev, int id) {
         return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlayOn, overlayOff, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
+    }*/
+
+    public static WidgetSupplier build(ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
+        return builder(((a, b) -> new ButtonWidget(a, b,  body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
     }
 
-    public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
-    }
-
-    public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id, String tooltipKey) {
-        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))).setTooltipKey(tooltipKey))).clientSide();
+    public static WidgetSupplier build(ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id, String tooltipKey) {
+        return builder(((a, b) -> new ButtonWidget(a, b, body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))).setTooltipKey(tooltipKey))).clientSide();
     }
 }

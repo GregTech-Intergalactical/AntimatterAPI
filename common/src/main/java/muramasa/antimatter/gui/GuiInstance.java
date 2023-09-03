@@ -188,12 +188,12 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body) {
-        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
+        addWidget(ButtonWidget.build(body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
         return this;
     }
 
     public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body, String tooltipKey) {
-        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
+        addWidget(ButtonWidget.build(body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
         return this;
     }
 
