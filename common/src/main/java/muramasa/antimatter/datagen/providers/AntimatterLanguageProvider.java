@@ -69,7 +69,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     @Override
     public final void run() {
         addTranslations();
-        GLOBAL_DATA.computeIfAbsent(providerDomain, d -> new Object2ObjectRBTreeMap<>()).put(locale, data);
+        GLOBAL_DATA.computeIfAbsent(providerDomain, d -> new Object2ObjectRBTreeMap<>()).merge(locale, data, (oldV, newV) -> {
+            oldV.putAll(newV);
+            return oldV;
+        });
     }
 
     @Override
