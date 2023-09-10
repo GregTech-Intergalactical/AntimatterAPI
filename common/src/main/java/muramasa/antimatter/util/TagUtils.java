@@ -114,6 +114,10 @@ public class TagUtils {
         return createTag(name, Biome.class, biomeName -> TagKey.create(Registry.BIOME_REGISTRY, biomeName));
     }
 
+    public static <T> TagKey<T> getTag(ResourceLocation name, Class<T> clazz, Registry<T> registry){
+        return createTag(name, clazz, biomeName -> TagKey.create(registry.key(), biomeName));
+    }
+
     /**
      * NamedToContent
      * In order to use a named tag in recipes outside antimatter(e.g. for furnace recipes)
