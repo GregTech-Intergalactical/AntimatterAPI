@@ -79,7 +79,7 @@ public class WorldGenVeinLayerBuilder {
               this.sporadic,
               this.dimensions);
       AntimatterWorldGenerator.writeJson(vein.toJson(), this.id, "vein_layers");
-      return AntimatterWorldGenerator.readJson(WorldGenVeinLayer.class, vein, WorldGenVeinLayer::fromJson, "veins");
+      return AntimatterWorldGenerator.readJson(WorldGenVeinLayer.class, vein, WorldGenVeinLayer::fromJson, "vein_layers");
   }
     public final WorldGenVeinLayerBuilder withWeight(int weight) {
         this.weight = weight;
