@@ -33,10 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -235,6 +232,29 @@ public class AntimatterWorldGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static <T extends IAntimatterObject> List<T> readCustomJsonObjects(Class<T> clazz, BiFunction<String, JsonObject, T> function, String path){
+        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/" + path + "/custom");
+        if (dir.listFiles() == null) return Collections.emptyList();
+        List<File> files = Arrays.asList(dir.listFiles());
+        List<T> objects = new ArrayList<>();
+        files.forEach(f -> {
+            if (f.isFile()){
+                if (f.getAbsolutePath().endsWith(".json")){
+                    try {
+                        Reader reader = Files.newBufferedReader(f.toPath());
+                        JsonObject parsed = JsonParser.parseReader(reader).getAsJsonObject();
+                        T read = function.apply(f.getName().replace(".json", ""), parsed);
+                        reader.close();
+                        objects.add(read);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        return objects;
     }
 
     public static  <T extends IAntimatterObject> T readJson(Class<T> clazz, T original, BiFunction<String, JsonObject, T> function, String path){

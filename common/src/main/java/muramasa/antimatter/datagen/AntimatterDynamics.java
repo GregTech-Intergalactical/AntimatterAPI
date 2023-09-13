@@ -36,6 +36,7 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.StoneLayerOre;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
+import muramasa.antimatter.worldgen.object.WorldGenStoneLayerBuilder;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayer;
@@ -264,9 +265,13 @@ public class AntimatterDynamics {
         if (runRegular) {
             WorldGenEvent ev = AntimatterPlatformUtils.postWorldEvent(Antimatter.INSTANCE);
             veins.addAll(ev.VEINS);
+            veins.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenVeinLayer.class, WorldGenVeinLayer::fromJson, "vein_layers"));
             smallOres.addAll(ev.SMALL_ORES);
+            smallOres.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenSmallOre.class, WorldGenSmallOre::fromJson, "small_ore"));
             stoneLayers.addAll(ev.STONE_LAYERS);
+            stoneLayers.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenStoneLayer.class, WorldGenStoneLayer::fromJson, "stone_layers"));
             vanillaOres.addAll(ev.VANILLA_ORES);
+            vanillaOres.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenVanillaOre.class, WorldGenVanillaOre::fromJson, "vanilla_ore"));
             ev.COLLISION_MAP.forEach((i, l) -> {
                 collisionMap.computeIfAbsent(i, i2 -> new ArrayList<>()).addAll(l);
             });

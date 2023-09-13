@@ -86,6 +86,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     }
 
     public StoneType setSandLike(boolean sandLike) {
+        if (sandLike) this.setHardnessAndResistance(0.5F).setRequiresTool(false).setType(BlockTags.MINEABLE_WITH_SHOVEL).setGravity(true).setBlockMaterial(net.minecraft.world.level.material.Material.SAND);
         this.sandLike = sandLike;
         return this;
     }

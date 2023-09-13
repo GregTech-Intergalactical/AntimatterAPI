@@ -74,11 +74,13 @@ public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEnt
             if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromEnergyHolder(pipeCapHolder, side).cast();
             }
+            return pipeCaps[side.get3DDataValue()].cast();
         }
         if (cap == ITEM_HANDLER_CAPABILITY && getCapClass() == ExtendedItemContainer.class){
             if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromItemHolder(pipeCapHolder, side).cast();
             }
+            return pipeCaps[side.get3DDataValue()].cast();
         }
         try {
             if (cap == AntimatterCaps.CAP_MAP.get(getCapClass())){
@@ -90,7 +92,7 @@ public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEnt
             e.printStackTrace();
             return LazyOptional.empty();
         }
-        if (pipeCaps[side.get3DDataValue()] != null){
+        if (pipeCaps[side.get3DDataValue()] != null && cap == AntimatterCaps.CAP_MAP.get(getCapClass())){
             return pipeCaps[side.get3DDataValue()].cast();
         }
         return LazyOptional.empty();
