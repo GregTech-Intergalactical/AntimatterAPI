@@ -165,7 +165,8 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     public FluidHolder extractFluid(long toExtract, boolean simulate) {
         if (getOutputTanks() != null){
             for (int i = 0; i < getOutputTanks().getSize(); i++) {
-                FluidHolder fluid = getOutputTanks().extractFluid(getOutputTanks().getFluidInTank(i), simulate);
+                FluidHolder toExtractFluid = getOutputTanks().getFluidInTank(i);
+                FluidHolder fluid = getOutputTanks().extractFluid(toExtractFluid.copyWithAmount(Math.min(toExtractFluid.getFluidAmount(), toExtract)), simulate);
                 if (!fluid.isEmpty()) return fluid;
             }
         }
