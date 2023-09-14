@@ -111,8 +111,20 @@ public class WorldGenHelper {
 
     public static boolean addRock(LevelAccessor world, BlockPos pos, Material material, int chance) {
         int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
-        BlockState state = world.getBlockState(new BlockPos(pos.getX(), y - 1, pos.getZ()));
+        BlockState state = getStoneStateForRock(y - 1, pos, world);
         return setRock(world, new BlockPos(pos.getX(), y, pos.getZ()), material, state, chance);
+    }
+
+    private static BlockState getStoneStateForRock(int y, BlockPos pos, LevelAccessor world){
+      BlockState fill = world.getBlockState(new BlockPos(pos.getX(), y, pos.getZ()));
+      StoneType stone = STONE_MAP.get(fill);
+      if (stone == AntimatterStoneTypes.BEDROCK){
+          return fill;
+      }
+      if (stone == null || !stone.doesGenerateOre()){
+          return getStoneStateForRock(y - 1, pos, world);
+      }
+      return fill;
     }
 
   /**
