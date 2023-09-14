@@ -57,8 +57,4 @@ public class ButtonData {
     public ButtonOverlay getOverlay(int i) {
         return data[i];
     }
-
-    public ButtonBody getBody(int i) {
-        return (ButtonBody) data[i];
-    }
 }

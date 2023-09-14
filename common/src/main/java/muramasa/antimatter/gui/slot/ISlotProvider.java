@@ -122,7 +122,8 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
     }
 
     default List<SlotData<?>> getAnySlots() {
-        return getSlotLookup().get("");
+        List<SlotData<?>> slots =  getSlotLookup().get("");
+        return slots != null ? slots : new ObjectArrayList<>();
     }
 
     default List<SlotData<?>> getSlots(Tier tier) {

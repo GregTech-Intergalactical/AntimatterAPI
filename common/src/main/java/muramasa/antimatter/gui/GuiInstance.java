@@ -9,6 +9,8 @@ import muramasa.antimatter.gui.core.RTree;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.ButtonWidget;
+import muramasa.antimatter.gui.widget.CycleButtonWidget;
+import muramasa.antimatter.gui.widget.SwitchButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
@@ -28,11 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 public class GuiInstance implements ICanSyncData {
@@ -98,7 +96,7 @@ public class GuiInstance implements ICanSyncData {
      */
     @Environment(EnvType.CLIENT)
     public Iterable<Widget> widgetsToRender() {
-        return () -> this.widgets.stream().filter(t -> t.parent == this.screen).sorted(Comparator.comparing(Widget::depth)).iterator();
+        return () -> this.widgets.stream().sorted(Comparator.comparing(Widget::depth)).iterator();
     }
 
     /**
@@ -187,13 +185,33 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
-    public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body) {
-        addWidget(ButtonWidget.build(body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
+    public GuiInstance addButton(int x, int y, ButtonOverlay body) {
+        addWidget(ButtonWidget.build(body, GuiEvents.EXTRA_BUTTON, buttonCounter++).setSize(x, y, body.w, body.h));
         return this;
     }
 
-    public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body, String tooltipKey) {
-        addWidget(ButtonWidget.build(body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
+    public GuiInstance addButton(int x, int y, ButtonOverlay body, String tooltipKey) {
+        addWidget(ButtonWidget.build(body, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, body.w, body.h));
+        return this;
+    }
+
+    public GuiInstance addSwitchButton(int x, int y, int w, int h, ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction) {
+        addWidget(SwitchButtonWidget.build(bodyOff, bodyOn, syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
+        return this;
+    }
+
+    public GuiInstance addSwitchButton(int x, int y, int w, int h, ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, String tooltipKey) {
+        addWidget(SwitchButtonWidget.build(bodyOff, bodyOn, syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
+        return this;
+    }
+
+    public GuiInstance addCycleButton(int x, int y, int w, int h, ToIntFunction<IGuiHandler> syncFunction, ButtonOverlay... buttons) {
+        addWidget(CycleButtonWidget.build(syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++, buttons).setSize(x, y, w, h));
+        return this;
+    }
+
+    public GuiInstance addCycleButton(int x, int y, int w, int h, ToIntFunction<IGuiHandler> syncFunction, String tooltipKey, ButtonOverlay... buttons) {
+        addWidget(CycleButtonWidget.build(syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey, buttons).setSize(x, y, w, h));
         return this;
     }
 

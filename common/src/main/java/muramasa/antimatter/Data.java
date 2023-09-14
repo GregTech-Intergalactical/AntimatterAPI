@@ -11,6 +11,7 @@ import muramasa.antimatter.cover.CoverMuffler;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.MenuHandlerPipe;
@@ -40,8 +41,8 @@ import net.minecraft.world.level.material.PushReaction;
 
 import javax.annotation.Nullable;
 
-;import static muramasa.antimatter.gui.ButtonBody.*;
-import static muramasa.antimatter.gui.ButtonBody.APAD_RIGHT;
+;
+import static muramasa.antimatter.gui.ButtonOverlay.APAD_RIGHT;
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static muramasa.antimatter.machine.Tier.MAX;
@@ -111,22 +112,22 @@ public class Data {
         CREATIVE_GENERATOR.getGui().setBackgroundTexture("creative_generator");
         if (side.isClient()){
             CREATIVE_GENERATOR.addGuiCallback(t -> {
-                t.addButton(10, 18, 14, 14, APAD_LEFT)
-                        .addButton(25, 18, 14, 14, PAD_LEFT)
-                        .addButton(10, 33, 14, 14, APAD_LEFT)
-                        .addButton(25, 33, 14, 14, PAD_LEFT)
-                        .addButton(10, 48, 14, 14, APAD_LEFT)
-                        .addButton(25, 48, 14, 14, PAD_LEFT)
-                        .addButton(10, 63, 14, 14, APAD_LEFT)
-                        .addButton(25, 63, 14, 14, PAD_LEFT)
-                        .addButton(137, 18, 14, 14, PAD_RIGHT)
-                        .addButton(152, 18, 14, 14, APAD_RIGHT)
-                        .addButton(137, 33, 14, 14, PAD_RIGHT)
-                        .addButton(152, 33, 14, 14, APAD_RIGHT)
-                        .addButton(137, 48, 14, 14, PAD_RIGHT)
-                        .addButton(152, 48, 14, 14, APAD_RIGHT)
-                        .addButton(137, 63, 14, 14, PAD_RIGHT)
-                        .addButton(152, 63, 14, 14, APAD_RIGHT);
+                t.addButton(10, 18, ButtonOverlay.APAD_LEFT)
+                        .addButton(25, 18, ButtonOverlay.PAD_LEFT)
+                        .addButton(10, 33, ButtonOverlay.APAD_LEFT)
+                        .addButton(25, 33, ButtonOverlay.PAD_LEFT)
+                        .addButton(10, 48, ButtonOverlay.APAD_LEFT)
+                        .addButton(25, 48, ButtonOverlay.PAD_LEFT)
+                        .addButton(10, 63, ButtonOverlay.APAD_LEFT)
+                        .addButton(25, 63, ButtonOverlay.PAD_LEFT)
+                        .addButton(137, 18, ButtonOverlay.PAD_RIGHT)
+                        .addButton(152, 18, APAD_RIGHT)
+                        .addButton(137, 33, ButtonOverlay.PAD_RIGHT)
+                        .addButton(152, 33, APAD_RIGHT)
+                        .addButton(137, 48, ButtonOverlay.PAD_RIGHT)
+                        .addButton(152, 48, APAD_RIGHT)
+                        .addButton(137, 63, ButtonOverlay.PAD_RIGHT)
+                        .addButton(152, 63, APAD_RIGHT);
             });
         }
     }

@@ -35,17 +35,17 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
         boolean shouldDrawIO = container.getTile().getMachineTier().getVoltage() > 0 && data.hasIOButton();
         if (shouldDrawIO) {
             if (container.getTile().has(MachineFlag.ITEM)) {
-                item = new SwitchWidget(gui, guiLeft + data.getItem().x, guiTop + data.getItem().y, data.getItem().z, data.getItem().w, data.getItemLocation(), (b, s) -> {
+                item = new SwitchButtonWidget(gui, guiLeft + data.getItem().x, guiTop + data.getItem().y, data.getItem().z, data.getItem().w, data.getItemLocation(), (b, s) -> {
                     Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
                 }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
             }
             if (container.getTile().has(MachineFlag.FLUID)) {
-                fluid = new SwitchWidget(gui, guiLeft + data.getFluid().x, guiTop + data.getFluid().y, data.getFluid().z, data.getFluid().w, data.getFluidLocation(), (b, s) -> {
+                fluid = new SwitchButtonWidget(gui, guiLeft + data.getFluid().x, guiTop + data.getFluid().y, data.getFluid().z, data.getFluid().w, data.getFluidLocation(), (b, s) -> {
                     Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
                 },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
             }
             if (item != null || fluid != null) {
-                addButton(new SwitchWidget(loc, guiLeft + data.getIo().x, guiTop + data.getIo().y, data.getIo().z, data.getIo().w, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
+                addButton(new SwitchButtonWidget(loc, guiLeft + data.getIo().x, guiTop + data.getIo().y, data.getIo().z, data.getIo().w, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
                     if (s) {
                         if (item != null) addButton(item);
                         if (fluid != null) addButton(fluid);
