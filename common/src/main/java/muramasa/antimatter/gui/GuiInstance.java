@@ -200,8 +200,8 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
-    public GuiInstance addSwitchButton(int x, int y, int w, int h, ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, String tooltipKey) {
-        addWidget(SwitchButtonWidget.build(bodyOff, bodyOn, syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
+    public GuiInstance addSwitchButton(int x, int y, int w, int h, ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, Function<Boolean, String> tooltipKeyFunction) {
+        addWidget(SwitchButtonWidget.build(bodyOff, bodyOn, syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKeyFunction).setSize(x, y, w, h));
         return this;
     }
 
@@ -210,7 +210,7 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
-    public GuiInstance addCycleButton(int x, int y, int w, int h, ToIntFunction<IGuiHandler> syncFunction, String tooltipKey, ButtonOverlay... buttons) {
+    public GuiInstance addCycleButton(int x, int y, int w, int h, ToIntFunction<IGuiHandler> syncFunction, IntFunction<String> tooltipKey, ButtonOverlay... buttons) {
         addWidget(CycleButtonWidget.build(syncFunction, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey, buttons).setSize(x, y, w, h));
         return this;
     }

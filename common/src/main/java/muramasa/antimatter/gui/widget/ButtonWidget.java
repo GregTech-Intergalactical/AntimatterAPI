@@ -83,9 +83,13 @@ public class ButtonWidget extends Widget {
     @Override
     public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
-        if (tooltipKey != null){
-            renderTooltip(stack,new TranslatableComponent(tooltipKey), mouseX, mouseY);
+        if (getTooltipKey() != null){
+            renderTooltip(stack,new TranslatableComponent(getTooltipKey()), mouseX, mouseY);
         }
+    }
+
+    protected String getTooltipKey(){
+        return tooltipKey;
     }
 
     @Override

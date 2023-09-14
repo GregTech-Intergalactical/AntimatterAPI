@@ -15,6 +15,7 @@ import java.util.function.*;
 public class CycleButtonWidget extends ButtonWidget{
     final ButtonOverlay[] buttons;
     final ToIntFunction<IGuiHandler> syncFunction;
+    protected IntFunction<String> tooltipKeyFunction;
     int state = 0;
     public CycleButtonWidget(GuiInstance instance, IGuiElement parent, @Nullable Consumer<ButtonWidget> onPress, ToIntFunction<IGuiHandler> syncFunction, ButtonOverlay... buttons) {
         super(instance, parent, buttons[0], onPress);
@@ -32,11 +33,21 @@ public class CycleButtonWidget extends ButtonWidget{
         return buttons[state];
     }
 
+    @Override
+    protected String getTooltipKey() {
+        return tooltipKeyFunction.apply(state);
+    }
+
+    public CycleButtonWidget setTooltipKeyFunction(IntFunction<String> tooltipKeyFunction) {
+        this.tooltipKeyFunction = tooltipKeyFunction;
+        return this;
+    }
+
     public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, ButtonOverlay... buttons) {
         return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons)));
     }
 
-    public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, String tooltipKey, ButtonOverlay... buttons) {
+    public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, IntFunction<String> tooltipKey, ButtonOverlay... buttons) {
         return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons).setTooltipKey(tooltipKey)));
     }
 }

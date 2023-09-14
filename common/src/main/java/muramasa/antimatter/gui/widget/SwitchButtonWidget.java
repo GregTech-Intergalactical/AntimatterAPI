@@ -12,12 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class SwitchButtonWidget extends ButtonWidget{
     final ButtonOverlay bodyOff;
     final ButtonOverlay bodyOn;
     final Predicate<IGuiHandler> syncFunction;
+    protected Function<Boolean, String> tooltipKeyFunction;
     boolean on = false;
     public SwitchButtonWidget(GuiInstance instance, IGuiElement parent, @NotNull ButtonOverlay bodyOff, @NotNull ButtonOverlay bodyOn, @Nullable Consumer<ButtonWidget> onPress, Predicate<IGuiHandler> syncFunction) {
         super(instance, parent, bodyOff, onPress);
@@ -36,11 +38,21 @@ public class SwitchButtonWidget extends ButtonWidget{
         return on ? bodyOn : bodyOff;
     }
 
+    @Override
+    protected String getTooltipKey() {
+        return tooltipKeyFunction.apply(on);
+    }
+
+    public SwitchButtonWidget setTooltipKeyFunction(Function<Boolean, String> tooltipKeyFunction) {
+        this.tooltipKeyFunction = tooltipKeyFunction;
+        return this;
+    }
+
     public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id) {
         return builder(((a, b) -> new SwitchButtonWidget(a, b,  bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction)));
     }
 
-    public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, String tooltipKey) {
-        return builder(((a, b) -> new SwitchButtonWidget(a, b, bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction).setTooltipKey(tooltipKey)));
+    public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, Function<Boolean, String> tooltipKeyFunction) {
+        return builder(((a, b) -> new SwitchButtonWidget(a, b, bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction).setTooltipKeyFunction(tooltipKeyFunction)));
     }
 }

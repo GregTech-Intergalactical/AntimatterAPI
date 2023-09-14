@@ -7,10 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 public class ButtonOverlay implements IAntimatterObject {
 
     public static ButtonOverlay STOP = new ButtonOverlay(Ref.ID,"stop",16, 16);
-    public static ButtonOverlay TORCH_OFF = new ButtonOverlay(Ref.ID,"torch_off",16, 16)
-            .setTextureOverride(new ResourceLocation("textures/block/redstone_torch_off.png"));
+    public static ButtonOverlay TORCH_OFF = new ButtonOverlay(Ref.ID,"torch_off",16, 16);
     public static ButtonOverlay TORCH_ON = new ButtonOverlay(Ref.ID,"torch_on",16, 16)
-            .setTextureOverride(new ResourceLocation("textures/block/redstone_torch.png"));
+            .setTextureOverride(new ResourceLocation("textures/item/redstone_torch.png"));
     public static ButtonOverlay REDSTONE = new ButtonOverlay(Ref.ID, "redstone", 16, 16)
             .setTextureOverride(new ResourceLocation("textures/item/redstone.png"));
     public static ButtonOverlay EXPORT = new ButtonOverlay(Ref.ID,"export",16, 16);
