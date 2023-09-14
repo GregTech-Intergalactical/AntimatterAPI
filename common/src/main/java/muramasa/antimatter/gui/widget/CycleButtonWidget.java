@@ -48,6 +48,6 @@ public class CycleButtonWidget extends ButtonWidget{
     }
 
     public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, IntFunction<String> tooltipKey, ButtonOverlay... buttons) {
-        return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons).setTooltipKey(tooltipKey)));
+        return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons).setTooltipKeyFunction(tooltipKey)));
     }
 }
