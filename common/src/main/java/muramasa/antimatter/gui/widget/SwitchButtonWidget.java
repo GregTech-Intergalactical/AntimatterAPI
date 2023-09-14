@@ -40,6 +40,7 @@ public class SwitchButtonWidget extends ButtonWidget{
 
     @Override
     protected String getTooltipKey() {
+        if (tooltipKeyFunction == null) return super.getTooltipKey();
         return tooltipKeyFunction.apply(on);
     }
 
