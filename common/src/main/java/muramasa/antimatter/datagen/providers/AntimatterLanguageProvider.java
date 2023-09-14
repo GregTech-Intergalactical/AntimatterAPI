@@ -318,6 +318,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.fluid.temp", "Temperature: %s K");
         add("antimatter.tooltip.fluid.liquid", "State: Liquid");
         add("antimatter.tooltip.fluid.gas", "State: Gas");
+        add("antimatter.tooltip.cover.output.no_input", "Inputs blocked");
+        add("antimatter.tooltip.cover.output.allow_input", "Inputs allowed");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
         //Is this loss?

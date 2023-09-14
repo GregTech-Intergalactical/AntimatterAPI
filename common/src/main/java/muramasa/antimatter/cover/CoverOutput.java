@@ -2,6 +2,7 @@ package muramasa.antimatter.cover;
 
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
@@ -10,9 +11,12 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.FluidPlatformUtils;
@@ -25,6 +29,8 @@ public class CoverOutput extends CoverInput {
 
     private boolean ejectItems = false;
     private boolean ejectFluids = false;
+
+    private boolean allowInput = false;
 
     public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         super(source, tier, side, factory);
@@ -78,6 +84,7 @@ public class CoverOutput extends CoverInput {
         super.deserialize(nbt);
         this.ejectItems = nbt.getBoolean("ei");
         this.ejectFluids = nbt.getBoolean("ef");
+        this.allowInput = nbt.getBoolean("ai");
     }
 
     @Override
@@ -85,7 +92,23 @@ public class CoverOutput extends CoverInput {
         CompoundTag nbt = super.serialize();
         nbt.putBoolean("ei", this.ejectItems);
         nbt.putBoolean("ef", this.ejectFluids);
+        nbt.putBoolean("ai", allowInput);
         return nbt;
+    }
+
+    @Override
+    public boolean onInteract(Player player, InteractionHand hand, Direction side, @org.jetbrains.annotations.Nullable AntimatterToolType type) {
+        if (type != null && type.getTag() == AntimatterDefaultTools.SCREWDRIVER.getTag()){
+            allowInput = !allowInput;
+            String suffix = allowInput ? "allow" : "no";
+            player.sendMessage(new TranslatableComponent("antimatter.tooltip.cover.output." + suffix + "_input"), player.getUUID());
+            return true;
+        }
+        return super.onInteract(player, hand, side, type);
+    }
+
+    public boolean doesAllowInput() {
+        return allowInput;
     }
 
     int processing = 0;
@@ -138,5 +161,10 @@ public class CoverOutput extends CoverInput {
         } else if (event == MachineEvent.FLUIDS_OUTPUTTED && ejectFluids) {
             processFluidOutput();
         }
+    }
+
+    @Override
+    public <T> boolean blocksInput(Class<T> cap, @org.jetbrains.annotations.Nullable Direction side) {
+        return !allowInput;
     }
 }

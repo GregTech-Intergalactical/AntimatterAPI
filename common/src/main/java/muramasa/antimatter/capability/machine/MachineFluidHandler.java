@@ -10,6 +10,7 @@ import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
 import muramasa.antimatter.capability.fluid.FluidHandlerSidedWrapper;
 import muramasa.antimatter.capability.fluid.FluidTanks;
+import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -241,7 +242,6 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canInput(Direction direction) {
-        if (tile.getOutputFacing() != null && direction == tile.getOutputFacing()) return false;
         if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontIO())
             return false;
         return super.allowsInsertion();
