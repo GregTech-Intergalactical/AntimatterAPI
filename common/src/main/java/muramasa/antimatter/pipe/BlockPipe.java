@@ -241,29 +241,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return stateIn;
     }
 
-    public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
-        super.entityInside(state, worldIn, pos, entityIn);
-        if (worldIn.isClientSide) return;
-        if (entityIn instanceof LivingEntity entity) {
-            if (worldIn.getBlockEntity(pos) instanceof TileEntityFluidPipe<?> fluidPipe) {
-                long temp = fluidPipe.getCurrentTemperature();
-                applyTemperatureDamage(entity, temp, 1.0f, 1.0f);
-            }
-        }
-    }
-
-    public static boolean applyTemperatureDamage(Entity entity, long temperature, float multiplier, float cap) {
-        if (temperature > 320) {
-            entity.hurt(DamageSource.HOT_FLOOR, Math.max(1, Math.min(cap, (multiplier * (temperature - 300)) / 50.0F)));
-            return true;
-        }
-        if (temperature < 260) {
-            entity.hurt(DamageSource.FREEZE, Math.max(1, Math.min(cap, (multiplier * (270 - temperature)) / 25.0F)));
-            return true;
-        }
-        return false;
-    }
-
     @Nonnull
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {

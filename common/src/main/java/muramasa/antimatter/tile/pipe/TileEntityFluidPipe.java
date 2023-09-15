@@ -12,6 +12,7 @@ import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.PipeFluidHandlerSidedWrapper;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.data.AntimatterTags;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
@@ -145,7 +146,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public int getCapacity() {
-        return getPipeType().getCapacity(getPipeSize());
+        return 1;
     }
 
     @Override
@@ -233,11 +234,21 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
                         }
                     } catch(Throwable e) {e.printStackTrace(ERR);}*/
                 }
+
+                if (!type.isAcidProof() && tFluid.getFluid().is(AntimatterTags.ACID)){
+                    transferredAmount += tTank.extractFluid(tFluid.copyWithAmount(16 * TesseractGraphWrappers.dropletMultiplier), false).getFluidAmount();
+                    level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 1.0f);
+                    if (level.random.nextInt(100) == 0){
+                        tTank.clearContent();
+                        level.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
+                        return;
+                    }
+                }
             }
             if (mTemperature > getTemperature()) {
                 burn(level, pos.getX(), pos.getY(), pos.getZ());
                 if (level.random.nextInt(100) == 0) {
-                    pipeFluidHandler.clearContent();
+                    tTank.clearContent();
                     level.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
                     return;
                 }
@@ -383,9 +394,9 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));
-        list.add("Capacity: " + getPipeType().getCapacity(getPipeSize()));
         list.add("Max temperature: " + getPipeType().getTemperature());
         list.add(getPipeType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
+        list.add(getPipeType().isAcidProof() ? "Acid proof." : "Cannot handle acids.");
         return list;
     }
 

@@ -15,6 +15,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
 
     protected int maxTemp;
     protected boolean gasProof;
+    protected boolean acidProof = false;
     protected int[] caps, pressures;
 
     public FluidPipe(String domain, Material material, int maxTemp, boolean gasProof) {
@@ -47,12 +48,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     public boolean isGasProof() {
         return gasProof;
     }
-
-    public int getCapacity(PipeSize size) {
-        if (size == PipeSize.NONUPLE) return getCapacity(PipeSize.SMALL);
-        if (size == PipeSize.QUADRUPLE) return getCapacity(PipeSize.NORMAL);
-        return caps[size.ordinal()];
-    }
+    
 
     public int getPressure(PipeSize size) {
         if (size == PipeSize.NONUPLE) return getPressure(PipeSize.SMALL);
@@ -81,5 +77,14 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     public T pressures(int... pressures) {
         this.pressures = Arrays.stream(pressures).map(t -> t / 20).toArray();
         return (T) this;
+    }
+
+    public T acidProof(boolean acidProof){
+        this.acidProof = acidProof;
+        return (T) this;
+    }
+
+    public boolean isAcidProof() {
+        return acidProof;
     }
 }

@@ -48,5 +48,6 @@ public class ForgeCTags {
     }
 
     public static void init(){
+        AntimatterTags.init();
     }
 }

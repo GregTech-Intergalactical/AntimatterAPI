@@ -37,42 +37,48 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         ITickingController<?, ?, ?> controller = TesseractGraphWrappers.FLUID.getController(world, pos.asLong());
         controller.getInfo(pos.asLong(), info);
         info.add("Pressure: " + getType().getPressure(getSize()));
-        info.add("Capacity: " + getType().getCapacity(getSize()));
         info.add("Max temperature: " + getType().getTemperature());
         info.add(getType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
+        info.add(getType().isAcidProof() ? "Acid proof." : "Cannot handle acids.");
         return info;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.pressure").append(": " +getType().getPressure(getSize())));
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity").append(": "+ getType().getCapacity(getSize())));
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()));
-
-        if (!Screen.hasShiftDown()) {
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
-        } else {
-            tooltip.add(new TextComponent("----------"));
-            tooltip.add(new TranslatableComponent("antimatter.pipe.fluid.info").withStyle(ChatFormatting.DARK_AQUA));
-            tooltip.add(new TextComponent("----------"));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.pressure", getType().getPressure(getSize())).withStyle(ChatFormatting.AQUA));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity", (getType().getPressure(getSize()) * 2) + "L").withStyle(ChatFormatting.AQUA));
+        if (getType().isGasProof()){
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.gas_proof").withStyle(ChatFormatting.GOLD));
         }
+        if (getType().isAcidProof()){
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.acid_proof").withStyle(ChatFormatting.GOLD));
+        }
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()).withStyle(ChatFormatting.DARK_RED));
     }
 
     @Override
     public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
-        if (!(entityIn instanceof LivingEntity)) return;
-        TileEntityFluidPipe pipe = (TileEntityFluidPipe) worldIn.getBlockEntity(pos);
-        PipeFluidHolder holder = pipe.getHolder();
-        if (holder == null) return;
-        long max = 0;
-        for (PipeFluidHolder.SetHolder fluid : holder.getFluids()) {
-            max = Math.max(max, FluidPlatformUtils.getFluidTemperature(fluid.fluid));
+        if (worldIn.isClientSide) return;
+        if (entityIn instanceof LivingEntity entity) {
+            if (worldIn.getBlockEntity(pos) instanceof TileEntityFluidPipe<?> fluidPipe) {
+                long temp = fluidPipe.getCurrentTemperature();
+                applyTemperatureDamage(entity, temp, 1.0f, 1.0f);
+            }
         }
-        if (max >= (295 + 100)) {
-            entityIn.hurt(DamageSource.HOT_FLOOR, Mth.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));
+    }
+
+    public static boolean applyTemperatureDamage(Entity entity, long temperature, float multiplier, float cap) {
+        if (temperature > 320) {
+            entity.hurt(DamageSource.HOT_FLOOR, Math.max(1, Math.min(cap, (multiplier * (temperature - 300)) / 50.0F)));
+            return true;
         }
+        if (temperature < 260) {
+            entity.hurt(DamageSource.FREEZE, Math.max(1, Math.min(cap, (multiplier * (270 - temperature)) / 25.0F)));
+            return true;
+        }
+        return false;
     }
 
     //    @Override

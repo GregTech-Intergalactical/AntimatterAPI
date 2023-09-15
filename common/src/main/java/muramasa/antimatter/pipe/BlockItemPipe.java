@@ -36,7 +36,7 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     @Override
     public void appendHoverText(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> tooltip, TooltipFlag p_49819_) {
         super.appendHoverText(p_49816_, p_49817_, tooltip, p_49819_);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity").append(": " + this.type.getCapacity(getSize())).append(" ").append(new TranslatableComponent("antimatter.tooltip.stacks").append(".")));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity", new TextComponent(type.getCapacity(getSize()) + "").append(" ").append(new TranslatableComponent("antimatter.tooltip.stacks").append("."))));
         if (!Screen.hasShiftDown()) {
             tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
         } else {
