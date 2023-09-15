@@ -365,7 +365,12 @@ public class Utils {
                 continue;
             }
             ItemStack inserted = insertItem(to, toInsert, true);
-            if (inserted.getCount() < toInsert.getCount()) {
+            if (inserted.isEmpty()){
+                insertItem(to, toInsert, false);
+                from.extractItem(i, toInsert.getCount(), false);
+                if (!successful) successful = true;
+                if (once) break;
+            } else if (inserted.getCount() < toInsert.getCount()) {
                 int actual = toInsert.getCount() - inserted.getCount();
                 toInsert.setCount(toInsert.getCount() - inserted.getCount());
                 insertItem(to, toInsert, false);
