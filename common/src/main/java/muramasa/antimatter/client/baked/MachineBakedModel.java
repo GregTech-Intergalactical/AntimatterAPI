@@ -28,8 +28,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -61,7 +61,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return list;
     }
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, BlockAndTintGetter level, @Nonnull BlockPos pos) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, BlockAndTintGetter level, @NotNull BlockPos pos) {
         if (side == null) {
             return Collections.emptyList();
         }

@@ -8,9 +8,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Optional;
@@ -97,7 +97,7 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
         return Arrays.stream(inputs).mapToInt(MachineFluidHandler::getSize).sum() + Arrays.stream(outputs).mapToInt(MachineFluidHandler::getSize).sum();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidHolder getFluidInTank(int tank) {
         if (tank < INPUT_END)

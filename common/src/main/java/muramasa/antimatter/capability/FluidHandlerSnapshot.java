@@ -4,9 +4,9 @@ import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.capability.FluidHandler;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class FluidHandlerSnapshot implements FluidSnapshot {
     EnumMap<FluidHandler.FluidDirection, Map<Integer, FluidHolder>> map = new EnumMap<>(FluidHandler.FluidDirection.class);

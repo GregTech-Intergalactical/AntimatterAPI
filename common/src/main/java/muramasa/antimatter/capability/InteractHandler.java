@@ -5,9 +5,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class InteractHandler<T extends BlockEntity> implements IInteractHandler<T> {
 
@@ -22,7 +21,7 @@ public class InteractHandler<T extends BlockEntity> implements IInteractHandler<
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public T getTile() {
         if (tile == null) throw new NullPointerException("InteractHandler cannot have a null tile");

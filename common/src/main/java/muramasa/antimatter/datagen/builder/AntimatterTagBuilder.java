@@ -1,15 +1,11 @@
 package muramasa.antimatter.datagen.builder;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;

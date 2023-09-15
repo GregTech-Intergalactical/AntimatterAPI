@@ -4,10 +4,9 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.core.Direction;
+import org.jetbrains.annotations.Nullable;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
-
-import javax.annotation.Nullable;
 
 public class CoverEnergy extends BaseCover {
 

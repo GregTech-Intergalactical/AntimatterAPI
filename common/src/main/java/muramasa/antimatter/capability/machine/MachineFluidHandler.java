@@ -10,7 +10,6 @@ import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
 import muramasa.antimatter.capability.fluid.FluidHandlerSidedWrapper;
 import muramasa.antimatter.capability.fluid.FluidTanks;
-import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -23,9 +22,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
+import org.jetbrains.annotations.NotNull;
 import tesseract.FluidPlatformUtils;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -183,7 +182,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         return -1;
     }
 
-    @Nonnull
+    @NotNull
     public FluidHolder consumeTaggedInput(TagKey<Fluid> input, long amount, boolean simulate) {
         FluidTanks inputs = getInputTanks();
         if (inputs == null) {
@@ -194,7 +193,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         return inputs.extractFluid(FluidHooks.newFluidHolder(inputs.getFluidInTank(id).getFluid(), amount, null), simulate);
     }
 
-    @Nonnull
+    @NotNull
     public List<FluidHolder> consumeAndReturnInputs(List<FluidIngredient> inputs, boolean simulate) {
         if (getInputTanks() == null) {
             return Collections.emptyList();
@@ -279,7 +278,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 return MachineFluidHandler.this.getSize();
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public FluidHolder getFluidInTank(int tank) {
                 return MachineFluidHandler.this.getFluidInTank(tank);

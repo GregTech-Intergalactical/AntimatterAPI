@@ -22,14 +22,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 import static muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin.intToSuperScript;

@@ -19,14 +19,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ButtonWidget extends Widget {
-    @Nonnull
+    @NotNull
     protected final ButtonOverlay body;
     @Nullable
     protected String message;

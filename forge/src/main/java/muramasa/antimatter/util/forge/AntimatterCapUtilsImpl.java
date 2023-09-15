@@ -1,9 +1,7 @@
 package muramasa.antimatter.util.forge;
 
-import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 

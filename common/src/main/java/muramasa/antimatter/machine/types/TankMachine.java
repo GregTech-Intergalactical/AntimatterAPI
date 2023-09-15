@@ -11,15 +11,11 @@ import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityTank;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.function.Function;
 
-import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
-import static muramasa.antimatter.machine.MachineFlag.FLUID;
-import static muramasa.antimatter.machine.MachineFlag.ITEM;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TankMachine extends Machine<TankMachine> {
     final Function<Tier, Integer> capacityPerTier;

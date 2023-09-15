@@ -19,10 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.TesseractCapUtils;
-import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
-import tesseract.api.gt.IGTNode;
 
 import java.util.List;
 import java.util.Optional;

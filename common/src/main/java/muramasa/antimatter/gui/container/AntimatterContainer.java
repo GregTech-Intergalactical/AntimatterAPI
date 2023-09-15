@@ -24,8 +24,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tesseract.api.item.ExtendedItemContainer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public abstract class AntimatterContainer extends AbstractContainerMenu implements IAntimatterContainer {

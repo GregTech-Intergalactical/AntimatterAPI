@@ -1,12 +1,8 @@
 package muramasa.antimatter.forge;
 
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.*;
 import muramasa.antimatter.datagen.AntimatterDynamics;
-import muramasa.antimatter.AntimatterMod;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.Integrations;

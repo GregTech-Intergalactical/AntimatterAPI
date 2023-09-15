@@ -19,8 +19,6 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
-
 public class ContainerItemShapelessRecipe extends ShapelessRecipe {
     public static final Serializer INSTANCE = new Serializer();
 

@@ -9,11 +9,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.TesseractCapUtils;
 import tesseract.api.heat.IHeatHandler;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Optional;
 
-@ParametersAreNonnullByDefault
+//@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public interface IComponentHandler {
 

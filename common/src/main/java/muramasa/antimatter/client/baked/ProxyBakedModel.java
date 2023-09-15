@@ -25,9 +25,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
@@ -55,7 +55,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos)
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, BlockPos pos)
     {
         BlockEntity tile = level.getBlockEntity(pos);
         if (!(tile instanceof TileEntityFakeBlock fake) || fake.getState() == null) {

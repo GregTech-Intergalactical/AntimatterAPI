@@ -1,7 +1,6 @@
 package muramasa.antimatter.registration.fabric;
 
 
-
 import com.google.gson.JsonObject;
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
@@ -15,15 +14,7 @@ import muramasa.antimatter.fabric.AntimatterAPIImpl;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.ingredient.IAntimatterIngredientSerializer;
-import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
-import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import muramasa.antimatter.recipe.material.MaterialSerializer;
-import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
-import muramasa.antimatter.registration.IItemBlockProvider;
-import muramasa.antimatter.registration.IRegistryEntryProvider;
-import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.registration.RegistryType;
+import muramasa.antimatter.registration.*;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;

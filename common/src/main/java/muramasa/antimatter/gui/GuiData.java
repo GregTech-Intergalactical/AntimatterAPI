@@ -6,7 +6,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
 import net.minecraft.resources.ResourceLocation;
 

@@ -20,10 +20,10 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -32,7 +32,7 @@ public interface IRecipeMap extends ISharedAntimatterObject {
     ItemStack[] EMPTY_ITEM = new ItemStack[0];
     FluidHolder[] EMPTY_FLUID = new FluidHolder[0];
 
-    IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidHolder[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle);
+    IRecipe find(@NotNull ItemStack[] items, @NotNull FluidHolder[] fluids, Tier tier, @NotNull Predicate<IRecipe> canHandle);
 
     default IRecipe findByID(ResourceLocation id){
         return getRecipes(false).stream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
@@ -59,8 +59,8 @@ public interface IRecipeMap extends ISharedAntimatterObject {
                 fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), tier, validateRecipe);
     }
 
-    default IRecipe find(@Nonnull Optional<MachineItemHandler<?>> itemHandler,
-                        @Nonnull Optional<MachineFluidHandler<?>> fluidHandler, Tier tier, Predicate<IRecipe> validator) {
+    default IRecipe find(@NotNull Optional<MachineItemHandler<?>> itemHandler,
+                        @NotNull Optional<MachineFluidHandler<?>> fluidHandler, Tier tier, Predicate<IRecipe> validator) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(MachineFluidHandler::getInputs).orElse(EMPTY_FLUID), tier, validator);
     }
@@ -73,7 +73,7 @@ public interface IRecipeMap extends ISharedAntimatterObject {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Environment(EnvType.CLIENT)
     default IRecipeInfoRenderer getInfoRenderer() {
         return InfoRenderers.DEFAULT_RENDERER;

@@ -6,7 +6,6 @@ import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.client.baked.GroupedBakedModel;
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

@@ -8,7 +8,6 @@ import muramasa.antimatter.capability.forge.AntimatterCaps;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
-import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.core.BlockPos;

@@ -3,7 +3,6 @@ package muramasa.antimatter.mixin.fabric;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.fabric.LootTableExtension;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;

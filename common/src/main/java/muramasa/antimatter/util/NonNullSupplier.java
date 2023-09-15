@@ -1,9 +1,9 @@
 package muramasa.antimatter.util;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface NonNullSupplier<T> {
-    @Nonnull
+    @NotNull
     T get();
 }

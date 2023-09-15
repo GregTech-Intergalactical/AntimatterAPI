@@ -18,7 +18,6 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -61,13 +60,12 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
-import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.item.PlatformItemHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -989,7 +987,7 @@ public class Utils {
      * @param world  World instance
      * @return if tree logging was successful
      */
-    public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull Player player, @Nonnull Level world) {
+    public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
         if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
             BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
             BlockState tpCompare = world.getBlockState(tempPos);
@@ -1032,7 +1030,7 @@ public class Utils {
      * @param depth  depth amount of blocks
      * @return set of harvestable BlockPos in the specified range with specified player
      */
-    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@Nonnull Level world, @Nonnull Player player, @Nonnull IAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
+    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
         return totalBlocks.stream().filter(b -> isToolEffective(tool, stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
     }
@@ -1047,7 +1045,7 @@ public class Utils {
      * @param depth  = depth amount of blocks
      * @return set of BlockPos in the specified range
      */
-    public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull Level world, @Nonnull Player player, int column, int row, int depth) {
+    public static ImmutableSet<BlockPos> getBlocksToBreak(@NotNull Level world, @NotNull Player player, int column, int row, int depth) {
         Vec3 lookPos = player.getEyePosition(1), rotation = player.getViewVector(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
         BlockHitResult result = world.clip(new ClipContext(lookPos, realLookPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         Direction playerDirection = player.getDirection();

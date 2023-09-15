@@ -3,8 +3,7 @@ package muramasa.antimatter.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created By Muramasa -  https://github.com/Muramasa-
@@ -72,25 +71,25 @@ public class int3 extends BlockPos.MutableBlockPos {
         return offset(n, side.getOpposite());
     }
 
-    @Nonnull
+    @NotNull
     public int3 above(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, Direction.UP);
         return offset(n, Direction.NORTH.getOpposite());
     }
 
-    @Nonnull
+    @NotNull
     public int3 below(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, Direction.DOWN);
         return offset(n, Direction.NORTH);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockPos relative(Direction side) {
         return offset(1, side);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockPos relative(Direction side, int n) {
         return offset(n, side);
@@ -139,7 +138,7 @@ public class int3 extends BlockPos.MutableBlockPos {
         return this;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString() {
         return "(" + getX() + ", " + getY() + ", " + getZ() + ")";

@@ -12,11 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
-import muramasa.antimatter.capability.item.ITrackedHandler;
-import muramasa.antimatter.capability.item.ROCombinedInvWrapper;
-import muramasa.antimatter.capability.item.SidedCombinedInvWrapper;
-import muramasa.antimatter.capability.item.TrackedItemHandler;
+import muramasa.antimatter.capability.item.*;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.recipe.IRecipe;
@@ -27,11 +23,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +104,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     }
 
-    public static ItemStack insertIntoOutput(ExtendedItemContainer handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public static ItemStack insertIntoOutput(ExtendedItemContainer handler, int slot, @NotNull ItemStack stack, boolean simulate) {
         if (handler instanceof ITrackedHandler trackedHandler) {
             return trackedHandler.insertOutputItem(slot, stack, simulate);
         }
@@ -161,7 +157,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return getCellInputHandler().getContainerSize();
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack[] getInputs() {
         return getInputList().toArray(new ItemStack[0]);
     }

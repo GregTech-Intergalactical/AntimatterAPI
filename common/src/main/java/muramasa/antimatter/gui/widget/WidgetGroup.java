@@ -4,16 +4,16 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class WidgetGroup extends Widget {
 
     private final List<Widget> children = new ObjectArrayList<>();
 
-    protected WidgetGroup(@Nonnull GuiInstance gui, @Nullable IGuiElement parent) {
+    protected WidgetGroup(@NotNull GuiInstance gui, @Nullable IGuiElement parent) {
         super(gui, parent);
     }
 

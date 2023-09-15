@@ -1,6 +1,5 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;

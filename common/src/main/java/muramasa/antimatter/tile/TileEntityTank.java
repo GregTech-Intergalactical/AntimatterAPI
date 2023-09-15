@@ -11,10 +11,9 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
-
-import javax.annotation.Nullable;
 
 public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMachine<T> implements IInfoRenderer<TankMachine.TankRenderWidget> {
 

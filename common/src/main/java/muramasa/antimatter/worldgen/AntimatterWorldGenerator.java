@@ -26,8 +26,8 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -129,7 +129,7 @@ public class AntimatterWorldGenerator {
      * @param featureToRemove feature instance wishing to be removed
      * @param states          BlockStates wish to be removed
      */
-    public static void removeDecoratedFeatureFromAllBiomes(BiomeGenerationSettings.Builder builder, @Nonnull final GenerationStep.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
+    public static void removeDecoratedFeatureFromAllBiomes(BiomeGenerationSettings.Builder builder, @NotNull final GenerationStep.Decoration stage, @NotNull final Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
         Set<BlockState> set = Set.of(states);
         // AntimatterAPI.runLaterCommon(() -> {
@@ -146,7 +146,7 @@ public class AntimatterWorldGenerator {
      * @param featureToRemove feature instance wishing to be removed
      * @param states          BlockStates wish to be removed
      */
-    public static void removeDecoratedFeaturesFromBiome(@Nonnull final Biome biome, final @Nonnull GenerationStep.Decoration stage, final @Nonnull Feature<?> featureToRemove, BlockState... states) {
+    public static void removeDecoratedFeaturesFromBiome(@NotNull final Biome biome, final @NotNull GenerationStep.Decoration stage, final @NotNull Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
         AntimatterAPI.runLaterCommon(() -> {
             for (BlockState state : states) {
@@ -158,7 +158,7 @@ public class AntimatterWorldGenerator {
     /**
      * Check with BlockState in a feature if it is disabled
      */
-    public static boolean isDecoratedFeatureDisabled(@Nonnull ConfiguredFeature<?, ?> configuredFeature, @Nonnull Feature<?> featureToRemove, @Nonnull Set<BlockState> state) {
+    public static boolean isDecoratedFeatureDisabled(@NotNull ConfiguredFeature<?, ?> configuredFeature, @NotNull Feature<?> featureToRemove, @NotNull Set<BlockState> state) {
         if (configuredFeature.config() instanceof OreConfiguration config) {
             return config.targetStates.stream().anyMatch(t -> state.contains(t.state));
         }

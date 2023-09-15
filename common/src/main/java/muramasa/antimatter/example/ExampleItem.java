@@ -5,7 +5,6 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.world.item.Item;
 
 public class ExampleItem extends ItemBasic<ExampleItem> implements IAntimatterObject, ITextureProvider, IModelProvider {
 

@@ -29,17 +29,12 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("removal")
@@ -192,7 +187,7 @@ public class MultiMachineInfoPage {
         getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
     
-    public void drawInfo(@Nonnull PoseStack matrixStack, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull PoseStack matrixStack, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         Vector4f transform = new Vector4f(0, 0, 0, 1);
         transform.transform(matrixStack.last().pose());

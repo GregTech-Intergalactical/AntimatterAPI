@@ -8,8 +8,8 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine.DynamicKey;
 import net.minecraft.core.Direction;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public class AntimatterProperties {

@@ -8,8 +8,6 @@ import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayer;
-import muramasa.antimatter.worldgen.vein.WorldGenVeinLayerBuilder;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;

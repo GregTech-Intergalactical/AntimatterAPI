@@ -10,9 +10,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         if (!hasConfig || !(state.getBlock() instanceof BlockDynamic dynamic)) return Collections.emptyList();//bakedDefault.getQuads(state, side, rand, data);
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = dynamic.getConfig(state, level, mutablePos, pos);

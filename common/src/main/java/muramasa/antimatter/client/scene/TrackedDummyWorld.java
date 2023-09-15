@@ -31,9 +31,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,21 +97,21 @@ public class TrackedDummyWorld extends Level {
 
     }
     @Override
-    public boolean setBlock(@Nonnull BlockPos pos, BlockState state, int a, int b) {
+    public boolean setBlock(@NotNull BlockPos pos, BlockState state, int a, int b) {
         renderedBlocks.put(pos, new BlockInfo(state, renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity()));
         return true;
     }
 
     @Override
-    public BlockEntity getBlockEntity(@Nonnull BlockPos pos) {
+    public BlockEntity getBlockEntity(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return null;
         return proxyWorld != null ? proxyWorld.getBlockEntity(pos) : renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public BlockState getBlockState(@Nonnull BlockPos pos) {
+    public BlockState getBlockState(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return Blocks.AIR.defaultBlockState(); //return air if not rendering this block
         return proxyWorld != null ? proxyWorld.getBlockState(pos) : renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getBlockState();
@@ -159,22 +159,22 @@ public class TrackedDummyWorld extends Level {
     }
 
     @Override
-    public int getBlockTint(@Nonnull BlockPos blockPos, @Nonnull ColorResolver colorResolver) {
+    public int getBlockTint(@NotNull BlockPos blockPos, @NotNull ColorResolver colorResolver) {
         return colorResolver.getColor(BuiltinRegistries.BIOME.get(net.minecraft.world.level.biome.Biomes.PLAINS), blockPos.getX(), blockPos.getY());
     }
 
     @Override
-    public int getBrightness(@Nonnull LightLayer lightType, @Nonnull BlockPos pos) {
+    public int getBrightness(@NotNull LightLayer lightType, @NotNull BlockPos pos) {
         return lightType == LightLayer.SKY ? 15 : 0;
     }
 
     @Override
-    public int getRawBrightness(@Nonnull BlockPos pos, int p_226659_2_) {
+    public int getRawBrightness(@NotNull BlockPos pos, int p_226659_2_) {
         return 15;
     }
 
     @Override
-    public boolean canSeeSky(@Nonnull BlockPos pos) {
+    public boolean canSeeSky(@NotNull BlockPos pos) {
         return true;
     }
 

@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.fluid.FluidContainerHandler;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -131,7 +130,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     public FluidHolder getFluidInTank(int tank) {
         return this.tanks[tank].getStoredFluid();
     }
@@ -173,7 +172,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
         return new SimpleFluidSnapshot(this);
     }
 
-    public boolean isFluidValid(int tank, @Nonnull FluidHolder stack) {
+    public boolean isFluidValid(int tank, @NotNull FluidHolder stack) {
         return this.tanks[tank].isFluidValid(stack);
     }
 

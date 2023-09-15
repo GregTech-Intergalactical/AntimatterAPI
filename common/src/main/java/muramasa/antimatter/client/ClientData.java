@@ -2,7 +2,10 @@ package muramasa.antimatter.client;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.gui.container.*;
+import muramasa.antimatter.gui.container.ContainerBasicMachine;
+import muramasa.antimatter.gui.container.ContainerCover;
+import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.container.ContainerMultiMachine;
 import muramasa.antimatter.gui.screen.*;
 import net.minecraft.client.gui.screens.MenuScreens;
 

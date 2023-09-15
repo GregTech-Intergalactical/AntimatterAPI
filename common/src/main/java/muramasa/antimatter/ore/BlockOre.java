@@ -30,11 +30,9 @@ import net.minecraft.world.level.block.Fallable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.ScheduledTick;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -51,7 +49,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         this(domain, material, stoneType, oreType, getOreProperties(Properties.of(stoneType.getBlockMaterial()), stoneType));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getDescriptionId() {
         return getId();

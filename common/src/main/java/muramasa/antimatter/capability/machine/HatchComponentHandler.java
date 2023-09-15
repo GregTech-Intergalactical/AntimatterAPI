@@ -1,11 +1,9 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.capability.ComponentHandler;
-import muramasa.antimatter.machine.types.HatchMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class HatchComponentHandler<T extends TileEntityHatch<T>> extends ComponentHandler<T> {
 
@@ -14,12 +12,12 @@ public class HatchComponentHandler<T extends TileEntityHatch<T>> extends Compone
     }
 
     @Override
-    public void onStructureFormed(@Nonnull TileEntityMultiMachine<?> controllerTile) {
+    public void onStructureFormed(@NotNull TileEntityMultiMachine<?> controllerTile) {
         super.onStructureFormed(controllerTile);
     }
 
     @Override
-    public void onStructureInvalidated(@Nonnull TileEntityMultiMachine<?> controllerTile) {
+    public void onStructureInvalidated(@NotNull TileEntityMultiMachine<?> controllerTile) {
         super.onStructureInvalidated(controllerTile);
     }
 

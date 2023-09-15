@@ -4,13 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
-import muramasa.antimatter.data.AntimatterMaterialTypes;
-import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
@@ -21,14 +16,14 @@ import net.minecraft.world.item.Item;
 
 import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.data.AntimatterDefaultTools.*;
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
 import static muramasa.antimatter.data.AntimatterMaterials.Wood;
 import static muramasa.antimatter.material.MaterialTags.*;
-import static muramasa.antimatter.recipe.RecipeBuilders.*;
+import static muramasa.antimatter.recipe.RecipeBuilders.CROWBAR_BUILDER;
+import static muramasa.antimatter.recipe.RecipeBuilders.PROBE_BUILDER;
 
 public class Tools {
     public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {

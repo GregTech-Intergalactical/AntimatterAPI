@@ -3,10 +3,9 @@ package muramasa.antimatter.capability.item;
 import muramasa.antimatter.capability.CoverHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemNode;
-
-import javax.annotation.Nonnull;
 
 public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItemNode {
     Direction side;
@@ -18,9 +17,9 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
         this.coverHandler = coverHandler;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (coverHandler != null) {
             if (coverHandler.get(side).blocksInput(ExtendedItemContainer.class, side)) {
                 return stack;
@@ -32,7 +31,7 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
         return super.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (coverHandler != null && coverHandler.get(side).blocksOutput(ExtendedItemContainer.class, side))

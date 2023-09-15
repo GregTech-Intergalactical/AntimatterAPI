@@ -1,11 +1,7 @@
 package muramasa.antimatter.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import net.fabricmc.api.EnvType;
@@ -13,19 +9,16 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -45,7 +38,7 @@ public abstract class Widget implements IGuiElement {
     private int x, y, w, h = 0;
     private int realX, realY;
 
-    protected Widget(@Nonnull final GuiInstance gui, @Nullable final IGuiElement parent) {
+    protected Widget(@NotNull final GuiInstance gui, @Nullable final IGuiElement parent) {
         this.gui = gui;
         this.isRemote = gui.isRemote;
         this.parent = parent;

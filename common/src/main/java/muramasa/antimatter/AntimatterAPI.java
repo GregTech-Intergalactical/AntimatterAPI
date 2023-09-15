@@ -31,9 +31,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -172,13 +172,13 @@ public final class AntimatterAPI {
         return getInternal(c, id);
     }
 
-    @Nonnull
+    @NotNull
     public static <T> T getOrDefault(Class<T> c, String id, String domain, NonNullSupplier<? extends T> supplier) {
         Object obj = get(c, id, domain);
         return obj != null ? c.cast(obj) : supplier.get();
     }
 
-    @Nonnull
+    @NotNull
     public static <T> T getOrThrow(Class<T> c, String id, String domain,
                                    Supplier<? extends RuntimeException> supplier) {
         Object obj = get(c, id, domain);
@@ -188,7 +188,7 @@ public final class AntimatterAPI {
         throw supplier.get();
     }
 
-    @Nonnull
+    @NotNull
     public static <T extends ISharedAntimatterObject> T getOrThrow(Class<T> c, String id,
                                                                    Supplier<? extends RuntimeException> supplier) {
         Object obj = get(c, id);
@@ -274,7 +274,7 @@ public final class AntimatterAPI {
                 : new Object2ObjectArrayMap<>(map).values().stream().flatMap(t -> t.map(Stream::of, right -> right.values().stream())).map(c::cast);
     }
 
-    private static <T> Stream<T> allInternal(Class<T> c, @Nonnull String domain) {
+    private static <T> Stream<T> allInternal(Class<T> c, @NotNull String domain) {
         return allInternal(c)
                 .filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)
                         || isRegistryEntry(o, domain));

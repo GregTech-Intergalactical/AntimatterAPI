@@ -1,11 +1,6 @@
 package muramasa.antimatter.forge;
 
-import muramasa.antimatter.registration.forge.AntimatterRegistration;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class AntimatterAPIImpl {

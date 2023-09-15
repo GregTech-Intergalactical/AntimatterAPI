@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.mojang.math.Vector3f;
 import muramasa.antimatter.datagen.json.JAntimatterModel;
 import muramasa.antimatter.datagen.json.JModel;
-import muramasa.antimatter.texture.Texture;
 import net.devtech.arrp.json.models.JElement;
 import net.devtech.arrp.json.models.JTextures;
 import net.minecraft.resources.ResourceLocation;

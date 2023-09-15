@@ -1,31 +1,20 @@
 package muramasa.antimatter.registration.forge;
 
 import com.google.gson.JsonObject;
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
-import muramasa.antimatter.MaterialDataInit;
-import muramasa.antimatter.Ref;
+import muramasa.antimatter.*;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.forge.condition.ConfigCondition;
 import muramasa.antimatter.recipe.forge.condition.TomlConfigCondition;
 import muramasa.antimatter.recipe.ingredient.IAntimatterIngredientSerializer;
-import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
-import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.recipe.material.MaterialSerializer;
-import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -46,7 +35,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 

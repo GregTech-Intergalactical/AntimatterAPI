@@ -14,8 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
@@ -45,58 +45,58 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
     }
 
     @Override
-    public boolean handleClick(@Nonnull MultiMachineInfoPage recipe, double mouseX, double mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull MultiMachineInfoPage recipe, double mouseX, double mouseY, int mouseButton) {
         return recipe.handleClick(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    public void draw(@Nonnull MultiMachineInfoPage recipe, @Nonnull PoseStack matrixStack, double mouseX, double mouseY) {
+    public void draw(@NotNull MultiMachineInfoPage recipe, @NotNull PoseStack matrixStack, double mouseX, double mouseY) {
         recipe.drawInfo(matrixStack, (int)mouseX, (int)mouseY);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ResourceLocation getUid() {
         return UID;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<? extends MultiMachineInfoPage> getRecipeClass() {
         return MultiMachineInfoPage.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Component getTitle() {
         return new TextComponent( "Multi Machines Title");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IDrawable getBackground() {
         return background;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setIngredients(@Nonnull MultiMachineInfoPage recipe, @Nonnull IIngredients ingredients) {
+    public void setIngredients(@NotNull MultiMachineInfoPage recipe, @NotNull IIngredients ingredients) {
         recipe.setIngredients(ingredients);
     }
     
-    @Nonnull
+    @NotNull
     @Override
-    public List<Component> getTooltipStrings(@Nonnull MultiMachineInfoPage recipe, double mouseX, double mouseY) {
+    public List<Component> getTooltipStrings(@NotNull MultiMachineInfoPage recipe, double mouseX, double mouseY) {
         return recipe.getTooltipStrings(mouseX, mouseY);
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull MultiMachineInfoPage recipe, @Nonnull IIngredients ingredients) {
+    public void setRecipe(@NotNull IRecipeLayout recipeLayout, @NotNull MultiMachineInfoPage recipe, @NotNull IIngredients ingredients) {
         recipe.setRecipeLayout(recipeLayout, guiHelper);
     }
 

@@ -1,10 +1,7 @@
 package muramasa.antimatter.worldgen.fabric;
 
-import com.google.common.collect.Lists;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.mixin.BiomeAccessor;
-import muramasa.antimatter.mixin.BiomeGenerationBuilderAccessor;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
@@ -24,9 +21,8 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Set;
 
 import static muramasa.antimatter.Ref.ID;
@@ -63,7 +59,7 @@ public class AntimatterFabricWorldgen {
      * @param featureToRemove feature instance wishing to be removed
      * @param states          BlockStates wish to be removed
      */
-    public static void removeDecoratedFeatureFromAllBiomes(Biome biome, BiomeModificationContext.GenerationSettingsContext context, @Nonnull final GenerationStep.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
+    public static void removeDecoratedFeatureFromAllBiomes(Biome biome, BiomeModificationContext.GenerationSettingsContext context, @NotNull final GenerationStep.Decoration stage, @NotNull final Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
         Set<BlockState> set = Set.of(states);
         // AntimatterAPI.runLaterCommon(() -> {

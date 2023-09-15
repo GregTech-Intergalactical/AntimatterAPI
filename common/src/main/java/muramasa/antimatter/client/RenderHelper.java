@@ -8,7 +8,6 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.client.LevelRendererAccessor;
 import muramasa.antimatter.mixin.client.VertexFormatAccessor;
 import muramasa.antimatter.pipe.PipeSize;
@@ -47,7 +46,6 @@ import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.graph.Connectivity;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;

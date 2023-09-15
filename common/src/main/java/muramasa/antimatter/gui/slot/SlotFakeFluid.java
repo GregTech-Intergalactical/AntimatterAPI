@@ -6,8 +6,8 @@ import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.SlotType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 
 public class SlotFakeFluid extends AbstractSlot<SlotFakeFluid> {
 
@@ -19,7 +19,7 @@ public class SlotFakeFluid extends AbstractSlot<SlotFakeFluid> {
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@NotNull ItemStack stack) {
         return false;
     }
 

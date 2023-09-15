@@ -1,10 +1,7 @@
 package muramasa.antimatter.mixin.forge;
 
 import muramasa.antimatter.recipe.material.MaterialSerializer;
-import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

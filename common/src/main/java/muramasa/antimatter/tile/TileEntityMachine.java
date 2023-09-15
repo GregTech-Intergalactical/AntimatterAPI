@@ -6,11 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.Holder;
-import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -67,12 +63,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -572,7 +568,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return InteractionResult.PASS;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Component getDisplayName() {
         return getMachineType().getDisplayName(getMachineTier());
@@ -580,7 +576,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int windowId, @Nonnull Inventory inv, @Nonnull Player player) {
+    public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory inv, @NotNull Player player) {
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().menu(this, inv, windowId) : null;
     }
 
@@ -606,7 +602,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
-    public <V> boolean blocksCapability(@Nonnull Class<V> cap, Direction side) {
+    public <V> boolean blocksCapability(@NotNull Class<V> cap, Direction side) {
         return coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false);
     }
 
@@ -667,7 +663,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serialize()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();

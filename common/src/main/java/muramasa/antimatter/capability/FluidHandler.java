@@ -3,7 +3,6 @@ package muramasa.antimatter.capability;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
-import earth.terrarium.botarium.common.fluid.impl.SimpleFluidSnapshot;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTank;
@@ -16,11 +15,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 import tesseract.api.fluid.IFluidNode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> implements IMachineHandler, IFluidNode {
@@ -72,7 +71,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         return this.tanks.values().stream().mapToInt(FluidTanks::getSize).sum();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidHolder getFluidInTank(int tank) {
         return getTank(tank).getStoredFluid();
@@ -120,7 +119,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidHolder stack) {
+    public boolean isFluidValid(int tank, @NotNull FluidHolder stack) {
         return getTank(tank).isFluidValid(stack);
     }
 
@@ -180,7 +179,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
      * @param simulate execute/simulate
      * @return the drained stack
      */
-    @Nonnull
+    @NotNull
     @Override
     public FluidHolder drainInput(FluidHolder stack, boolean simulate) {
         if (getInputTanks() != null) {
@@ -215,7 +214,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     /**
      * Helpers
      **/
-    @Nonnull
+    @NotNull
     public FluidHolder[] getInputs() {
         FluidTanks tanks = getInputTanks();
         return tanks == null ? new FluidHolder[0] : tanks.getFluids().toArray(FluidHolder[]::new);

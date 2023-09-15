@@ -6,7 +6,6 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import tesseract.api.context.TesseractItemContext;
-import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandlerItem;
 
 /**

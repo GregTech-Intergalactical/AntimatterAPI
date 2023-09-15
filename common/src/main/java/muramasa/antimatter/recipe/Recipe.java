@@ -17,10 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 
 public class Recipe implements IRecipe {
     private final ItemStack[] itemsOutput;
-    @Nonnull
+    @NotNull
     private final List<Ingredient> itemsInput;
-    @Nonnull
+    @NotNull
     private final List<FluidIngredient> fluidsInput;
     private final FluidHolder[] fluidsOutput;
     private final int duration;
@@ -55,7 +55,7 @@ public class Recipe implements IRecipe {
 
     public static final RecipeType<IRecipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
-    public Recipe(@Nonnull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidHolder[] fluidsOutput, int duration, long power, int special, int amps) {
+    public Recipe(@NotNull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @NotNull List<FluidIngredient> fluidsInput, FluidHolder[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = ImmutableList.copyOf(stacksInput);
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -143,12 +143,12 @@ public class Recipe implements IRecipe {
         });
     }
 
-    @Nonnull
+    @NotNull
     public List<Ingredient> getInputItems() {
         return hasInputItems() ? itemsInput : Collections.emptyList();
     }
 
-    @Nonnull
+    @NotNull
     public List<RecipeIngredient> getCastedInputs() {
         return hasInputItems() ? itemsInput.stream().filter(t -> t instanceof RecipeIngredient).map(t -> (RecipeIngredient)t).collect(Collectors.toList()) : Collections.emptyList();
     }
@@ -207,7 +207,7 @@ public class Recipe implements IRecipe {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     public List<FluidIngredient> getInputFluids() {
         return fluidsInput;
     }
@@ -353,7 +353,7 @@ public class Recipe implements IRecipe {
         return AntimatterRecipeSerializer.INSTANCE;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public RecipeType<?> getType() {
         return Recipe.RECIPE_TYPE;

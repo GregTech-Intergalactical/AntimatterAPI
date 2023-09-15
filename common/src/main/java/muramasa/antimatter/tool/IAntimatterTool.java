@@ -9,7 +9,10 @@ import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.registration.*;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Camera;
@@ -39,12 +42,12 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IEnergyItem;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 import static muramasa.antimatter.material.Material.NULL;

@@ -4,7 +4,6 @@ import muramasa.antimatter.block.BlockMaterialType;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import net.minecraft.world.level.block.Blocks;
 
 public class BlockOreStone extends BlockMaterialType implements ISharedAntimatterObject {
 

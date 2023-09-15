@@ -8,8 +8,7 @@ import muramasa.antimatter.client.model.AntimatterModel;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DefaultModelLoader extends AntimatterModelLoader<AntimatterModel> {
     public DefaultModelLoader(ResourceLocation loc) {
@@ -17,7 +16,7 @@ public class DefaultModelLoader extends AntimatterModelLoader<AntimatterModel> {
     }
 
     @SuppressWarnings("unchecked")
-    @Nonnull
+    @NotNull
     @Override
     public AntimatterModel readModel(JsonDeserializationContext context, JsonObject json) {
         try {

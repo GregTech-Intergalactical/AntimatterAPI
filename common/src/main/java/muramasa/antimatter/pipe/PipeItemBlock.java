@@ -3,8 +3,7 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class PipeItemBlock extends AntimatterItemBlock {
 
@@ -19,7 +18,7 @@ public class PipeItemBlock extends AntimatterItemBlock {
         return pipe;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public InteractionResult place(BlockPlaceContext context) {
         InteractionResult action = super.place(context);

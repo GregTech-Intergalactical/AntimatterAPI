@@ -7,7 +7,6 @@ import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.IGuiEvent;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
@@ -33,11 +32,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,7 +52,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return true;
     }
 
-    @Nonnull
+    @NotNull
     default Component getDisplayName() {
         return new TextComponent(Utils.underscoreToUpperCamel(this.getId()));
     }

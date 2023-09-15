@@ -2,12 +2,10 @@ package muramasa.antimatter.gui.container;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;

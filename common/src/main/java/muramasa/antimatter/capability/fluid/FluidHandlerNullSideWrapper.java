@@ -9,7 +9,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import tesseract.api.fluid.IFluidNode;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FluidHandlerNullSideWrapper implements IFluidNode {

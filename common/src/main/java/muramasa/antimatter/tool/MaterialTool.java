@@ -27,11 +27,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -40,19 +36,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandlerItem;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-@ParametersAreNonnullByDefault
+//@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class MaterialTool extends DiggerItem implements IAntimatterTool, IContainerItem {
 
@@ -94,7 +89,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return type.isPowered() ? String.join("_", type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : type.getId();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public AntimatterToolType getAntimatterToolType() {
         return type;
@@ -106,7 +101,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     }
 
     /*
-    @Nonnull
+    @NotNull
     @Override
     public Set<Tag<Block>> getToolTypes(ItemStack stack) {
         return getToolTypes();
@@ -119,9 +114,9 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return energyTier;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary) {
+    public ItemStack asItemStack(@NotNull Material primary, @NotNull Material secondary) {
         return resolveStack(primary, secondary, 0, maxEnergy);
     }
 

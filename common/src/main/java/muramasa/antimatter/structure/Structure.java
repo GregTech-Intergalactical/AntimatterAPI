@@ -3,15 +3,10 @@ package muramasa.antimatter.structure;
 import com.google.common.collect.ImmutableMap;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
-import net.minecraft.core.BlockPos;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -62,11 +57,11 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
         return i == successful;
     }
 
-    /*public abstract StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile);
+    /*public abstract StructureResult evaluate(@NotNull TileEntityBasicMultiMachine<?> tile);
 
     public abstract LongList allPositions(TileEntityBasicMultiMachine<?> tile);*/
 
-    /*public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityBasicMultiMachine<?> tile, @Nonnull BlockPos pos) {
+    /*public boolean evaluatePosition(@NotNull StructureResult res, @NotNull TileEntityBasicMultiMachine<?> tile, @NotNull BlockPos pos) {
         StructureElement el = res.get(pos);
         if (el != null) {
             return el.evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), res);
@@ -78,7 +73,7 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
         boolean check(IStructureDefinition<T> structureDefinition, T tile, String part, int i, int3 newOffset);
     }
 
-    /*public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
+    /*public Iterator<Point> forAllElements(@NotNull BlockPos source, @NotNull Direction facing, @Nullable Direction hFacing) {
         return new Iterator<Point>() {
             final int3 corner = hFacing == null ? new int3(source, facing).left(size().getX() / 2).back(offset().x).up(offset().y) : new int3(source, facing, hFacing).left(size().getX() / 2).back(offset().x).up(offset().y);
             final int3 working = new int3(facing, hFacing);

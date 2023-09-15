@@ -10,9 +10,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
 
 //TODO: Should be used on filters
 public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
@@ -24,7 +24,7 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@NotNull ItemStack stack) {
         return settable;
     }
 
@@ -34,7 +34,7 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     }
 
     @Override
-    public int getMaxStackSize(@Nonnull ItemStack stack) {
+    public int getMaxStackSize(@NotNull ItemStack stack) {
         if (settable) {
             return 1;
         }
@@ -42,14 +42,14 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack remove(int amount) {
         if (!settable || !(this.getContainer() instanceof FakeTrackedItemHandler)) return super.remove(amount);
         return MachineItemHandler.extractFromInput(this.getContainer(), index, amount, false);
     }
 
     @Override
-    public void onQuickCraft(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_) {
+    public void onQuickCraft(@NotNull ItemStack p_75220_1_, @NotNull ItemStack p_75220_2_) {
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     }
 
     @Override
-    public void set(@Nonnull ItemStack stack) {
+    public void set(@NotNull ItemStack stack) {
         super.set(stack);
     }
 

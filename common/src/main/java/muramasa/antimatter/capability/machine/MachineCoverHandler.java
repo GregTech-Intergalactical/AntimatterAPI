@@ -13,9 +13,9 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -71,7 +71,7 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
-    public boolean onInteract(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(@NotNull Player player, @NotNull InteractionHand hand, @NotNull Direction side, @Nullable AntimatterToolType type) {
         return super.onInteract(player, hand, side, type);
     }
 
@@ -81,7 +81,7 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
-    public boolean isValid(@Nonnull Direction side, @Nonnull ICover replacement) {
+    public boolean isValid(@NotNull Direction side, @NotNull ICover replacement) {
         if (!validCovers.contains(replacement.getLoc())) return false;
         if (side == getOutputFacing()) return false;
         return (get(side).isEmpty() && !replacement.isEmpty()) || super.isValid(side, replacement);

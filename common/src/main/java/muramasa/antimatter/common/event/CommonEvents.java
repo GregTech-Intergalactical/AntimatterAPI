@@ -9,7 +9,6 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
-import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;

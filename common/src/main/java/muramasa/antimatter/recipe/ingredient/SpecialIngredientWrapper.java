@@ -2,8 +2,7 @@ package muramasa.antimatter.recipe.ingredient;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SpecialIngredientWrapper extends AbstractMapIngredient {
 
@@ -14,7 +13,7 @@ public class SpecialIngredientWrapper extends AbstractMapIngredient {
         this.source = source;
     }
 
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean isItemValid(@NotNull ItemStack stack) {
         return source.test(stack);
     }
 

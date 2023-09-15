@@ -1,8 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import muramasa.antimatter.cover.ICoverMode;
-import muramasa.antimatter.cover.ICoverModeHandler;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerCover;
 import net.minecraft.client.Minecraft;

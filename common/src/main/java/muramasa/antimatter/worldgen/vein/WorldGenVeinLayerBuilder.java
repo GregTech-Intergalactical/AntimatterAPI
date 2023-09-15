@@ -1,20 +1,13 @@
 package muramasa.antimatter.worldgen.vein;
 
-import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVeinVariant;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVeinVariantBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class WorldGenVeinLayerBuilder {
 

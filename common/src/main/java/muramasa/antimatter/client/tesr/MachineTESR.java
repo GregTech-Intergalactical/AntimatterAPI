@@ -30,9 +30,9 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.NotNull;
 import tesseract.FluidPlatformUtils;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +47,13 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
 
     //Renders this tile as a TESR.
     @Override
-    public void render(@Nonnull TileEntityMachine<?> tile, float partialTicks, @Nonnull PoseStack stack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
+    public void render(@NotNull TileEntityMachine<?> tile, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int light, int overlay) {
         if (tile.getMachineType().renderContainerLiquids()) {
             renderLiquids(tile, partialTicks, stack, buffer, light, overlay);
         }
     }
 
-    private void renderLiquids(@Nonnull TileEntityMachine<?> tile, float partialTicks, @Nonnull PoseStack stack, @Nonnull MultiBufferSource buffer, int light, int overlay) {
+    private void renderLiquids(@NotNull TileEntityMachine<?> tile, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int light, int overlay) {
         VertexConsumer builder = buffer.getBuffer(RenderType.cutout());
         long t = tile.getBlockState().getSeed(tile.getBlockPos());
        // net.minecraftforge.client.ForgeHooksClient.setRenderLayer(RenderType.cutout());

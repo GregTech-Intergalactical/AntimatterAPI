@@ -10,7 +10,6 @@ import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.dynamic.DynamicModel;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
 public class DynamicModelLoader extends AntimatterModelLoader<DynamicModel> {

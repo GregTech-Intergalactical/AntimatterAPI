@@ -2,9 +2,8 @@ package muramasa.antimatter.capability.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
-
-import javax.annotation.Nonnull;
 
 public class CombinedInvWrapper implements ExtendedItemContainer {
 
@@ -59,8 +58,8 @@ public class CombinedInvWrapper implements ExtendedItemContainer {
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         int index = getIndexForSlot(slot);
         ExtendedItemContainer handler = getHandlerFromIndex(index);
@@ -69,7 +68,7 @@ public class CombinedInvWrapper implements ExtendedItemContainer {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         int index = getIndexForSlot(slot);
@@ -88,7 +87,7 @@ public class CombinedInvWrapper implements ExtendedItemContainer {
     }
 
     @Override
-    public boolean canPlaceItem(int slot, @Nonnull ItemStack stack)
+    public boolean canPlaceItem(int slot, @NotNull ItemStack stack)
     {
         int index = getIndexForSlot(slot);
         ExtendedItemContainer handler = getHandlerFromIndex(index);

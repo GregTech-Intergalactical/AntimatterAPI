@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.IContainerItem;
-import muramasa.antimatter.recipe.material.MaterialRecipe;
-import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,7 +17,6 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class ContainerItemShapedRecipe extends ShapedRecipe {

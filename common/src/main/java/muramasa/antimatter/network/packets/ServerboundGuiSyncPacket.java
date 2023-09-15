@@ -6,12 +6,9 @@ import io.netty.buffer.ByteBuf;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.ICanSyncData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
-import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.network.AntimatterNetwork;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import java.util.List;
 

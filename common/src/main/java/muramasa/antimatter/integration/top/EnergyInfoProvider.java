@@ -2,7 +2,6 @@ package muramasa.antimatter.integration.top;
 
 import mcjty.theoneprobe.api.*;
 import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
-import mcjty.theoneprobe.config.Config;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.tile.TileEntityMachine;

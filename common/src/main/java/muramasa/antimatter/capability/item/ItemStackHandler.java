@@ -5,11 +5,10 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ContainerItemHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.util.ItemHandlerUtils;
-
-import javax.annotation.Nonnull;
 
 public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHandler {
     protected NonNullList<ItemStack> stacks;
@@ -31,7 +30,7 @@ public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHan
     }
 
     @Override
-    public void setItem(int slot, @Nonnull ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         this.validateSlotIndex(slot);
         this.stacks.set(slot, stack);
         this.onContentsChanged(slot);
@@ -42,7 +41,7 @@ public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHan
         return this.stacks.size();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getItem(int slot) {
         this.validateSlotIndex(slot);
@@ -54,9 +53,9 @@ public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHan
         return this;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         } else if (!this.canPlaceItem(slot, stack)) {
@@ -92,7 +91,7 @@ public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHan
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) {
@@ -129,12 +128,12 @@ public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHan
         return 64;
     }
 
-    protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+    protected int getStackLimit(int slot, @NotNull ItemStack stack) {
         return Math.min(this.getSlotLimit(slot), stack.getMaxStackSize());
     }
 
     @Override
-    public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) {
+    public boolean canPlaceItem(int slot, @NotNull ItemStack stack) {
         return true;
     }
 

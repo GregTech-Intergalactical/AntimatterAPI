@@ -1,7 +1,6 @@
 package muramasa.antimatter.material.tags;
 
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.tags.TypeMaterialTag;
 
 public class DoubleMaterialTag extends TypeMaterialTag<Material> {
 

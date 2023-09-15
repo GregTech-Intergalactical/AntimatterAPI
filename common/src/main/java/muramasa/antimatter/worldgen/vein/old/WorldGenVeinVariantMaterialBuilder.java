@@ -1,8 +1,7 @@
 package muramasa.antimatter.worldgen.vein.old;
 
 import muramasa.antimatter.material.Material;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class WorldGenVeinVariantMaterialBuilder {
 

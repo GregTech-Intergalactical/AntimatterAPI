@@ -17,9 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import tesseract.api.gt.IEnergyHandler;
 
 import java.util.List;
-import java.util.function.IntToLongFunction;
 import java.util.function.LongFunction;
-import java.util.function.ToLongFunction;
 
 import static muramasa.antimatter.data.AntimatterDefaultTools.SOFT_HAMMER;
 

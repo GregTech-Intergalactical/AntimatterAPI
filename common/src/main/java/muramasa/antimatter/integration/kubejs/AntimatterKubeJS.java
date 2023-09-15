@@ -5,10 +5,8 @@ import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.MaterialEvent;
-import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public class AntimatterKubeJS extends KubeJSPlugin {

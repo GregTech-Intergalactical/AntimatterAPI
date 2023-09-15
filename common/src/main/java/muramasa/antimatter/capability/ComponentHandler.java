@@ -10,7 +10,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -33,13 +32,13 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
         this(componentId, componentId, componentTile);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getId() {
         return componentId;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public T getTile() {
         return componentTile;
@@ -50,31 +49,31 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
         return idForHandlers;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Optional<MachineItemHandler<?>> getItemHandler() {
         return componentTile instanceof TileEntityMachine<?> machine ? machine.itemHandler.map(h -> h) : Optional.empty();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Optional<MachineFluidHandler<?>> getFluidHandler() {
         return componentTile instanceof TileEntityMachine<?> machine ?  machine.fluidHandler.map(f -> f) : Optional.empty();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Optional<MachineEnergyHandler<?>> getEnergyHandler() {
         return componentTile instanceof TileEntityMachine<?> machine ? machine.energyHandler.map(e -> e) : Optional.empty();
     }
 
     @Override
-    public void onStructureFormed(@Nonnull TileEntityMultiMachine<?> controllerTile) {
+    public void onStructureFormed(@NotNull TileEntityMultiMachine<?> controllerTile) {
         this.controllers.add(controllerTile);
     }
 
     @Override
-    public void onStructureInvalidated(@Nonnull TileEntityMultiMachine<?> controllerTile) {
+    public void onStructureInvalidated(@NotNull TileEntityMultiMachine<?> controllerTile) {
         this.controllers.remove(controllerTile);
     }
 
@@ -83,7 +82,7 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
         return StructureCache.has(getTile().getLevel(), getTile().getBlockPos());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<TileEntityMultiMachine<?>> getControllers() {
         return controllers;

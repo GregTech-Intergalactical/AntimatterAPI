@@ -23,12 +23,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import tesseract.Tesseract;
+import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
 import tesseract.api.gt.GTController;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {

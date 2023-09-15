@@ -7,9 +7,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
@@ -48,7 +48,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
 
     private final Function<BuilderData, List<BakedQuad>> builder;
 
-    public DynamicTextureProvider(@Nonnull Function<BuilderData, List<BakedQuad>> builder) {
+    public DynamicTextureProvider(@NotNull Function<BuilderData, List<BakedQuad>> builder) {
         this.builder = builder;
     }
 

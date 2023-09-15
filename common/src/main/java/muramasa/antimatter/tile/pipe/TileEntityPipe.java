@@ -31,10 +31,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import tesseract.api.IConnectable;
 import tesseract.graph.Connectivity;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 

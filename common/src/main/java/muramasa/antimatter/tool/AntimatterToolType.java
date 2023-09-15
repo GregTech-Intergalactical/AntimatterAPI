@@ -27,8 +27,8 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Function;

@@ -3,7 +3,6 @@ package muramasa.antimatter.mixin.forge;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import muramasa.antimatter.registration.forge.AntimatterRegistration;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import org.spongepowered.asm.mixin.Mixin;

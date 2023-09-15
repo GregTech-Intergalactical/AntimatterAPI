@@ -1,14 +1,13 @@
 package muramasa.antimatter.capability.item;
 
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
-
 public interface ITrackedHandler extends ExtendedItemContainer {
-    @Nonnull
-    ItemStack insertOutputItem(int slot, @Nonnull ItemStack stack, boolean simulate);
+    @NotNull
+    ItemStack insertOutputItem(int slot, @NotNull ItemStack stack, boolean simulate);
 
-    @Nonnull
+    @NotNull
     ItemStack extractFromInput(int slot, int amount, boolean simulate);
 }

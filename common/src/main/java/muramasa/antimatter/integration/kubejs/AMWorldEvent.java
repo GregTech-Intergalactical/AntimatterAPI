@@ -11,8 +11,6 @@ import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayerBuilder;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayer;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayerBuilder;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVeinBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

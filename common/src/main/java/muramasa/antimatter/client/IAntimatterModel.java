@@ -10,7 +10,6 @@ import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 

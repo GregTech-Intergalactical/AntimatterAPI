@@ -1,50 +1,13 @@
 package muramasa.antimatter.client.event.forge;
 
-import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.behaviour.IBehaviour;
-import muramasa.antimatter.block.IInfoProvider;
-import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.event.ClientEvents;
-import muramasa.antimatter.cover.IHaveCover;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.mixin.client.LevelRendererAccessor;
-import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
-import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
-import muramasa.antimatter.util.Utils;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
@@ -55,12 +18,6 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
 public class ClientEventsForge {

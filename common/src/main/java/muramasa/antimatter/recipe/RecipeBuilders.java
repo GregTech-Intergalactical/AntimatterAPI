@@ -3,30 +3,18 @@ package muramasa.antimatter.recipe;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialItem;
-import muramasa.antimatter.material.MaterialTypeItem;
-import muramasa.antimatter.pipe.PipeItemBlock;
-import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.pipe.types.FluidPipe;
-import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,7 +43,7 @@ public class RecipeBuilders {
         }
 
         @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+        public Map<String, Object> getFromResult(@NotNull ItemStack stack) {
             return ImmutableMap.of();
         }
     });
@@ -71,7 +59,7 @@ public class RecipeBuilders {
         }
 
         @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+        public Map<String, Object> getFromResult(@NotNull ItemStack stack) {
             CompoundTag nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
             int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
             Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getMaterialColor().col == secondary).findFirst();

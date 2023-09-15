@@ -24,14 +24,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,7 +38,7 @@ public class PropertyIngredient extends Ingredient {
 
     public interface Getter {
         @Nullable
-        Object get(@Nonnull ItemStack item);
+        Object get(@NotNull ItemStack item);
     }
 
     private final Set<MaterialTypeItem<?>> type;

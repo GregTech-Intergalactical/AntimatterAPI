@@ -4,8 +4,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 //Behaves like CoverOutput in terms of refresh but no event handler.
 public class CoverInput extends BaseCover {

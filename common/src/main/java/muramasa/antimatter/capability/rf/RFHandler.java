@@ -1,14 +1,10 @@
 package muramasa.antimatter.capability.rf;
 
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
-import earth.terrarium.botarium.util.Updatable;
 import muramasa.antimatter.Ref;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import tesseract.api.gt.GTConsumer;
-import tesseract.api.gt.GTTransaction;
 import tesseract.api.rf.IRFNode;
 
 

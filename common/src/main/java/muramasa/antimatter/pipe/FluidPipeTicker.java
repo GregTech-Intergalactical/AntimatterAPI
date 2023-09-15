@@ -3,7 +3,6 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;

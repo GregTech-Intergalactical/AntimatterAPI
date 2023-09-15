@@ -14,10 +14,8 @@ import net.minecraft.network.chat.Component;
 import tesseract.FluidPlatformUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 

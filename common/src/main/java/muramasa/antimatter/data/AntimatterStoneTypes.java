@@ -1,7 +1,6 @@
 package muramasa.antimatter.data;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;

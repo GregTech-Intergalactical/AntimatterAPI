@@ -10,8 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 public class BlockHeatPipe<T extends HeatPipe<T>> extends BlockPipe<T> {
 
     public BlockHeatPipe(T type, PipeSize size) {
@@ -19,7 +17,7 @@ public class BlockHeatPipe<T extends HeatPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
+    //@ParametersAreNotNullByDefault
     public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
         if (!(entityIn instanceof LivingEntity)) return;

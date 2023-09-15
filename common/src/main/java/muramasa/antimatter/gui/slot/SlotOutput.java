@@ -4,9 +4,9 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.SlotType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
 
 public class SlotOutput extends AbstractSlot<SlotOutput> {
 
@@ -20,7 +20,7 @@ public class SlotOutput extends AbstractSlot<SlotOutput> {
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@NotNull ItemStack stack) {
         return false;
     }
 }

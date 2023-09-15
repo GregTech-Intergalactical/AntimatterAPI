@@ -1,7 +1,6 @@
 package muramasa.antimatter.data;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
@@ -10,7 +9,10 @@ import muramasa.antimatter.cover.CoverPlate;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.item.CoverMaterialItem;
-import muramasa.antimatter.material.*;
+import muramasa.antimatter.material.MaterialItem;
+import muramasa.antimatter.material.MaterialTypeBlock;
+import muramasa.antimatter.material.MaterialTypeFluid;
+import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;

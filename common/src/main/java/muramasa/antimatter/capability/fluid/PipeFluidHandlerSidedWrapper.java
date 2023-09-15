@@ -3,12 +3,10 @@ package muramasa.antimatter.capability.fluid;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
-import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
-import tesseract.api.fluid.IFluidNode;
 
 public class PipeFluidHandlerSidedWrapper extends FluidHandlerSidedWrapper{
     TileEntityFluidPipe<?> pipe;

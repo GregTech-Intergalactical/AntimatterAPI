@@ -1,7 +1,6 @@
 package muramasa.antimatter.fluid.fabric;
 
 import earth.terrarium.botarium.common.registry.fluid.FluidProperties;
-import earth.terrarium.botarium.fabric.fluid.holder.FabricFluidHolder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.minecraft.Util;

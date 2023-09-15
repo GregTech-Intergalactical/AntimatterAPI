@@ -46,7 +46,6 @@ import net.minecraft.world.level.ItemLike;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

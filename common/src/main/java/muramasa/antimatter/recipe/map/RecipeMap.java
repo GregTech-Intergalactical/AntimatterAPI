@@ -26,9 +26,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -117,7 +117,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return recipeSerializer;
     }
 
-    @Nonnull
+    @NotNull
     @Environment(EnvType.CLIENT)
     public IRecipeInfoRenderer getInfoRenderer() {
         if (infoRenderer == null)
@@ -338,8 +338,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      * @param index       where in the ingredients list we are.
      * @param count       how many added already.
      */
-    boolean recurseItemTreeAdd(@Nonnull IRecipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
-            @Nonnull Branch map, int index, int count) {
+    boolean recurseItemTreeAdd(@NotNull IRecipe recipe, @NotNull List<List<AbstractMapIngredient>> ingredients,
+            @NotNull Branch map, int index, int count) {
         if (count >= ingredients.size())
             return true;
         if (index >= ingredients.size()) {
@@ -405,8 +405,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      * @param map   the root branch to search from.
      * @return a recipe
      */
-    IRecipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-            @Nonnull Predicate<IRecipe> canHandle) {
+    IRecipe recurseItemTreeFind(@NotNull List<List<AbstractMapIngredient>> items, @NotNull Branch map,
+            @NotNull Predicate<IRecipe> canHandle) {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < items.size(); i++) {
             IRecipe r = recurseItemTreeFind(items, map, canHandle, i, 0, (1L << i));
@@ -428,8 +428,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      *                  recursion.
      * @return a recipe
      */
-    IRecipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-            @Nonnull Predicate<IRecipe> canHandle, int index, int count, long skip) {
+    IRecipe recurseItemTreeFind(@NotNull List<List<AbstractMapIngredient>> items, @NotNull Branch map,
+            @NotNull Predicate<IRecipe> canHandle, int index, int count, long skip) {
         if (count == items.size())
             return null;
         List<AbstractMapIngredient> wr = items.get(index);
@@ -463,7 +463,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return null;
     }
 
-    private IRecipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+    private IRecipe callback(@NotNull List<List<AbstractMapIngredient>> items, @NotNull Branch map,
             Predicate<IRecipe> canHandle, int index, int count, long skip) {
         // We loop around items.size() if we reach the end.
         int counter = (index + 1) % items.size();
@@ -482,7 +482,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
 
     @Nullable
     @Override
-    public IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidHolder[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle) {
+    public IRecipe find(@NotNull ItemStack[] items, @NotNull FluidHolder[] fluids, Tier tier, @NotNull Predicate<IRecipe> canHandle) {
         // First, check if items and fluids are valid.
         if (items.length + fluids.length > Long.SIZE) {
             Utils.onInvalidData(

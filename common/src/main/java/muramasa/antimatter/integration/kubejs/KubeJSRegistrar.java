@@ -2,17 +2,19 @@ package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.mods.kubejs.KubeJSPaths;
 import dev.latvian.mods.kubejs.server.ServerScriptManager;
-import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.AntimatterMod;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 
-;import java.nio.file.Files;
+import java.nio.file.Files;
 import java.nio.file.LinkOption;
+
+;
 
 public class KubeJSRegistrar extends AntimatterMod {
     public KubeJSRegistrar() {

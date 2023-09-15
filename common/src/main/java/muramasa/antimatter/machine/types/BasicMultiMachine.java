@@ -3,21 +3,15 @@ package muramasa.antimatter.machine.types;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.widget.ProgressWidget;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +20,6 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.MULTI;
-import static muramasa.antimatter.machine.Tier.NONE;
 
 public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
 

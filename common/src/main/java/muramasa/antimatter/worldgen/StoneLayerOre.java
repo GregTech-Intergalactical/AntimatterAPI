@@ -1,12 +1,10 @@
 package muramasa.antimatter.worldgen;
 
 import com.google.gson.JsonObject;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.worldgen.vein.old.WorldGenVeinVariantMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 

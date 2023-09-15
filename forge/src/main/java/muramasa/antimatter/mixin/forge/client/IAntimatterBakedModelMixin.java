@@ -13,11 +13,10 @@ import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -28,14 +27,14 @@ public interface IAntimatterBakedModelMixin extends IDynamicBakedModel {
     boolean hasOnlyGeneralQuads();
 
     @Shadow
-    List<BakedQuad> getQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
+    List<BakedQuad> getQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos);
 
     @Shadow
-    TextureAtlasSprite getParticleIcon(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
+    TextureAtlasSprite getParticleIcon(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos);
 
     @NotNull
     @Override
-    default List<BakedQuad> getQuads(@javax.annotation.Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data){
+    default List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData data){
         BlockAndTintGetter world = data.getData(AntimatterModelProperties.WORLD);
         BlockPos pos = data.getData(AntimatterModelProperties.POS);
         if (world == null || pos == null) return Collections.emptyList();

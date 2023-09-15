@@ -1,15 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.cover.CoverDebug;
-import muramasa.antimatter.cover.CoverDynamo;
-import muramasa.antimatter.cover.CoverEnergy;
-import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.CoverHeat;
-import muramasa.antimatter.cover.CoverInput;
-import muramasa.antimatter.cover.CoverMuffler;
-import muramasa.antimatter.cover.CoverOutput;
-import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.cover.*;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.MenuHandlerCover;
@@ -38,14 +30,14 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-
-;
 import static muramasa.antimatter.gui.ButtonOverlay.APAD_RIGHT;
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static muramasa.antimatter.machine.Tier.MAX;
+
+;
 
 public class Data {
 

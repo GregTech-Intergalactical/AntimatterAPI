@@ -4,13 +4,12 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
 
 public class AbstractSlot<T extends Slot> extends Slot {
     protected final int index;
@@ -27,7 +26,7 @@ public class AbstractSlot<T extends Slot> extends Slot {
     }
 
     @Override
-    public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+    public void onQuickCraft(@NotNull ItemStack oldStackIn, @NotNull ItemStack newStackIn) {
         super.onQuickCraft(oldStackIn, newStackIn);
         if (this.container instanceof TrackedItemHandler<?> trackedItemHandler) {
             trackedItemHandler.onContentsChanged(this.index);
@@ -44,7 +43,7 @@ public class AbstractSlot<T extends Slot> extends Slot {
 
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack remove(int amount) {
         return MachineItemHandler.extractFromInput(this.container, index, amount, false);
     }
@@ -55,12 +54,12 @@ public class AbstractSlot<T extends Slot> extends Slot {
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@NotNull ItemStack stack) {
         return this.type.tester.test(this.holder, stack);
     }
 
     @Override
-    public int getMaxStackSize(@Nonnull ItemStack stack) {
+    public int getMaxStackSize(@NotNull ItemStack stack) {
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
         maxAdd.setCount(maxInput);

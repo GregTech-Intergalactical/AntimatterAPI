@@ -17,7 +17,6 @@ import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.gui.widget.CoverModeHandlerWidget;
 import muramasa.antimatter.gui.widget.SlotWidget;
-import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
@@ -29,10 +28,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tesseract.api.item.ExtendedItemContainer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +42,9 @@ import java.util.stream.Collectors;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
-    @Nonnull
+    @NotNull
     public final CoverFactory factory;
-    @Nonnull
+    @NotNull
     public final ICoverHandler<?> handler;
     @Nullable
     public final Tier tier;
@@ -73,7 +72,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         return handler;
     }
 
-    public BaseCover(@Nonnull ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+    public BaseCover(@NotNull ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         this.factory = Objects.requireNonNull(factory, "Missing factory in BaseCover");
         this.handler = source;
         this.tier = tier;

@@ -3,8 +3,7 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.core.Direction;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class CoverTintable extends BaseCover {
 

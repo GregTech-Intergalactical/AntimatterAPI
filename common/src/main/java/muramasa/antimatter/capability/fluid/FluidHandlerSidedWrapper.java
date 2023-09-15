@@ -5,13 +5,12 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.capability.FluidHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.fluid.FluidContainerHandler;
 import tesseract.api.fluid.IFluidNode;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandler {
@@ -40,7 +39,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandl
         return new FluidHandlerSidedWrapper(fluidHandler, coverHandler, side);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidHolder getFluidInTank(int tank) {
         return fluidHandler.getFluidInTank(tank);
@@ -66,7 +65,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandl
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidHolder stack) {
+    public boolean isFluidValid(int tank, @NotNull FluidHolder stack) {
         return fluidHandler.isFluidValid(tank, stack);
     }
 
@@ -92,7 +91,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandl
         return fluidHandler.insertFluid(resource, simulate);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidHolder extractFluid(FluidHolder resource, boolean  simulate) {
         if (coverHandler != null && coverHandler.get(side).blocksOutput(FluidContainer.class, side)) {

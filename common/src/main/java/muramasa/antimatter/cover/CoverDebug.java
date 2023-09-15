@@ -5,9 +5,8 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.core.Direction;
+import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
-
-import javax.annotation.Nullable;
 
 public class CoverDebug extends BaseCover {
 

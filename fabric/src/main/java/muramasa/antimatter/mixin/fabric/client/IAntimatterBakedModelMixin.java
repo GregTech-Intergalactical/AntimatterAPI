@@ -13,12 +13,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -30,7 +29,7 @@ public interface IAntimatterBakedModelMixin extends FabricBakedModel, BakedModel
     boolean hasOnlyGeneralQuads();
 
     @Shadow
-    List<BakedQuad> getBlockQuads(BlockState state, @javax.annotation.Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
+    List<BakedQuad> getBlockQuads(BlockState state, @org.jetbrains.annotations.Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos);
 
     @Override
     default boolean isVanillaAdapter() {

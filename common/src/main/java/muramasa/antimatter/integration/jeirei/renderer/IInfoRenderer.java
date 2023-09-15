@@ -5,6 +5,7 @@ import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
+
 ;
 ;
 

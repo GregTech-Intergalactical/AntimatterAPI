@@ -1,8 +1,6 @@
 package muramasa.antimatter.mixin.forge;
 
-import muramasa.antimatter.recipe.container.ContainerItemShapedRecipe;
 import muramasa.antimatter.recipe.container.ContainerItemShapedRecipe.Serializer;
-import muramasa.antimatter.recipe.material.MaterialSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;

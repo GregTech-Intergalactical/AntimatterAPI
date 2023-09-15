@@ -4,7 +4,6 @@ import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;

@@ -16,9 +16,9 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -54,7 +54,7 @@ public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
      * @param pos
      * @return null if not found or not fully cut
      */
-    @Nonnull
+    @NotNull
     public static Tree findTree(@Nullable BlockGetter reader, BlockPos pos) {
         if (reader == null)
             return NO_TREE;

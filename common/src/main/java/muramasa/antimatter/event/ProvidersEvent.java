@@ -3,11 +3,9 @@ package muramasa.antimatter.event;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.registration.Side;
-import net.minecraft.data.DataGenerator;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ProvidersEvent {

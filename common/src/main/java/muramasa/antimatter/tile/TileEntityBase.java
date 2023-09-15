@@ -10,9 +10,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockEntity {
@@ -97,7 +96,7 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockE
     }
 
     //TODO: implications of this.
-    /*@Nonnull
+    /*@NotNull
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();

@@ -22,15 +22,11 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
 import tesseract.api.heat.IHeatHandler;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static muramasa.antimatter.machine.MachineFlag.CELL;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-import static muramasa.antimatter.machine.MachineFlag.FLUID;
-import static muramasa.antimatter.machine.MachineFlag.ITEM;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
 

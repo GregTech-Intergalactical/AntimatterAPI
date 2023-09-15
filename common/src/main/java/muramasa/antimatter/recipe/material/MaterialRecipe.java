@@ -13,11 +13,10 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +48,7 @@ public class MaterialRecipe extends ContainerItemShapedRecipe {
     public interface ItemBuilder {
         ItemStack build(@Nullable CraftingContainer inv, Result mats);
 
-        Map<String, Object> getFromResult(@Nonnull ItemStack stack);
+        Map<String, Object> getFromResult(@NotNull ItemStack stack);
     }
 
     public final Map<String, Set<Integer>> materialSlots;

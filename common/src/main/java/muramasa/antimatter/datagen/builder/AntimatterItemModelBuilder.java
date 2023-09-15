@@ -5,7 +5,6 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.devtech.arrp.json.loot.JCondition;
 import net.devtech.arrp.json.models.JOverride;
-import net.devtech.arrp.json.models.JTextures;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import tesseract.FluidPlatformUtils;

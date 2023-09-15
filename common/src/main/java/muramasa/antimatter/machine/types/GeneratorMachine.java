@@ -3,10 +3,7 @@ package muramasa.antimatter.machine.types;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.tile.single.TileEntityGenerator;
 
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
-import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class GeneratorMachine extends Machine<GeneratorMachine> {
     public GeneratorMachine(String domain, String id) {

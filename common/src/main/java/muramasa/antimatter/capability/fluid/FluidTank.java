@@ -8,16 +8,16 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.fluid.FluidContainerHandler;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 public class FluidTank implements FluidContainer, FluidContainerHandler {
     protected Predicate<FluidHolder> validator;
-    @Nonnull
+    @NotNull
     protected FluidHolder storedFluid = FluidHooks.emptyFluid();
     protected long capacity;
     public FluidTank(long capacity)
@@ -49,7 +49,7 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
         return capacity;
     }
 
-    @Nonnull
+    @NotNull
     public FluidHolder getStoredFluid() {
         return storedFluid;
     }

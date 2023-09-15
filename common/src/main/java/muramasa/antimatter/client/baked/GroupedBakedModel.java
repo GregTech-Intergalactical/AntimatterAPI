@@ -9,9 +9,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, BlockPos pos) {
         int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE[offset];
         if (arr == null) {
@@ -48,7 +48,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
     }
 
     /*@Override
-    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getItemQuads(@Nullable Direction side, @NotNull Random rand, @NotNull IModelData data) {
         int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE_ITEM[offset];
         if (arr == null) {

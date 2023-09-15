@@ -8,9 +8,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +61,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
     //Note: does call get().
     boolean hasSpecialIngredients();
 
-    @Nonnull
+    @NotNull
     List<FluidIngredient> getInputFluids();
 
     @Nullable

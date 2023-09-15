@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public class DynamicConfigBuilder {

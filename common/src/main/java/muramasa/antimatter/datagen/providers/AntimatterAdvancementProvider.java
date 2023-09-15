@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +54,7 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
     }
 
     @Override
-    public void run(@Nonnull HashCache cache) {
+    public void run(@NotNull HashCache cache) {
         /*Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
@@ -75,7 +75,7 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
         return path.resolve(String.join("", "data/", providerDomain, "/advancements/", advancement.getId().getPath(), ".json"));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return providerName;

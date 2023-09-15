@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.megane.provider;
+package muramasa.antimatter.integration.fabric.megane.provider;
 
 import lol.bai.megane.api.provider.EnergyProvider;
 import muramasa.antimatter.tile.TileEntityMachine;

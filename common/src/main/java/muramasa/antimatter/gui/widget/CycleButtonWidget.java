@@ -10,7 +10,9 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
+import java.util.function.ToIntFunction;
 
 public class CycleButtonWidget extends ButtonWidget{
     final ButtonOverlay[] buttons;

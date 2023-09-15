@@ -2,10 +2,9 @@ package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 
 public class FakeTrackedItemHandler<T extends IGuiHandler> extends TrackedItemHandler<T> {
@@ -13,7 +12,7 @@ public class FakeTrackedItemHandler<T extends IGuiHandler> extends TrackedItemHa
         super(tile, size, output, input, validator, contentEvent);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractFromInput(int slot, int amount, boolean simulate) {
         super.extractFromInput(slot, amount, simulate);
@@ -21,7 +20,7 @@ public class FakeTrackedItemHandler<T extends IGuiHandler> extends TrackedItemHa
     }
 
     @Override
-    public void setItem(int slot, @Nonnull ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         super.setItem(slot, stack.copy());
     }
 }

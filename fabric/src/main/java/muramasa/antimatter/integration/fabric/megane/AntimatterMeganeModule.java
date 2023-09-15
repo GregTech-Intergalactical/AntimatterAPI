@@ -1,11 +1,11 @@
-package muramasa.antimatter.integration.megane;
+package muramasa.antimatter.integration.fabric.megane;
 
 import lol.bai.megane.api.MeganeModule;
 import lol.bai.megane.api.registry.ClientRegistrar;
 import lol.bai.megane.api.registry.CommonRegistrar;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.integration.megane.provider.MachineEnergyProvider;
-import muramasa.antimatter.integration.megane.provider.MachineProgressProvider;
+import muramasa.antimatter.integration.fabric.megane.provider.MachineEnergyProvider;
+import muramasa.antimatter.integration.fabric.megane.provider.MachineProgressProvider;
 import muramasa.antimatter.tile.TileEntityMachine;
 
 public class AntimatterMeganeModule implements MeganeModule {

@@ -4,9 +4,7 @@ import muramasa.antimatter.Ref;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import tesseract.api.gt.GTConsumer;
-import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.api.gt.IGTNode;
 
 
 public class EnergyHandler implements IEnergyHandler {

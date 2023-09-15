@@ -20,7 +20,6 @@ import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.fabric.FluidAttributesVariantWrapper;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
-import muramasa.antimatter.material.*;
 import muramasa.antimatter.pipe.FluidPipeTicker;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.recipe.fabric.RecipeConditions;
@@ -36,10 +35,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
@@ -53,8 +50,6 @@ import team.reborn.energy.api.EnergyStorage;
 import tesseract.api.fabric.TesseractLookups;
 import tesseract.api.fabric.wrapper.ExtendedContainerWrapper;
 import tesseract.fabric.TesseractImpl;
-
-import java.util.Map;
 
 import static muramasa.antimatter.Ref.ID;
 

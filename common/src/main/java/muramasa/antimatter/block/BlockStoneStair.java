@@ -17,10 +17,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 
-import static net.minecraft.core.Direction.EAST;
-import static net.minecraft.core.Direction.NORTH;
-import static net.minecraft.core.Direction.SOUTH;
-import static net.minecraft.core.Direction.WEST;
+import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.level.block.state.properties.StairsShape.STRAIGHT;
 
 public class BlockStoneStair extends StairBlock implements ISharedAntimatterObject, ITextureProvider, IModelProvider {

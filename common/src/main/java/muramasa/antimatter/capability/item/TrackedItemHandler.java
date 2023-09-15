@@ -1,14 +1,13 @@
 package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 
 public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler implements ITrackedHandler {
@@ -52,9 +51,9 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
 
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!input)
             return stack;
         boolean validate = validator.test(tile, stack);
@@ -66,12 +65,12 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
         return super.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
-    public ItemStack insertOutputItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @NotNull
+    public ItemStack insertOutputItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         return super.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (!output)
@@ -79,7 +78,7 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
         return super.extractItem(slot, amount, simulate);
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack extractFromInput(int slot, int amount, boolean simulate) {
         return super.extractItem(slot, amount, simulate);
     }
@@ -92,7 +91,7 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     }
 
     @Override
-    public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) {
+    public boolean canPlaceItem(int slot, @NotNull ItemStack stack) {
         return true;//validator.test(tile, stack);
     }
 }

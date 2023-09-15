@@ -8,8 +8,8 @@ import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public class AntimatterItemTier implements Tier {
         TIERS_LOOKUP.put(NULL.hashCode(), NULL);
     }
 
-    AntimatterItemTier(@Nonnull Material primary, @Nonnull Material secondary) {
+    AntimatterItemTier(@NotNull Material primary, @NotNull Material secondary) {
         this.primary = primary.has(MaterialTags.TOOLS) ? primary : Material.NULL;
         this.secondary = secondary.has(MaterialTags.HANDLE) ? secondary : Material.NULL;
     }

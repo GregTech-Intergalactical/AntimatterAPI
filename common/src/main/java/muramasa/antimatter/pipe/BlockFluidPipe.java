@@ -3,12 +3,9 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,12 +14,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import tesseract.FluidPlatformUtils;
+import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
-import tesseract.api.fluid.PipeFluidHolder;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {

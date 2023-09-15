@@ -2,21 +2,14 @@ package muramasa.antimatter.network.packets;
 
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.AntimatterNetwork;
-import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
-import java.util.Optional;
 
 public class TileGuiEventPacket extends AbstractGuiEventPacket<TileGuiEventPacket> {
     public static final Handler HANDLER = new Handler();

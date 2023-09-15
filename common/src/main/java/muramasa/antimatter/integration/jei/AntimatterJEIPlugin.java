@@ -15,26 +15,22 @@ import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
-import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
-import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -46,8 +42,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,7 +66,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         runtime = jeiRuntime;
         //Remove fluid "blocks".
@@ -111,7 +107,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipes(@Nonnull IRecipeRegistration registration) {
+    public void registerRecipes(@NotNull IRecipeRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         if (helpers == null) helpers = registration.getJeiHelpers();
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
@@ -205,7 +201,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
+    public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         AntimatterAPI.all(Machine.class, machine -> {
             ((Machine<?>)machine).getTiers().forEach(t -> {

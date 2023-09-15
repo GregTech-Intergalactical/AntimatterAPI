@@ -3,8 +3,8 @@ package muramasa.antimatter.recipe.ingredient.test;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.stream.Stream;
 

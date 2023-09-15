@@ -5,11 +5,9 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class AntimatterItemBlock extends BlockItem {
 
@@ -17,9 +15,9 @@ public class AntimatterItemBlock extends BlockItem {
         super(block, new Properties().tab(block instanceof IItemBlockProvider ? ((IItemBlockProvider) block).getItemGroup() : Ref.TAB_BLOCKS));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Component getName(@Nonnull ItemStack stack) {
+    public Component getName(@NotNull ItemStack stack) {
         return getBlock() instanceof IItemBlockProvider ? ((IItemBlockProvider) getBlock()).getDisplayName(stack) : new TranslatableComponent(stack.getDescriptionId());
     }
 }

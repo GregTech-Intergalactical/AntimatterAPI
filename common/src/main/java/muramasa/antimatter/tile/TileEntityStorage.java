@@ -2,16 +2,12 @@ package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.Pair;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
-import tesseract.api.gt.GTTransaction;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 
 import java.util.List;

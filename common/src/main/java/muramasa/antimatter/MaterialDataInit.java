@@ -5,16 +5,13 @@ import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.material.MaterialTags;
-import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.material.MaterialTags.MOLTEN;
 import static muramasa.antimatter.material.MaterialTags.QUARTZ_LIKE_BLOCKS;
-import static net.minecraft.world.item.Tiers.GOLD;
-import static net.minecraft.world.item.Tiers.IRON;
-import static net.minecraft.world.item.Tiers.NETHERITE;
+import static net.minecraft.world.item.Tiers.*;
 
 public class MaterialDataInit {
     public static void onMaterialEvent(MaterialEvent event){

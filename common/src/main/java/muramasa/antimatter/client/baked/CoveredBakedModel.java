@@ -8,9 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -22,13 +22,13 @@ public class CoveredBakedModel extends AttachableBakedModel {
     }
 
     @Override
-    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand,
-                                                 @Nonnull BlockAndTintGetter level, BlockPos pos) {
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @NotNull Random rand,
+                                                 @NotNull BlockAndTintGetter level, BlockPos pos) {
         return Collections.emptyList();//attachCoverQuads(new ArrayList<>(), state, side, data);
     }
 /*
     protected final List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, Direction side,
-                                                     @Nonnull IModelData data) {
+                                                     @NotNull IModelData data) {
         TileEntityBase<?> tile = data.getData(AntimatterProperties.TILE_PROPERTY);
         if (tile == null)
             return quads;

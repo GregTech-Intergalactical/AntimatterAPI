@@ -1,6 +1,5 @@
 package muramasa.antimatter.material;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import muramasa.antimatter.AntimatterAPI;

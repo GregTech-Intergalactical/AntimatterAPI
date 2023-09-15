@@ -9,7 +9,6 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

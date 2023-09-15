@@ -11,9 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -29,9 +29,9 @@ public class AttachableBakedModel extends DynamicBakedModel {
         super(particle, bakedTuple);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         try {
             if (onlyGeneralQuads && side != null) return Collections.emptyList();
             if (state == null) {
@@ -52,7 +52,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
+    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         //if (side != null) return super.getBlockQuads(state, side, rand, data);
         // if (side == null) return super.getBlockQuads(state, null,rand,data);
         //if (side == null) return super.getBlockQuads(state,null,rand,data);
@@ -62,7 +62,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
         return sideQuads;
     }
 
-    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         return Collections.emptyList();
     }
 }

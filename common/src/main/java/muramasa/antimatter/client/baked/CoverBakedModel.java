@@ -2,7 +2,6 @@ package muramasa.antimatter.client.baked;
 
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -10,15 +9,12 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CoverBakedModel extends GroupedBakedModel {
     public CoverBakedModel(TextureAtlasSprite p, Map<String, BakedModel> models) {
@@ -30,7 +26,7 @@ public class CoverBakedModel extends GroupedBakedModel {
         return getBlockQuads(state, side, rand, level, pos, null);
     }
 
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos, Predicate<Map.Entry<String, BakedModel>> predicate) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, BlockPos pos, Predicate<Map.Entry<String, BakedModel>> predicate) {
         if (predicate == null) return Collections.emptyList();
         List<BakedQuad> quads = new ArrayList<>();
         for (Map.Entry<String, BakedModel> t : this.models.entrySet()) {
@@ -44,7 +40,7 @@ public class CoverBakedModel extends GroupedBakedModel {
         }).flatMap(t -> t.getValue().getQuads(state, null, rand).stream()).collect(Collectors.toList());*/
     }
 
-    @Nonnull
+    @NotNull
     public static EnumMap<Direction, Byte> addCoverModelData(Direction side, ICoverHandler<?> handler) {;
         EnumMap<Direction, Byte> map = new EnumMap<>(Direction.class);
         if (handler == null) return map;
