@@ -1,10 +1,12 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.data.AntimatterTags;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.material.Fluid;
 
@@ -29,6 +31,9 @@ public class AntimatterFluidTagProvider extends AntimatterTagProvider<Fluid> imp
                 tag(getForgelikeFluidTag(m.getId()))
                         .add(f.getFluid())
                         .replace(replace);
+                if (m.has(MaterialTags.ACID)){
+                    tag(AntimatterTags.ACID).add(f.getFluid());
+                }
             }
         });
     }
