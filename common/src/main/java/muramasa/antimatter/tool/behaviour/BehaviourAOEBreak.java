@@ -9,8 +9,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -57,9 +55,9 @@ public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IIte
         CompoundTag tag = instance.getDataTag(stack);
         if (tag != null){
             boolean enabled = tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK);
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.behaviour.aoe_right_click", new TranslatableComponent("antimatter.behaviour." + tooltipKey)));
+            tooltip.add(Utils.translatable("antimatter.tooltip.behaviour.aoe_right_click", Utils.translatable("antimatter.behaviour." + tooltipKey)));
             String suffix = enabled ? "enabled" : "disabled";
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.behaviour.aoe_" + suffix, new TranslatableComponent("antimatter.behaviour." + tooltipKey)));
+            tooltip.add(Utils.translatable("antimatter.tooltip.behaviour.aoe_" + suffix, Utils.translatable("antimatter.behaviour." + tooltipKey)));
         }
     }
 
@@ -71,7 +69,7 @@ public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IIte
             if (tag != null){
                 boolean enabled = tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK);
                 tag.putBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK, !enabled);
-                player.sendMessage(new TextComponent("Mode set to " + !enabled), player.getUUID());
+                player.sendMessage(Utils.literal("Mode set to " + !enabled), player.getUUID());
             }
         }
         return InteractionResultHolder.pass(stack);

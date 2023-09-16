@@ -9,6 +9,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
@@ -27,14 +28,11 @@ import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.BlockItem;
@@ -412,7 +410,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setTooltipInfo(String translationKey){
-        return setTooltipInfo((m, s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
+        return setTooltipInfo((m, s,w,t,f) -> t.add(Utils.translatable(translationKey)));
     }
 
     public T setTooltipInfo(Component tooltip){
@@ -440,7 +438,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public Component getDisplayName(Tier tier) {
         String keyAddition = tierSpecificLang ? "." + tier.getId() : "";
-        return new TranslatableComponent("machine." + id + keyAddition, new TextComponent(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting()));
+        return Utils.translatable("machine." + id + keyAddition, Utils.literal(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting()));
     }
 
     public boolean canClientTick() {

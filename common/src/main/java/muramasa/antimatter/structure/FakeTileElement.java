@@ -2,12 +2,12 @@ package muramasa.antimatter.structure;
 
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
-import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
+import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -70,7 +70,7 @@ public class FakeTileElement<T extends BlockEntityBasicMultiMachine<T>> implemen
 
     public void onInfoTooltip(List<Component> text, long count, BlockEntityBasicMultiMachine<?> machine) {
         //super.onInfoTooltip(text, count, machine);
-        text.add(new TextComponent("Element replaced with a TileEntity to allow input/output."));
+        text.add(Utils.literal("Element replaced with a TileEntity to allow input/output."));
     }
 
     @Override

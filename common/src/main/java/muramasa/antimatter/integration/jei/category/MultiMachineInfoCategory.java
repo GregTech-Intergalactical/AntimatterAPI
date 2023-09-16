@@ -10,8 +10,8 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeRegistration;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +69,7 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
     @NotNull
     @Override
     public Component getTitle() {
-        return new TextComponent( "Multi Machines Title");
+        return Utils.literal( "Multi Machines Title");
     }
 
     @NotNull

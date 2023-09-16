@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.data.AntimatterDefaultTools;
@@ -9,12 +10,10 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -99,7 +98,7 @@ public class CoverOutput extends CoverInput {
         if (type != null && type.getTag() == AntimatterDefaultTools.SCREWDRIVER.getTag()){
             allowInput = !allowInput;
             String suffix = allowInput ? "allow" : "no";
-            player.sendMessage(new TranslatableComponent("antimatter.tooltip.cover.output." + suffix + "_input"), player.getUUID());
+            player.sendMessage(Utils.translatable("antimatter.tooltip.cover.output." + suffix + "_input"), player.getUUID());
             return true;
         }
         return super.onInteract(player, hand, side, type);

@@ -8,9 +8,9 @@ import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
-import net.minecraft.network.chat.TextComponent;
 
 public class MachineStateWidget extends Widget {
     /* Location in most machine textures. */
@@ -57,7 +57,7 @@ public class MachineStateWidget extends Widget {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
         MachineState machineState = ((BlockEntityMachine<?>) gui.handler).getMachineState();
         if (isRecipe) {
-            renderTooltip(stack, new TextComponent(machineState.getDisplayName()), mouseX, mouseY);
+            renderTooltip(stack, Utils.literal(machineState.getDisplayName()), mouseX, mouseY);
         }
     }
 

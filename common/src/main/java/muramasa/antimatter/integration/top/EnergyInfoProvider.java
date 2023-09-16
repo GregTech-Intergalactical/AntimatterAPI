@@ -6,7 +6,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -58,7 +57,7 @@ public class EnergyInfoProvider implements IProbeInfoProvider {
                 //horizontalPane.text("Energy: ");
                 NumberFormat format = player.isCrouching() ? NumberFormat.FULL : NumberFormat.COMPACT;
                 horizontalPane.progress(energyHandler.getEnergy(), maxCapacity, probeInfo.defaultProgressStyle()
-                        .suffix(new TextComponent(" / ").append(ElementProgress.format(maxCapacity, format, new TextComponent(" EU"))))
+                        .suffix(Utils.literal(" / ").append(ElementProgress.format(maxCapacity, format, Utils.literal(" EU"))))
                         .filledColor(0xFFEEE600)
                         .alternateFilledColor(0xFFEEE600)
                         .borderColor(0xFF555555).numberFormat(format));

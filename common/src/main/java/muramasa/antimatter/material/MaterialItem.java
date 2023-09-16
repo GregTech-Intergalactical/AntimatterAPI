@@ -21,8 +21,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -80,7 +78,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         //Here only add specific types, events are handled below.
         if (type == AntimatterMaterialTypes.ROCK) {
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.occurrence").append(new TextComponent(material.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW)));
+            tooltip.add(Utils.translatable("antimatter.tooltip.occurrence").append(Utils.literal(material.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW)));
         }
     }
 
@@ -88,11 +86,11 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     public static void addTooltipsForMaterialItems(ItemStack stack, Material mat, MaterialType<?> type, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         if (!mat.getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
-                tooltip.add(new TranslatableComponent("antimatter.tooltip.chemical_formula").append(": ").append(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));
-                tooltip.add(new TranslatableComponent("antimatter.tooltip.mass").append(": ").append(new TextComponent(mat.getMass() + "").withStyle(ChatFormatting.DARK_AQUA)));
-                tooltip.add(new TranslatableComponent("antimatter.tooltip.material_modid", AntimatterPlatformUtils.getModName(mat.materialDomain())));
+                tooltip.add(Utils.translatable("antimatter.tooltip.chemical_formula").append(": ").append(Utils.literal(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));
+                tooltip.add(Utils.translatable("antimatter.tooltip.mass").append(": ").append(Utils.literal(mat.getMass() + "").withStyle(ChatFormatting.DARK_AQUA)));
+                tooltip.add(Utils.translatable("antimatter.tooltip.material_modid", AntimatterPlatformUtils.getModName(mat.materialDomain())));
             } else {
-                tooltip.add(new TranslatableComponent("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
+                tooltip.add(Utils.translatable("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
             }
         }
     }

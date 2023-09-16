@@ -11,7 +11,6 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.commons.lang3.tuple.Pair;
@@ -153,7 +152,7 @@ public class Material implements ISharedAntimatterObject {
      * Basic Getters
      **/
     public Component getDisplayName() {
-        return displayName == null ? displayName = new TranslatableComponent("material." + getId()) : displayName;
+        return displayName == null ? displayName = Utils.translatable("material." + getId()) : displayName;
     }
 
     public Set<MaterialType<?>> getTypes() {

@@ -34,7 +34,7 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import net.minecraft.network.chat.TranslatableComponent;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
@@ -62,7 +62,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                     if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.CLIENT.SHOW_ALL_ORES && t != AntimatterMaterialTypes.ROCK) return;
                     if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.CLIENT.SHOW_ROCKS) return;
                     List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, getter.get((Material) m, s).asStack())).toList();
-                    registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
+                    registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
                 });
                 if (t != AntimatterMaterialTypes.ROCK){
                     return;
@@ -82,13 +82,13 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             if (func == null) return;
             Function<Material, ItemStack> finalFunc = func;
             List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, finalFunc.apply((Material) m))).toList();
-            registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + t.getId()), entries);
+            registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId()), entries);
         });
         if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
         AntimatterAPI.all(StoneType.class, s -> {
             if (s instanceof CobbleStoneType cobble){
                 List<EntryStack<ItemStack>> entries = cobble.getBlocks().values().stream().map(b -> EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(b.asItem()))).toList();
-                registry.group(new ResourceLocation(Ref.SHARED_ID, s.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + s.getId()), entries);
+                registry.group(new ResourceLocation(Ref.SHARED_ID, s.getId()), Utils.translatable(Ref.ID + ".rei.group." + s.getId()), entries);
             }
         });
     }

@@ -19,13 +19,12 @@ import muramasa.antimatter.client.scene.WorldSceneRenderer;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.structure.BlockInfo;
 import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -70,9 +69,9 @@ public class MultiMachineInfoPage {
         this.controllers = new BlockEntityBasicMultiMachine[patterns.size()];
         descriptions = new Component[patterns.size()];
 
-        this.buttonNextLayer = new Button(WIDTH - (20 + RIGHT_PADDING), 65, ICON_SIZE, ICON_SIZE, new TextComponent("A"), (b)->toggleNextLayer());
-        this.buttonPreviousPattern = new Button(WIDTH - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, new TextComponent("<"), (b) -> switchRenderPage(-1));
-        this.buttonNextPattern = new Button(WIDTH - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, new TextComponent(">"), (b) -> switchRenderPage(1));
+        this.buttonNextLayer = new Button(WIDTH - (20 + RIGHT_PADDING), 65, ICON_SIZE, ICON_SIZE, Utils.literal("A"), (b)->toggleNextLayer());
+        this.buttonPreviousPattern = new Button(WIDTH - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, Utils.literal("<"), (b) -> switchRenderPage(-1));
+        this.buttonNextPattern = new Button(WIDTH - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, Utils.literal(">"), (b) -> switchRenderPage(1));
 
         for (int i = 0; i < patterns.size(); i++) {
             descriptions[i] = patterns.get(i).getDescription();
@@ -100,7 +99,7 @@ public class MultiMachineInfoPage {
             worldSceneRenderer.setClearColor(0xC6C6C6);
             world.addBlocks(blockMap);
             if (controllers == null || !controllers.checkStructure()) {
-                descriptions[i] = new TranslatableComponent("InValid Structure");
+                descriptions[i] = Utils.translatable("InValid Structure");
             }
             Vector3f size = world.getSize();
             Vector3f minPos = world.getMinPos();
@@ -159,7 +158,7 @@ public class MultiMachineInfoPage {
 
     private void setNextLayer(int newLayer) {
         this.layerIndex = newLayer;
-        this.buttonNextLayer.setMessage(new TextComponent(layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1)));
+        this.buttonNextLayer.setMessage(Utils.literal(layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1)));
         WorldSceneRenderer renderer = getCurrentRenderer();
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);

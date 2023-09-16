@@ -1,11 +1,11 @@
 package muramasa.antimatter.fluid.fabric;
 
 import earth.terrarium.botarium.common.registry.fluid.FluidProperties;
+import muramasa.antimatter.util.Utils;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public record FluidAttributesVariantWrapper(FluidProperties attributes) implements FluidVariantAttributeHandler {
     @Override
     public Component getName(FluidVariant fluidVariant) {
-        return new TranslatableComponent(Util.makeDescriptionId("fluid_type", attributes.id()));
+        return Utils.translatable(Util.makeDescriptionId("fluid_type", attributes.id()));
     }
 
     @Override

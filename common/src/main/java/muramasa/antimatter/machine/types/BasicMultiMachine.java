@@ -11,7 +11,7 @@ import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraft.network.chat.TranslatableComponent;
+import muramasa.antimatter.util.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +33,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);
         setTooltipInfo((machine, stack, world, tooltip, flag) -> {
-            tooltip.add(new TranslatableComponent("machine.structure.form"));
+            tooltip.add(Utils.translatable("machine.structure.form"));
         });
         this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
      }

@@ -11,9 +11,9 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -35,17 +35,17 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(new TextComponent(this.tooltip));
+        tooltip.add(Utils.literal(this.tooltip));
         if (Screen.hasShiftDown()) {
-            tooltip.add(new TextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
-            tooltip.add(new TextComponent("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
-            tooltip.add(new TextComponent("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
-            tooltip.add(new TextComponent("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
-            tooltip.add(new TextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
-            tooltip.add(new TextComponent("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
-            tooltip.add(new TextComponent("Data:"));
-            tooltip.add(new TextComponent("Ore Materials: " + AntimatterMaterialTypes.ORE.all().size()));
-            tooltip.add(new TextComponent("Small Ore Materials: " + AntimatterMaterialTypes.ORE_SMALL.all().size()));
+            tooltip.add(Utils.literal("Blocks: " + AntimatterAPI.all(Block.class).size()));
+            tooltip.add(Utils.literal("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
+            tooltip.add(Utils.literal("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
+            tooltip.add(Utils.literal("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
+            tooltip.add(Utils.literal("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
+            tooltip.add(Utils.literal("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
+            tooltip.add(Utils.literal("Data:"));
+            tooltip.add(Utils.literal("Ore Materials: " + AntimatterMaterialTypes.ORE.all().size()));
+            tooltip.add(Utils.literal("Small Ore Materials: " + AntimatterMaterialTypes.ORE_SMALL.all().size()));
         }
     }
 
@@ -56,11 +56,11 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
         if (tile instanceof BlockEntityBase) {
-            ((BlockEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new TextComponent(s), context.getPlayer().getUUID()));
+            ((BlockEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
             ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
-                context.getPlayer().sendMessage(new TextComponent(s), context.getPlayer().getUUID());
+                context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID());
             });
             return InteractionResult.SUCCESS;
         } else {

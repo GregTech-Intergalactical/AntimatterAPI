@@ -2,10 +2,10 @@ package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,15 +41,15 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.pressure", getType().getPressure(getSize())).withStyle(ChatFormatting.AQUA));
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity", (getType().getPressure(getSize()) * 2) + "L").withStyle(ChatFormatting.AQUA));
+        tooltip.add(Utils.translatable("antimatter.tooltip.pressure", getType().getPressure(getSize())).withStyle(ChatFormatting.AQUA));
+        tooltip.add(Utils.translatable("antimatter.tooltip.capacity", (getType().getPressure(getSize()) * 2) + "L").withStyle(ChatFormatting.AQUA));
         if (getType().isGasProof()){
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.gas_proof").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Utils.translatable("antimatter.tooltip.gas_proof").withStyle(ChatFormatting.GOLD));
         }
         if (getType().isAcidProof()){
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.acid_proof").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Utils.translatable("antimatter.tooltip.acid_proof").withStyle(ChatFormatting.GOLD));
         }
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()).withStyle(ChatFormatting.DARK_RED));
+        tooltip.add(Utils.translatable("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()).withStyle(ChatFormatting.DARK_RED));
     }
 
     @Override

@@ -14,13 +14,12 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
@@ -70,11 +69,11 @@ public class RecipeMapDisplay implements Display {
                     components.add(c);
                 }
                 if (recipe.getId() != null){
-                    components.add(new TextComponent("Recipe by: ").append(new TextComponent(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                    components.add(Utils.literal("Recipe by: ").append(Utils.literal(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
                     Minecraft minecraft = Minecraft.getInstance();
                     boolean showAdvanced = minecraft.options.advancedItemTooltips || Screen.hasShiftDown();
                     if (showAdvanced){
-                        components.add(new TextComponent("Recipe Id: " + recipe.getId().toString()).withStyle(ChatFormatting.DARK_GRAY));
+                        components.add(Utils.literal("Recipe Id: " + recipe.getId().toString()).withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
                 return components;
@@ -88,11 +87,11 @@ public class RecipeMapDisplay implements Display {
             fluidStackEntryStack.setting(EntryStack.Settings.TOOLTIP_PROCESSOR, (entry, t) -> {
                 createFluidTooltip(t, fluidStackEntryStack.getValue());
                 if (recipe.getId() != null){
-                    t.add(new TextComponent("Recipe by: ").append(new TextComponent(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                    t.add(Utils.literal("Recipe by: ").append(Utils.literal(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
                     Minecraft minecraft = Minecraft.getInstance();
                     boolean showAdvanced = minecraft.options.advancedItemTooltips || Screen.hasShiftDown();
                     if (showAdvanced){
-                        t.add(new TextComponent("Recipe Id: " + recipe.getId().toString()).withStyle(ChatFormatting.DARK_GRAY));
+                        t.add(Utils.literal("Recipe Id: " + recipe.getId().toString()).withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
                 return t;
@@ -120,13 +119,13 @@ public class RecipeMapDisplay implements Display {
         tooltip.entries().remove(1);
         long mb = (stack.getAmount() / TesseractGraphWrappers.dropletMultiplier);
         if (AntimatterPlatformUtils.isFabric()){
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", new TextComponent(mb + " " + intToSuperScript(stack.getAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
+            tooltip.add(Utils.translatable("antimatter.tooltip.fluid.amount", Utils.literal(mb + " " + intToSuperScript(stack.getAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
         } else {
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
+            tooltip.add(Utils.translatable("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
         }
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
+        tooltip.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
         String liquid = !FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
+        tooltip.add(Utils.translatable("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         tooltip.add(component.getAsText());
     }
 
@@ -139,13 +138,13 @@ public class RecipeMapDisplay implements Display {
                     e.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> {
                         List<Component> components = new ArrayList<>();
                         if (ri.ignoreConsume()) {
-                           components.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
+                           components.add(Utils.literal("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
                         }
                         if (ri.ignoreNbt()) {
-                            components.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
+                            components.add(Utils.literal("Ignores NBT.").withStyle(ChatFormatting.WHITE));
                         }
                         if (RecipeMap.isIngredientSpecial(i)) {
-                            components.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
+                            components.add(Utils.literal("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(Utils.literal(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
                         }
                         return components;
                     });
@@ -159,7 +158,7 @@ public class RecipeMapDisplay implements Display {
         if (probability == 10000) {
             return null;
         } else {
-            MutableComponent text = new TextComponent("Chance: " + ((float)probability / 100) + "%");
+            MutableComponent text = Utils.literal("Chance: " + ((float)probability / 100) + "%");
             text.withStyle(ChatFormatting.WHITE);
             return text;
         }
@@ -173,7 +172,7 @@ public class RecipeMapDisplay implements Display {
 
     private static Function<EntryStack<?>, List<Component>> getFluidSetting(FluidStack fluidStack) {
         @Nullable
-        Component tooltip = new TextComponent((fluidStack.getAmount() / 81L) + " " + intToSuperScript(fluidStack.getAmount() % 81L) + "/₈₁ mb");
+        Component tooltip = Utils.literal((fluidStack.getAmount() / 81L) + " " + intToSuperScript(fluidStack.getAmount() % 81L) + "/₈₁ mb");
         return es -> List.of(tooltip);
     }
 

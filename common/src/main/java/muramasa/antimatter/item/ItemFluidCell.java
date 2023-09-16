@@ -19,7 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -117,10 +116,10 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
             FluidHolder fluid = x.getFluidInTank(0);
             if (!fluid.isEmpty()) {
                 MutableComponent fluidname = (MutableComponent) FluidPlatformUtils.getFluidDisplayName(fluid);
-                fluidname.append(": ").append(new TextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mB").withStyle(ChatFormatting.GRAY));
+                fluidname.append(": ").append(Utils.literal(NumberFormat.getNumberInstance(Locale.US).format(fluid.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mB").withStyle(ChatFormatting.GRAY));
                 tooltip.add(fluidname);
             }
-            tooltip.add(new TextComponent("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K"));
+            tooltip.add(Utils.literal("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K"));
         });
     }
 

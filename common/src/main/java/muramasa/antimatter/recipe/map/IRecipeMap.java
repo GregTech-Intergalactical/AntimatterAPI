@@ -13,10 +13,10 @@ import muramasa.antimatter.integration.jeirei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -80,6 +80,6 @@ public interface IRecipeMap extends ISharedAntimatterObject {
     }
 
     default Component getDisplayName() {
-        return new TranslatableComponent("jei.category." + getLoc().getPath());
+        return Utils.translatable("jei.category." + getLoc().getPath());
     }
 }

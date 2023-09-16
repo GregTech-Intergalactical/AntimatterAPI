@@ -28,8 +28,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -166,9 +164,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     } else if (type == AntimatterDefaultTools.SOFT_HAMMER) {
                         tile.toggleMachine();
                         if (tile.getMachineState() == MachineState.DISABLED) {
-                            player.sendMessage(new TextComponent("Disabled machine."), player.getUUID());
+                            player.sendMessage(Utils.literal("Disabled machine."), player.getUUID());
                         } else {
-                            player.sendMessage(new TextComponent("Enabled machine."), player.getUUID());
+                            player.sendMessage(Utils.literal("Enabled machine."), player.getUUID());
                         }
                         Utils.damageStack(stack, player);
                         return InteractionResult.SUCCESS;
@@ -277,8 +275,8 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
         if (getType().has(BASIC) && !getType().has(RF)) {
             if (getTier().getVoltage() > 0 && getType().has(MachineFlag.ENERGY)) {
-                tooltip.add(new TranslatableComponent("machine.voltage.in").append(": ").append(new TextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
-                tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
+                tooltip.add(Utils.translatable("machine.voltage.in").append(": ").append(Utils.literal(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
+                tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
             }
         }
         this.type.getTooltipFunction().getTooltips(this, stack, world, tooltip, flag);

@@ -11,7 +11,7 @@ import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
-import net.minecraft.network.chat.TranslatableComponent;
+import muramasa.antimatter.util.Utils;
 
 import java.util.function.Function;
 
@@ -29,7 +29,7 @@ public class TankMachine extends Machine<TankMachine> {
         this.capacityPerTier = capacityPerTier;
         setTile(BlockEntityTank::new);
         setTooltipInfo((machine, stack, world, tooltip, flag) -> {
-            tooltip.add(new TranslatableComponent("machine.tank.capacity", capacityPerTier.apply(machine.getTier())));
+            tooltip.add(Utils.translatable("machine.tank.capacity", capacityPerTier.apply(machine.getTier())));
         });
         addFlags(ITEM, FLUID, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);

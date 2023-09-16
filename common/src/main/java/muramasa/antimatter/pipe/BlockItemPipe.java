@@ -1,12 +1,11 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.pipe.types.ItemPipe;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -36,13 +35,13 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     @Override
     public void appendHoverText(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> tooltip, TooltipFlag p_49819_) {
         super.appendHoverText(p_49816_, p_49817_, tooltip, p_49819_);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity", new TextComponent(type.getCapacity(getSize()) + "").append(" ").append(new TranslatableComponent("antimatter.tooltip.stacks").append("."))));
+        tooltip.add(Utils.translatable("antimatter.tooltip.capacity", Utils.literal(type.getCapacity(getSize()) + "").append(" ").append(Utils.translatable("antimatter.tooltip.stacks").append("."))));
         if (!Screen.hasShiftDown()) {
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(Utils.translatable("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
         } else {
-            tooltip.add(new TextComponent("----------"));
-            tooltip.add(new TranslatableComponent("antimatter.pipe.item.info").withStyle(ChatFormatting.DARK_AQUA));
-            tooltip.add(new TextComponent("----------"));
+            tooltip.add(Utils.literal("----------"));
+            tooltip.add(Utils.translatable("antimatter.pipe.item.info").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(Utils.literal("----------"));
         }
     }
     //    @Override

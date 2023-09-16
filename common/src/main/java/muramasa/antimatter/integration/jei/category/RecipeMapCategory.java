@@ -37,8 +37,6 @@ import muramasa.antimatter.util.int4;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -116,7 +114,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     @Override
     public Component getTitle() {
-        return new TextComponent(title);
+        return Utils.literal(title);
     }
 
     @Override
@@ -158,14 +156,14 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                             slot.addTooltipCallback((ing, list) -> {
                                 if (recipe.getInputItems().get(ss) instanceof RecipeIngredient ri) {
                                     if (ri.ignoreConsume()) {
-                                        list.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
+                                        list.add(Utils.literal("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
                                     }
                                     if (ri.ignoreNbt()) {
-                                        list.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
+                                        list.add(Utils.literal("Ignores NBT.").withStyle(ChatFormatting.WHITE));
                                     }
                                     Ingredient i = recipe.getInputItems().get(ss);
                                     if (RecipeMap.isIngredientSpecial(i)) {
-                                        list.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
+                                        list.add(Utils.literal("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(Utils.literal(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
                                     }
                                 }
                             });
@@ -187,7 +185,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     slot.addTooltipCallback((ing, list) -> {
                         if (recipe.hasChances()) {
                             if (recipe.getChances()[ss] < 10000) {
-                                list.add(new TextComponent("Chance: " + ((float)recipe.getChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
+                                list.add(Utils.literal("Chance: " + ((float)recipe.getChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
                             }
                         }
                     });
@@ -240,15 +238,15 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         list.remove(1);
         long mb = (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
         if (AntimatterPlatformUtils.isFabric()){
-            list.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", new TextComponent(mb + " " + intToSuperScript(stack.getFluidAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
+            list.add(Utils.translatable("antimatter.tooltip.fluid.amount", Utils.literal(mb + " " + intToSuperScript(stack.getFluidAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
         } else {
-            list.add(new TranslatableComponent("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
+            list.add(Utils.translatable("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
         }
-        list.add(new TranslatableComponent("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
+        list.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
         String liquid = !FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
-        list.add(new TranslatableComponent("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
+        list.add(Utils.translatable("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
-            list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
+            list.add(Utils.literal("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
         list.add(component);
     }
 
@@ -261,15 +259,15 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                         Ingredient i = ing.getIngredient();
                     })
                     if (recipe.getInputItems().get(index).ignoreConsume()) {
-                        tooltip.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
+                        tooltip.add(Utils.literal("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
                     }
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreNbt()) {
-                        tooltip.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
+                        tooltip.add(Utils.literal("Ignores NBT.").withStyle(ChatFormatting.WHITE));
                     }
                     if (recipe.getInputItems().size() >= index) {
                         Ingredient i = recipe.getInputItems().get(index).get();
                         if (RecipeMap.isIngredientSpecial(i)) {
-                            tooltip.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
+                            tooltip.add(Utils.literal("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(Utils.literal(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
                         }
                     }
                 }
@@ -277,7 +275,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
                 if (recipe.getChances()[chanceIndex] < 100) {
-                    tooltip.add(new TextComponent("Chance: " + recipe.getChances()[chanceIndex] + "%").withStyle(ChatFormatting.WHITE));
+                    tooltip.add(Utils.literal("Chance: " + recipe.getChances()[chanceIndex] + "%").withStyle(ChatFormatting.WHITE));
                 }
             }
         }

@@ -37,6 +37,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -569,6 +570,14 @@ public class Utils {
 //
 //        return FluidRegistry.getRegisteredFluidIDs().get(fluid);
 //    }
+
+    public static MutableComponent translatable(String key, Object... objects){
+        return Utils.translatable(key, objects);
+    }
+
+    public static MutableComponent literal(String text){
+        return Utils.literal(text);
+    }
 
     /**
      * https://stackoverflow.com/a/1308407

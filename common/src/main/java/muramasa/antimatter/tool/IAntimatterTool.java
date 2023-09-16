@@ -22,7 +22,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -199,15 +198,15 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
         if (!getAntimatterToolType().isSimple())
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary", primary.getDisplayName().getString()));
+            tooltip.add(Utils.translatable("antimatter.tooltip.material_primary", primary.getDisplayName().getString()));
         if (secondary != NULL)
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary", secondary.getDisplayName().getString()));
+            tooltip.add(Utils.translatable("antimatter.tooltip.material_secondary", secondary.getDisplayName().getString()));
         DyeColor color = getDyeColor(stack);
         if (color != null){
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.dye_color", color.getName()));
+            tooltip.add(Utils.translatable("antimatter.tooltip.dye_color", color.getName()));
         }
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
+            tooltip.add(Utils.translatable("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();

@@ -14,8 +14,8 @@ import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -78,8 +78,8 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                         if (a.isEmpty()) return;
                         a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
                             Map<String, Object> o = recipe.builder.getFromResult(ing);
-                            b.add(new TextComponent("Properties:").withStyle(GOLD));
-                            o.forEach((k, v) -> b.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
+                            b.add(Utils.literal("Properties:").withStyle(GOLD));
+                            o.forEach((k, v) -> b.add(Utils.literal(k.substring(0, 1).toUpperCase() + k.substring(1)).append(Utils.literal(" - " + v.toString()))));
                         });
                     });
                     outputSlot.addIngredients(VanillaTypes.ITEM, Collections.singletonList(stack));*/
@@ -131,8 +131,8 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                         if (a.isEmpty()) return;
                         a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
                             Map<String, Object> o = recipe.builder.getFromResult(ing);
-                            b.add(new TextComponent("Properties: ").withStyle(GOLD));
-                            o.forEach((k, v) -> b.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
+                            b.add(Utils.literal("Properties: ").withStyle(GOLD));
+                            o.forEach((k, v) -> b.add(Utils.literal(k.substring(0, 1).toUpperCase() + k.substring(1)).append(Utils.literal(" - " + v.toString()))));
                         });
                     });
                     if (result.size() > 0) {
@@ -149,7 +149,7 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
     }
 
     private EntryIngredient ingredient(List<ItemStack> list, PropertyIngredient p){
-        List<EntryStack<ItemStack>> entries = list.stream().map(stack -> EntryStacks.of(stack).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> List.of(new TextComponent("Property: ").append(new TextComponent(p.getId().substring(0, 1).toUpperCase() + p.getId().substring(1)).withStyle(GOLD))))).toList();
+        List<EntryStack<ItemStack>> entries = list.stream().map(stack -> EntryStacks.of(stack).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> List.of(Utils.literal("Property: ").append(Utils.literal(p.getId().substring(0, 1).toUpperCase() + p.getId().substring(1)).withStyle(GOLD))))).toList();
         return EntryIngredient.of(entries);
     }
 }

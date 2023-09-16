@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -160,9 +159,9 @@ public class ClientEvents {
         if (flags.isAdvanced() && Ref.SHOW_ITEM_TAGS) {
             Collection<ResourceLocation> tags = Collections.emptyList(); //ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
-                tooltip.add(new TextComponent("Tags:").withStyle(ChatFormatting.DARK_GRAY));
+                tooltip.add(Utils.literal("Tags:").withStyle(ChatFormatting.DARK_GRAY));
                 for (ResourceLocation loc : tags) {
-                    tooltip.add(new TextComponent(loc.toString()).withStyle(ChatFormatting.DARK_GRAY));
+                    tooltip.add(Utils.literal(loc.toString()).withStyle(ChatFormatting.DARK_GRAY));
                 }
             }
         }

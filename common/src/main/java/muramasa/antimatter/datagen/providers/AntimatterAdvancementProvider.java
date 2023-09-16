@@ -3,12 +3,12 @@ package muramasa.antimatter.datagen.providers;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import org.apache.logging.log4j.LogManager;
@@ -82,11 +82,11 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
     }
 
     public static Advancement.Builder buildRootAdvancement(ItemLike provider, ResourceLocation backgroundPath, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.advancement().display(provider, new TranslatableComponent(title), new TranslatableComponent(desc), backgroundPath, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
+        return Advancement.Builder.advancement().display(provider, Utils.translatable(title), Utils.translatable(desc), backgroundPath, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static Advancement.Builder buildAdvancement(Advancement parent, ItemLike provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.advancement().parent(parent).display(provider, new TranslatableComponent(title), new TranslatableComponent(desc), null, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
+        return Advancement.Builder.advancement().parent(parent).display(provider, Utils.translatable(title), Utils.translatable(desc), null, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static String getLoc(String domain, String id) {

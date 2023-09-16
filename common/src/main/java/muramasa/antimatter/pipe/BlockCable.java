@@ -1,18 +1,17 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.pipe.BlockEntityCable;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.blockentity.pipe.BlockEntityCable;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -111,16 +110,16 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
-        tooltip.add(new TranslatableComponent("generic.amp").append(": ").append(new TextComponent(String.valueOf(this.type.getAmps(this.size))).withStyle(ChatFormatting.GREEN)));
-        tooltip.add(new TranslatableComponent("generic.voltage").append(": ").append(new TextComponent(String.valueOf(this.type.getTier().getVoltage())).withStyle(ChatFormatting.BLUE)));
-        tooltip.add(new TranslatableComponent("generic.loss").append(": ").append(new TextComponent(String.valueOf(this.type.getLoss())).withStyle(ChatFormatting.BLUE)));
+        tooltip.add(Utils.translatable("generic.amp").append(": ").append(Utils.literal(String.valueOf(this.type.getAmps(this.size))).withStyle(ChatFormatting.GREEN)));
+        tooltip.add(Utils.translatable("generic.voltage").append(": ").append(Utils.literal(String.valueOf(this.type.getTier().getVoltage())).withStyle(ChatFormatting.BLUE)));
+        tooltip.add(Utils.translatable("generic.loss").append(": ").append(Utils.literal(String.valueOf(this.type.getLoss())).withStyle(ChatFormatting.BLUE)));
 
         if (!Screen.hasShiftDown()) {
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(Utils.translatable("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
         } else {
-            tooltip.add(new TextComponent("----------"));
-            tooltip.add(new TranslatableComponent("antimatter.pipe.cable.info").withStyle(ChatFormatting.DARK_AQUA));
-            tooltip.add(new TextComponent("----------"));
+            tooltip.add(Utils.literal("----------"));
+            tooltip.add(Utils.translatable("antimatter.pipe.cable.info").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(Utils.literal("----------"));
         }
     }
 

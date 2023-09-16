@@ -3,12 +3,11 @@ package muramasa.antimatter.item;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -92,7 +91,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         ItemStack stack = player.getItemInHand(hand);
         if (!world.isClientSide() && player.isCrouching()) {
             boolean newMode = chargeModeSwitch(stack);
-            player.sendMessage(new TranslatableComponent(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUUID());
+            player.sendMessage(Utils.translatable(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUUID());
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.pass(stack);
@@ -122,10 +121,10 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         //TODO: Translateable
         if (reusable) {
-            tooltip.add(new TranslatableComponent("item.reusable"));
+            tooltip.add(Utils.translatable("item.reusable"));
         }
         long energy = TesseractCapUtils.getEnergyHandlerItem(stack).map(IGTNode::getEnergy).orElse(0L);
-        tooltip.add(new TranslatableComponent("item.charge").append(": ").append(new TextComponent(energy + "/" + cap).withStyle(energy == 0 ? ChatFormatting.RED : ChatFormatting.GREEN)).append(" (" + tier.getId().toUpperCase() + ")"));
+        tooltip.add(Utils.translatable("item.charge").append(": ").append(Utils.literal(energy + "/" + cap).withStyle(energy == 0 ? ChatFormatting.RED : ChatFormatting.GREEN)).append(" (" + tier.getId().toUpperCase() + ")"));
         super.appendHoverText(stack, worldIn, tooltip, flag);
     }
 

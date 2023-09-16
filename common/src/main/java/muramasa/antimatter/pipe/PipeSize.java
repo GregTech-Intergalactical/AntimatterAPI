@@ -1,8 +1,8 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Locale;
@@ -39,7 +39,7 @@ public enum PipeSize implements IAntimatterObject {
     }
 
     public Component getDisplayName() {
-        return new TranslatableComponent("pipe." + getId());
+        return Utils.translatable("pipe." + getId());
     }
 
     public int getCableThickness() {

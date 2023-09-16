@@ -2,8 +2,8 @@ package muramasa.antimatter.registration;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ public interface IItemBlockProvider {
     }
 
     default Component getDisplayName(ItemStack stack) {
-        return new TranslatableComponent(stack.getDescriptionId());
+        return Utils.translatable(stack.getDescriptionId());
     }
 
     default boolean generateItemBlock() {

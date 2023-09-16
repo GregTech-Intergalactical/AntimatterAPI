@@ -6,9 +6,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -19,7 +19,7 @@ public class PatternBuilder {
     
     private List<String[]> slices = new ObjectArrayList<>();
     private Object2ObjectMap<String, BlockInfo> elementLookup = new Object2ObjectOpenHashMap<>();
-    private Component description = new TranslatableComponent("");
+    private Component description = Utils.translatable("");
 
     public PatternBuilder of(String... slices) {
         this.slices.add(slices);
@@ -67,7 +67,7 @@ public class PatternBuilder {
     }
 
     public PatternBuilder description(String description) {
-        return this.description(new TranslatableComponent(description));
+        return this.description(Utils.translatable(description));
     }
 
     public PatternBuilder description(Component description) {

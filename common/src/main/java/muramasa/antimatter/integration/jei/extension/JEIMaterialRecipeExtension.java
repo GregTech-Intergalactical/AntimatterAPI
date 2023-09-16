@@ -14,7 +14,7 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategor
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
-import net.minecraft.network.chat.TextComponent;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
@@ -69,8 +69,8 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                     if (a.isEmpty()) return;
                     a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
                         Map<String, Object> o = recipe.builder.getFromResult(ing);
-                        b.add(new TextComponent("Properties:").withStyle(GOLD));
-                        o.forEach((k, v) -> b.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
+                        b.add(Utils.literal("Properties:").withStyle(GOLD));
+                        o.forEach((k, v) -> b.add(Utils.literal(k.substring(0, 1).toUpperCase() + k.substring(1)).append(Utils.literal(" - " + v.toString()))));
                     });
                 });
                 outputSlot.addIngredients(VanillaTypes.ITEM, Collections.singletonList(stack));
@@ -123,8 +123,8 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                     if (a.isEmpty()) return;
                     a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
                         Map<String, Object> o = recipe.builder.getFromResult(ing);
-                        b.add(new TextComponent("Properties: ").withStyle(GOLD));
-                        o.forEach((k, v) -> b.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
+                        b.add(Utils.literal("Properties: ").withStyle(GOLD));
+                        o.forEach((k, v) -> b.add(Utils.literal(k.substring(0, 1).toUpperCase() + k.substring(1)).append(Utils.literal(" - " + v.toString()))));
                     });
                 });
                 if (result.size() > 0) {
@@ -145,7 +145,7 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                         final int j = i;
                         slot.addTooltipCallback((a, b) -> {
                             if (recipe.getIngredients().get(j - 1) instanceof PropertyIngredient p) {
-                                b.add(new TextComponent("Property: ").append(new TextComponent(p.getId().substring(0, 1).toUpperCase() + p.getId().substring(1)).withStyle(GOLD)));
+                                b.add(Utils.literal("Property: ").append(Utils.literal(p.getId().substring(0, 1).toUpperCase() + p.getId().substring(1)).withStyle(GOLD)));
                             }
                         });
                     }
