@@ -15,8 +15,8 @@ public class CoverDebug extends BaseCover {
     }
 
     @Override
-    public void onTransfer(Object object, boolean inputSide, boolean simulate) {
-        if (this.handler.getTile().getLevel().isClientSide) return;
+    public boolean onTransfer(Object object, boolean inputSide, boolean simulate) {
+        if (this.handler.getTile().getLevel().isClientSide) return false;
         if (!simulate) {
             String fmt = "";
             if (object instanceof FluidHolder fluidHolder) {
@@ -26,6 +26,7 @@ public class CoverDebug extends BaseCover {
             }
             Antimatter.LOGGER.info(String.format("Transfer type: %s, data: %s, position: %s, side: %s", object.getClass().getSimpleName(), fmt, this.handler.getTile().getBlockPos().toString(), side));
         }
+        return false;
     }
 
     public boolean ticks() {

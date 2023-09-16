@@ -77,7 +77,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     @Override
     public Optional<ExtendedItemContainer> forSide(Direction side) {
         return Optional.of(new SidedCombinedInvWrapper(side, coverHandler.orElse(null), new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
-                                                                                                                  simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate)))));
+                                                                                                                  simulate) -> this.coverHandler.map(t -> t.onTransfer(stack, in, out, simulate)).orElse(false))));
     }
 
     @Override

@@ -23,8 +23,7 @@ public class PipeCoverHandler<T extends BlockEntityPipe<?>> extends CoverHandler
     }
 
 
-    public void onTransfer(Object obj, Direction from, Direction towards, boolean simulate) {
-        super.onTransfer(obj, from, towards, simulate);
-        this.get(towards).onTransfer(obj, false, simulate);
+    public boolean onTransfer(Object obj, Direction from, Direction towards, boolean simulate) {
+        return super.onTransfer(obj, from, towards, simulate) || this.get(towards).onTransfer(obj, false, simulate);
     }
 }

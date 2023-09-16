@@ -61,8 +61,8 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         // NOOP
     }
 
-    default void onTransfer(Object object, boolean inputSide, boolean simulate) {
-
+    default boolean onTransfer(Object object, boolean inputSide, boolean simulate) {
+        return false;
     }
 
     Direction side();
