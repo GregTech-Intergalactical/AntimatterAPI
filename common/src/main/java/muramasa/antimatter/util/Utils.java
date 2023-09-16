@@ -38,6 +38,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -572,11 +574,11 @@ public class Utils {
 //    }
 
     public static MutableComponent translatable(String key, Object... objects){
-        return Utils.translatable(key, objects);
+        return new TranslatableComponent(key, objects);
     }
 
     public static MutableComponent literal(String text){
-        return Utils.literal(text);
+        return new TextComponent(text);
     }
 
     /**
