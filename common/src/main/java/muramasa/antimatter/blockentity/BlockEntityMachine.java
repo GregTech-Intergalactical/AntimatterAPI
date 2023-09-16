@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile;
+package muramasa.antimatter.blockentity;
 
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.SoundHelper;
@@ -34,7 +35,6 @@ import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Cache;
 import muramasa.antimatter.util.Utils;
@@ -79,7 +79,7 @@ import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraft.world.level.block.Blocks.AIR;
 
-public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements MenuProvider, IMachineHandler, IGuiHandler {
+public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEntityTickable<T> implements MenuProvider, IMachineHandler, IGuiHandler {
 
     /**
      * Open container. Allows for better syncing
@@ -109,7 +109,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
     public LazyOptional<MachineEnergyHandler<U>> energyHandler;
     public LazyOptional<MachineRecipeHandler<U>> recipeHandler;
-    public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
+    public LazyOptional<MachineCoverHandler<BlockEntityMachine>> coverHandler;*/
 
     public Holder<ExtendedItemContainer, MachineItemHandler<T>> itemHandler = new Holder<>(ExtendedItemContainer.class, dispatch);
     public Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler = new Holder<>(FluidContainer.class, dispatch);
@@ -124,7 +124,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public LazyLoadedValue<DynamicTexturer<Machine<?>, DynamicKey>> multiTexturer;
     public Cache<List<Caches.LiquidCache>> liquidCache;
 
-    public TileEntityMachine(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type.getTileType(), pos, state);
         this.tier = ((BlockMachine) state.getBlock()).getTier();
         this.type = type;
@@ -548,7 +548,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public Function<Direction, Texture> getMultiTexture(){
         if (this.getMachineType() instanceof BasicMultiMachine<?>) return null;
-        TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
+        BlockEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, BlockEntityBasicMultiMachine.class);
         if (mTile != null) {
             return dir -> mTile.getTextureForHatches(dir, worldPosition);
         }

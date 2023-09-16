@@ -3,14 +3,14 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.BlockEntityMachine;
+import muramasa.antimatter.tile.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 
-public class MultiMachineRecipeHandler<T extends TileEntityMultiMachine> extends MachineRecipeHandler<T> {
+public class MultiMachineRecipeHandler<T extends BlockEntityMultiMachine> extends MachineRecipeHandler<T> {
 
-    public MultiMachineRecipeHandler(TileEntityMachine tile) {
+    public MultiMachineRecipeHandler(BlockEntityMachine tile) {
         super((T) tile);
     }
 

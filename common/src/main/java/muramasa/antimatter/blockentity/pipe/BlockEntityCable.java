@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.pipe;
+package muramasa.antimatter.blockentity.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
@@ -25,11 +25,11 @@ import tesseract.api.gt.IGTCable;
 
 import java.util.Optional;
 
-public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
+public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
     private long holder;
 
-    public TileEntityCable(T type,BlockPos pos, BlockState state) {
+    public BlockEntityCable(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         pipeCapHolder.set(() -> this);
     }

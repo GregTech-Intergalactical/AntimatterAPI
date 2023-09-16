@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile;
+package muramasa.antimatter.blockentity;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
@@ -8,7 +8,7 @@ import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,34 +26,34 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock> {
+public class BlockEntityFakeBlock extends BlockEntityTickable<BlockEntityFakeBlock> {
 
-    private TileEntityBasicMultiMachine<?> controller = null;
+    private BlockEntityBasicMultiMachine<?> controller = null;
     public Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
     private BlockPos controllerPos = null;
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
-    public TileEntityFakeBlock(BlockPos pos, BlockState state) {
+    public BlockEntityFakeBlock(BlockPos pos, BlockState state) {
         super(BlockFakeTile.TYPE, pos, state);
         coverTexturer = new Object2ObjectOpenHashMap<>();
     }
 
-    public void setController(TileEntityBasicMultiMachine<?> controller) {
+    public void setController(BlockEntityBasicMultiMachine<?> controller) {
         this.controller = controller;
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
     }
 
-    public TileEntityBasicMultiMachine<?> getController() {
+    public BlockEntityBasicMultiMachine<?> getController() {
         return controller;
     }
 
     @Override
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         if (controllerPos != null){
-            if (level.getBlockEntity(pos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+            if (level.getBlockEntity(pos) instanceof BlockEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
                 setController(basicMultiMachine);
             }
             controllerPos = null;
@@ -74,13 +74,13 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
         return ret;
     }
 
-    public void removeController(TileEntityBasicMultiMachine<?> controller) {
+    public void removeController(BlockEntityBasicMultiMachine<?> controller) {
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         this.controller = null;
     }
 
-    public TileEntityFakeBlock setCovers(Map<Direction, CoverFactory> covers) {
+    public BlockEntityFakeBlock setCovers(Map<Direction, CoverFactory> covers) {
         ICoverHandler<?> handler = ICoverHandler.empty(this);
         for (Map.Entry<Direction, CoverFactory> entry : covers.entrySet()) {
             Direction dir = entry.getKey();
@@ -96,7 +96,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
         return this;
     }
 
-    public TileEntityFakeBlock setFacing(Direction facing) {
+    public BlockEntityFakeBlock setFacing(Direction facing) {
         this.facing = facing;
         setChanged();
         return this;

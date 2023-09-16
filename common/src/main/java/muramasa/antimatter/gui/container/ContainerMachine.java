@@ -3,12 +3,12 @@ package muramasa.antimatter.gui.container;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.slot.AbstractSlot;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
+public abstract class ContainerMachine<T extends BlockEntityMachine<T>> extends AntimatterContainer {
 
     protected final T tile;
     public final Map<SlotType<?>, List<Slot>> slotMap = new Object2ObjectOpenHashMap<>();
@@ -50,7 +50,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
         super.broadcastChanges();
     }
 
-    protected void addSlots(TileEntityMachine<?> tile) {
+    protected void addSlots(BlockEntityMachine<?> tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
         for (SlotData<?> slot : tile.getMachineType().getSlots(tile.getMachineTier())) {
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);

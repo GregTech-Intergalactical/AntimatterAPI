@@ -2,9 +2,9 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.capability.Dispatch;
-import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -20,9 +20,9 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     public final int temperaturesize;
     protected int currentHeat;
 
-    public final TileEntityBase<?> tile;
+    public final BlockEntityBase<?> tile;
 
-    public DefaultHeatHandler(TileEntityBase<?> tile, int heatCap, int temperatureSize) {
+    public DefaultHeatHandler(BlockEntityBase<?> tile, int heatCap, int temperatureSize) {
         this.heatCap = heatCap;
         this.tile = tile;
         this.temperaturesize = temperatureSize;
@@ -85,7 +85,7 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
 
     @Override
     public Optional<? extends IHeatHandler> forSide(Direction side) {
-        if (tile instanceof TileEntityMachine<?> m) {
+        if (tile instanceof BlockEntityMachine<?> m) {
             if (side == null) return Optional.of(this);
             if (m.coverHandler.map(t -> t.get(side).getFactory() == Data.COVERHEAT).orElse(false)) {
                 return Optional.of(this);

@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.single;
+package muramasa.antimatter.blockentity.single;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.EnergyHandler;
@@ -12,7 +12,7 @@ import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,9 +23,9 @@ import java.util.List;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
-public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> extends TileEntityMachine<T> implements IInfoRenderer<TileEntityInfiniteStorage.InfiniteStorageWidget> {
+public class BlockEntityInfiniteStorage<T extends BlockEntityInfiniteStorage<T>> extends BlockEntityMachine<T> implements IInfoRenderer<BlockEntityInfiniteStorage.InfiniteStorageWidget> {
 
-    public TileEntityInfiniteStorage(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityInfiniteStorage(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, Long.MAX_VALUE, Long.MAX_VALUE, 0, 32, 0, 4) {
 
@@ -46,7 +46,7 @@ public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> e
         });
         // TODO
         /*
-        interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
+        interactHandler.setup((tile, tag) -> new MachineInteractHandler<BlockEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
                 if ((type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && hand == Hand.MAIN_HAND) {
@@ -180,7 +180,7 @@ public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> e
         @Override
         public void init() {
             super.init();
-            TileEntityInfiniteStorage<?> m = (TileEntityInfiniteStorage<?>) gui.handler;
+            BlockEntityInfiniteStorage<?> m = (BlockEntityInfiniteStorage<?>) gui.handler;
             gui.syncInt(() -> Math.toIntExact(m.energyHandler.map(EnergyHandler::getOutputAmperage).orElse(0L)), i -> amperage = i, SERVER_TO_CLIENT);
             gui.syncLong(() -> m.energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0L), i -> voltage = i, SERVER_TO_CLIENT);
         }

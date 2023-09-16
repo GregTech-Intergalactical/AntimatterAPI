@@ -7,6 +7,7 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.ModelUtils;
@@ -15,7 +16,6 @@ import muramasa.antimatter.client.VertexTransformer;
 import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.ListBakedModel;
 import muramasa.antimatter.client.baked.MachineBakedModel;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
+public class MachineTESR implements BlockEntityRenderer<BlockEntityMachine<?>> {
 
     protected final BlockEntityRendererProvider.Context context;
     public MachineTESR(BlockEntityRendererProvider.Context context) {
@@ -47,13 +47,13 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
 
     //Renders this tile as a TESR.
     @Override
-    public void render(@NotNull TileEntityMachine<?> tile, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int light, int overlay) {
+    public void render(@NotNull BlockEntityMachine<?> tile, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int light, int overlay) {
         if (tile.getMachineType().renderContainerLiquids()) {
             renderLiquids(tile, partialTicks, stack, buffer, light, overlay);
         }
     }
 
-    private void renderLiquids(@NotNull TileEntityMachine<?> tile, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int light, int overlay) {
+    private void renderLiquids(@NotNull BlockEntityMachine<?> tile, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int light, int overlay) {
         VertexConsumer builder = buffer.getBuffer(RenderType.cutout());
         long t = tile.getBlockState().getSeed(tile.getBlockPos());
        // net.minecraftforge.client.ForgeHooksClient.setRenderLayer(RenderType.cutout());
@@ -81,7 +81,7 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
         return new ListBakedModel(out);
     }
 
-    public static List<Caches.LiquidCache> buildLiquids(TileEntityMachine<?> tile) {
+    public static List<Caches.LiquidCache> buildLiquids(BlockEntityMachine<?> tile) {
         List<Caches.LiquidCache> ret = new ObjectArrayList<>();
         MachineFluidHandler<?> handler = tile.fluidHandler.map(t -> t).orElse(null);
         if (handler == null) return Collections.emptyList();

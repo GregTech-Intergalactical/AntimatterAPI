@@ -3,6 +3,8 @@ package muramasa.antimatter.pipe.types;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeItemBlock;
@@ -10,8 +12,6 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.RegistryType;
-import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,12 +28,12 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     public final String domain;
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
-    protected BlockEntityType<? extends TileEntityPipe<?>> tileType;
+    protected BlockEntityType<? extends BlockEntityPipe<?>> tileType;
     protected Map<PipeSize, Block> registeredBlocks;
 
-    private final TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> tileFunc;
+    private final BlockEntityBase.BlockEntitySupplier<BlockEntityPipe<?>, T> tileFunc;
 
-    public PipeType(String domain, Material material, TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> func) {
+    public PipeType(String domain, Material material, BlockEntityBase.BlockEntitySupplier<BlockEntityPipe<?>, T> func) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);

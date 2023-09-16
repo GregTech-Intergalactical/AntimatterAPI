@@ -2,6 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.machine.BlockMultiMachine;
@@ -9,7 +10,6 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -25,7 +25,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
 
     public BasicMultiMachine(String domain, String name) {
         super(domain, name);
-        setTile(TileEntityBasicMultiMachine::new);
+        setTile(BlockEntityBasicMultiMachine::new);
         setBlock(BlockMultiMachine::new);
         setItemBlockClass(() -> BlockMultiMachine.class);
         addFlags(MULTI, COVERABLE);

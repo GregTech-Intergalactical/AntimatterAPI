@@ -18,6 +18,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -25,7 +26,6 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.ToolUtils;
@@ -652,7 +652,7 @@ public class Utils {
     }
 
     public static boolean isForeignTile(@Nullable BlockEntity target) {
-        return target != null && !(target instanceof TileEntityBase);
+        return target != null && !(target instanceof BlockEntityBase);
     }
 
     @Nullable

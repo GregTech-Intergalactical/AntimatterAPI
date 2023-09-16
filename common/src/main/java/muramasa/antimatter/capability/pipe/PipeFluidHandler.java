@@ -1,11 +1,11 @@
 package muramasa.antimatter.capability.pipe;
 
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
+import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
 import muramasa.antimatter.capability.FluidHandler;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 
-public class PipeFluidHandler extends FluidHandler<TileEntityFluidPipe> {
-    public PipeFluidHandler(TileEntityFluidPipe tile, int capacity, int pressure, int inputCount, int outputCount) {
+public class PipeFluidHandler extends FluidHandler<BlockEntityFluidPipe> {
+    public PipeFluidHandler(BlockEntityFluidPipe tile, int capacity, int pressure, int inputCount, int outputCount) {
         super(tile, capacity, pressure, inputCount, outputCount);
     }
 

@@ -1,7 +1,7 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.blockentity.pipe.BlockEntityHeatPipe;
 import muramasa.antimatter.pipe.types.HeatPipe;
-import muramasa.antimatter.tile.pipe.TileEntityHeatPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,7 +21,7 @@ public class BlockHeatPipe<T extends HeatPipe<T>> extends BlockPipe<T> {
     public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
         if (!(entityIn instanceof LivingEntity)) return;
-        TileEntityHeatPipe<?> pipe = (TileEntityHeatPipe) worldIn.getBlockEntity(pos);
+        BlockEntityHeatPipe<?> pipe = (BlockEntityHeatPipe) worldIn.getBlockEntity(pos);
         int temp = pipe.getTemperature();
         if (temp > 50) {
             entityIn.hurt(DamageSource.GENERIC, Mth.clamp((temp-10)/2, 2, 20));

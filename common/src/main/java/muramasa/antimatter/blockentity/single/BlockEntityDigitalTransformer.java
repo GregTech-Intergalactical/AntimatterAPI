@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.single;
+package muramasa.antimatter.blockentity.single;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.GuiInstance;
@@ -18,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
-public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> implements IInfoRenderer<TileEntityDigitalTransformer.DigitalTransformerWidget> {
+public class BlockEntityDigitalTransformer<T extends BlockEntityDigitalTransformer<T>> extends BlockEntityTransformer<T> implements IInfoRenderer<BlockEntityDigitalTransformer.DigitalTransformerWidget> {
 
-    public TileEntityDigitalTransformer(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityDigitalTransformer(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state, 0, (v) -> (8192L + v * 64L));
     }
 
@@ -127,7 +127,7 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
         @Override
         public void init() {
             super.init();
-            TileEntityDigitalTransformer<?> m = (TileEntityDigitalTransformer<?>) gui.handler;
+            BlockEntityDigitalTransformer<?> m = (BlockEntityDigitalTransformer<?>) gui.handler;
             gui.syncInt(() -> m.amperage, i -> amperage = i, SERVER_TO_CLIENT);
             gui.syncLong(() -> m.voltage, i -> voltage = i, SERVER_TO_CLIENT);
         }

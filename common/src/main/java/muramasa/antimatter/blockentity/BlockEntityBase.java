@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile;
+package muramasa.antimatter.blockentity;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
@@ -14,11 +14,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockEntity {
+public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends BlockEntity {
 
     protected final Dispatch dispatch;
 
-    public TileEntityBase(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityBase(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         dispatch = new Dispatch();
     }

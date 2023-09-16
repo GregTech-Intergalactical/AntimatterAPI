@@ -1,7 +1,8 @@
-package muramasa.antimatter.tile.multi;
+package muramasa.antimatter.blockentity.multi;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
@@ -13,7 +14,6 @@ import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
@@ -28,13 +28,13 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
+public class BlockEntityMultiMachine<T extends BlockEntityMultiMachine<T>> extends BlockEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
 
     protected long EUt;
     protected List<IHeatHandler> heatHandlers = Collections.emptyList();
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
-    public TileEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         if (type.has(ITEM) || type.has(CELL)) {
             itemHandler.set(() -> new MultiMachineItemHandler<>((T) this));
@@ -253,7 +253,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     public void explodeMultiblock() {
         this.components.forEach((s, l) -> {
             l.forEach(c -> {
-                if (c.getTile() instanceof TileEntityMachine<?> machine){
+                if (c.getTile() instanceof BlockEntityMachine<?> machine){
                     Utils.createExplosion(this.level, machine.getBlockPos(), 6.0F, Explosion.BlockInteraction.DESTROY);
                 }
             });

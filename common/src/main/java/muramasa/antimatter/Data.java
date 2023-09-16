@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.*;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
@@ -16,9 +17,8 @@ import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.types.BasicMachine;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.tile.single.TileEntityInfiniteStorage;
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
+import muramasa.antimatter.blockentity.single.BlockEntityInfiniteStorage;
 import muramasa.antimatter.tool.enchantment.ElectricEnchantment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -68,11 +68,11 @@ public class Data {
     public static CoverFactory COVERENERGY = CoverFactory.builder(CoverEnergy::new).addTextures(new Texture(Ref.ID, "block/cover/energy")).build(Ref.ID, "energy");
 
 
-    public static MenuHandlerMachine<? extends TileEntityMachine, ? extends ContainerBasicMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_basic") {
+    public static MenuHandlerMachine<? extends BlockEntityMachine, ? extends ContainerBasicMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_basic") {
         @Nullable
         @Override
         public ContainerMachine<?> getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
-            return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine<?>) tile, playerInv, this, windowId) : null;
+            return tile instanceof BlockEntityMachine ? new ContainerBasicMachine((BlockEntityMachine<?>) tile, playerInv, this, windowId) : null;
         }
     };
 
@@ -85,10 +85,10 @@ public class Data {
         }
     };
 
-    public static MenuHandlerMachine<? extends TileEntityMultiMachine, ? extends ContainerMultiMachine> MULTI_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_multi") {
+    public static MenuHandlerMachine<? extends BlockEntityMultiMachine, ? extends ContainerMultiMachine> MULTI_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_multi") {
         @Override
         public ContainerMultiMachine getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
-            return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine<?>) tile, playerInv, this, windowId) : null;
+            return tile instanceof BlockEntityMultiMachine ? new ContainerMultiMachine((BlockEntityMultiMachine<?>) tile, playerInv, this, windowId) : null;
         }
 
         @Override
@@ -97,7 +97,7 @@ public class Data {
         }
     };
 
-    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setAllowVerticalFacing(true).allowFrontIO().setTile(TileEntityInfiniteStorage::new)
+    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setAllowVerticalFacing(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
             .noCovers();
 
     public static void init(Side side) {

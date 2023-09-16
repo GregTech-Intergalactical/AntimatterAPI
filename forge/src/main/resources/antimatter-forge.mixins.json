@@ -11,9 +11,9 @@
     "MaterialSerializerMixin",
     "PropertyIngredientMixin",
     "RecipeIngredientMixin",
-    "TileEntityFakeBlockMixin",
-    "TileEntityMachineMixin",
-    "TileEntityPipeMixin"
+    "BlockEntityFakeBlockMixin",
+    "BlockEntityMachineMixin",
+    "BlockEntityPipeMixin"
   ],
   "client" : [
     "client.IAntimatterBakedModelMixin",

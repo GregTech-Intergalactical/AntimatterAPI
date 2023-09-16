@@ -2,9 +2,9 @@ package muramasa.antimatter.integration.top;
 
 import mcjty.theoneprobe.api.*;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +25,7 @@ public class RecipeInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile instanceof TileEntityMachine machine) {
+            if (tile instanceof BlockEntityMachine machine) {
                 if(!machine.recipeHandler.isPresent()) {
                     return;
                 }

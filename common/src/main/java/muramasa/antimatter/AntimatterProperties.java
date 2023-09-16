@@ -6,7 +6,7 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine.DynamicKey;
+import muramasa.antimatter.blockentity.BlockEntityMachine.DynamicKey;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.Nullable;
 

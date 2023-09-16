@@ -3,6 +3,8 @@ package muramasa.antimatter.machine;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
@@ -17,8 +19,6 @@ import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -129,7 +129,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
         if (!worldIn.isClientSide) {
-            TileEntityMachine<?> tile = (TileEntityMachine<?>) worldIn.getBlockEntity(pos);
+            BlockEntityMachine<?> tile = (BlockEntityMachine<?>) worldIn.getBlockEntity(pos);
             if (tile != null) {
                 tile.onBlockUpdate(fromPos);
             }
@@ -141,7 +141,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         InteractionResult ty; //= onBlockActivatedBoth(state, world, pos, player, hand, hit);
-        TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getBlockEntity(pos);
+        BlockEntityMachine<?> tile = (BlockEntityMachine<?>) world.getBlockEntity(pos);
         if (tile != null) {
             ItemStack stack = player.getItemInHand(hand);
             AntimatterToolType type = Utils.getToolType(player);
@@ -236,7 +236,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         List<ItemStack> list = super.getDrops(state, builder);
         BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        if (tileentity instanceof TileEntityMachine<?> machine){
+        if (tileentity instanceof BlockEntityMachine<?> machine){
             machine.onDrop(state, builder, list);
             machine.itemHandler.ifPresent(t -> list.addAll(t.getAllItems()));
             machine.coverHandler.ifPresent(t -> list.addAll(t.getDrops()));
@@ -248,7 +248,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(world, pos, state, placer, stack);
         BlockEntity tileEntity = world.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityMachine<?> machine){
+        if (tileEntity instanceof BlockEntityMachine<?> machine){
             machine.onPlacedBy(world, pos, state, placer, stack);
         }
     }
@@ -325,8 +325,8 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
         BlockEntity entity = blockAccess.getBlockEntity(pos);
-        if (entity instanceof TileEntityMachine) {
-            TileEntityMachine<?> machine = (TileEntityMachine<?>) entity;
+        if (entity instanceof BlockEntityMachine) {
+            BlockEntityMachine<?> machine = (BlockEntityMachine<?>) entity;
             return machine.getWeakRedstonePower(side);
         }
         return super.getSignal(blockState, blockAccess, pos, side);
@@ -335,8 +335,8 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public int getDirectSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
         BlockEntity entity = blockAccess.getBlockEntity(pos);
-        if (entity instanceof TileEntityMachine) {
-            TileEntityMachine<?> machine = (TileEntityMachine<?>) entity;
+        if (entity instanceof BlockEntityMachine) {
+            BlockEntityMachine<?> machine = (BlockEntityMachine<?>) entity;
             return machine.getStrongRedstonePower(side);
         }
         return super.getDirectSignal(blockState, blockAccess, pos, side);
@@ -345,7 +345,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        TileEntityMachine<?> machine = (TileEntityMachine) getType().getTileType().create(pos, state);
+        BlockEntityMachine<?> machine = (BlockEntityMachine) getType().getTileType().create(pos, state);
         return machine;
     }
 
@@ -353,14 +353,14 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide() && !getType().canClientTick()) return null;
-        return TileEntityTickable::commonTick;
+        return BlockEntityTickable::commonTick;
     }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
         if (!type.isAmbientTicking()) return;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof TileEntityMachine<?> machine){
+        if (be instanceof BlockEntityMachine<?> machine){
             machine.animateTick(state, level, pos, random);
         }
     }

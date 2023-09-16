@@ -1,14 +1,14 @@
 package muramasa.antimatter.client.baked;
 
 import com.google.common.collect.Sets;
+import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.mixin.client.ChunkReaderAccessor;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityFakeBlock;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -49,7 +49,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
     @Override
     public TextureAtlasSprite getParticleIcon(BlockAndTintGetter getter, BlockPos pos) {
-        if (!(getter.getBlockEntity(pos) instanceof TileEntityFakeBlock fakeBlock)) return getParticleIcon();
+        if (!(getter.getBlockEntity(pos) instanceof BlockEntityFakeBlock fakeBlock)) return getParticleIcon();
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fakeBlock.getState());
         return model.getParticleIcon();
     }
@@ -58,7 +58,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, BlockPos pos)
     {
         BlockEntity tile = level.getBlockEntity(pos);
-        if (!(tile instanceof TileEntityFakeBlock fake) || fake.getState() == null) {
+        if (!(tile instanceof BlockEntityFakeBlock fake) || fake.getState() == null) {
             return Collections.emptyList();
         }
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
@@ -67,7 +67,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         Collection<Material> mats = m.getMaterials(ModelUtils.getDefaultModelGetter(), Sets.newLinkedHashSet());
         Material first = mats.iterator().next();
         BlockState cState = Blocks.AIR.defaultBlockState();
-        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(getWorld(level), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
+        BlockEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(getWorld(level), fake.getBlockPos(), BlockEntityBasicMultiMachine.class);
         if (machine != null) {
             cState = machine.getBlockState();
         }

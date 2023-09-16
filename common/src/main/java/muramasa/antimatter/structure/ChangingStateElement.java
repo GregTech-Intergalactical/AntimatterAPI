@@ -2,7 +2,7 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.tile.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -32,7 +32,7 @@ public class ChangingStateElement extends StructureElement {
     }
 
     @Override
-    public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
+    public boolean evaluate(BlockEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
         BlockState state = machine.getLevel().getBlockState(pos);
         IBlockStatePredicate pred = machine.getMachineState() == MachineState.INVALID_STRUCTURE ? regular : built;
         if (pred.evaluate(machine.getLevel(), pos, machine.getLevel().getBlockState(pos))) {
@@ -43,7 +43,7 @@ public class ChangingStateElement extends StructureElement {
     }
 
     @Override
-    public void onBuild(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
+    public void onBuild(BlockEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onBuild(machine, pos, result, count);
         if (count > 1) return;
         Level world = machine.getLevel();
@@ -52,7 +52,7 @@ public class ChangingStateElement extends StructureElement {
     }
 
     @Override
-    public void onRemove(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
+    public void onRemove(BlockEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onRemove(machine, pos, result, count);
         if (count == 0) {
             Level world = machine.getLevel();
@@ -66,7 +66,7 @@ public class ChangingStateElement extends StructureElement {
     }
 
     @Override
-    public void onStateChange(TileEntityBasicMultiMachine<?> machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
+    public void onStateChange(BlockEntityBasicMultiMachine<?> machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
         super.onStateChange(machine, newState, pos, result, count);
         Level world = machine.getLevel();
         BlockState bs = builder.apply(newState, world.getBlockState(pos));

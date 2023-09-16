@@ -1,10 +1,10 @@
 package muramasa.antimatter.mixin.forge;
 
+import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
+import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.forge.duck.IFakeTileCap;
-import muramasa.antimatter.tile.TileEntityFakeBlock;
-import muramasa.antimatter.tile.TileEntityTickable;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,14 +18,14 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Map;
 
-@Mixin(TileEntityFakeBlock.class)
-public class TileEntityFakeBlockMixin extends TileEntityTickable<TileEntityFakeBlock> {
+@Mixin(BlockEntityFakeBlock.class)
+public class BlockEntityFakeBlockMixin extends BlockEntityTickable<BlockEntityFakeBlock> {
     @Shadow
-    private TileEntityBasicMultiMachine<?> controller = null;
+    private BlockEntityBasicMultiMachine<?> controller = null;
     @Shadow
     public Map<Direction, ICover> covers;
 
-    public TileEntityFakeBlockMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityFakeBlockMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 

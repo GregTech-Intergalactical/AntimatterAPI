@@ -5,6 +5,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
@@ -15,8 +16,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.*;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.AntimatterPreLaunchUtil;
 import muramasa.antimatter.util.NonNullSupplier;
@@ -445,12 +445,12 @@ public final class AntimatterAPI {
     }
 
     @ExpectPlatform
-    public static void registerTransferApi(BlockEntityType<? extends TileEntityMachine<?>> type){
+    public static void registerTransferApi(BlockEntityType<? extends BlockEntityMachine<?>> type){
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static void registerTransferApiPipe(BlockEntityType<? extends TileEntityPipe<?>> type){
+    public static void registerTransferApiPipe(BlockEntityType<? extends BlockEntityPipe<?>> type){
         throw new AssertionError();
     }
 

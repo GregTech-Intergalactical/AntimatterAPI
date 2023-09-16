@@ -4,13 +4,13 @@ import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.EmptyContainer;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.slot.*;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -87,8 +87,8 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
 
         @Override
         public boolean test(IGuiHandler iGuiHandler, ItemStack stack) {
-            if (iGuiHandler instanceof TileEntityMachine) {
-                return (((TileEntityMachine<?>) iGuiHandler).recipeHandler.map(rh -> rh.accepts(stack)).orElse(true));
+            if (iGuiHandler instanceof BlockEntityMachine) {
+                return (((BlockEntityMachine<?>) iGuiHandler).recipeHandler.map(rh -> rh.accepts(stack)).orElse(true));
             }
             return true;
         }

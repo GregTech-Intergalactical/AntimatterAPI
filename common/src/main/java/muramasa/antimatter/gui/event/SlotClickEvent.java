@@ -3,11 +3,11 @@ package muramasa.antimatter.gui.event;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -53,8 +53,8 @@ public class SlotClickEvent implements IGuiEvent {
     }
 
     private PlatformFluidHandler tryGetCap(IGuiHandler handler) {
-        if (handler instanceof TileEntityMachine) {
-            TileEntityMachine<?> machine = (TileEntityMachine<?>) handler;
+        if (handler instanceof BlockEntityMachine) {
+            BlockEntityMachine<?> machine = (BlockEntityMachine<?>) handler;
             return machine.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(null);
         }
         if (handler instanceof BlockEntity be) {

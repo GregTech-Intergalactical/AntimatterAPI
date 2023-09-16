@@ -8,7 +8,7 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
-import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -32,8 +32,8 @@ import java.util.stream.LongStream;
  */
 public class FluidTanks implements FluidContainer, FluidContainerHandler {
 
-    public static <T extends TileEntityBase<T> & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent,
-                                                                                    UnaryOperator<Builder<T>> builder) {
+    public static <T extends BlockEntityBase<T> & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent,
+                                                                                     UnaryOperator<Builder<T>> builder) {
         return builder.apply(new Builder<>(tile, contentEvent)).build();
     }
 
@@ -250,7 +250,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
         }
     }
 
-    public static class Builder<T extends TileEntityBase & IMachineHandler> {
+    public static class Builder<T extends BlockEntityBase & IMachineHandler> {
 
         private final T tile;
         private final List<FluidTank> tanks;

@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.pipe;
+package muramasa.antimatter.blockentity.pipe;
 
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;

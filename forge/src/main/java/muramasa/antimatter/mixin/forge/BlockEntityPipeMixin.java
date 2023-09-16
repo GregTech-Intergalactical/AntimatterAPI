@@ -3,13 +3,13 @@ package muramasa.antimatter.mixin.forge;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.forge.energy.ForgeEnergyContainer;
 import earth.terrarium.botarium.forge.fluid.ForgeFluidContainer;
+import muramasa.antimatter.blockentity.BlockEntityTickable;
+import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.tile.TileEntityTickable;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -35,8 +35,8 @@ import java.util.Optional;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-@Mixin(TileEntityPipe.class)
-public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEntityTickable<TileEntityPipe<T>> {
+@Mixin(BlockEntityPipe.class)
+public abstract class BlockEntityPipeMixin<T extends PipeType<T>> extends BlockEntityTickable<BlockEntityPipe<T>> {
     @Shadow
     protected Holder pipeCapHolder;
     @Shadow
@@ -50,14 +50,14 @@ public abstract class TileEntityPipeMixin<T extends PipeType<T>> extends TileEnt
 
     @Unique
     protected LazyOptional[] pipeCaps = new LazyOptional[7];
-    public TileEntityPipeMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityPipeMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
     @NotNull
     @Override
     public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction side) {
-        if (side == null && !(((Object)this) instanceof TileEntityFluidPipe<?>)) return LazyOptional.empty();
+        if (side == null && !(((Object)this) instanceof BlockEntityFluidPipe<?>)) return LazyOptional.empty();
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return LazyOptional.of(() -> coverHandler.get()).cast();
         if (side != null && !connects(side)) return LazyOptional.empty();
         if (!pipeCapHolder.isPresent()) return LazyOptional.empty();

@@ -4,13 +4,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -55,8 +55,8 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         if (context.getLevel().isClientSide) return super.useOn(context);
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (tile instanceof TileEntityBase) {
-            ((TileEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new TextComponent(s), context.getPlayer().getUUID()));
+        if (tile instanceof BlockEntityBase) {
+            ((BlockEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new TextComponent(s), context.getPlayer().getUUID()));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
             ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
@@ -80,16 +80,16 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
 //        TileEntity tile = Utils.getTile(world, pos);
 //        if (tile != null) {
 //            if (Data.DebugScanner.isEqual(stack)) {
-//                if (tile instanceof TileEntityMachine) {
-//                    if (tile instanceof TileEntityMultiMachine) {
+//                if (tile instanceof BlockEntityMachine) {
+//                    if (tile instanceof BlockEntityMultiMachine) {
 //                        if (!world.isRemote) {
-//                            if (!((TileEntityMultiMachine) tile).isStructureValid()) {
-//                                ((TileEntityMultiMachine) tile).checkStructure();
+//                            if (!((BlockEntityMultiMachine) tile).isStructureValid()) {
+//                                ((BlockEntityMultiMachine) tile).checkStructure();
 //                            }
 //                        }
-//                        ((TileEntityMultiMachine) tile).checkRecipe();
-//                    } else if (tile instanceof TileEntityHatch) {
-////                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
+//                        ((BlockEntityMultiMachine) tile).checkRecipe();
+//                    } else if (tile instanceof BlockEntityHatch) {
+////                        MachineFluidHandler handler = ((BlockEntityHatch) tile).getFluidHandler();
 ////                        if (handler != null) {
 ////                            System.out.println(handler.toString());
 ////                        }
@@ -100,8 +100,8 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
 //                        }
 //                        tile.markDirty();
 //                    }*/
-//                } else if (tile instanceof TileEntityPipe) {
-//                    player.sendMessage(new StringTextComponent("C: " + ((TileEntityPipe) tile).getConnections() + (((TileEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
+//                } else if (tile instanceof BlockEntityPipe) {
+//                    player.sendMessage(new StringTextComponent("C: " + ((BlockEntityPipe) tile).getConnections() + (((BlockEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
 //                } else if (tile instanceof TileEntityMaterial) {
 //                    if (!world.isRemote) {
 //                        TileEntityMaterial ore = (TileEntityMaterial) tile;

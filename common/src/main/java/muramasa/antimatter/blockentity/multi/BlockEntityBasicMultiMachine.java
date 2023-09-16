@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.multi;
+package muramasa.antimatter.blockentity.multi;
 
 import com.google.common.collect.Lists;
 import com.gtnewhorizon.structurelib.StructureLibAPI;
@@ -27,7 +27,7 @@ import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureHandle;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
@@ -51,7 +51,7 @@ import java.util.Set;
 /**
  * Allows a MultiMachine to handle GUI recipes, instead of using Hatches
  **/
-public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T>
+public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine<T>> extends BlockEntityMachine<T>
         implements IAlignment {
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
@@ -80,7 +80,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
 
-    public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         extendedFacing = ExtendedFacing.of(getFacing(state), Rotation.NORMAL, Flip.NONE);
     }
@@ -307,7 +307,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.onMachineEvent(event, data);
         if (event == MachineEvent.FLUIDS_OUTPUTTED || event == MachineEvent.ITEMS_OUTPUTTED) {
             components.values().forEach(l -> l.forEach(i -> {
-                if (i.getTile() instanceof TileEntityHatch<?> hatch) {
+                if (i.getTile() instanceof BlockEntityHatch<?> hatch) {
                     hatch.onMachineEvent(event, data);
                 }
             }));

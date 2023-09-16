@@ -3,8 +3,8 @@ package muramasa.antimatter.integration.top;
 import mcjty.theoneprobe.api.*;
 import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +28,7 @@ public class EnergyInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile instanceof TileEntityMachine machine) {
+            if (tile instanceof BlockEntityMachine machine) {
                 if(!machine.energyHandler.isPresent()) {
                     return;
                 }

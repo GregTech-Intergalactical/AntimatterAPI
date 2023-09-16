@@ -1,9 +1,9 @@
 package muramasa.antimatter.structure;
 
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
+import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.tile.TileEntityFakeBlock;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -23,7 +23,7 @@ import java.util.List;
  * as well as rendering possible covers on it. It also forwards capability calls
  * to the master controller.
  */
-public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implements IStructureElement<T> {
+public class FakeTileElement<T extends BlockEntityBasicMultiMachine<T>> implements IStructureElement<T> {
 
     private IBlockStatePredicate pred;
     private BlockState state;
@@ -51,7 +51,7 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
     public void onStructureSuccess(T machine, Level world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof TileEntityFakeBlock fakeBlock && StructureCache.refCount(world, pos) == 0){
+        if (be instanceof BlockEntityFakeBlock fakeBlock && StructureCache.refCount(world, pos) == 0){
             fakeBlock.setFacing(machine.getFacing()).setCovers(covers);
             fakeBlock.setController(machine);
         }
@@ -62,13 +62,13 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
         BlockPos pos = new BlockPos(x, y, z);
         if (world.isLoaded(pos)){
             BlockEntity be = world.getBlockEntity(pos);
-            if (be instanceof TileEntityFakeBlock fakeBlock){
+            if (be instanceof BlockEntityFakeBlock fakeBlock){
                 fakeBlock.setController(null);
             }
         }
     }
 
-    public void onInfoTooltip(List<Component> text, long count, TileEntityBasicMultiMachine<?> machine) {
+    public void onInfoTooltip(List<Component> text, long count, BlockEntityBasicMultiMachine<?> machine) {
         //super.onInfoTooltip(text, count, machine);
         text.add(new TextComponent("Element replaced with a TileEntity to allow input/output."));
     }
@@ -79,7 +79,7 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
         BlockState state = world.getBlockState(pos);
         if (pred.evaluate(machine.getLevel(), pos, state)) {
             BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof TileEntityFakeBlock) {
+            if (tile instanceof BlockEntityFakeBlock) {
                 return StructureCache.refCount(world, pos) == 0;
             }
             return false;

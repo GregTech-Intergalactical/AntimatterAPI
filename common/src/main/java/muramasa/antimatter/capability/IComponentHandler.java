@@ -1,9 +1,9 @@
 package muramasa.antimatter.capability;
 
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.TesseractCapUtils;
@@ -32,11 +32,11 @@ public interface IComponentHandler {
         return TesseractCapUtils.getHeatHandler(getTile(), null);
     }
 
-    void onStructureFormed(TileEntityMultiMachine<?> tile);
+    void onStructureFormed(BlockEntityMultiMachine<?> tile);
 
-    void onStructureInvalidated(TileEntityMultiMachine<?> tile);
+    void onStructureInvalidated(BlockEntityMultiMachine<?> tile);
 
     boolean hasLinkedController();
 
-    Collection<TileEntityMultiMachine<?>> getControllers();
+    Collection<BlockEntityMultiMachine<?>> getControllers();
 }

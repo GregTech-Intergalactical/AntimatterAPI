@@ -1,6 +1,6 @@
 package muramasa.antimatter.mixin.client;
 
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -14,8 +14,8 @@ public class TESRMixin {
 
     @Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
     private <E extends BlockEntity> void inject(E tile, CallbackInfoReturnable<BlockEntityRenderer<E>> ret) {
-        if (tile instanceof TileEntityMachine) {
-            TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
+        if (tile instanceof BlockEntityMachine) {
+            BlockEntityMachine<?> machine = (BlockEntityMachine<?>) tile;
             if (machine.getMachineType().renderAsTesr()) {
                 return;
             }

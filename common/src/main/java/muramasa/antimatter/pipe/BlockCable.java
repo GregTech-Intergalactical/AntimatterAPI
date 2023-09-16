@@ -4,7 +4,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.pipe.TileEntityCable;
+import muramasa.antimatter.blockentity.pipe.BlockEntityCable;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -83,7 +83,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         if (worldIn.isClientSide) return;
         if (this.insulated) return;
         if (entityIn instanceof LivingEntity entity) {
-            if (worldIn.getBlockEntity(pos) instanceof TileEntityCable cable) {
+            if (worldIn.getBlockEntity(pos) instanceof BlockEntityCable cable) {
                 if (TesseractGraphWrappers.GT_ENERGY.getController(worldIn, pos.asLong()) instanceof GTController c) {
                     if (c.cableIsActive.contains(pos.asLong())) {
                         entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());

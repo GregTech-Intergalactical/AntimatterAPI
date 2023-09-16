@@ -5,8 +5,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -118,7 +118,7 @@ public class StructureCache {
      * @return a nullable Tile Entity.
      */
     @Nullable
-    public static <T extends TileEntityBasicMultiMachine> T getAnyMulti(Level world, BlockPos pos, Class<T> clazz) {
+    public static <T extends BlockEntityBasicMultiMachine> T getAnyMulti(Level world, BlockPos pos, Class<T> clazz) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return null;
         LongSet list = entry.get(pos);
@@ -159,7 +159,7 @@ public class StructureCache {
 
     private static void refreshController(Level world, BlockPos controller, BlockPos at) {
         BlockEntity tile = world.getBlockEntity(controller);
-        if (tile instanceof TileEntityMachine<?> machine) machine.onBlockUpdate(at);
+        if (tile instanceof BlockEntityMachine<?> machine) machine.onBlockUpdate(at);
     }
 
     /**

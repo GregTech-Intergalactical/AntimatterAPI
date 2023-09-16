@@ -1,9 +1,9 @@
-package muramasa.antimatter.tile.single;
+package muramasa.antimatter.blockentity.single;
 
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,17 +21,17 @@ import java.util.function.LongFunction;
 
 import static muramasa.antimatter.data.AntimatterDefaultTools.SOFT_HAMMER;
 
-public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends TileEntityMachine<T> {
+public class BlockEntityTransformer<T extends BlockEntityTransformer<T>> extends BlockEntityMachine<T> {
 
     protected long voltage;
     protected int amperage;
     protected LongFunction<Long> capFunc;
 
-    public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps) {
+    public BlockEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps) {
         this(type, pos, state, amps, (v) -> (512L + v * 8L));
     }
 
-    public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps, LongFunction<Long> capFunc) {
+    public BlockEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps, LongFunction<Long> capFunc) {
         super(type, pos, state);
         this.amperage = amps;
         this.capFunc = capFunc;
@@ -48,7 +48,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
         });
         // FIXME
         /*
-        interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
+        interactHandler.setup((tile, tag) -> new MachineInteractHandler<BlockEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
                 if (type == HAMMER && hand == Hand.MAIN_HAND) {

@@ -1,11 +1,11 @@
 package muramasa.antimatter.integration.fabric.megane.provider;
 
 import lol.bai.megane.api.provider.ProgressProvider;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class MachineProgressProvider extends ProgressProvider<TileEntityMachine> {
+public class MachineProgressProvider extends ProgressProvider<BlockEntityMachine> {
     @Override
     public int getInputSlotCount() {
         return getCastedObject().itemHandler.map(i -> i.getInputHandler().getSlots()).orElse(0);
@@ -31,7 +31,7 @@ public class MachineProgressProvider extends ProgressProvider<TileEntityMachine>
         return getCastedObject().recipeHandler.map(r -> ((float)r.getCurrentProgress() / (float) r.getMaxProgress()) * 100).orElse(0f).intValue();
     }
 
-    TileEntityMachine<?> getCastedObject(){
-        return (TileEntityMachine<?>) getObject();
+    BlockEntityMachine<?> getCastedObject(){
+        return (BlockEntityMachine<?>) getObject();
     }
 }

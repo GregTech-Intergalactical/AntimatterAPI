@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.pipe;
+package muramasa.antimatter.blockentity.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
@@ -22,12 +22,12 @@ import tesseract.api.item.IItemPipe;
 
 import java.util.Optional;
 
-public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
+public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<T>
         implements IItemPipe, Dispatch.Sided<ExtendedItemContainer>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
 
     private int holder;
 
-    public TileEntityItemPipe(T type, BlockPos pos, BlockState state) {
+    public BlockEntityItemPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         pipeCapHolder.set(() -> this);
         this.holder = 0;

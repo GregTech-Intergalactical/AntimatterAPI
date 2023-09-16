@@ -1,15 +1,15 @@
 package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 
 public class MultiMachine extends BasicMultiMachine<MultiMachine> {
 
     public MultiMachine(String domain, String name) {
         super(domain, name);
-        setTile(TileEntityMultiMachine::new);
+        setTile(BlockEntityMultiMachine::new);
         setGUI(Data.MULTI_MENU_HANDLER);
         covers((CoverFactory[]) null);
     }
@@ -18,7 +18,7 @@ public class MultiMachine extends BasicMultiMachine<MultiMachine> {
     protected void setupGui() {
         super.setupGui();
         addGuiCallback(t -> {
-            TileEntityMultiMachine<?> machine = (TileEntityMultiMachine<?>) t.handler;
+            BlockEntityMultiMachine<?> machine = (BlockEntityMultiMachine<?>) t.handler;
             WidgetSupplier wid = machine.getInfoWidget();
             if (wid != null) t.addWidget(wid);
         });

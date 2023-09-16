@@ -1,7 +1,7 @@
 package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.tile.single.TileEntityGenerator;
+import muramasa.antimatter.blockentity.single.BlockEntityGenerator;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
@@ -9,7 +9,7 @@ public class GeneratorMachine extends Machine<GeneratorMachine> {
     public GeneratorMachine(String domain, String id) {
         super(domain, id);
         addFlags(BASIC, ENERGY, COVERABLE, GENERATOR);
-        setTile(TileEntityGenerator::new);
+        setTile(BlockEntityGenerator::new);
         setGUI(Data.BASIC_MENU_HANDLER);
         noCovers();
         setAllowVerticalFacing(true);

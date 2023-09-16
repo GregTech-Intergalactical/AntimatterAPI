@@ -1,15 +1,15 @@
 package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 // TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
-public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMachine<T>> extends AntimatterContainerScreen<U> implements MenuAccess<U> {
+public class ScreenMachine<T extends BlockEntityMachine<T>, U extends ContainerMachine<T>> extends AntimatterContainerScreen<U> implements MenuAccess<U> {
 
     protected U container;
     protected String name;

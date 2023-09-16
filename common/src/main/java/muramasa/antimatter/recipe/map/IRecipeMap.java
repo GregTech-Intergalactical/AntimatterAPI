@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe.map;
 
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -12,7 +13,6 @@ import muramasa.antimatter.integration.jeirei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
@@ -54,7 +54,7 @@ public interface IRecipeMap extends ISharedAntimatterObject {
         return null;
     }
 
-    default <T extends TileEntityMachine<T>> IRecipe find(Holder<ExtendedItemContainer, MachineItemHandler<T>> itemHandler, Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler, Tier tier, Predicate<IRecipe> validateRecipe) {
+    default <T extends BlockEntityMachine<T>> IRecipe find(Holder<ExtendedItemContainer, MachineItemHandler<T>> itemHandler, Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler, Tier tier, Predicate<IRecipe> validateRecipe) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), tier, validateRecipe);
     }

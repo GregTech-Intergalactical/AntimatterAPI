@@ -5,7 +5,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.tile.pipe.TileEntityCable;
+import muramasa.antimatter.blockentity.pipe.BlockEntityCable;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Set;
@@ -18,7 +18,7 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
     protected int[] amps;
 
     public Cable(String domain, Material material, int loss, Tier tier) {
-        super(domain, material, TileEntityCable::new);
+        super(domain, material, BlockEntityCable::new);
         this.loss = loss;
         this.tier = tier;
         material.flags(MaterialTags.CABLE);

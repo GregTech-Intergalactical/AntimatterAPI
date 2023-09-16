@@ -1,13 +1,13 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 
 import java.util.Arrays;
 
-public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> extends MachineEnergyHandler<T> {
+public class MultiMachineEnergyHandler<T extends BlockEntityMultiMachine<T>> extends MachineEnergyHandler<T> {
 
     protected MachineEnergyHandler<?>[] inputs;//= new IEnergyHandler[0];
     protected MachineEnergyHandler<?>[] outputs; //= new IEnergyHandler[0];

@@ -7,7 +7,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 
-public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler<?>> {
+public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler<?>> {
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         Arrays.stream(Ref.DIRS).forEach(d -> {

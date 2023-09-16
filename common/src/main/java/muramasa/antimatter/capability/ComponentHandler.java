@@ -1,26 +1,26 @@
 package muramasa.antimatter.capability;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-public class ComponentHandler<T extends TileEntityBase<T>> implements IComponentHandler {
+public class ComponentHandler<T extends BlockEntityBase<T>> implements IComponentHandler {
 
     protected String componentId;
     protected String idForHandlers;
     protected T componentTile;
 
-    protected Set<TileEntityMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
+    protected Set<BlockEntityMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
 
     public ComponentHandler(String componentId, String idForHandlers, T componentTile) {
         this.componentId = componentId;
@@ -52,28 +52,28 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
     @NotNull
     @Override
     public Optional<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine<?> machine ? machine.itemHandler.map(h -> h) : Optional.empty();
+        return componentTile instanceof BlockEntityMachine<?> machine ? machine.itemHandler.map(h -> h) : Optional.empty();
     }
 
     @NotNull
     @Override
     public Optional<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine<?> machine ?  machine.fluidHandler.map(f -> f) : Optional.empty();
+        return componentTile instanceof BlockEntityMachine<?> machine ?  machine.fluidHandler.map(f -> f) : Optional.empty();
     }
 
     @NotNull
     @Override
     public Optional<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine<?> machine ? machine.energyHandler.map(e -> e) : Optional.empty();
+        return componentTile instanceof BlockEntityMachine<?> machine ? machine.energyHandler.map(e -> e) : Optional.empty();
     }
 
     @Override
-    public void onStructureFormed(@NotNull TileEntityMultiMachine<?> controllerTile) {
+    public void onStructureFormed(@NotNull BlockEntityMultiMachine<?> controllerTile) {
         this.controllers.add(controllerTile);
     }
 
     @Override
-    public void onStructureInvalidated(@NotNull TileEntityMultiMachine<?> controllerTile) {
+    public void onStructureInvalidated(@NotNull BlockEntityMultiMachine<?> controllerTile) {
         this.controllers.remove(controllerTile);
     }
 
@@ -84,7 +84,7 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
 
     @NotNull
     @Override
-    public Collection<TileEntityMultiMachine<?>> getControllers() {
+    public Collection<BlockEntityMultiMachine<?>> getControllers() {
         return controllers;
     }
 }

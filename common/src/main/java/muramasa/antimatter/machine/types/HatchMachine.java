@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.widget.TankIconWidget;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.tile.multi.TileEntityHatch;
+import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -18,7 +18,7 @@ public class HatchMachine extends Machine<HatchMachine> {
     public HatchMachine(String domain, String id, CoverFactory cover) {
         super(domain, id);
         idForHandlers = id.replace("hatch_", "").replace("_hatch", "");
-        setTile(TileEntityHatch::new);
+        setTile(BlockEntityHatch::new);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);

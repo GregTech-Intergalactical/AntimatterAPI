@@ -2,13 +2,13 @@ package muramasa.antimatter.common.event;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
@@ -62,8 +62,8 @@ public class CommonEvents {
         if (placedOff.getBlock() instanceof BlockPipe && !(placedBlock.getBlock() instanceof BlockPipe)){
             if (entity instanceof Player && !entity.isCrouching()){
                 BlockEntity pipe = world.getBlockEntity(pos.relative(entity.getDirection()));
-                if (pipe instanceof TileEntityPipe && placedBlock.getBlock() instanceof EntityBlock){
-                    ((TileEntityPipe<?>)pipe).setConnection(entity.getDirection().getOpposite());
+                if (pipe instanceof BlockEntityPipe && placedBlock.getBlock() instanceof EntityBlock){
+                    ((BlockEntityPipe<?>)pipe).setConnection(entity.getDirection().getOpposite());
                 }
             }
         }

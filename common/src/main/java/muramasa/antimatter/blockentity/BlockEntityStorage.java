@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile;
+package muramasa.antimatter.blockentity;
 
 import it.unimi.dsi.fastutil.Pair;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
@@ -12,9 +12,9 @@ import tesseract.api.gt.IGTNode;
 
 import java.util.List;
 
-public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends TileEntityMachine<T> {
+public abstract class BlockEntityStorage<T extends BlockEntityStorage<T>> extends BlockEntityMachine<T> {
 
-    public TileEntityStorage(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityStorage(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
 
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1,0) {

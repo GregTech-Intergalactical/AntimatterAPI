@@ -4,8 +4,8 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.*;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
@@ -14,7 +14,7 @@ public class BasicMachine extends Machine<BasicMachine> {
     public BasicMachine(String domain, String id) {
         super(domain, id);
         addFlags(BASIC, ENERGY, COVERABLE);
-        setTile(TileEntityMachine::new);
+        setTile(BlockEntityMachine::new);
         setGUI(Data.BASIC_MENU_HANDLER);
     }
 
@@ -28,10 +28,10 @@ public class BasicMachine extends Machine<BasicMachine> {
                         .addWidget(MachineStateWidget.build());
             }
             if ((has(ITEM) || has(FLUID)))
-                t.addWidget(IOWidget.build(9, 63).onlyIf(u -> u.handler instanceof TileEntityMachine<?> machine &&
+                t.addWidget(IOWidget.build(9, 63).onlyIf(u -> u.handler instanceof BlockEntityMachine<?> machine &&
                         machine.getOutputFacing() != null &&
                         machine.coverHandler.map(c -> c.getOutputCover() instanceof CoverOutput).orElse(false) &&
-                        !(u.handler instanceof TileEntityMultiMachine<?>)));
+                        !(u.handler instanceof BlockEntityMultiMachine<?>)));
         });
     }
 }

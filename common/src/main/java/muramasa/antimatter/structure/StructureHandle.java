@@ -1,7 +1,7 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.Dir;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.Direction;
@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
+public class StructureHandle<T extends BlockEntityBasicMultiMachine<T>> {
     private final boolean debug = false;
-    private final TileEntityBasicMultiMachine<?> source;
+    private final BlockEntityBasicMultiMachine<?> source;
     private final List<int3> offsets;
     private final Consumer<T> onRemoval;
     private final Consumer<T> onAdd;
@@ -24,11 +24,11 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
     @Nullable
     private T object;
 
-    public StructureHandle(Class<T> clazz, TileEntityBasicMultiMachine<?> tile, int3 off, @Nullable Consumer<T> onRemoval, @Nullable Consumer<T> onAdd) {
+    public StructureHandle(Class<T> clazz, BlockEntityBasicMultiMachine<?> tile, int3 off, @Nullable Consumer<T> onRemoval, @Nullable Consumer<T> onAdd) {
         this(clazz, tile, Collections.singletonList(off), onRemoval, onAdd);
     }
 
-    public StructureHandle(Class<T> clazz, TileEntityBasicMultiMachine<?> tile, List<int3> off, @Nullable Consumer<T> onRemoval, @Nullable Consumer<T> onAdd) {
+    public StructureHandle(Class<T> clazz, BlockEntityBasicMultiMachine<?> tile, List<int3> off, @Nullable Consumer<T> onRemoval, @Nullable Consumer<T> onAdd) {
         this.source = tile;
         this.offsets = off;
         this.onRemoval = onRemoval;
@@ -37,7 +37,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
         tile.addStructureHandle(this);
     }
 
-    public TileEntityBasicMultiMachine<?> getSource() {
+    public BlockEntityBasicMultiMachine<?> getSource() {
         return source;
     }
 

@@ -7,6 +7,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
@@ -25,9 +27,7 @@ import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -64,8 +64,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Basic Members
      **/
-    protected BlockEntityType<? extends TileEntityMachine<?>> tileType;
-    protected TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> tileFunc = TileEntityMachine::new;
+    protected BlockEntityType<? extends BlockEntityMachine<?>> tileType;
+    protected BlockEntityBase.BlockEntitySupplier<BlockEntityMachine<?>, T> tileFunc = BlockEntityMachine::new;
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
@@ -283,7 +283,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public void onRegistryBuild(RegistryType registry) {
         if (registry != RegistryType.BLOCKS) return;
-        tileType = new BlockEntityType<>(new TileEntityBase.BlockEntityGetter<>(tileFunc, (T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null);
+        tileType = new BlockEntityType<>(new BlockEntityBase.BlockEntityGetter<>(tileFunc, (T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null);
         AntimatterAPI.registerTransferApi(tileType);
         AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
     }
@@ -396,7 +396,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T setTile(TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> func) {
+    public T setTile(BlockEntityBase.BlockEntitySupplier<BlockEntityMachine<?>, T> func) {
         this.tileFunc = func;
         return (T) this;
     }
@@ -564,7 +564,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Function<StructureBuilder<U>, Structure> func) {
+    public <U extends BlockEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Function<StructureBuilder<U>, Structure> func) {
         getTiers().forEach(t -> setStructure(clazz, t, func));
     }
 
@@ -574,7 +574,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Tier tier, Function<StructureBuilder<U>, Structure> func) {
+    public <U extends BlockEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Tier tier, Function<StructureBuilder<U>, Structure> func) {
         structures.put(tier, func.apply(new StructureBuilder<>()));
     }
 

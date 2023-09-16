@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.machine.types.HatchMachine;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
@@ -25,7 +25,7 @@ import java.util.function.BiFunction;
 
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
 
-public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
+public class StructureBuilder<T extends BlockEntityBasicMultiMachine<T>> {
     public StructureDefinition.Builder<T> STRUCTURE_BUILDER = StructureDefinition.builder();
 
     private Map<String, StructurePartBuilder> parts = new Object2ObjectLinkedOpenHashMap<>();

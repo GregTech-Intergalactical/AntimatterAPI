@@ -1,8 +1,9 @@
-package muramasa.antimatter.tile.pipe;
+package muramasa.antimatter.blockentity.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
@@ -16,7 +17,6 @@ import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,7 +38,7 @@ import tesseract.graph.Connectivity;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTickable<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
+public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntityTickable<BlockEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
 
     /**
      * Pipe Data
@@ -61,7 +61,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
 
     protected Holder pipeCapHolder;
 
-    public TileEntityPipe(T type, BlockPos pos, BlockState state) {
+    public BlockEntityPipe(T type, BlockPos pos, BlockState state) {
         super(type.getTileType(), pos, state);
         this.size = getPipeSize(state);
         this.type = getPipeType(state);
@@ -131,14 +131,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return ((BlockPipe<?>) state.getBlock()).getSize();
     }
 
-    public TileEntityPipe<?> getPipe(Direction side) {
+    public BlockEntityPipe<?> getPipe(Direction side) {
         return getPipe(getBlockPos().relative(side));
     }
 
-    public TileEntityPipe<?> getPipe(BlockPos side) {
+    public BlockEntityPipe<?> getPipe(BlockPos side) {
         BlockEntity tile = getLevel().getBlockEntity(side);
-        if (!(tile instanceof TileEntityPipe)) return null;
-        TileEntityPipe<?> pipe = (TileEntityPipe<?>) tile;
+        if (!(tile instanceof BlockEntityPipe)) return null;
+        BlockEntityPipe<?> pipe = (BlockEntityPipe<?>) tile;
         return pipe.getCapClass() == this.getCapClass() ?  pipe : null;
     }
 
@@ -153,7 +153,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public void setConnection(Direction side) {
         if (connects(side)) return;
         if (blocksSide(side)) return;
-        TileEntityPipe<?>  pipe = getPipe(side);
+        BlockEntityPipe<?> pipe = getPipe(side);
         //If it is a tile but invalid do not connect.
         connection = Connectivity.set(connection, side.get3DDataValue());
         boolean ok = validate(side);
@@ -174,7 +174,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         connection = Connectivity.clear(connection, side.get3DDataValue());
         dispatch.invalidate(side);
         refreshConnection();
-        TileEntityPipe<?>  pipe = getPipe(side);
+        BlockEntityPipe<?> pipe = getPipe(side);
         if (pipe != null) {
             pipe.clearConnection(side.getOpposite());
         }
@@ -255,7 +255,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         var new_s = getBlockState().setValue(BlockPipe.TICKING, !getBlockState().getValue(BlockPipe.TICKING));
         //no block update here
         level.setBlock(getBlockPos(), new_s, 10);
-        TileEntityPipe<?> pipe = (TileEntityPipe<?>) level.getBlockEntity(getBlockPos());
+        BlockEntityPipe<?> pipe = (BlockEntityPipe<?>) level.getBlockEntity(getBlockPos());
         if (pipe != this && pipe != null) {
             pipe.load(nbt);
             if (pipe.isConnector()) {

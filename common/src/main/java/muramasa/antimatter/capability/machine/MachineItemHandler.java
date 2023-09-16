@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.*;
@@ -17,7 +18,6 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 
-public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Serializable, Dispatch.Sided<ExtendedItemContainer> {
+public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMachineHandler, Serializable, Dispatch.Sided<ExtendedItemContainer> {
 
     protected final T tile;
     protected final Object2ObjectMap<SlotType<?>, TrackedItemHandler<T>> inventories = new Object2ObjectOpenHashMap<>();

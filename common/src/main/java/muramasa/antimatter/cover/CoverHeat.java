@@ -2,7 +2,7 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +28,6 @@ public class CoverHeat extends BaseCover{
     @Override
     public void onPlace() {
         super.onPlace();
-        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(IHeatHandler.class);
+        ((BlockEntityMachine<?>) handler.getTile()).invalidateCap(IHeatHandler.class);
     }
 }

@@ -3,14 +3,14 @@ package muramasa.antimatter.gui.widget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import net.minecraft.client.Minecraft;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
@@ -63,7 +63,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         @Override
         public void init() {
             super.init();
-            TileEntityMultiMachine<?> m = (TileEntityMultiMachine<?>) gui.handler;
+            BlockEntityMultiMachine<?> m = (BlockEntityMultiMachine<?>) gui.handler;
             gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.currentProgress = i, SERVER_TO_CLIENT);
             gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getMaxProgress).orElse(0), i -> this.maxProgress = i, SERVER_TO_CLIENT);
             gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getOverclock).orElse(0), i -> this.overclock = i, SERVER_TO_CLIENT);
@@ -89,7 +89,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         @Override
         public void init() {
             super.init();
-            TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
+            BlockEntityPipe<?> pipe = (BlockEntityPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             gui.syncLong(() -> {
                 ITickingController controller = TesseractGraphWrappers.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
@@ -134,7 +134,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         @Override
         public void init() {
             super.init();
-            TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
+            BlockEntityPipe<?> pipe = (BlockEntityPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             gui.syncInt(() -> {
                 ITickingController controller = TesseractGraphWrappers.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
@@ -167,7 +167,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         @Override
         public void init() {
             super.init();
-            TileEntityFluidPipe<?> pipe = (TileEntityFluidPipe<?>) gui.handler;
+            BlockEntityFluidPipe<?> pipe = (BlockEntityFluidPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             /*gui.syncInt(() -> {
                 ITickingController controller = Tesseract.FLUID.getController(pipe.getLevel(), pipe.getBlockPos().asLong());

@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile;
+package muramasa.antimatter.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.fluid.FluidTank;
@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
 
-public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMachine<T> implements IInfoRenderer<TankMachine.TankRenderWidget> {
+public class BlockEntityTank<T extends BlockEntityMachine<T>> extends BlockEntityMachine<T> implements IInfoRenderer<TankMachine.TankRenderWidget> {
 
-    public TileEntityTank(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityTank(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         int capacity = type instanceof TankMachine tankMachine ? tankMachine.getCapacityPerTier().apply(tier) : 8000 * (1 + tier.getIntegerId());
         fluidHandler.set(() -> new MachineFluidHandler<T>((T) this, capacity, 8000) {

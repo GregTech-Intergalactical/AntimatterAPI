@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.tile.multi.BlockEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -86,21 +86,21 @@ public class StructureResult {
         return true;
     }
 
-    public void build(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
+    public void build(BlockEntityBasicMultiMachine<?> machine, StructureResult result) {
         for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
             int count = StructureCache.refCount(machine.getLevel(), entry.getKey());
             entry.getValue().onBuild(machine, entry.getKey(), result, count);
         }
     }
 
-    public void remove(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
+    public void remove(BlockEntityBasicMultiMachine<?> machine, StructureResult result) {
         for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
             int count = StructureCache.refCount(machine.getLevel(), entry.getKey());
             entry.getValue().onRemove(machine, entry.getKey(), result, count);
         }
     }
 
-    public void updateState(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
+    public void updateState(BlockEntityBasicMultiMachine<?> machine, StructureResult result) {
         MachineState proper = machine.getMachineState().getTextureState();
         for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
             int count = StructureCache.refCount(machine.getLevel(), entry.getKey());
@@ -108,7 +108,7 @@ public class StructureResult {
         }
     }
 
-    public void tick(TileEntityBasicMultiMachine<?> machine) {
+    public void tick(BlockEntityBasicMultiMachine<?> machine) {
         if (tickingElements.isEmpty()) return;
         for (Map.Entry<BlockPos, StructureElement> entry : tickingElements.entrySet()) {
             entry.getValue().tick(machine, this, entry.getKey());

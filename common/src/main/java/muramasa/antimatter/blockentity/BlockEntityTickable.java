@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile;
+package muramasa.antimatter.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -6,11 +6,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEntityBase<T> {
+public class BlockEntityTickable<T extends BlockEntityTickable<T>> extends BlockEntityBase<T> {
 
     private boolean hadFirstTick;
 
-    public TileEntityTickable(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityTickable(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
@@ -36,7 +36,7 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
     }
 
     public static <T extends BlockEntity> void commonTick(Level level, BlockPos pos, BlockState state, T tile) {
-        if (tile instanceof TileEntityTickable tick) {
+        if (tile instanceof BlockEntityTickable tick) {
             tick.tick(level, pos, state);
         }
     }

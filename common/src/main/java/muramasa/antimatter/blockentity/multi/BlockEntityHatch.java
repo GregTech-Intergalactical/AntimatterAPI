@@ -1,5 +1,6 @@
-package muramasa.antimatter.tile.multi;
+package muramasa.antimatter.blockentity.multi;
 
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
@@ -11,7 +12,6 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.HatchMachine;
 import muramasa.antimatter.structure.IComponent;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,12 +28,12 @@ import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERENERGY;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
+public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntityMachine<T> implements IComponent {
 
     public final Optional<HatchComponentHandler<T>> componentHandler;
     public final HatchMachine hatchMachine;
 
-    public TileEntityHatch(HatchMachine type, BlockPos pos, BlockState state) {
+    public BlockEntityHatch(HatchMachine type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.hatchMachine = type;
         componentHandler = Optional

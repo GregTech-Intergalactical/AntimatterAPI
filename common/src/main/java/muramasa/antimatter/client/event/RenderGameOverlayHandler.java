@@ -2,7 +2,7 @@ package muramasa.antimatter.client.event;//package muramasa.gtu.client.events;
 //
 //import muramasa.gtu.Ref;
 //import muramasa.antimatter.items.MaterialTool;
-//import muramasa.antimatter.tileentities.TileEntityBase;
+//import muramasa.antimatter.tileentities.BlockEntityBase;
 //import muramasa.antimatter.util.Utils;
 //import muramasa.gtu.common.Data;
 //import net.minecraft.client.Minecraft;
@@ -23,17 +23,17 @@ package muramasa.antimatter.client.event;//package muramasa.gtu.client.events;
 //        if (MC.gameSettings.showDebugInfo && MC.objectMouseOver != null) {
 //            TileEntity tile;
 //            tile = Utils.getTile(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(MC.world.provider.getDimension()), MC.objectMouseOver.getBlockPos());
-//            if (tile instanceof TileEntityBase) {
+//            if (tile instanceof BlockEntityBase) {
 //                e.getLeft().add("");
 //                e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
-//                e.getLeft().addAll(((TileEntityBase) tile).getInfo());
+//                e.getLeft().addAll(((BlockEntityBase) tile).getInfo());
 //            }
 //            if (MC.player.isSneaking()) {
 //                tile = Utils.getTile(MC.world, MC.objectMouseOver.getBlockPos());
-//                if (tile instanceof TileEntityBase) {
+//                if (tile instanceof BlockEntityBase) {
 //                    e.getLeft().add("");
 //                    e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Client]");
-//                    e.getLeft().addAll(((TileEntityBase) tile).getInfo());
+//                    e.getLeft().addAll(((BlockEntityBase) tile).getInfo());
 //                }
 //            }
 //        }

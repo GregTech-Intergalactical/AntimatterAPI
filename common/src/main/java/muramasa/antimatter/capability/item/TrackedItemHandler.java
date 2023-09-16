@@ -3,7 +3,7 @@ package muramasa.antimatter.capability.item;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
 
     @Override
     public void onContentsChanged(int slot) {
-        if (tile instanceof TileEntityMachine<?> machine){
+        if (tile instanceof BlockEntityMachine<?> machine){
             machine.setChanged();
             machine.onMachineEvent(contentEvent, slot);
         } else if (tile instanceof ICover cover){

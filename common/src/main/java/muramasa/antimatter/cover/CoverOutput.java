@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.gui.event.GuiEvents;
@@ -8,8 +9,7 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.tile.TileEntityFakeBlock;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
@@ -32,7 +32,7 @@ public class CoverOutput extends CoverInput {
 
     public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         super(source, tier, side, factory);
-        if (source.getTile() instanceof TileEntityFakeBlock){
+        if (source.getTile() instanceof BlockEntityFakeBlock){
             setEjects(true, true);
         }
     }
@@ -152,7 +152,7 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
+    public void onMachineEvent(BlockEntityMachine<?> tile, IMachineEvent event, int... data) {
         // TODO: Tesseract stuff?
         if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
             processItemOutput();

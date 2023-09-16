@@ -1,10 +1,10 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -37,7 +37,7 @@ public class CoverMuffler extends BaseCover {
         BlockPos pos = handler.getTile().getBlockPos();
         Level world = this.handler.getTile().getLevel();
         if (world.isClientSide) {
-            TileEntityMultiMachine<?> tile = StructureCache.getAnyMulti(world, pos, TileEntityMultiMachine.class);
+            BlockEntityMultiMachine<?> tile = StructureCache.getAnyMulti(world, pos, BlockEntityMultiMachine.class);
             if (tile == null || tile.getMachineState() != MachineState.ACTIVE) return;
             Random rand = world.random;
             Direction dir = this.side;

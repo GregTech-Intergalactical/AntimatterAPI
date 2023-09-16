@@ -6,6 +6,7 @@ import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.RenderHelper;
@@ -13,7 +14,6 @@ import muramasa.antimatter.client.SimpleModelState;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.mixin.client.BlockModelAccessor;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -81,7 +81,7 @@ public class DynamicTexturers {
                 return Collections.emptyList();
             });
 
-    public static final DynamicTextureProvider<Machine<?>, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<Machine<?>, TileEntityMachine.DynamicKey>(
+    public static final DynamicTextureProvider<Machine<?>, BlockEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<Machine<?>, BlockEntityMachine.DynamicKey>(
             t -> {
                 Vec3i vector3i = t.currentDir.getNormal();
                 Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
@@ -89,7 +89,7 @@ public class DynamicTexturers {
                 Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
                 UnbakedModel model = ModelUtils.getModel(t.source.getModel(t.type, side));
                 BlockEntity blockEntity = t.getBlockEntity();
-                if (!(blockEntity instanceof TileEntityMachine<?> machine)) return Collections.emptyList();
+                if (!(blockEntity instanceof BlockEntityMachine<?> machine)) return Collections.emptyList();
                 BlockModel m = (BlockModel) model;
                 ((BlockModelAccessor)m).getTextureMap().put("base", Either.left(
                     ModelUtils.getBlockMaterial(machine.getMultiTexture().apply(side))));

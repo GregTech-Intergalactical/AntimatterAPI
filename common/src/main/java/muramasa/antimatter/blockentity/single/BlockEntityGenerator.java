@@ -1,18 +1,18 @@
-package muramasa.antimatter.tile.single;
+package muramasa.antimatter.blockentity.single;
 
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
-public class TileEntityGenerator<T extends TileEntityGenerator<T>> extends TileEntityMachine<T> {
+public class BlockEntityGenerator<T extends BlockEntityGenerator<T>> extends BlockEntityMachine<T> {
 
-    public TileEntityGenerator(Machine<?> type, BlockPos pos, BlockState state) {
+    public BlockEntityGenerator(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, type.amps(), type.has(GENERATOR)) {
             @Override

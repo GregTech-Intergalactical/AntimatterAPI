@@ -12,7 +12,7 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
@@ -104,7 +104,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return getDomain();
     }
 
-    default void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
+    default void onMachineEvent(BlockEntityMachine<?> tile, IMachineEvent event, int... data) {
         // NOOP
     }
 

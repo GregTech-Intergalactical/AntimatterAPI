@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.pipe;
+package muramasa.antimatter.blockentity.pipe;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.DefaultHeatHandler;
@@ -17,9 +17,9 @@ import tesseract.api.heat.IHeatPipe;
 
 import java.util.Optional;
 
-public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T> implements IHeatPipe {
+public class BlockEntityHeatPipe<T extends HeatPipe<T>> extends BlockEntityPipe<T> implements IHeatPipe {
 
-    public TileEntityHeatPipe(T type, BlockPos pos, BlockState state) {
+    public BlockEntityHeatPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         pipeCapHolder.set(() -> new DefaultHeatHandler(this, 800*type.conductivity, type.conductivity) {
 

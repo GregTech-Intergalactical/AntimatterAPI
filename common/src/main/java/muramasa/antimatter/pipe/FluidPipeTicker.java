@@ -1,18 +1,18 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
+import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FluidPipeTicker {
-    public static final List<TileEntityFluidPipe<?>> SERVER_TICK_PRE = new ArrayList<>(), SERVER_TICK_PR2 = new ArrayList<>();
+    public static final List<BlockEntityFluidPipe<?>> SERVER_TICK_PRE = new ArrayList<>(), SERVER_TICK_PR2 = new ArrayList<>();
 
     public static void onServerWorldTick(MinecraftServer server){
         for (int i = 0; i < SERVER_TICK_PRE.size(); i++) {
-            TileEntityFluidPipe<?> tTileEntity = SERVER_TICK_PRE.get(i);
+            BlockEntityFluidPipe<?> tTileEntity = SERVER_TICK_PRE.get(i);
             if (tTileEntity.isRemoved()) {
                 SERVER_TICK_PRE.remove(i--);
                 tTileEntity.onUnregisterPre();
@@ -27,7 +27,7 @@ public class FluidPipeTicker {
             }
         }
         for (int i = 0; i < SERVER_TICK_PR2.size(); i++) {
-            TileEntityFluidPipe<?> tTileEntity = SERVER_TICK_PR2.get(i);
+            BlockEntityFluidPipe<?> tTileEntity = SERVER_TICK_PR2.get(i);
             if (tTileEntity.isRemoved()) {
                 SERVER_TICK_PR2.remove(i--);
                 tTileEntity.onUnregisterPre();

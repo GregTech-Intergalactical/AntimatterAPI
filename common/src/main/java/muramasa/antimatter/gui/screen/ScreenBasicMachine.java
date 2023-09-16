@@ -1,12 +1,12 @@
 package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends ContainerBasicMachine<T>> extends ScreenMachine<T, U> {
+public class ScreenBasicMachine<T extends BlockEntityMachine<T>, U extends ContainerBasicMachine<T>> extends ScreenMachine<T, U> {
 
     public ScreenBasicMachine(U container, Inventory inv, Component name) {
         super(container, inv, name);

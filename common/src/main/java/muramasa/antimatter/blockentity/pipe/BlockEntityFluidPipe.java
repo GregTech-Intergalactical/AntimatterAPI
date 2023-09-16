@@ -1,4 +1,4 @@
-package muramasa.antimatter.tile.pipe;
+package muramasa.antimatter.blockentity.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
+public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPipe<T> implements IFluidPipe, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
     protected Optional<PipeFluidHandler> fluidHandler;
     public static byte[] SBIT = {1, 2, 4, 8, 16, 32};
@@ -53,7 +53,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     long transferredAmount = 0;
     long mTemperature = 293;
 
-    public TileEntityFluidPipe(T type, BlockPos pos, BlockState state) {
+    public BlockEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         int count = getPipeSize() == PipeSize.QUADRUPLE ? 4 : getPipeSize() == PipeSize.NONUPLE ? 9 : 1;
         fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), count, 0));

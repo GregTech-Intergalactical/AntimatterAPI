@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
+import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
@@ -15,7 +16,6 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.client.LevelRendererAccessor;
 import muramasa.antimatter.mixin.client.MultiPlayerGameModeAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
@@ -146,7 +146,7 @@ public class ClientEvents {
             left.addAll(info.getInfo(new ObjectArrayList<>(), world, state, pos));
         }
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof TileEntityBase<?> b) {
+        if (tile instanceof BlockEntityBase<?> b) {
             left.addAll(b.getInfo());
         }
         if (MC.player.isCrouching()) {

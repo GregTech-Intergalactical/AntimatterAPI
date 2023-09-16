@@ -1,12 +1,12 @@
 package muramasa.antimatter.gui.container;
 
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.gui.MenuHandlerPipe;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 
-public class ContainerPipe<T extends TileEntityPipe<?>> extends AntimatterContainer {
+public class ContainerPipe<T extends BlockEntityPipe<?>> extends AntimatterContainer {
 
     protected T tile;
 

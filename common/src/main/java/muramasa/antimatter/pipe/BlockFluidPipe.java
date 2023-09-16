@@ -1,7 +1,7 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -57,7 +57,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         super.entityInside(state, worldIn, pos, entityIn);
         if (worldIn.isClientSide) return;
         if (entityIn instanceof LivingEntity entity) {
-            if (worldIn.getBlockEntity(pos) instanceof TileEntityFluidPipe<?> fluidPipe) {
+            if (worldIn.getBlockEntity(pos) instanceof BlockEntityFluidPipe<?> fluidPipe) {
                 long temp = fluidPipe.getCurrentTemperature();
                 applyTemperatureDamage(entity, temp, 1.0f, 1.0f);
             }

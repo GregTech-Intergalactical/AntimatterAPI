@@ -8,13 +8,13 @@ import earth.terrarium.botarium.common.item.ItemStackHolder;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.rf.RFHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ import tesseract.api.rf.IRFNode;
 import java.util.List;
 import java.util.Optional;
 
-public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<IRFNode> {
+public class MachineRFHandler<T extends BlockEntityMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<IRFNode> {
     protected final T tile;
     protected List<Pair<ItemStack, PlatformItemEnergyManager>> cachedItems = new ObjectArrayList<>();
 

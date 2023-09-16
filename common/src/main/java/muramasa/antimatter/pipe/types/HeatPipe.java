@@ -2,7 +2,7 @@ package muramasa.antimatter.pipe.types;
 
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockHeatPipe;
-import muramasa.antimatter.tile.pipe.TileEntityHeatPipe;
+import muramasa.antimatter.blockentity.pipe.BlockEntityHeatPipe;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Set;
@@ -13,7 +13,7 @@ public class HeatPipe<T extends HeatPipe<T>> extends PipeType<T> {
     public final int conductivity;
 
     public HeatPipe(String domain, Material material, int conductivity) {
-        super(domain, material, TileEntityHeatPipe::new);
+        super(domain, material, BlockEntityHeatPipe::new);
         this.conductivity = conductivity;
     }
 

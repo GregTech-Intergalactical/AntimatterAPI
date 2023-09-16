@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends MachineRecipeHandler<T> {
+public class CookingRecipeHandler<T extends BlockEntityMachine<T>> extends MachineRecipeHandler<T> {
 
     protected int burnDuration = 0;
     protected static final Supplier<List<Ingredient>> BURNABLE = () -> Collections.singletonList(Ingredients.BURNABLES);

@@ -7,6 +7,7 @@ import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties.MachineProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.DirectionalQuadTransformer;
 import muramasa.antimatter.client.ModelUtils;
@@ -16,7 +17,6 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -44,7 +44,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }    
 
 
-    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, Random rand, MachineProperties data, TileEntityMachine<?> machine, BlockAndTintGetter level, BlockPos pos) {
+    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, Random rand, MachineProperties data, BlockEntityMachine<?> machine, BlockAndTintGetter level, BlockPos pos) {
    
         ICover cover = data.covers[side.get3DDataValue()];
         if (cover.isEmpty()) return Collections.emptyList();
@@ -66,7 +66,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
             return Collections.emptyList();
         }
         BlockEntity tile = level.getBlockEntity(pos);
-        if (!(tile instanceof TileEntityMachine<?> machine)) return Collections.emptyList();
+        if (!(tile instanceof BlockEntityMachine<?> machine)) return Collections.emptyList();
         MachineProperties props = getMachineProperty(machine);
         if (props == null) return Collections.emptyList();
         List<BakedQuad> quads = new ObjectArrayList<>(20);
@@ -75,7 +75,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
         if (machine.getMultiTexture() != null) {
             Function<Direction, Texture> ft = machine.getMultiTexture();
-            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.type, new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), side, props.state, props), side.get3DDataValue(), level, pos);
+            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.type, new BlockEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), side, props.state, props), side.get3DDataValue(), level, pos);
         }
 
         BakedModel model = getModel(state, side, props.state);
@@ -102,7 +102,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return sides.get(m)[side.get3DDataValue()];
     }
 
-    public MachineProperties getMachineProperty(TileEntityMachine<?> machine) {
+    public MachineProperties getMachineProperty(BlockEntityMachine<?> machine) {
         ICover[] covers = machine.coverHandler.map(CoverHandler::getAll).orElse(new ICover[]{ICover.empty, ICover.empty, ICover.empty, ICover.empty, ICover.empty, ICover.empty});
         Machine<?> m = machine.getMachineType();
         Function<Direction, Texture> mText = a -> {

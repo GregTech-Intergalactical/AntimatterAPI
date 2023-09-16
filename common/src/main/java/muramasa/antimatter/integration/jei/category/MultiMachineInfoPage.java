@@ -10,6 +10,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.event.ClientEvents;
 import muramasa.antimatter.client.scene.ImmediateWorldSceneRenderer;
@@ -18,7 +19,6 @@ import muramasa.antimatter.client.scene.WorldSceneRenderer;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.structure.BlockInfo;
 import muramasa.antimatter.structure.Pattern;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -61,13 +61,13 @@ public class MultiMachineInfoPage {
 
     private final WorldSceneRenderer[] renderers;
     private final Component[] descriptions;
-    private final TileEntityBasicMultiMachine<?>[] controllers;
+    private final BlockEntityBasicMultiMachine<?>[] controllers;
     private static MultiMachineInfoPage LAST_PAGE;
 
     public MultiMachineInfoPage(BasicMultiMachine<?> machine, List<Pattern> patterns) {
         this.machine = machine;
         renderers = new WorldSceneRenderer[patterns.size()];
-        this.controllers = new TileEntityBasicMultiMachine[patterns.size()];
+        this.controllers = new BlockEntityBasicMultiMachine[patterns.size()];
         descriptions = new Component[patterns.size()];
 
         this.buttonNextLayer = new Button(WIDTH - (20 + RIGHT_PADDING), 65, ICON_SIZE, ICON_SIZE, new TextComponent("A"), (b)->toggleNextLayer());
@@ -78,7 +78,7 @@ public class MultiMachineInfoPage {
             descriptions[i] = patterns.get(i).getDescription();
             Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
             BlockInfo[][][] blocks = patterns.get(i).getBlockInfos();
-            TileEntityBasicMultiMachine<?> controllers = null;
+            BlockEntityBasicMultiMachine<?> controllers = null;
             for (int z = 0; z < blocks.length; z++) {
                 BlockInfo[][] aisle = blocks[z];
                 for (int y = 0; y < aisle.length; y++) {
@@ -88,8 +88,8 @@ public class MultiMachineInfoPage {
                         BlockPos blockPos = new BlockPos(y, z, x);
                         BlockInfo blockInfo = column[x];
                         blockMap.put(blockPos, blockInfo);
-                        if (blockInfo.getTileEntity() instanceof TileEntityBasicMultiMachine) {
-                            controllers = (TileEntityBasicMultiMachine<?>) blockInfo.getTileEntity();
+                        if (blockInfo.getTileEntity() instanceof BlockEntityBasicMultiMachine) {
+                            controllers = (BlockEntityBasicMultiMachine<?>) blockInfo.getTileEntity();
                             this.controllers[i] = controllers;
                         }
                     }

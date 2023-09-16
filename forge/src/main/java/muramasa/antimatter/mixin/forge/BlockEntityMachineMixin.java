@@ -3,6 +3,8 @@ package muramasa.antimatter.mixin.forge;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.forge.energy.ForgeEnergyContainer;
 import earth.terrarium.botarium.forge.fluid.ForgeFluidContainer;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
@@ -11,9 +13,7 @@ import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.forge.duck.IFakeTileCap;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.TileEntityTickable;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -37,8 +37,8 @@ import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
-@Mixin(TileEntityMachine.class)
-public abstract class TileEntityMachineMixin<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements IFakeTileCap {
+@Mixin(BlockEntityMachine.class)
+public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> extends BlockEntityTickable<T> implements IFakeTileCap {
 
     @Shadow
     public Holder<ExtendedItemContainer, MachineItemHandler<T>> itemHandler;
@@ -69,7 +69,7 @@ public abstract class TileEntityMachineMixin<T extends TileEntityMachine<T>> ext
     @Unique
     private LazyOptional<IEnergyStorage>[] rfHandlerLazyOptional = new LazyOptional[7];
 
-    public TileEntityMachineMixin(BlockEntityType type, BlockPos pos, BlockState state) {
+    public BlockEntityMachineMixin(BlockEntityType type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
@@ -84,7 +84,7 @@ public abstract class TileEntityMachineMixin<T extends TileEntityMachine<T>> ext
 
     @Override
     public <U> LazyOptional<U> getCapabilityFromFake(@NotNull Capability<U> cap, @Nullable Direction side, ICover cover) {
-        if (((Object)this) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine){
+        if (((Object)this) instanceof BlockEntityBasicMultiMachine<?> basicMultiMachine){
             if (!basicMultiMachine.allowsFakeTiles()) return LazyOptional.empty();
             if ((cap == CapabilityEnergy.ENERGY || cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY) && !(cover instanceof CoverDynamo || cover instanceof CoverEnergy)) return LazyOptional.empty();
             return getCap(cap, side);

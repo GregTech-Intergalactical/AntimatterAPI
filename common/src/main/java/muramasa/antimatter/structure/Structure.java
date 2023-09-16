@@ -3,14 +3,14 @@ package muramasa.antimatter.structure;
 import com.google.common.collect.ImmutableMap;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import it.unimi.dsi.fastutil.Pair;
-import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class Structure<T extends TileEntityBasicMultiMachine<T>> {
+public class Structure<T extends BlockEntityBasicMultiMachine<T>> {
     private final IStructureDefinition<T> structureDefinition;
 
 
@@ -57,11 +57,11 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
         return i == successful;
     }
 
-    /*public abstract StructureResult evaluate(@NotNull TileEntityBasicMultiMachine<?> tile);
+    /*public abstract StructureResult evaluate(@NotNull BlockEntityBasicMultiMachine<?> tile);
 
-    public abstract LongList allPositions(TileEntityBasicMultiMachine<?> tile);*/
+    public abstract LongList allPositions(BlockEntityBasicMultiMachine<?> tile);*/
 
-    /*public boolean evaluatePosition(@NotNull StructureResult res, @NotNull TileEntityBasicMultiMachine<?> tile, @NotNull BlockPos pos) {
+    /*public boolean evaluatePosition(@NotNull StructureResult res, @NotNull BlockEntityBasicMultiMachine<?> tile, @NotNull BlockPos pos) {
         StructureElement el = res.get(pos);
         if (el != null) {
             return el.evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), res);
@@ -69,7 +69,7 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
         return true;
     }*/
 
-    public interface StructurePartCheckCallback<T extends TileEntityBasicMultiMachine<T>> {
+    public interface StructurePartCheckCallback<T extends BlockEntityBasicMultiMachine<T>> {
         boolean check(IStructureDefinition<T> structureDefinition, T tile, String part, int i, int3 newOffset);
     }
 

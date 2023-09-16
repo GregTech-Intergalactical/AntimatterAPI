@@ -1,11 +1,11 @@
 package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +33,7 @@ public class ProgressWidget extends Widget {
         setY(gui.getMachineData().getProgressPos().y + 6);
         setW(gui.getMachineData().getProgressSize().x);
         setH(gui.getMachineData().getProgressSize().y);
-        texture = gui.getMachineData().getProgressTexture(((TileEntityMachine<?>)instance.handler).getMachineTier());
+        texture = gui.getMachineData().getProgressTexture(((BlockEntityMachine<?>)instance.handler).getMachineTier());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class ProgressWidget extends Widget {
     @Override
     public void onClick(double mouseX, double mouseY, int button) {
         super.onClick(mouseX, mouseY, button);
-        if (this.gui.handler instanceof TileEntityMachine<?> machine) {
+        if (this.gui.handler instanceof BlockEntityMachine<?> machine) {
             AntimatterJEIREIPlugin.showCategory(machine.getMachineType(), machine.getMachineTier());
         }
     }
