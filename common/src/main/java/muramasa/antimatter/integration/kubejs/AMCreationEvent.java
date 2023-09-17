@@ -4,8 +4,16 @@ import dev.latvian.mods.kubejs.event.EventJS;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.machine.types.BasicMachine;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
+import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.machine.types.MultiMachine;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.map.RecipeBuilder;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -34,6 +42,28 @@ public class AMCreationEvent extends EventJS {
         return AntimatterAPI.register(Material.class, new Material(Ref.MOD_KJS, id, rgb, set, Element.getFromElementId(element)));
     }
 
+    public BasicMachine createBasicMachine(String id){
+        return new BasicMachine(Ref.MOD_KJS, id);
+    }
+
+    public MultiMachine createMultiMachine(String id){
+        return new MultiMachine(Ref.MOD_KJS, id);
+    }
+
+    public BasicMultiMachine createBasicMultiMachine(String id){
+        return new BasicMultiMachine(Ref.MOD_KJS, id);
+    }
+
+    public Machine createMachine(String id){
+        return new Machine(Ref.MOD_KJS, id);
+    }
+
+    public RecipeMap createRecipeMap(String id){
+        return AntimatterAPI.register(RecipeMap.class, new RecipeMap<>(Ref.MOD_KJS, id, new RecipeBuilder()));
+    }
+
+
+
     public void addFlagsToMaterial(String materialId, String... flags) {
         if (Material.get(materialId) != Material.NULL) {
             for (String flag : flags) {
@@ -45,8 +75,20 @@ public class AMCreationEvent extends EventJS {
         }
     }
 
+    public MachineFlag machineFlag(String id){
+        return MachineFlag.valueOf(id);
+    }
+
     public MaterialType type(String type) {
         return AntimatterAPI.get(MaterialType.class, type);
+    }
+
+    public RecipeMap recipeMap(String id){
+        return AntimatterAPI.get(RecipeMap.class, id);
+    }
+
+    public SlotType slotType(String id){
+        return AntimatterAPI.get(SlotType.class, id, Ref.ID);
     }
 
     public static void init(){

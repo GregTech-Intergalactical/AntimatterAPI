@@ -33,7 +33,9 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);
         setTooltipInfo((machine, stack, world, tooltip, flag) -> {
-            tooltip.add(Utils.translatable("machine.structure.form"));
+            if (machine.getType().getStructure(machine.getTier()) != null) {
+                tooltip.add(Utils.translatable("machine.structure.form"));
+            }
         });
         this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
      }
