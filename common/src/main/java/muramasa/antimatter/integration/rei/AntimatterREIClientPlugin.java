@@ -169,6 +169,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 registry.registerRecipeFiller(net.minecraft.world.item.crafting.Recipe.class, m.getProxy().loc(), r -> {
                     IRecipe recipe = m.getProxy().handler().apply(r, m.RB());
                     if (recipe == null) return null;
+                    if (recipe.isHidden()) return null;
                     return new RecipeMapDisplay(recipe);
                 });
             }
