@@ -146,8 +146,13 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         ItemStack stack =  ICover.super.getDroppedStack();
         if (inventories != null && getFactory().hasGui()){
             CompoundTag nbt = new CompoundTag();
-            this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serialize(new CompoundTag())));
-            stack.getOrCreateTag().put("coverInventories", nbt);
+            this.inventories.forEach((f, i) -> {
+                if (i.isEmpty()) return;
+                nbt.put(f.getId(), i.serialize(new CompoundTag()));
+            });
+            if (!nbt.isEmpty()) {
+                stack.getOrCreateTag().put("coverInventories", nbt);
+            }
         }
         return stack;
     }
@@ -162,6 +167,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
                     if (!nbt.contains(f.getId())) return;
                     i.deserialize(nbt.getCompound(f.getId()));
                 });
+                handler.getTile().setChanged();
             }
         }
     }
@@ -223,7 +229,10 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     public CompoundTag serialize() {
         CompoundTag nbt = new CompoundTag();
         if (inventories != null && getFactory().hasGui()){
-            this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serialize(new CompoundTag())));
+            this.inventories.forEach((f, i) -> {
+                if (i.isEmpty()) return;
+                nbt.put(f.getId(), i.serialize(new CompoundTag()));
+            });
         }
         return nbt;
     }
