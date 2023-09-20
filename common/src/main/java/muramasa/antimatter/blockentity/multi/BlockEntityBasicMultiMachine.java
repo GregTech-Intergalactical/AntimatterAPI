@@ -251,6 +251,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
 
     @Override
     public void onBlockUpdate(BlockPos pos) {
+        super.onBlockUpdate(pos);
         if (checkingStructure > 0)
             return;
         if (validStructure) {
