@@ -207,7 +207,6 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     @Override
     public void deserialize(CompoundTag nbt) {
         if (getFactory().hasGui()){
-            setInventory();
             this.inventories.forEach((f, i) -> {
                 if (!nbt.contains(f.getId())) return;
                 i.deserialize(nbt.getCompound(f.getId()));
