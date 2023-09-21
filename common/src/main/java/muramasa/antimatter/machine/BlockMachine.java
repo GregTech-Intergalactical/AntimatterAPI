@@ -126,11 +126,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-        if (!worldIn.isClientSide) {
-            BlockEntityMachine<?> tile = (BlockEntityMachine<?>) worldIn.getBlockEntity(pos);
-            if (tile != null) {
-                tile.onBlockUpdate(fromPos);
-            }
+        BlockEntityMachine<?> tile = (BlockEntityMachine<?>) worldIn.getBlockEntity(pos);
+        if (tile != null) {
+            tile.onBlockUpdate(fromPos);
         }
     }
 
