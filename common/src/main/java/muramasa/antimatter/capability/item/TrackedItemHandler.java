@@ -2,8 +2,10 @@ package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +21,13 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     private final BiPredicate<IGuiHandler, ItemStack> validator;
     private final int limit;
     private final int size;
+    private final SlotType<?> type;
 
-    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent) {
-        this(tile, size, output, input, validator, contentEvent, 64);
+    public TrackedItemHandler(T tile, SlotType<?> type, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent) {
+        this(tile, type, size, output, input, validator, contentEvent, 64);
     }
 
-    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent, int limit) {
+    public TrackedItemHandler(T tile, SlotType<?> type, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent, int limit) {
         super(size);
         this.tile = tile;
         this.output = output;
@@ -33,6 +36,7 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
         this.validator = validator;
         this.limit = limit;
         this.size = size;
+        this.type = type;
     }
 
     @Override
@@ -54,6 +58,13 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (this.type == SlotType.IT_IN){
+            for (int i = 0; i < size; i++){
+                if (i == slot) continue;
+                if (this.getItem(i).isEmpty()) continue;
+                if (Utils.equals(this.getItem(i), stack)) return stack;
+            }
+        }
         if (!input)
             return stack;
         boolean validate = validator.test(tile, stack);
