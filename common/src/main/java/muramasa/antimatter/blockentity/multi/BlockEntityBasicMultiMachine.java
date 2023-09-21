@@ -165,7 +165,9 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     @Override
     public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
         if (!validStructure && checkingStructure == 0){
-            checkStructure();
+            if (checkStructure()){
+                return InteractionResult.SUCCESS;
+            }
         }
         return super.onInteractBoth(state, world, pos, player, hand, hit, type);
     }
