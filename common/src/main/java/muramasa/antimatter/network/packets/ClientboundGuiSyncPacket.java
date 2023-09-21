@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ClientboundGuiSyncPacket extends GuiSyncPacket<ClientboundGuiSyncPacket>{
 
-    public static final ClientHandler HANDLER = new ClientHandler();
+    public static final PacketHandler<ClientboundGuiSyncPacket> HANDLER = new ClientHandler();
     public ClientboundGuiSyncPacket(List<GuiInstance.SyncHolder> data) {
         super(data);
     }

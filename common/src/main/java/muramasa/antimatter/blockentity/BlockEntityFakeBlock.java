@@ -9,6 +9,8 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
+import muramasa.antimatter.network.AntimatterNetwork;
+import muramasa.antimatter.network.packets.FakeTilePacket;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -42,8 +44,12 @@ public class BlockEntityFakeBlock extends BlockEntityTickable<BlockEntityFakeBlo
 
     public void setController(BlockEntityBasicMultiMachine<?> controller) {
         this.controller = controller;
-        if (level != null)
+        if (level != null) {
+            if (controller != null && !level.isClientSide){
+                AntimatterNetwork.NETWORK.sendToAllLoaded(new FakeTilePacket(this.getBlockPos(), controller.getBlockPos()), level, this.getBlockPos());
+            }
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+        }
     }
 
     public BlockEntityBasicMultiMachine<?> getController() {

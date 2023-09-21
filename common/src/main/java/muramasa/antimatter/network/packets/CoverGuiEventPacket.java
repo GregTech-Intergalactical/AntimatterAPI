@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.Optional;
 
 public class CoverGuiEventPacket extends AbstractGuiEventPacket<CoverGuiEventPacket> {
-    public static final Handler HANDLER = new Handler();
+    public static final PacketHandler<CoverGuiEventPacket> HANDLER = new Handler();
     Direction facing;
 
     public CoverGuiEventPacket(IGuiEvent event, BlockPos pos, Direction facing) {

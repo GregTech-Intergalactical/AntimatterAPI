@@ -12,7 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class TileGuiEventPacket extends AbstractGuiEventPacket<TileGuiEventPacket> {
-    public static final Handler HANDLER = new Handler();
+    public static final PacketHandler<TileGuiEventPacket> HANDLER = new Handler();
 
     public TileGuiEventPacket(IGuiEvent event, BlockPos pos) {
         super(event, pos, AntimatterNetwork.TILE_GUI_PACKET_ID);
