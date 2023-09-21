@@ -115,7 +115,7 @@ public class WorldGenHelper {
         return setRock(world, new BlockPos(pos.getX(), y, pos.getZ()), material, state, chance);
     }
 
-    private static BlockState getStoneStateForRock(int y, BlockPos pos, LevelAccessor world){
+    public static BlockState getStoneStateForRock(int y, BlockPos pos, LevelAccessor world){
       BlockState fill = world.getBlockState(new BlockPos(pos.getX(), y, pos.getZ()));
       StoneType stone = STONE_MAP.get(fill);
       if (stone == AntimatterStoneTypes.BEDROCK){

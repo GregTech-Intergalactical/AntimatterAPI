@@ -10,6 +10,7 @@ import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -89,6 +90,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             AntimatterAPI.all(BlockStoneWall.class, this::add);
             AntimatterAPI.all(BlockOre.class, this::addToFortune);
             AntimatterAPI.all(BlockOreStone.class, this::addToStone);
+            AntimatterAPI.all(BlockSurfaceRock.class, b -> tables.put(b,  b2 -> BlockLoot.createSingleItemTable(AntimatterAPI.get(MaterialItem.class, "rock_" + b.getMaterial().getId()))));
         }
     }
 

@@ -107,7 +107,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         if (!context.canPlace()) {
             return InteractionResult.FAIL;
         } else {
-            BlockState existing = context.getLevel().getBlockState(context.getClickedPos().below());
+            BlockState existing = WorldGenHelper.getStoneStateForRock(context.getClickedPos().getY() - 1, context.getClickedPos(), context.getLevel());
             StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
             BlockState blockstate = AntimatterMaterialTypes.ROCK.get().get(material, type).asState();
             if (blockstate == null) {
