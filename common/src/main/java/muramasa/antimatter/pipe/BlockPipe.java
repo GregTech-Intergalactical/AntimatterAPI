@@ -73,6 +73,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     protected final int modelId;
     protected Texture side;
+    protected Texture overlay;
     protected Texture[] faces;
 
     public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
@@ -87,6 +88,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         this.type = type;
         this.size = size;
         side = new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_side");
+        overlay = new Texture(Ref.ID, "block/empty");
         faces = new Texture[]{
                 new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_vtiny"),
                 new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_tiny"),

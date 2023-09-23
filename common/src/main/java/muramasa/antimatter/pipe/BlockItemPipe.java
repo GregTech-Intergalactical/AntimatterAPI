@@ -1,6 +1,8 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.ItemPipe;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,6 +27,9 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     public BlockItemPipe(T type, PipeSize size, boolean restricted) {
         super((restricted ? "restrictive_" : "") + type.getId(), type, size, 0);
         this.restricted = restricted;
+        if (restricted){
+            this.side = new Texture(Ref.ID, "block/pipe/pipe_restrictor_side");
+        }
     }
 
     @Override
