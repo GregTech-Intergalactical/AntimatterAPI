@@ -31,7 +31,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     protected BlockEntityType<? extends BlockEntityPipe<?>> tileType;
     protected Map<PipeSize, Block> registeredBlocks;
 
-    private final BlockEntityBase.BlockEntitySupplier<BlockEntityPipe<?>, T> tileFunc;
+    protected final BlockEntityBase.BlockEntitySupplier<BlockEntityPipe<?>, T> tileFunc;
 
     public PipeType(String domain, Material material, BlockEntityBase.BlockEntitySupplier<BlockEntityPipe<?>, T> func) {
         this.domain = domain;

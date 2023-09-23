@@ -17,6 +17,7 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.recipe.map.RecipeMap;
@@ -141,12 +142,15 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             AntimatterAPI.all(BlockPipe.class).forEach(s -> {
                 String str = s.getSize().getId();
                 //hmmmm
-                if (str.equals("vtiny")) str = "very tiny";
+                if (str.equals("vtiny")) str = "very_tiny";
                 if (s.getType() instanceof Cable) {
                     str = s.getSize().getCableThickness() + "x";
                 }
-                //String strd = s.getType().getId().split("_")[0];
-                add(s, StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1), " ", Utils.getLocalizedType(s.getType().getMaterial()), " ", Utils.lowerUnderscoreToUpperSpaced(s.getType().getType())));
+                if (s instanceof BlockItemPipe<?> itemPipe && itemPipe.isRestricted()){
+                    str = "restrictive_" + str;
+                }
+                String prefix = str.contains("_") ? Utils.lowerUnderscoreToUpperSpaced(str) : str.substring(0, 1).toUpperCase() + str.substring(1);
+                add(s, StringUtils.join(prefix, " ", Utils.getLocalizedType(s.getType().getMaterial()), " ", Utils.lowerUnderscoreToUpperSpaced(s.getType().getType())));
             });
             AntimatterAPI.all(Material.class).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
             AntimatterAPI.all(BlockOre.class, o -> {
@@ -326,7 +330,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.dye_color", "Handle Color: %s");
         add("antimatter.gui.show_recipes", "Show Recipes");
         add("antimatter.tooltip.pressure", "Bandwidth: %s L/t");
-        add("antimatter.tooltip.capacity", "Capacity: %s");
+        add("antimatter.tooltip.capacity", "Bandwidth: %s");
+        add("antimatter.tooltip.stepsize", "Stepsize: %s");
         add("antimatter.tooltip.gas_proof", "Can handle Gases");
         add("antimatter.tooltip.acid_proof", "Can handle Acids");
         add("antimatter.tooltip.max_temperature", "Max Temperature");

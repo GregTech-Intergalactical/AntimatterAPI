@@ -10,17 +10,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
 
 import java.util.List;
+import java.util.Map;
 
 public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
+    final boolean restricted;
 
-    public BlockItemPipe(T type, PipeSize size) {
-        super(type.getId(), type, size, 0);
+    public BlockItemPipe(T type, PipeSize size, boolean restricted) {
+        super((restricted ? "restrictive_" : "") + type.getId(), type, size, 0);
+        this.restricted = restricted;
     }
 
     @Override
@@ -35,7 +39,8 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     @Override
     public void appendHoverText(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> tooltip, TooltipFlag p_49819_) {
         super.appendHoverText(p_49816_, p_49817_, tooltip, p_49819_);
-        tooltip.add(Utils.translatable("antimatter.tooltip.capacity", Utils.literal(type.getCapacity(getSize()) + "").append(" ").append(Utils.translatable("antimatter.tooltip.stacks").append("."))));
+        tooltip.add(Utils.translatable("antimatter.tooltip.stepsize", (type.getStepsize(getSize()) * (restricted ? 100 : 1))).withStyle(ChatFormatting.AQUA));
+        tooltip.add(Utils.translatable("antimatter.tooltip.capacity", Utils.literal(type.getCapacity(getSize()) + "/s").withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.AQUA));
         if (!Screen.hasShiftDown()) {
             tooltip.add(Utils.translatable("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
         } else {
@@ -44,6 +49,11 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
             tooltip.add(Utils.literal("----------"));
         }
     }
+
+    public boolean isRestricted() {
+        return restricted;
+    }
+
     //    @Override
 //    public ITextComponent getDisplayName(ItemStack stack) {
 //        boolean res = stack.getMetadata() > 7;

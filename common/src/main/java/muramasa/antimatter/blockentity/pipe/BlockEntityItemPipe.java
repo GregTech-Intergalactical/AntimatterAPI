@@ -7,6 +7,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
+import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
@@ -26,11 +27,15 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
         implements IItemPipe, Dispatch.Sided<ExtendedItemContainer>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
 
     private int holder;
+    private boolean restricted;
 
     public BlockEntityItemPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         pipeCapHolder.set(() -> this);
         this.holder = 0;
+        if (state.getBlock() instanceof BlockItemPipe<?> itemPipe){
+            restricted = itemPipe.isRestricted();
+        }
     }
 
     @Override
@@ -52,6 +57,11 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     @Override
     public int getCapacity() {
         return getPipeType().getCapacity(getPipeSize());
+    }
+
+    @Override
+    public int getStepsize() {
+        return getPipeType().getStepsize(getPipeSize()) * (restricted ? 100 : 1);
     }
 
     @Override
