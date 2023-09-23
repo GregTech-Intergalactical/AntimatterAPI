@@ -28,10 +28,7 @@ import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.item.ExtendedItemContainer;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.GUI;
@@ -308,9 +305,15 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
         if (a == null) return true;
         ExtendedItemContainer outputHandler = getOutputHandler();
         boolean[] results = new boolean[a.length];
+        List<Integer> slotsTaken = new ArrayList<>();
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < outputHandler.getContainerSize(); j++) {
+                if (slotsTaken.contains(j)) continue;
                 results[i] |= insertIntoOutput(outputHandler, j, a[i], true).isEmpty();
+                if (results[i]){
+                    slotsTaken.add(j);
+                    break;
+                }
             }
         }
         for (boolean value : results) {
