@@ -37,10 +37,10 @@ public class ButtonOverlay implements IAntimatterObject {
     public static ButtonOverlay ARROW_RIGHT = new ButtonOverlay(Ref.ID,"arrow_right", 16, 16);
     public static ButtonOverlay INPUT_OUTPUT = new ButtonOverlay(Ref.ID,"in_out", 14, 14);
     public static ButtonOverlay NO_OVERLAY = new ButtonOverlay(Ref.ID, "no_overlay", 16, 16);
-    public static ButtonOverlay APAD_LEFT = new ButtonOverlay(Ref.ID,"apad_left",14, 14);    // «
-    public static ButtonOverlay PAD_LEFT = new ButtonOverlay(Ref.ID,"pad_left", 14, 14);     // ‹
-    public static ButtonOverlay PAD_RIGHT = new ButtonOverlay(Ref.ID,"pad_right", 14, 14);   // »
-    public static ButtonOverlay APAD_RIGHT = new ButtonOverlay(Ref.ID,"apad_right", 14, 14); // ›
+    public static ButtonOverlay APAD_LEFT = new ButtonOverlay(Ref.ID,"apad_left",14, 14).changedOnHovered();    // «
+    public static ButtonOverlay PAD_LEFT = new ButtonOverlay(Ref.ID,"pad_left", 14, 14).changedOnHovered();     // ‹
+    public static ButtonOverlay PAD_RIGHT = new ButtonOverlay(Ref.ID,"pad_right", 14, 14).changedOnHovered();   // »
+    public static ButtonOverlay APAD_RIGHT = new ButtonOverlay(Ref.ID,"apad_right", 14, 14).changedOnHovered(); // ›
 
     protected String id, domain;
     protected int w, h;
