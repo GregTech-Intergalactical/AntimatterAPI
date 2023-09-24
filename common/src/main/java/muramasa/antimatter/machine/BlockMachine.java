@@ -323,7 +323,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         BlockEntity entity = blockAccess.getBlockEntity(pos);
         if (entity instanceof BlockEntityMachine) {
             BlockEntityMachine<?> machine = (BlockEntityMachine<?>) entity;
-            return machine.getWeakRedstonePower(side);
+            return machine.getWeakRedstonePower(side == null ? null : side.getOpposite());
         }
         return super.getSignal(blockState, blockAccess, pos, side);
     }
@@ -333,7 +333,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         BlockEntity entity = blockAccess.getBlockEntity(pos);
         if (entity instanceof BlockEntityMachine) {
             BlockEntityMachine<?> machine = (BlockEntityMachine<?>) entity;
-            return machine.getStrongRedstonePower(side);
+            return machine.getStrongRedstonePower(side == null ? null : side.getOpposite());
         }
         return super.getDirectSignal(blockState, blockAccess, pos, side);
     }
