@@ -45,6 +45,7 @@ public class FluidIngredient {
         if (tag != null) {
             List<FluidHolder> list = new ObjectArrayList<>();
             Registry.FLUID.getTagOrEmpty(tag).iterator().forEachRemaining(t -> {
+                if (!t.value().isSource(t.value().defaultFluidState())) return;
                 FluidHolder stack = FluidHooks.newFluidHolder(t.value(), getAmount(), null);
                 list.add(stack);
             });
