@@ -21,6 +21,7 @@
     "issues": "https://github.com/GregTech-Intergalactical/AntimatterAPI/issues",
     "discord": "https://discord.gg/9kM4bRj"
   },
+  "icon": "assets/antimatter/icon.png",
   "license": "LGPL-3.0",
   "mixins": [
     "antimatter.mixins.json",
