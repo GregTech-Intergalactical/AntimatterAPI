@@ -12,9 +12,4 @@ public class BlockEntityBatteryBuffer<T extends BlockEntityBatteryBuffer<T>> ext
     public BlockEntityBatteryBuffer(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
-
-    @Override
-    public CoverFactory[] getValidCovers() {
-        return new CoverFactory[0];
-    }
 }
