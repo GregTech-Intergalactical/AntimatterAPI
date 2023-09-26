@@ -25,6 +25,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ButtonWidget extends Widget {
+    static int backgroundCenter = 0xff8b8b8b;
+    static int backgroundBlackEdge = 0xff373737;
+    static int backgroundWhiteEdge = 0xffffffff;
     @NotNull
     protected final ButtonOverlay body;
     @Nullable
@@ -34,6 +37,7 @@ public class ButtonWidget extends Widget {
     protected Function<ButtonWidget, Boolean> activeHandler;
     protected Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
+    protected boolean renderBackground = false;
 
     public ButtonWidget(GuiInstance instance, IGuiElement parent, @NotNull ButtonOverlay body, @Nullable Consumer<ButtonWidget> onPress) {
         super(instance, parent);
@@ -93,6 +97,17 @@ public class ButtonWidget extends Widget {
 
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+        if (renderBackground){
+            int x = realX();
+            int y = realY();
+            fillGradient(matrixStack, x, y, getW(), getH(), backgroundCenter, backgroundCenter);
+            fillGradient(matrixStack, x + getW(), y - 1, 1, 1, backgroundCenter, backgroundCenter);
+            fillGradient(matrixStack, x - 1, y + getH(), 1, 1, backgroundCenter, backgroundCenter);
+            fillGradient(matrixStack, x - 1, y - 1, getW() + 1, 1, backgroundWhiteEdge, backgroundWhiteEdge);
+            fillGradient(matrixStack, x - 1, y, 1, getH(), backgroundWhiteEdge, backgroundWhiteEdge);
+            fillGradient(matrixStack, x, y + getH(), getW() + 1, 1, backgroundBlackEdge, backgroundBlackEdge);
+            fillGradient(matrixStack, x + getW(), y, 1, getH(), backgroundBlackEdge, backgroundBlackEdge);
+        }
         Minecraft minecraft = Minecraft.getInstance();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 

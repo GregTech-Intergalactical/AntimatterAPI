@@ -256,7 +256,7 @@ public abstract class Widget implements IGuiElement {
     }
 
     @Environment(EnvType.CLIENT)
-    protected void fillGradient(PoseStack matrixStack, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
+    protected void fillGradient(PoseStack matrixStack, int x1, int y1, int width, int height, int colorFrom, int colorTo) {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -264,7 +264,7 @@ public abstract class Widget implements IGuiElement {
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder bufferbuilder = tesselator.getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        fillGradient(matrixStack.last().pose(), bufferbuilder, x1, y1, x2,y2, 0, colorFrom, colorTo);
+        fillGradient(matrixStack.last().pose(), bufferbuilder, x1, y1, x1 + width,  y1 + height, 0, colorFrom, colorTo);
         tesselator.end();
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();

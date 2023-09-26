@@ -82,7 +82,7 @@ public class FluidSlotWidget extends Widget {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
         int slotColor = -2130706433;
-        this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
+        this.fillGradient(stack, x, y, 16, 16, slotColor, slotColor);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
         List<Component> str = new ArrayList<>();
