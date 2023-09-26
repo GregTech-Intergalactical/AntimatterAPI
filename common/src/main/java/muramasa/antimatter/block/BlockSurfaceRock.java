@@ -118,9 +118,6 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult traceResult) {
         if (player.isCrouching()) return InteractionResult.FAIL;
-        playerDestroy(world, player, pos, state, world.getBlockEntity(pos), player.getItemInHand(hand));
-        dropResources(state, world, pos, null,player, ItemStack.EMPTY);
-       // if (dropResources(state, world, pos, null,player, true, null)) {
         if (!player.addItem(AntimatterMaterialTypes.ROCK.get(material, 1))) {
             Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, AntimatterMaterialTypes.ROCK.get(material, 1)));
         }
