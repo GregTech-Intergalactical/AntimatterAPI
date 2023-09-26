@@ -46,7 +46,7 @@ public class DynamicDataPack implements PackResources {
     public static void addRecipe(FinishedRecipe recipe) {
         JsonObject recipeJson = recipe.serializeRecipe();
         Path parent = AntimatterPlatformUtils.getConfigDir().getParent()
-                .resolve("dumped/amtimatter-dynamic-data/data");
+                .resolve("dumped/antimatter-dynamic-data/data");
         if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES){
             writeJson(recipe.getId(), "recipes", parent, recipeJson);
         }
