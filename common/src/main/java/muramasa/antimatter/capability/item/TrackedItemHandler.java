@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.item;
 
+import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
@@ -58,7 +59,7 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (this.type == SlotType.IT_IN){
+        if (this.type == SlotType.IT_IN && !(tile instanceof BlockEntityHatch<?>)){
             for (int i = 0; i < size; i++){
                 if (i == slot) continue;
                 if (this.getItem(i).isEmpty()) continue;
