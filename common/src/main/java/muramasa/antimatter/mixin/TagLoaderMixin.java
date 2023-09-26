@@ -10,6 +10,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -46,14 +48,35 @@ public abstract class TagLoaderMixin {
                 Antimatter.LOGGER.error(e.getMessage(), e);
             }
         }
-        /*if (directory.equals("tags/blocks")) {
+        if (directory.equals("tags/blocks")) {
             try {
-                Map<ResourceLocation, Collection<Holder<Block>>> tags = Utils.cast(cir.getReturnValue());
-                TagReloadHandler.initBlockTags(tags);
-                TagReloadHandler.run();
+                Map<ResourceLocation, Tag<Holder<Block>>> tags = Utils.cast(cir.getReturnValue());
+                Map<ResourceLocation, List<Block>> tagMap = Utils.cast(AntimatterTagProvider.TAGS_TO_REMOVE_GLOBAL.get(Registry.BLOCK));
+                tagMap.forEach((resourceLocation, items) -> {
+                    if (tags.containsKey(resourceLocation)){
+                        Tag<Holder<Block>> tag = tags.get(resourceLocation);
+                        tag = new Tag<>(tag.getValues().stream().filter(i -> !items.contains(i.value())).toList());
+                        tags.put(resourceLocation, tag);
+                    }
+                });
             } catch (Exception e) {
-                AlmostUnified.LOG.error(e.getMessage(), e);
+                Antimatter.LOGGER.error(e.getMessage(), e);
             }
-        }*/
+        }
+        if (directory.equals("tags/fluids")) {
+            try {
+                Map<ResourceLocation, Tag<Holder<Fluid>>> tags = Utils.cast(cir.getReturnValue());
+                Map<ResourceLocation, List<Fluid>> tagMap = Utils.cast(AntimatterTagProvider.TAGS_TO_REMOVE_GLOBAL.get(Registry.FLUID));
+                tagMap.forEach((resourceLocation, items) -> {
+                    if (tags.containsKey(resourceLocation)){
+                        Tag<Holder<Fluid>> tag = tags.get(resourceLocation);
+                        tag = new Tag<>(tag.getValues().stream().filter(i -> !items.contains(i.value())).toList());
+                        tags.put(resourceLocation, tag);
+                    }
+                });
+            } catch (Exception e) {
+                Antimatter.LOGGER.error(e.getMessage(), e);
+            }
+        }
     }
 }
