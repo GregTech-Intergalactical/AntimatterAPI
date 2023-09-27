@@ -128,7 +128,7 @@ public class CoverFactory implements IAntimatterObject {
                 ? AntimatterAPI.get(Tier.class, nbt.getString(dir.get3DDataValue() + "t"))
                 : null;
         ICover cover = factory.supplier.get(source, tier, dir, factory);
-        cover.onPlace();
+        cover.onCreate();
         if (nbt.contains(dir.get3DDataValue() + "c"))
             cover.deserialize((CompoundTag) nbt.get(dir.get3DDataValue() + "c"));
         return cover;

@@ -99,6 +99,11 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public void onPlace() {
+        onCreate();
+    }
+
+    @Override
+    public void onCreate() {
         setInventory();
     }
 

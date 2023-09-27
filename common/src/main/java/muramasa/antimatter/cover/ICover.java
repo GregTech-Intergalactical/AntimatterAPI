@@ -47,6 +47,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
     }
 
+    default void onCreate(){
+
+    }
+
     default boolean canPlace(){
         return true;
     }
