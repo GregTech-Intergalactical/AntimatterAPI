@@ -199,16 +199,20 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
             return Collections.emptyList();
         }
         List<FluidHolder> consumed = new ObjectArrayList<>();
-        boolean ret = true;
+        List<FluidIngredient> fluidIngredients = new ObjectArrayList<>();
         if (inputs != null) {
             for (FluidIngredient input : inputs) {
-                List<FluidHolder> inner = input.drain(this, true, simulate);
+                List<FluidHolder> inner = input.drain(this, true, true);
                 if (inner.stream().mapToLong(FluidHolder::getFluidAmount).sum() != input.getAmount()) {
-                    ret = false;
+                    return Collections.emptyList();
                 } else {
+                    fluidIngredients.add(input);
                     consumed.addAll(inner);
                 }
             }
+        }
+        if (!simulate){
+            fluidIngredients.forEach(f -> f.drain(this, true, false));
         }
         return consumed;
     }
