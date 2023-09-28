@@ -46,11 +46,11 @@ public class CycleButtonWidget extends ButtonWidget{
         return this;
     }
 
-    public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, ButtonOverlay... buttons) {
-        return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons)));
+    public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground, ButtonOverlay... buttons) {
+        return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons).setRenderBackground(renderBackground)));
     }
 
-    public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, IntFunction<String> tooltipKey, ButtonOverlay... buttons) {
-        return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons).setTooltipKeyFunction(tooltipKey)));
+    public static WidgetSupplier build(ToIntFunction<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground, IntFunction<String> tooltipKey, ButtonOverlay... buttons) {
+        return builder(((a, b) -> new CycleButtonWidget(a, b, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction, buttons).setTooltipKeyFunction(tooltipKey).setRenderBackground(renderBackground)));
     }
 }

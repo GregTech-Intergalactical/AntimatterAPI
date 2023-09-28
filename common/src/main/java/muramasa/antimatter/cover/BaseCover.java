@@ -254,7 +254,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public ResourceLocation getGuiTexture() {
-        return new ResourceLocation(factory.getDomain(), "textures/gui/cover/" + getId() + ".png");
+        return new ResourceLocation(Ref.ID, "textures/gui/background/machine_basic.png");
     }
 
     @Override

@@ -31,10 +31,7 @@ public class ButtonWidget extends Widget {
     @NotNull
     protected final ButtonOverlay body;
     @Nullable
-    protected String message;
-    @Nullable
     protected String tooltipKey;
-    protected Function<ButtonWidget, Boolean> activeHandler;
     protected Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
     protected boolean renderBackground = false;
@@ -49,13 +46,13 @@ public class ButtonWidget extends Widget {
         this.onPress = clicker;
     }
 
-    public ButtonWidget setStateHandler(Function<ButtonWidget, Boolean> func) {
-        this.activeHandler = func;
+    public ButtonWidget setTooltipKey(@Nullable String tooltipKey) {
+        this.tooltipKey = tooltipKey;
         return this;
     }
 
-    public ButtonWidget setTooltipKey(@Nullable String tooltipKey) {
-        this.tooltipKey = tooltipKey;
+    public ButtonWidget setRenderBackground(boolean renderBackground){
+        this.renderBackground = renderBackground;
         return this;
     }
 
@@ -108,71 +105,27 @@ public class ButtonWidget extends Widget {
             fillGradient(matrixStack, x, y + getH(), getW() + 1, 1, backgroundBlackEdge, backgroundBlackEdge);
             fillGradient(matrixStack, x + getW(), y, 1, getH(), backgroundBlackEdge, backgroundBlackEdge);
         }
-        Minecraft minecraft = Minecraft.getInstance();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        renderButtonBody(matrixStack, mouseX, mouseY, partialTicks);
+    }
 
-        RenderSystem.disableDepthTest();
-        RenderSystem.setShaderTexture(0, getBody().getTexture());
+    protected void renderButtonBody(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks){
         int xTex = 0;
         int yTex = 0;
         if (getBody().isChangedOnHovered() && isInside(mouseX, mouseY)) {
             yTex += getBody().getH();
         }
-
-        ScreenWidget.blit(matrixStack, realX(), realY(), this.getW(), this.getH(), xTex, yTex, getBody().getW(), getBody().getH(), getBody().getW(), getBody().getH() * (getBody().isChangedOnHovered() ? 2 : 1));
-        /*boolean isActive = activeHandler == null || activeHandler.apply(this);
-        float color = isActive ? 1.0f : pressed ? 0.75f : 0.5f;
-        if (color < 1f) {
-            RenderSystem.setShaderColor(color, color, color, 1);
-        }*/
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        Component message = getMessage();
-        if (!message.getString().isEmpty()) {
-            GuiComponent.drawCenteredString(matrixStack, minecraft.font, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);
-        }
+        drawTexture(matrixStack, getBody().getTexture(), realX(), realY(), xTex, yTex, getBody().getW(), getBody().getH(), getBody().getW(), getBody().getH() * (getBody().isChangedOnHovered() ? 2 : 1));
     }
 
     protected ButtonOverlay getBody(){
         return body;
     }
 
-    /*public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
-        super(instance, parent);
-        this.res = res;
-        this.body = null;
-        this.overlayOn = overlayOn;
-        this.overlayOff = overlayOff;
-        this.resLoc = loc;
-        this.bodyLoc = bodyLoc;
-        this.onPress = onPress;
-    }*/
-
-    /*public static WidgetSupplier build(ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, body, overlay, null, onPress)).clientSide();
+    public static WidgetSupplier build(ButtonOverlay body, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground) {
+        return builder(((a, b) -> new ButtonWidget(a, b,  body, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))).setRenderBackground(renderBackground))).clientSide();
     }
 
-    public static WidgetSupplier build(ButtonBody body, ButtonOverlay overlayOn, ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, body, overlayOn, overlayOff, onPress)).clientSide();
-    }*/
-
-    /*public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, null, onPress)).clientSide();
-    }*/
-
-    /*public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
-    }*/
-
-    /*public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlayOn, ButtonOverlay overlayOff, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlayOn, overlayOff, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
-    }*/
-
-    public static WidgetSupplier build(ButtonOverlay body, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder(((a, b) -> new ButtonWidget(a, b,  body, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
-    }
-
-    public static WidgetSupplier build(ButtonOverlay body, IGuiEvent.IGuiEventFactory ev, int id, String tooltipKey) {
-        return builder(((a, b) -> new ButtonWidget(a, b, body, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))).setTooltipKey(tooltipKey))).clientSide();
+    public static WidgetSupplier build(ButtonOverlay body, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground, String tooltipKey) {
+        return builder(((a, b) -> new ButtonWidget(a, b, body, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))).setRenderBackground(renderBackground).setTooltipKey(tooltipKey))).clientSide();
     }
 }

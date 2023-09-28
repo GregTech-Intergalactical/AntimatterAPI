@@ -49,11 +49,11 @@ public class SwitchButtonWidget extends ButtonWidget{
         return this;
     }
 
-    public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder(((a, b) -> new SwitchButtonWidget(a, b,  bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction)));
+    public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground) {
+        return builder(((a, b) -> new SwitchButtonWidget(a, b,  bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction).setRenderBackground(renderBackground)));
     }
 
-    public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, Function<Boolean, String> tooltipKeyFunction) {
-        return builder(((a, b) -> new SwitchButtonWidget(a, b, bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction).setTooltipKeyFunction(tooltipKeyFunction)));
+    public static WidgetSupplier build(ButtonOverlay bodyOff, ButtonOverlay bodyOn, Predicate<IGuiHandler> syncFunction, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground, Function<Boolean, String> tooltipKeyFunction) {
+        return builder(((a, b) -> new SwitchButtonWidget(a, b, bodyOff, bodyOn, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))), syncFunction).setTooltipKeyFunction(tooltipKeyFunction).setRenderBackground(renderBackground)));
     }
 }
