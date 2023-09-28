@@ -24,9 +24,9 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
             if (coverHandler.get(side).blocksInput(ExtendedItemContainer.class, side)) {
                 return stack;
             }
-            ItemStack copy = stack.copy();
-            coverHandler.onTransfer(stack, side, side, simulate);
-            if (copy.isEmpty()) return stack;
+            if (coverHandler.onTransfer(stack, side, side, simulate)) {
+                return stack;
+            }
         }
         return super.insertItem(slot, stack, simulate);
     }
