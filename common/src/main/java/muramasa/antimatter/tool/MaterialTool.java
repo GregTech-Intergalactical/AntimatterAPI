@@ -339,25 +339,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return getGenericContainerItem(oldStack);
     }
 
-
-    @Override
-    public int getBarColor(ItemStack stack) {
-        // return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
-        if (type.isPowered()) return getCurrentEnergy(stack) > 0 ? 0x00BFFF : super.getBarColor(stack);
-        return super.getBarColor(stack);
-    }
-
-    @Override
-    public int getBarWidth(ItemStack stack) {
-        if (!type.isPowered()) return super.getBarWidth(stack);
-        long currentEnergy = getCurrentEnergy(stack);
-        if (currentEnergy > 0) {
-            double maxAmount = getMaxEnergy(stack);
-            return (int)( 13*(currentEnergy / maxAmount));
-        }
-        return super.getBarWidth(stack);
-    }
-
     @Override
     public boolean isBarVisible(ItemStack stack) {
         if (type.isPowered()) return true;

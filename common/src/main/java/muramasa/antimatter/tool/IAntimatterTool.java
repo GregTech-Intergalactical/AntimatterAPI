@@ -80,6 +80,23 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return null;
     }
 
+    default int getPoweredBarColor(ItemStack stack){
+        return 0x00BFFF;
+    }
+
+    default int getPoweredBarWidth(ItemStack stack){
+        long currentEnergy = getCurrentEnergy(stack);
+        if (currentEnergy > 0) {
+            double maxAmount = getMaxEnergy(stack);
+            return (int)( 13*(currentEnergy / maxAmount));
+        }
+        return 0;
+    }
+
+    default boolean isPoweredBarVisible(ItemStack stack) {
+        return getCurrentEnergy(stack) > 0;
+    }
+
     default Material[] getMaterials(ItemStack stack) {
         return new Material[]{getPrimaryMaterial(stack), getSecondaryMaterial(stack)};
     }
