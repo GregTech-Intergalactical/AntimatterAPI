@@ -41,7 +41,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Utils.translatable("antimatter.tooltip.pressure", getType().getPressure(getSize())).withStyle(ChatFormatting.AQUA));
+        tooltip.add(Utils.translatable("antimatter.tooltip.bandwidth", getType().getPressure(getSize()) + " L/t").withStyle(ChatFormatting.AQUA));
         tooltip.add(Utils.translatable("antimatter.tooltip.capacity", (getType().getPressure(getSize()) * 2) + "L").withStyle(ChatFormatting.AQUA));
         if (getType().isGasProof()){
             tooltip.add(Utils.translatable("antimatter.tooltip.gas_proof").withStyle(ChatFormatting.GOLD));

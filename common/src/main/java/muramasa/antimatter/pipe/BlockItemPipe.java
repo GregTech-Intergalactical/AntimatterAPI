@@ -45,7 +45,7 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     public void appendHoverText(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> tooltip, TooltipFlag p_49819_) {
         super.appendHoverText(p_49816_, p_49817_, tooltip, p_49819_);
         tooltip.add(Utils.translatable("antimatter.tooltip.stepsize", (type.getStepsize(getSize()) * (restricted ? 100 : 1))).withStyle(ChatFormatting.AQUA));
-        tooltip.add(Utils.translatable("antimatter.tooltip.capacity", Utils.literal(type.getCapacity(getSize()) + "/s").withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.AQUA));
+        tooltip.add(Utils.translatable("antimatter.tooltip.bandwidth", Utils.literal(type.getCapacity(getSize()) + "/s").withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.AQUA));
         if (!Screen.hasShiftDown()) {
             tooltip.add(Utils.translatable("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
         } else {
