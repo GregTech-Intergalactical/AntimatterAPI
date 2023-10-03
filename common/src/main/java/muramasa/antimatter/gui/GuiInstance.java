@@ -180,6 +180,11 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
+    public GuiInstance addButton(int x, int y, ButtonOverlay body) {
+        addWidget(ButtonWidget.build(body, GuiEvents.EXTRA_BUTTON, buttonCounter++, false).setSize(x, y, body.w, body.h));
+        return this;
+    }
+
     public GuiInstance addButton(int x, int y, ButtonOverlay body, boolean renderBackground) {
         addWidget(ButtonWidget.build(body, GuiEvents.EXTRA_BUTTON, buttonCounter++, renderBackground).setSize(x, y, body.w, body.h));
         return this;
@@ -187,6 +192,11 @@ public class GuiInstance implements ICanSyncData {
 
     public GuiInstance addButton(int x, int y, ButtonOverlay body, boolean renderBackground, String tooltipKey) {
         addWidget(ButtonWidget.build(body, GuiEvents.EXTRA_BUTTON, buttonCounter++, renderBackground, tooltipKey).setSize(x, y, body.w, body.h));
+        return this;
+    }
+
+    public GuiInstance addButton(int x, int y, ButtonOverlay body, String tooltipKey) {
+        addWidget(ButtonWidget.build(body, GuiEvents.EXTRA_BUTTON, buttonCounter++, false, tooltipKey).setSize(x, y, body.w, body.h));
         return this;
     }
 
