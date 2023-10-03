@@ -55,7 +55,7 @@ public class SlotClickEvent implements IGuiEvent {
     private PlatformFluidHandler tryGetCap(IGuiHandler handler) {
         if (handler instanceof BlockEntityMachine) {
             BlockEntityMachine<?> machine = (BlockEntityMachine<?>) handler;
-            return machine.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(null);
+            return machine.fluidHandler.map(f -> type == SlotType.FL_IN && f.getInputTanks() != null ? f.getInputTanks().getTank(index) : type == SlotType.FL_OUT && f.getOutputTanks() != null ? f.getOutputTanks().getTank(index) : f.getGuiHandler()).orElse(null);
         }
         if (handler instanceof BlockEntity be) {
             return FluidHooks.safeGetBlockFluidManager(be, null).orElse(null);
