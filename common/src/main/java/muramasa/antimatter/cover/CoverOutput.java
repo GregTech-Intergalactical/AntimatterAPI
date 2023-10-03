@@ -1,5 +1,7 @@
 package muramasa.antimatter.cover;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
@@ -131,9 +133,16 @@ public class CoverOutput extends CoverInput {
         processing++;
         TesseractCapUtils.getFluidHandler(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, Integer.MAX_VALUE * TesseractGraphWrappers.dropletMultiplier, true));
+                    FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> tryFluidTransfer(adjHandler, h, Integer.MAX_VALUE * TesseractGraphWrappers.dropletMultiplier, true));
                 });
         processing--;
+    }
+
+    public static void tryFluidTransfer(PlatformFluidHandler fluidDestination, PlatformFluidHandler fluidSource, long maxAmount, boolean doTransfer) {
+        for (int i = 0; i < fluidSource.getTankAmount(); i++) {
+            FluidHolder fluid = fluidSource.getFluidInTank(i);
+            FluidPlatformUtils.tryFluidTransfer(fluidDestination, fluidSource, fluid.copyWithAmount(Math.min(fluid.getFluidAmount(), maxAmount)), doTransfer);
+        }
     }
 
     @Override
