@@ -329,7 +329,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.material_secondary", "Secondary Material: %s");
         add("antimatter.tooltip.dye_color", "Handle Color: %s");
         add("antimatter.gui.show_recipes", "Show Recipes");
-        add("antimatter.tooltip.pressure", "Bandwidth: %s");
+        add("antimatter.tooltip.bandwidth", "Bandwidth: %s");
         add("antimatter.tooltip.capacity", "Capacity: %s");
         add("antimatter.tooltip.stepsize", "Stepsize: %s");
         add("antimatter.tooltip.gas_proof", "Can handle Gases");
