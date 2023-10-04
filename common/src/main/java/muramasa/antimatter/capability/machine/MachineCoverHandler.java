@@ -12,6 +12,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +72,7 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
     }
 
     @Override
-    public boolean onInteract(@NotNull Player player, @NotNull InteractionHand hand, @NotNull Direction side, @Nullable AntimatterToolType type) {
+    public InteractionResult onInteract(@NotNull Player player, @NotNull InteractionHand hand, @NotNull Direction side, @Nullable AntimatterToolType type) {
         return super.onInteract(player, hand, side, type);
     }
 

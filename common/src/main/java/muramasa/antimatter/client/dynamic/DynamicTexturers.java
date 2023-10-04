@@ -8,13 +8,13 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.ICoverHandlerProvider;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.SimpleModelState;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.mixin.client.BlockModelAccessor;
-import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -24,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,19 +58,7 @@ public class DynamicTexturers {
                     BakedModel b = model.bake(ModelUtils.getModelBakery(), model, ModelUtils.getDefaultTextureGetter(),
                             new SimpleModelState(base), t.source.getModel(t.type, Direction.SOUTH), true);
 
-                    ICoverHandler<?> coverHandler = AntimatterCapUtils.getCoverHandler(t.getBlockEntity(), t.currentDir).orElse(null);
-                    Predicate<Map.Entry<String, BakedModel>> predicate = null;
-
-                    if (coverHandler != null){
-                        predicate = e -> {
-                            String key = e.getKey();
-                            if (key.isEmpty()) return true;
-                            Direction dir = Utils.rotate(t.currentDir, Direction.byName(key));
-                            if (dir == null) throw new NullPointerException("Dir null in getBlockQuads");
-                            boolean ok =  coverHandler.get(dir).isEmpty();//(filter & (1 << dir.get3DDataValue())) > 0;
-                            return ok;
-                        };
-                    }
+                    Predicate<Map.Entry<String, BakedModel>> predicate = getEntryPredicate(t);
 
                     List<BakedQuad> ret = new ObjectArrayList<>();
                     for (Direction dir : Ref.DIRS) {
@@ -80,6 +69,24 @@ public class DynamicTexturers {
                 }
                 return Collections.emptyList();
             });
+
+    @Nullable
+    private static Predicate<Map.Entry<String, BakedModel>> getEntryPredicate(DynamicTextureProvider<ICover, ICover.DynamicKey>.BuilderData t) {
+        ICoverHandler<?> coverHandler = t.getBlockEntity() instanceof ICoverHandlerProvider<?> provider ? provider.getCoverHandler().orElse(null) : null;
+        Predicate<Map.Entry<String, BakedModel>> predicate = null;
+
+        if (coverHandler != null){
+            predicate = e -> {
+                String key = e.getKey();
+                if (key.isEmpty()) return true;
+                Direction dir = Utils.rotate(t.currentDir, Direction.byName(key));
+                if (dir == null) throw new NullPointerException("Dir null in getBlockQuads");
+                boolean ok =  coverHandler.get(dir).isEmpty();//(filter & (1 << dir.get3DDataValue())) > 0;
+                return ok;
+            };
+        }
+        return predicate;
+    }
 
     public static final DynamicTextureProvider<Machine<?>, BlockEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<Machine<?>, BlockEntityMachine.DynamicKey>(
             t -> {

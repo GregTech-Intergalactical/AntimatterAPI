@@ -24,7 +24,6 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -249,38 +248,39 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (stack.getItem() instanceof IHaveCover) {
                 CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                 Direction dir = Utils.getInteractSide(hit);
-                boolean ok = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
+                boolean ok = tile.getCoverHandler().map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                 if (ok) {
                     return InteractionResult.SUCCESS;
                 }
             }
             AntimatterToolType type = Utils.getToolType(player);
-            if (type == null) {
-                return InteractionResult.PASS;
-            }
-            boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(h -> h.onInteract(player, hand, Utils.getInteractSide(hit), type)).orElse(false);
-            if (coverInteract) return InteractionResult.SUCCESS;
             if (type == AntimatterDefaultTools.CROWBAR) {
                 if (!player.isCrouching()) {
-                    if (AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                    if (tile.getCoverHandler().map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                         Utils.damageStack(stack, hand, player);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
                 } else {
-                    if (AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
+                    if (tile.getCoverHandler().map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                         Utils.damageStack(stack, player);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
                 }
-            } else if (type == AntimatterDefaultTools.SCREWDRIVER || type == AntimatterDefaultTools.ELECTRIC_SCREWDRIVER) {
+            }
+            InteractionResult coverInteract = tile.getCoverHandler().map(h -> h.onInteract(player, hand, Utils.getInteractSide(hit), type)).orElse(InteractionResult.PASS);
+            if (coverInteract != InteractionResult.PASS) return coverInteract;
+            if (type == null) {
+                return InteractionResult.PASS;
+            }
+            if (type == AntimatterDefaultTools.SCREWDRIVER || type == AntimatterDefaultTools.ELECTRIC_SCREWDRIVER) {
                 if (player.isCrouching()) {
                     AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
                     Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
                 }
-                ICover instance = AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
+                ICover instance = tile.getCoverHandler().map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
                         Utils.damageStack(stack, hand, player);

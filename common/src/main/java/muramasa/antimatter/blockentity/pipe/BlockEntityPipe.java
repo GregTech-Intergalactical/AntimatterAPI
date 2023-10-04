@@ -37,7 +37,7 @@ import tesseract.graph.Connectivity;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntityTickable<BlockEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
+public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntityTickable<BlockEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable, ICoverHandlerProvider<BlockEntityPipe<?>> {
 
     /**
      * Pipe Data
@@ -136,8 +136,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
 
     public BlockEntityPipe<?> getPipe(BlockPos side) {
         BlockEntity tile = getLevel().getBlockEntity(side);
-        if (!(tile instanceof BlockEntityPipe)) return null;
-        BlockEntityPipe<?> pipe = (BlockEntityPipe<?>) tile;
+        if (!(tile instanceof BlockEntityPipe<?> pipe)) return null;
         return pipe.getCapClass() == this.getCapClass() ?  pipe : null;
     }
 
@@ -156,7 +155,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         //If it is a tile but invalid do not connect.
         connection = Connectivity.set(connection, side.get3DDataValue());
         boolean ok = validate(side);
-        if (!ok && pipe == null && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
+        if (!ok && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
             connection = Connectivity.clear(connection, side.get3DDataValue());
             return;
         }
@@ -372,5 +371,10 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         //instance.addWidget(WidgetSupplier.build((a, b) -> TextWidget.build(((AntimatterContainerScreen<?>) b).getTitle().getString(), 4210752).build(a, b)).setPos(9, 5).clientSide());
         instance.addWidget(BackgroundWidget.build(instance.handler.getGuiTexture(), instance.handler.guiSize(), instance.handler.guiHeight()));
+    }
+
+    @Override
+    public Optional<ICoverHandler<BlockEntityPipe<?>>> getCoverHandler() {
+        return coverHandler.map(p -> (ICoverHandler<BlockEntityPipe<?>>) p);
     }
 }

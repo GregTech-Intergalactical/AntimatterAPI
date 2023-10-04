@@ -1,8 +1,11 @@
 package muramasa.antimatter.blockentity.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.Dispatch;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.CoverPlate;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
@@ -42,7 +45,13 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
 
     @Override
     public CoverFactory[] getValidCovers() {
-        return new CoverFactory[0];
+        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> {
+            try {
+                return t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t) instanceof CoverPlate;
+            } catch (Exception ex) {
+                return false;
+            }
+        }).toArray(CoverFactory[]::new);
     }
 
     @Override

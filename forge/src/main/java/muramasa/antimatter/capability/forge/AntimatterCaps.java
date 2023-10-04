@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = Ref.ID)
 public class AntimatterCaps {
     public static final BiMap<Class<?>, Capability<?>> CAP_MAP = HashBiMap.create();
-    public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 
     @SubscribeEvent

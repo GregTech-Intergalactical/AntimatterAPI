@@ -6,6 +6,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,7 +34,7 @@ public interface ICoverHandler<T extends BlockEntity> extends Serializable {
 
     // If the player uses a cover in hand -> place cover if none exists.. Otherwises
     // interact with the cover, if present.
-    boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type);
+    InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type);
 
     /**
      * Helpers
@@ -111,8 +112,8 @@ public interface ICoverHandler<T extends BlockEntity> extends Serializable {
         }
 
         @Override
-        public boolean onInteract(Player player, InteractionHand hand, Direction side, AntimatterToolType type) {
-            return false;
+        public InteractionResult onInteract(Player player, InteractionHand hand, Direction side, AntimatterToolType type) {
+            return InteractionResult.PASS;
         }
 
         @Override

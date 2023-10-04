@@ -58,7 +58,6 @@ public abstract class BlockEntityPipeMixin<T extends PipeType<T>> extends BlockE
     @Override
     public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction side) {
         if (side == null && !(((Object)this) instanceof BlockEntityFluidPipe<?>)) return LazyOptional.empty();
-        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return LazyOptional.of(() -> coverHandler.get()).cast();
         if (side != null && !connects(side)) return LazyOptional.empty();
         if (!pipeCapHolder.isPresent()) return LazyOptional.empty();
         if (cap == FLUID_HANDLER_CAPABILITY && getCapClass() == FluidContainer.class){

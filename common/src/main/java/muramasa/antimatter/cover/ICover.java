@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -146,9 +147,9 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
      * Fires once per Side. Return defines whether or not to consume the
      * interaction.
      **/
-    default boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
+    default InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
         // Do not consume behaviour per default.
-        return false;
+        return InteractionResult.PASS;
     }
 
     default boolean ticks() {

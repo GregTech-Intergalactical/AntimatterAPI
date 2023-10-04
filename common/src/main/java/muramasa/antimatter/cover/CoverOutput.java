@@ -17,6 +17,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -96,12 +97,12 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public boolean onInteract(Player player, InteractionHand hand, Direction side, @org.jetbrains.annotations.Nullable AntimatterToolType type) {
+    public InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @org.jetbrains.annotations.Nullable AntimatterToolType type) {
         if (type != null && type.getTag() == AntimatterDefaultTools.SCREWDRIVER.getTag()){
             allowInput = !allowInput;
             String suffix = allowInput ? "allow" : "no";
             player.sendMessage(Utils.translatable("antimatter.tooltip.cover.output." + suffix + "_input"), player.getUUID());
-            return true;
+            return InteractionResult.SUCCESS;
         }
         return super.onInteract(player, hand, side, type);
     }

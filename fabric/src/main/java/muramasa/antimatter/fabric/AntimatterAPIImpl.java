@@ -4,7 +4,6 @@ import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.fabric.fluid.storage.FabricBlockFluidContainer;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
-import muramasa.antimatter.capability.fabric.AntimatterLookups;
 import muramasa.antimatter.blockentity.pipe.*;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -32,7 +31,6 @@ public class AntimatterAPIImpl {
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
             TesseractImpl.registerMITile((be, direction) -> be.energyHandler.side(direction).orElse(null), type);
         }
-        AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.side(direction).orElse(null), type);
     }
 
     public static void registerTransferApiPipe(BlockEntityType<? extends BlockEntityPipe<?>> type){
@@ -62,7 +60,6 @@ public class AntimatterAPIImpl {
             if (!(be instanceof BlockEntityHeatPipe<?> heatPipe)) return null;
             return (IHeatHandler) heatPipe.getPipeCapHolder().side(direction).orElse(null);
         }, type);
-        AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.coverHandler.orElse(null), type);
     }
 
     public static void registerItemTransferAPI(Item item){

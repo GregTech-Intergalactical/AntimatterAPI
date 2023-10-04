@@ -70,6 +70,7 @@ import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
@@ -79,7 +80,7 @@ import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraft.world.level.block.Blocks.AIR;
 
-public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEntityTickable<T> implements MenuProvider, IMachineHandler, IGuiHandler {
+public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEntityTickable<T> implements MenuProvider, IMachineHandler, IGuiHandler, ICoverHandlerProvider<T> {
 
     /**
      * Open container. Allows for better syncing
@@ -716,6 +717,11 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
     public String getId() {
         return this.getMachineType().getId();
+    }
+
+    @Override
+    public Optional<ICoverHandler<T>> getCoverHandler() {
+        return coverHandler.map(c -> c);
     }
 
     /**

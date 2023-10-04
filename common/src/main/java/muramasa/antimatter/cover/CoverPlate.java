@@ -8,11 +8,16 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -83,5 +88,10 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public Texture[] getTextures() {
         return new Texture[]{material.getSet().getTextures(AntimatterMaterialTypes.BLOCK)[0]};
+    }
+
+    @Override
+    public InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
+        return InteractionResult.FAIL;
     }
 }
