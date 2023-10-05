@@ -17,7 +17,7 @@ public class MaterialDataInit {
     public static void onMaterialEvent(MaterialEvent event){
         //why?
         //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
-        event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.GEAR).addHandleStat(-10, -0.5F);
+        event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.GEAR).addHandleStat(-10, -0.5F);
         event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Andesite).asDust(AntimatterMaterialTypes.ROCK);
