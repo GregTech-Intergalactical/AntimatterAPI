@@ -110,6 +110,8 @@ public class ForgeCommonEvents {
                 replacement = id.replace("item_", "item_pipe_");
             } else if (id.contains("vanilla_basalt")){
                 replacement = id.replace("vanilla_basalt", "basalt");
+            } else if (id.contains("sad_red")){
+                replacement = id.replace("sand_red", "red_sand");
             }
             if (id.contains("__")){
                 replacement = replacement.isEmpty() ? id.replace("__", "_") : replacement.replace("__", "_");
@@ -175,6 +177,11 @@ public class ForgeCommonEvents {
                 replacement = id.replace("item_", "item_pipe_");
             } else if (id.contains("vanilla_basalt")){
                 replacement = id.replace("vanilla_basalt", "basalt");
+            } else if (id.contains("sad_red")){
+                replacement = id.replace("sand_red", "red_sand");
+            }
+            if (id.contains("__")){
+                replacement = replacement.isEmpty() ? id.replace("__", "_") : replacement.replace("__", "_");
             }
             if (!replacement.isEmpty()) {
                 Item replacementBlock = AntimatterAPI.get(Item.class, replacement, Ref.SHARED_ID);
