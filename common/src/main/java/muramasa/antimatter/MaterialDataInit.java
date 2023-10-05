@@ -24,7 +24,6 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Deepslate).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Tuff).asDust(AntimatterMaterialTypes.ROCK);
 
-        event.setMaterial(AntimatterMaterials.Gravel).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Dirt).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Sand).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.RedSand).asDust(AntimatterMaterialTypes.ROCK);

@@ -30,6 +30,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
+import static muramasa.antimatter.data.AntimatterMaterials.Stone;
 import static muramasa.antimatter.material.Material.NULL;
 
 @Mod.EventBusSubscriber(modid = Ref.ID)
@@ -153,6 +155,10 @@ public class ForgeCommonEvents {
             String id = map.key.getPath();
             if (id.equals("basalt")){
                 map.remap(Items.BASALT);
+                return;
+            }
+            if (id.equals("dust_gravel")){
+                map.remap(DUST.get(Stone));
                 return;
             }
             if (id.contains("crushed_centrifuged")){

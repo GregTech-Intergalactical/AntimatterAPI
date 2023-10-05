@@ -16,7 +16,6 @@ public class AntimatterMaterials {
     public static Material Andesite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "andesite", 0xbfbfbf, NONE));
     public static Material Deepslate = AntimatterAPI.register(Material.class, new Material(Ref.ID, "deepslate", 0x1e1414, NONE));
     public static Material Tuff = AntimatterAPI.register(Material.class, new Material(Ref.ID, "tuff", 0x392923, NONE));
-    public static Material Gravel = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gravel", 0xcdcdcd, NONE));
     public static Material Dirt = AntimatterAPI.register(Material.class, new Material(Ref.ID, "dirt", 0x976d4d, NONE));
     public static Material Sand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sand", 0xfafac8, NONE));
     public static Material RedSand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "red_sand", 0xff8438, NONE));

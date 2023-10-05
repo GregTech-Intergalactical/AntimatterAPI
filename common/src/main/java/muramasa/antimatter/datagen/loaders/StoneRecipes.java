@@ -20,10 +20,15 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
+import static muramasa.antimatter.data.AntimatterMaterials.RedSand;
+import static muramasa.antimatter.data.AntimatterMaterials.Sand;
 
 public class StoneRecipes {
     public static void loadRecipes(Consumer<FinishedRecipe> output, AntimatterRecipeProvider provider){
         provider.addItemRecipe(output, "minecraft", "", "furnaces","has_cobble", provider.hasSafeItem(ItemTags.STONE_TOOL_MATERIALS), Items.FURNACE, ImmutableMap.of('C', ItemTags.STONE_TOOL_MATERIALS), "CCC", "C C", "CCC");
+        provider.addItemRecipe(output, "stones", "has_sand_dust", provider.hasSafeItem(DUST.getMaterialTag(Sand)), Items.SAND, of('S', DUST.getMaterialTag(Sand)), "SS", "SS");
+        provider.addItemRecipe(output, "stones", "has_sand_dust", provider.hasSafeItem(DUST.getMaterialTag(RedSand)), Items.RED_SAND, of('S', DUST.getMaterialTag(RedSand)), "SS", "SS");
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             Material m = s.getMaterial();
             if (m.has(AntimatterMaterialTypes.ROD)){
