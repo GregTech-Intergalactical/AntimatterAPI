@@ -153,7 +153,7 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
                     continueLoop = true;
                 }
                 ItemStack itemstack = slot.getItem();
-                if (!continueLoop && !itemstack.isEmpty() && itemstack.sameItem(stack)) {
+                if (!continueLoop && !itemstack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
                     int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
                     if (j <= maxSize) {
