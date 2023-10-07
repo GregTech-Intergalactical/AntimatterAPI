@@ -26,7 +26,6 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
@@ -310,9 +309,9 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             rfHandler.ifPresent(e -> e.onMachineEvent(event, data));
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
-            if (event instanceof ContentEvent && openContainers.size() > 0) {
+            /*if (event instanceof ContentEvent && openContainers.size() > 0) {
                 //openContainers.forEach(ContainerMachine::detectAndSendLiquidChanges);
-            }
+            }*/
             markDirty();
         }
     }

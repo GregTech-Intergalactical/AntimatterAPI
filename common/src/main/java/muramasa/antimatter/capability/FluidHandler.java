@@ -7,7 +7,7 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.FluidTanks;
-import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.blockentity.BlockEntityBase;
 import net.minecraft.core.Direction;
@@ -37,7 +37,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
         this.capacity = capacity;
         this.pressure = pressure;
         if (inputCount > 0) {
-            tanks.put(FluidDirection.INPUT, FluidTanks.create(tile, ContentEvent.FLUID_INPUT_CHANGED, b -> {
+            tanks.put(FluidDirection.INPUT, FluidTanks.create(tile, SlotType.FL_IN, b -> {
                 for (int i = 0; i < inputCount; i++) {
                     b.tank(capacity);
                 }
@@ -45,7 +45,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
             }));
         }
         if (outputCount > 0) {
-            tanks.put(FluidDirection.OUTPUT, FluidTanks.create(tile, ContentEvent.FLUID_OUTPUT_CHANGED, b -> {
+            tanks.put(FluidDirection.OUTPUT, FluidTanks.create(tile, SlotType.FL_OUT, b -> {
                 for (int i = 0; i < outputCount; i++) {
                     b.tank(capacity);
                 }

@@ -4,7 +4,6 @@ import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +15,6 @@ import java.util.function.BiPredicate;
 public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler implements ITrackedHandler {
 
     private final T tile;
-    private final ContentEvent contentEvent;
     private final boolean output;
     private final boolean input;
     private final BiPredicate<IGuiHandler, ItemStack> validator;
@@ -24,16 +22,15 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     private final int size;
     private final SlotType<?> type;
 
-    public TrackedItemHandler(T tile, SlotType<?> type, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent) {
-        this(tile, type, size, output, input, validator, contentEvent, 64);
+    public TrackedItemHandler(T tile, SlotType<?> type, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator) {
+        this(tile, type, size, output, input, validator, 64);
     }
 
-    public TrackedItemHandler(T tile, SlotType<?> type, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent, int limit) {
+    public TrackedItemHandler(T tile, SlotType<?> type, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, int limit) {
         super(size);
         this.tile = tile;
         this.output = output;
         this.input = input;
-        this.contentEvent = contentEvent;
         this.validator = validator;
         this.limit = limit;
         this.size = size;
