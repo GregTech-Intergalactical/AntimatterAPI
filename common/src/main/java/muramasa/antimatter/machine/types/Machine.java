@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
@@ -65,6 +66,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BlockEntityType<? extends BlockEntityMachine<?>> tileType;
     protected BlockEntityBase.BlockEntitySupplier<BlockEntityMachine<?>, T> tileFunc = BlockEntityMachine::new;
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
+    protected Function<BlockMachine, AntimatterItemBlock> itemBlockFunction = AntimatterItemBlock::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
     protected ITooltipInfo tooltipFunction = (m, s,w,t,f) -> {};
@@ -295,6 +297,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return blockFunc.apply(type, tier);
     }
 
+    public Function<BlockMachine, AntimatterItemBlock> getItemBlockFunction() {
+        return itemBlockFunction;
+    }
+
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
         return AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
@@ -406,6 +412,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setItemBlockClass(Supplier<Class<? extends BlockMachine>> function){
         this.itemClassSupplier = function;
+        return (T) this;
+    }
+
+    public T setItemBlock(Function<BlockMachine, AntimatterItemBlock> function){
+        itemBlockFunction = function;
         return (T) this;
     }
 
