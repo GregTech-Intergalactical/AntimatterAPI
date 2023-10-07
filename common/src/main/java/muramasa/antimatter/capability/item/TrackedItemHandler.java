@@ -49,11 +49,11 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     public void onContentsChanged(int slot) {
         if (tile instanceof BlockEntityMachine<?> machine){
             machine.setChanged();
-            machine.onMachineEvent(contentEvent, slot);
+            machine.onMachineEvent(type, slot);
         } else if (tile instanceof ICover cover){
             cover.source().getTile().setChanged();
+            cover.onMachineEvent(cover, type, slot);
         }
-
     }
 
     @NotNull

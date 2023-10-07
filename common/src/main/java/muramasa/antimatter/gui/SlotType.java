@@ -10,6 +10,7 @@ import muramasa.antimatter.capability.item.EmptyContainer;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.slot.*;
 import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -21,7 +22,7 @@ import tesseract.api.item.ExtendedItemContainer;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
-public class SlotType<T extends Slot> implements IAntimatterObject {
+public class SlotType<T extends Slot> implements IAntimatterObject, IMachineEvent {
 
     public static SlotType<SlotInput> IT_IN = new SlotType<>("item_in", (type, gui, inv, i, d) -> new SlotInput(type, gui, inv.getOrDefault(type, new EmptyContainer()), i, d.getX(), d.getY()), new ItIn(), ContentEvent.ITEM_INPUT_CHANGED, true, false);
     public static SlotType<SlotOutput> IT_OUT = new SlotType<>("item_out", (type, gui, inv, i, d) -> new SlotOutput(type, gui, inv.getOrDefault(type, new EmptyContainer()), i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.ITEM_OUTPUT_CHANGED, false, true);

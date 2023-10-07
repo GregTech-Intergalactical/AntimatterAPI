@@ -128,18 +128,14 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         super.onMachineEvent(event, data);
-        if (event instanceof ContentEvent) {
-            switch ((ContentEvent) event) {
-                case ITEM_CELL_CHANGED:
-                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
-                    break;
-                case FLUID_INPUT_CHANGED:
-                case FLUID_OUTPUT_CHANGED:
-                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
-                    if (this.tile.getMachineType().renderContainerLiquids()) {
-                        tile.sidedSync(true);
-                    }
-                    break;
+        if (event instanceof SlotType<?>) {
+            if (event == SlotType.CELL_IN || event == SlotType.CELL_OUT) {
+                if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
+            } else if (event == SlotType.FL_IN || event == SlotType.FL_OUT) {
+                if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
+                if (this.tile.getMachineType().renderContainerLiquids()) {
+                    tile.sidedSync(true);
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -91,12 +92,11 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         if (isClientSide())
             return;
         super.onMachineEvent(event, data);
-        if (event instanceof ContentEvent) {
+        if (event instanceof SlotType<?>) {
             componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList())
                     .forEach(controller -> {
-                        switch ((ContentEvent) event) {
-                            case ITEM_INPUT_CHANGED, ITEM_OUTPUT_CHANGED, ITEM_CELL_CHANGED, FLUID_INPUT_CHANGED, FLUID_OUTPUT_CHANGED ->
-                                    controller.onMachineEvent(event, data);
+                        if (event == SlotType.IT_IN || event == SlotType.IT_OUT || event == SlotType.CELL_IN || event == SlotType.CELL_OUT || event == SlotType.FL_IN || event == SlotType.FL_OUT) {
+                            controller.onMachineEvent(event, data);
                         }
                     });
         } else if (event instanceof MachineEvent) {

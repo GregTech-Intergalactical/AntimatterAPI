@@ -6,6 +6,7 @@ import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
@@ -161,7 +162,7 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void onMachineEvent(BlockEntityMachine<?> tile, IMachineEvent event, int... data) {
+    public void onMachineEvent(IGuiHandler tile, IMachineEvent event, int... data) {
         // TODO: Tesseract stuff?
         if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
             processItemOutput();

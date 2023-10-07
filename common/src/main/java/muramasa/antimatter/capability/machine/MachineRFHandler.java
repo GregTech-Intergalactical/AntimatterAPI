@@ -12,6 +12,7 @@ import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.rf.RFHandler;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -132,7 +133,7 @@ public class MachineRFHandler<T extends BlockEntityMachine<T>> extends RFHandler
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
+        if (event == SlotType.ENERGY) {
             tile.itemHandler.ifPresent(h -> {
                 cachedItems = h.getRFChargeableItems();
                 offsetInsert = 0;

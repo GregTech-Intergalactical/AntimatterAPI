@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineState.*;
-import static muramasa.antimatter.machine.event.ContentEvent.ENERGY_SLOT_CHANGED;
 
 //TODO: This needs some look into, a bit of spaghetti code sadly.
 public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IMachineHandler, Dispatch.Sided<MachineRecipeHandler<?>> {
@@ -550,7 +549,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (tickingRecipe) return;
-        if (event instanceof ContentEvent) {
+        if (event instanceof SlotType<?>) {
             if (tile.getMachineState() == ACTIVE)
                 return;
             if (tile.getMachineState() == POWER_LOSS) {
@@ -559,12 +558,12 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             if (activeRecipe != null && !consumeResourceForRecipe(true)) {
                 return;
             }
-            if (event == ENERGY_SLOT_CHANGED) {
+            if (event == SlotType.ENERGY) {
                 if (tile.itemHandler.map(t -> t.inventories.get(SlotType.ENERGY).getItem((int) data[0]).isEmpty()).orElse(true)) {
                     return;
                 }
             }
-            if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && tickTimer == 0 && canOutput()) {
+            if ((event == SlotType.IT_OUT || event == SlotType.FL_OUT) && tile.getMachineState() == OUTPUT_FULL && tickTimer == 0 && canOutput()) {
                 tickingRecipe = true;
                 tile.setMachineState(recipeFinish());
                 tickingRecipe = false;
@@ -575,7 +574,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                     tile.setMachineState(NO_POWER);
                 } else if (tile.getMachineState() != POWER_LOSS && tickTimer == 0) {
                     checkRecipe();
-                } else if (event == ContentEvent.ITEM_INPUT_CHANGED || event == ContentEvent.FLUID_INPUT_CHANGED) {
+                } else if (event == SlotType.IT_IN || event == SlotType.FL_IN) {
                     checkRecipe();
                 }
             }

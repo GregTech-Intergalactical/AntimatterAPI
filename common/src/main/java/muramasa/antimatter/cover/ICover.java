@@ -108,7 +108,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return getDomain();
     }
 
-    default void onMachineEvent(BlockEntityMachine<?> tile, IMachineEvent event, int... data) {
+    default void onMachineEvent(IGuiHandler tile, IMachineEvent event, int... data) {
         // NOOP
     }
 
