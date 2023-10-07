@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.HitResult;
@@ -52,6 +53,11 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
         if (tile instanceof HopperBlockEntity hopperBlockEntity){
             if (dir != Direction.UP){
                 return hopperBlockEntity.getBlockState().getValue(BlockStateProperties.FACING_HOPPER) == dir;
+            }
+        }
+        if(tile instanceof ChestBlockEntity chestBlockEntity){
+            if (dir.getAxis().isHorizontal()){
+                return chestBlockEntity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING) == dir;
             }
         }
         return false;
