@@ -82,6 +82,7 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
         if (slotId >= 0 && this.getSlot(slotId) instanceof IClickableSlot) {
             try {
                 ((IClickableSlot) this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
+                return;
             } catch (Exception exception) {
                 CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
                 CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
