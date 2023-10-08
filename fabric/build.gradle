@@ -29,6 +29,9 @@ dependencies{
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     common(project(path: ":tesseract-common", configuration: "namedElements")) { transitive false }
     implementation(project(path: ":tesseract-fabric", configuration: "namedElements")) { transitive false }
+    afterEvaluate {
+        include(project(path: ":tesseract-fabric"))
+    }
     modImplementation(include("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable")){
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")

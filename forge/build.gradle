@@ -30,6 +30,10 @@ dependencies {
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionForge")) { transitive false }
 
+    afterEvaluate {
+        include(project(path: ":tesseract-forge"))
+    }
+
     //MIXIN
     if (System.getProperty('idea.sync.active') != 'true') {
         annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
@@ -41,7 +45,7 @@ dependencies {
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
     modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.6.7-1.18.2"))
     modImplementation(include("com.github.Reforged-Mods.Terraform-Reforged:terraform-utils-v1:${project.terraform_version}"))
-    modImplementation("earth.terrarium:botarium-forge-1.18.2:${project.botarium_version}")
+    modImplementation(include("earth.terrarium:botarium-forge-1.18.2:${project.botarium_version}"))
     modImplementation(include("com.gtnewhorizon.structurelib:structurelib-forge:${project.structurelib_version}-${project.minecraft_version}"))
     modImplementation(include("com.teamresourceful.resourcefullib:resourcefullib-forge-1.18.2:${project.resourcefullib_version}"))
     modImplementation(include("io.github.llamalad7:mixinextras-forge:0.2.0-beta.11"))
