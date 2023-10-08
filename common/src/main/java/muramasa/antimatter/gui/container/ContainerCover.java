@@ -21,12 +21,20 @@ public class ContainerCover extends AntimatterContainer {
     private final MenuHandlerCover<?> m;
 
     public ContainerCover(ICover on, Inventory playerInv, MenuHandlerCover<?> menuHandler, int windowId) {
-        super(on, menuHandler.getContainerType(), windowId, playerInv, 0);
+        super(on, menuHandler.getContainerType(), windowId, playerInv, getInvSize(on));
         this.c = on;
         this.m = menuHandler;
         addSlots(c);
         if (c.getGui().enablePlayerSlots()) addPlayerSlots();
         this.onEntity = Objects.requireNonNull(on.source().getTile());
+    }
+
+    private static int getInvSize(ICover cover){
+        if (cover.getGui().getSlots() != null){
+            List<SlotData<?>> slots = cover.getTier() == null ? cover.getGui().getSlots().getAnySlots() : cover.getGui().getSlots().getSlots(cover.getTier());
+            return slots.size();
+        }
+        return 0;
     }
 
     protected void addSlots(ICover cover) {
