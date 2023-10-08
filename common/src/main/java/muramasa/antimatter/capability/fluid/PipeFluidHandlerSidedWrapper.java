@@ -24,7 +24,7 @@ public class PipeFluidHandlerSidedWrapper extends FluidHandlerSidedWrapper{
             if (coverHandler.get(side).blocksInput(FluidContainer.class, side)) {
                 return 0;
             }
-            if(coverHandler.onTransfer(resource, side, side.getOpposite(), simulate)) return 0;
+            if(coverHandler.onTransfer(resource, side, true, simulate)) return 0;
         }
 
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)) {
@@ -43,6 +43,9 @@ public class PipeFluidHandlerSidedWrapper extends FluidHandlerSidedWrapper{
     @Override
     public FluidHolder extractFluid(FluidHolder resource, boolean simulate) {
         if (side == null) return FluidHooks.emptyFluid();
+        if (coverHandler != null && (coverHandler.get(side).blocksOutput(FluidContainer.class, side) || coverHandler.onTransfer(resource, side, false, simulate))) {
+            return FluidHooks.emptyFluid();
+        }
         return super.extractFluid(resource, simulate);
     }
 }

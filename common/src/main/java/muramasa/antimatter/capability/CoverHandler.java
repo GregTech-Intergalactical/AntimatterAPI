@@ -155,8 +155,8 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         return covers.get(side).onInteract(player, hand, side, type);
     }
 
-    public boolean onTransfer(Object obj, Direction from, Direction towards, boolean simulate) {
-        return this.get(from).onTransfer(obj, true, simulate);
+    public boolean onTransfer(Object obj, Direction side, boolean inputSide, boolean simulate) {
+        return this.get(side).onTransfer(obj, inputSide, simulate);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
                 return stack;
             }
             ItemStack copy = stack.copy();
-            if (coverHandler.onTransfer(copy, side, side, simulate)) {
+            if (coverHandler.onTransfer(copy, side, true, simulate)) {
                 return copy;
             }
         }
@@ -35,7 +35,7 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
     @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (coverHandler != null && coverHandler.get(side).blocksOutput(ExtendedItemContainer.class, side))
+        if (coverHandler != null && (coverHandler.get(side).blocksOutput(ExtendedItemContainer.class, side) || coverHandler.onTransfer(getItem(slot), side, false, simulate)))
             return ItemStack.EMPTY;
         return super.extractItem(slot, amount, simulate);
     }

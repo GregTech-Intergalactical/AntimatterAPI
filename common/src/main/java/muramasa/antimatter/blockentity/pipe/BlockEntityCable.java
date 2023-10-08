@@ -126,8 +126,8 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
 
     @Override
     public Optional<IEnergyHandler> forSide(Direction side) {
-        return Optional.of(new TesseractGTCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
-        this.coverHandler.map(t -> t.onTransfer(stack, in, out, simulate)).orElse(false)));
+        return Optional.of(new TesseractGTCapability<>(this, side, !isConnector(), (stack, dir, input, simulate) ->
+        this.coverHandler.map(t -> t.onTransfer(stack, dir, input, simulate)).orElse(false)));
     }
 
     @Override

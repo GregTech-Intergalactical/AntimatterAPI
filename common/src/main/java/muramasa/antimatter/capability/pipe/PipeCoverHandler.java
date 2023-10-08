@@ -46,8 +46,4 @@ public class PipeCoverHandler<T extends BlockEntityPipe<?>> extends CoverHandler
         }
         return ok;
     }
-
-    public boolean onTransfer(Object obj, Direction from, Direction towards, boolean simulate) {
-        return super.onTransfer(obj, from, towards, simulate) || this.get(towards).onTransfer(obj, false, simulate);
-    }
 }

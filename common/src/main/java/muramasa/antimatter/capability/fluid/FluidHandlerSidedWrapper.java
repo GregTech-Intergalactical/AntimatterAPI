@@ -80,7 +80,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandl
             if (coverHandler.get(side).blocksInput(FluidContainer.class, side)) {
                 return 0;
             }
-            if(coverHandler.onTransfer(resource, side, side.getOpposite(), simulate)) return 0;
+            if(coverHandler.onTransfer(resource, side, true, simulate)) return 0;
         }
 
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)) {
@@ -92,7 +92,7 @@ public class FluidHandlerSidedWrapper implements IFluidNode, FluidContainerHandl
     @NotNull
     @Override
     public FluidHolder extractFluid(FluidHolder resource, boolean  simulate) {
-        if (coverHandler != null && coverHandler.get(side).blocksOutput(FluidContainer.class, side)) {
+        if (coverHandler != null && (coverHandler.get(side).blocksOutput(FluidContainer.class, side) || coverHandler.onTransfer(resource, side, false, simulate))) {
             return FluidHooks.emptyFluid();
         }
         if (!fluidHandler.canOutput(side)) return FluidHooks.emptyFluid();
