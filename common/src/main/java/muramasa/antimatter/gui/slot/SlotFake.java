@@ -88,12 +88,7 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
         Inventory playerinventory = playerEntity.getInventory();
         ItemStack itemstack = container.getCarried().copy();
         if ((clickType == ClickType.PICKUP || clickType == ClickType.SWAP) && (clickedButton == 0 || clickedButton == 1)) {
-
-            ItemStack slotStack = this.getItem();
             ItemStack heldStack = container.getCarried().copy();
-            if (!slotStack.isEmpty()) {
-                itemstack = slotStack.copy();
-            }
             this.set(heldStack.isEmpty() ? ItemStack.EMPTY : Utils.ca(this.getMaxStackSize(heldStack), heldStack));
             this.setChanged();
         }

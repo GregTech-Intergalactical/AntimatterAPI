@@ -14,6 +14,7 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.container.ContainerMultiMachine;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemCover;
+import muramasa.antimatter.item.ItemFluidIcon;
 import muramasa.antimatter.machine.types.BasicMachine;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.texture.Texture;
@@ -45,6 +46,7 @@ public class Data {
 
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(ChatFormatting.AQUA + "" + ChatFormatting.ITALIC + "Development Item");
 
+    public static ItemFluidIcon FLUID_ICON = new ItemFluidIcon();
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
     public static final MobType CREEPER = new MobType();
