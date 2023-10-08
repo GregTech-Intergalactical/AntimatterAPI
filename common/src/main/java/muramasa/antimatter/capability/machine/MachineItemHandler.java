@@ -45,7 +45,7 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
             for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
                 SlotType<?> type = entry.getKey();
                 int count = tile.getMachineType().getCount(tile.getMachineTier(), entry.getKey());
-                if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY) {
+                if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY || type == SlotType.FLUID_DISPLAY_SETTABLE) {
                     inventories.put(type, new FakeTrackedItemHandler<>(tile, type, count, type.output, type.input, type.tester));
                 } else {
                     inventories.put(type, new TrackedItemHandler<>(tile, type, count, type.output, type.input, type.tester));
