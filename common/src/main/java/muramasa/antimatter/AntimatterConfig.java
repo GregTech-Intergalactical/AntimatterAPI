@@ -240,7 +240,7 @@ public class AntimatterConfig {
 
             ORE_VEIN_SPECTATOR_DEBUG = builder.comment("Shows ore veins very clearly in spectator mode - Default: false")
                     .translation(Ref.ID + ".config.ore_vein_debug")
-                    .define("ORE_VEIN_SPECTATOR_DEBUG", true);  // todo change before release
+                    .define("ORE_VEIN_SPECTATOR_DEBUG", false);
 
             builder.pop();
 
