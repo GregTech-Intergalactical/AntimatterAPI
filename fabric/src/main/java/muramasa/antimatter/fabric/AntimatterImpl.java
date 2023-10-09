@@ -38,7 +38,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
@@ -65,7 +65,7 @@ public class AntimatterImpl implements ModInitializer {
             ModConfigEvent.RELOADING.register(AntimatterConfig::onModConfigEvent);
             ModLoadingContext.registerConfig(ID, ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
             ModLoadingContext.registerConfig(ID, ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
-            EntrypointUtils.invoke("antimatter", IAntimatterRegistrarInitializer.class, IAntimatterRegistrarInitializer::onRegistrarInit);
+            FabricLoader.getInstance().getEntrypointContainers("antimatter", IAntimatterRegistrarInitializer.class).forEach(r -> r.getEntrypoint().onRegistrarInit());
             AntimatterRegistration.onRegister();
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
             CommonHandler.setup();
