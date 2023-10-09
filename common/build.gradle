@@ -26,8 +26,7 @@ dependencies{
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")
     }
-    implementation("io.github.llamalad7:mixinextras-common:0.2.0-beta.11")
-    annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-beta.11")
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-beta.11"))
     modImplementation("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}"
