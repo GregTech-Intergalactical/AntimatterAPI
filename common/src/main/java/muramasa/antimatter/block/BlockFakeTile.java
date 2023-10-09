@@ -27,7 +27,7 @@ public class BlockFakeTile extends BlockBasic implements IRegistryEntryProvider,
     public static BlockEntityType<BlockEntityFakeBlock> TYPE;
     private static Set<Block> TILE_SET = new HashSet<>();
     public BlockFakeTile(String domain, String id, Properties properties) {
-        super(domain, id, properties);
+        super(domain, id, properties.isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
         AntimatterAPI.register(IRegistryEntryProvider.class, this);
     }
 

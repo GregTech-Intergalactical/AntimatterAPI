@@ -32,7 +32,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     private static final VoxelShape FRAME_SHAPE = Shapes.box(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
     public BlockStorage(String domain,  MaterialType<?> type, Material material) {
-        super(domain, material, type, Properties.of(material == AntimatterMaterials.Wood ? net.minecraft.world.level.material.Material.WOOD : net.minecraft.world.level.material.Material.METAL).strength(type == AntimatterMaterialTypes.FRAME ? 2.0f : 8.0f).sound(material == AntimatterMaterials.Wood ? SoundType.WOOD : SoundType.METAL).requiresCorrectToolForDrops());
+        super(domain, material, type, Properties.of(material == AntimatterMaterials.Wood ? net.minecraft.world.level.material.Material.WOOD : net.minecraft.world.level.material.Material.METAL).strength(type == AntimatterMaterialTypes.FRAME ? 2.0f : 8.0f).sound(material == AntimatterMaterials.Wood ? SoundType.WOOD : SoundType.METAL).requiresCorrectToolForDrops().isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
     }
 
     @Override

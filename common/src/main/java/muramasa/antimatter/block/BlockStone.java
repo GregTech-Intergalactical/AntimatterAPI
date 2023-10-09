@@ -17,7 +17,7 @@ public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
     }
 
     public BlockStone(StoneType type, String suffix) {
-        super(type.getDomain(), type.getId() + "_" + suffix, getProps(type));
+        super(type.getDomain(), type.getId() + "_" + suffix, getProps(type).isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
         this.type = type;
         this.suffix = suffix;
     }
