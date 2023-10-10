@@ -291,7 +291,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             }
             if (getToolType().equals(type)) {
                 Direction side = Utils.getInteractSide(hit);
-                if (tile.blocksSide(side)) return InteractionResult.CONSUME;
+                if (tile.blocksSide(side) || (tile.getPipe(side) != null && tile.getPipe(side).blocksSide(side.getOpposite()))) return InteractionResult.CONSUME;
                 tile.toggleConnection(side);
                 Utils.damageStack(stack, hand, player);
                 return InteractionResult.SUCCESS;
