@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
+import muramasa.antimatter.capability.IFilterableHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
@@ -65,7 +66,8 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
         }
         if (!input)
             return stack;
-        boolean validate = validator.test(tile, stack);
+        boolean validate = !(tile instanceof IFilterableHandler filterableHandler) || filterableHandler.test(type, slot, stack);
+        validate = validate && validator.test(tile, stack);
         if (!validate)
             return stack;
         /*if (simulate) {

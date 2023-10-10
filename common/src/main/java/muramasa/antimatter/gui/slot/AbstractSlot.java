@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.slot;
 
+import muramasa.antimatter.capability.IFilterableHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -55,7 +56,11 @@ public class AbstractSlot<T extends Slot> extends Slot {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        return this.type.tester.test(this.holder, stack);
+        boolean filter = true;
+        if (this.holder instanceof IFilterableHandler handler){
+            filter = handler.test(type, index, stack);
+        }
+        return filter && this.type.tester.test(this.holder, stack);
     }
 
     @Override
