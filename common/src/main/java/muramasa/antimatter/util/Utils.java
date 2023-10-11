@@ -67,6 +67,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.heat.IHeatHandler;
 import tesseract.api.item.PlatformItemHandler;
 
 import java.awt.*;
@@ -448,6 +449,18 @@ public class Utils {
             long inserted = to.insert(extracted, false);
             if (inserted > 0) {
                 from.extractEnergy(inserted, false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean transferHeat(IHeatHandler from, IHeatHandler to) {
+        int extracted = from.extract(Integer.MAX_VALUE, true);
+        if (extracted > 0) {
+            int inserted = to.insert(extracted, false);
+            if (inserted > 0) {
+                from.extract(inserted, false);
                 return true;
             }
         }

@@ -235,6 +235,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
                 BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
                 Optional<IEnergyHandler> handle = TesseractCapUtils.getEnergyHandler(tile, dir.getOpposite());
+                if (handle.map(h -> !h.canInput(dir.getOpposite())).orElse(true)) continue;
                 handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
             }
         }

@@ -65,6 +65,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.heat.IHeatHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
@@ -115,6 +116,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     public Holder<FluidContainer, MachineFluidHandler<T>> fluidHandler = new Holder<>(FluidContainer.class, dispatch);
     public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(ICoverHandler.class, dispatch, null);
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(IEnergyHandler.class, dispatch);
+    public Holder<IHeatHandler, DefaultHeatHandler> heatHandler = new Holder<>(IHeatHandler.class, dispatch);
     public Holder<IRFNode, MachineRFHandler<T>> rfHandler = new Holder<>(IRFNode.class, dispatch);
     public Holder<MachineRecipeHandler<?>, MachineRecipeHandler<T>> recipeHandler = new Holder<>(MachineRecipeHandler.class, dispatch, null);
 
@@ -141,6 +143,9 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             } else {
                 energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
             }
+        }
+        if (type.has(HEAT)){
+            heatHandler.set(() -> new DefaultHeatHandler(this, (int) (this.getMachineTier().getVoltage() * 4), type.has(GENERATOR) ? 0 : (int) this.getMachineTier().getVoltage(), type.has(GENERATOR) ? (int) this.getMachineTier().getVoltage() : 0));
         }
         if (type.has(RECIPE)) {
             recipeHandler.set(() -> new MachineRecipeHandler<>((T) this));
@@ -250,6 +255,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
         rfHandler.ifPresent(MachineRFHandler::onUpdate);
+        heatHandler.ifPresent(handler -> handler.update(getMachineState() == MachineState.ACTIVE));
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);
@@ -629,10 +635,13 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (tag.contains(Ref.KEY_MACHINE_ITEMS))
             itemHandler.ifPresent(i -> i.deserialize(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY)) {
-            if (type.has(RF))
-                rfHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
-            else
-                energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+            energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+        }
+        if (tag.contains(Ref.KEY_MACHINE_RF)){
+            rfHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_RF)));
+        }
+        if (tag.contains(Ref.KEY_MACHINE_HEAT)){
+            heatHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_HEAT)));
         }
         if (tag.contains(Ref.KEY_MACHINE_COVER))
             coverHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_COVER)));
@@ -657,10 +666,11 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serialize(new CompoundTag())));
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
-        rfHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
+        rfHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RF, e.serialize(new CompoundTag())));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER , e.serialize(new CompoundTag())));
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serialize(new CompoundTag())));
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serialize()));
+        heatHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_HEAT, e.serialize(new CompoundTag())));
     }
 
     @NotNull

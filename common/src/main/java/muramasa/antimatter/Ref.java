@@ -90,6 +90,8 @@ public class Ref {
     public static final String KEY_MACHINE_TEXTURE = "mt";
     public static final String KEY_MACHINE_FLUIDS = "fl";
     public static final String KEY_MACHINE_ENERGY = "en";
+    public static final String KEY_MACHINE_RF = "rf";
+    public static final String KEY_MACHINE_HEAT = "he";
     public static final String KEY_MACHINE_RECIPE = "re";
     public static final String KEY_MACHINE_COVER = "co";
     public static final String KEY_MACHINE_INTERACT = "ci";

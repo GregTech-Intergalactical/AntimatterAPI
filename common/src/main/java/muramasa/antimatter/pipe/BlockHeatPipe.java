@@ -20,11 +20,11 @@ public class BlockHeatPipe<T extends HeatPipe<T>> extends BlockPipe<T> {
     //@ParametersAreNotNullByDefault
     public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
-        if (!(entityIn instanceof LivingEntity)) return;
+        /*if (!(entityIn instanceof LivingEntity)) return;
         BlockEntityHeatPipe<?> pipe = (BlockEntityHeatPipe) worldIn.getBlockEntity(pos);
         int temp = pipe.getTemperature();
         if (temp > 50) {
             entityIn.hurt(DamageSource.GENERIC, Mth.clamp((temp-10)/2, 2, 20));
-        }
+        }*/
     }
 }

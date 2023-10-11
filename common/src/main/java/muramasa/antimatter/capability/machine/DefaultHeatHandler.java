@@ -5,11 +5,13 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import tesseract.TesseractCapUtils;
-import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;
 
 import java.util.Optional;
@@ -18,37 +20,77 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
 
     public final int heatCap;
     public final int temperaturesize;
+    public final int maxInput, maxOutput;
     protected int currentHeat;
 
     public final BlockEntityBase<?> tile;
 
-    public DefaultHeatHandler(BlockEntityBase<?> tile, int heatCap, int temperatureSize) {
+    public DefaultHeatHandler(BlockEntityBase<?> tile, int heatCap, int maxInput, int maxOutput) {
         this.heatCap = heatCap;
         this.tile = tile;
-        this.temperaturesize = temperatureSize;
-    }
-    @Override
-    public HeatTransaction extract() {
-        //if (this.currentHeat < this.temperaturesize) return new HeatTransaction(0,0, Utils.sink());
-        if (this.currentHeat < this.temperaturesize) return new HeatTransaction(0,0, Utils.sink());
-        return new HeatTransaction(this.temperaturesize, getTemperature(), this::sub);
+        this.temperaturesize = 100;
+        this.maxInput = maxInput;
+        this.maxOutput = maxOutput;
     }
 
     @Override
-    public void insert(HeatTransaction transaction) {
-        int availableToInsert = transaction.available();
-        availableToInsert = Math.min(heatCap - currentHeat, availableToInsert);
-        if (availableToInsert > 0) {
-            transaction.addData(availableToInsert, getTemperature(), this::add);
+    public int insert(int heat, boolean simulate) {
+        if (!canInput()) return 0;
+        int insert = Math.min(maxInput, Math.min(heatCap - currentHeat, heat));
+        if (!simulate) add(insert);
+        return insert;
+    }
+
+    @Override
+    public int extract(int heat, boolean simulate) {
+        if (!canOutput()) return 0;
+        int extract = Math.min(maxOutput, Math.min(currentHeat, heat));
+        if (!simulate) sub(extract);
+        return extract;
+    }
+
+    @Override
+    public boolean canInput() {
+        return maxInput > 0;
+    }
+
+    @Override
+    public boolean canOutput() {
+        return maxOutput > 0;
+    }
+
+    @Override
+    public boolean canInput(Direction direction) {
+        return canInput();
+    }
+
+    @Override
+    public boolean canOutput(Direction direction) {
+        return canOutput();
+    }
+
+    @Override
+    public long getMaxInsert() {
+        return maxInput;
+    }
+
+    @Override
+    public long getMaxExtract() {
+        return maxOutput;
+    }
+
+    protected void sub(int temp) {
+        this.currentHeat -= temp;
+        if (tile instanceof IMachineHandler machineHandler){
+            machineHandler.onMachineEvent(MachineEvent.HEAT_DRAINED, temp);
         }
     }
 
-    protected void sub(Integer temp) {
-        this.currentHeat -= temp;
-    }
-
-    protected void add(Integer temp) {
+    protected void add(int temp) {
         this.currentHeat += temp;
+        if (tile instanceof IMachineHandler machineHandler){
+            machineHandler.onMachineEvent(MachineEvent.HEAT_INPUTTED, temp);
+        }
     }
 
     @Override
@@ -57,20 +99,20 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     }
 
     public void update(boolean active) {
-        boolean doTransfer = tile.getLevel().getGameTime() % 20 == 0;
 
-        if (doTransfer) {
-            //Transfer 1 degree of power each second.
-            HeatTransaction tx = extract();
-            if (tx.isValid()) {
-                Utils.entitiesAround(tile.getLevel(), tile.getBlockPos(), (dir, ent) -> TesseractCapUtils.getHeatHandler(ent, dir.getOpposite()).ifPresent(t -> t.insert(tx)));
-                tx.commit();
+        for (Direction dir : Ref.DIRS) {
+            if (canOutput(dir)) {
+                BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                if (tile == null) continue;
+                Optional<IHeatHandler> handle = TesseractCapUtils.getHeatHandler(tile, dir.getOpposite());
+                if (handle.map(h -> !h.canInput(dir.getOpposite())).orElse(true)) continue;
+                handle.ifPresent(eh -> Utils.transferHeat(this, eh));
             }
         }
-        if (!active) {
+        /*if (!active) {
             this.currentHeat -= temperaturesize / 40;
             this.currentHeat = Math.max(0, this.currentHeat);
-        }
+        }*/
     }
 
     @Override

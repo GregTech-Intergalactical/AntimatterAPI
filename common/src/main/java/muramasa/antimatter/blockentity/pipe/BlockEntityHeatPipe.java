@@ -21,32 +21,7 @@ public class BlockEntityHeatPipe<T extends HeatPipe<T>> extends BlockEntityPipe<
 
     public BlockEntityHeatPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        pipeCapHolder.set(() -> new DefaultHeatHandler(this, 800*type.conductivity, type.conductivity) {
 
-            @Override
-            public void update(boolean active) {
-                boolean doTransfer = true;
-                //Always called per frame
-                if (doTransfer) {
-                    //Transfer 1 degree of power each quarter second.
-                    HeatTransaction tx = extract();
-                    if (tx.isValid()) {
-                        int3 mutPos = new int3();
-                        for (Direction dir : Ref.DIRS) {
-                            if (connects(dir) && validate(dir)) {
-                                mutPos.set(pos);
-                                mutPos = mutPos.offset(1,dir);
-                                BlockEntity ent = level.getBlockEntity(mutPos);
-                                if (ent == null) continue;
-                                TesseractCapUtils.getHeatHandler(ent, dir.getOpposite()).ifPresent(t -> t.insert(tx));
-                            }
-                        }
-                        tx.commit();
-                        this.currentHeat = Math.max(0, this.currentHeat - (int)(((float)this.temperaturesize)*0.01));
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -65,47 +40,7 @@ public class BlockEntityHeatPipe<T extends HeatPipe<T>> extends BlockEntityPipe<
     }
 
     @Override
-    public HeatTransaction extract() {
-        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::extract).orElse(null);
-    }
-
-    @Override
-    public void insert(HeatTransaction transaction) {
-        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(t -> t.insert(transaction));
-    }
-
-    @Override
-    public int getHeat() {
-        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getHeat).orElse(0);
-    }
-
-    @Override
-    public int getHeatCap() {
-        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getHeatCap).orElse(0);
-    }
-
-    @Override
-    public int getTemperature() {
-        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(IHeatHandler::getTemperature).orElse(0);
-    }
-
-    @Override
-    public void update(boolean active) {
-        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(t -> t.update(active));
-    }
-
-    @Override
     public int temperatureCoefficient() {
         return this.type.conductivity;
-    }
-
-    @Override
-    public CompoundTag serialize(CompoundTag nbt) {
-        return ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).map(h -> h.serialize(new CompoundTag())).orElse(null);
-    }
-
-    @Override
-    public void deserialize(CompoundTag nbt) {
-        ((Optional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(h -> h.deserialize(nbt));
     }
 }
