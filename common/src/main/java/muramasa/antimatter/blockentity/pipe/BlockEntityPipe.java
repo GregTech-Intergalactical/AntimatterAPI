@@ -154,11 +154,11 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         BlockEntityPipe<?> pipe = getPipe(side);
         //If it is a tile but invalid do not connect.
         connection = Connectivity.set(connection, side.get3DDataValue());
-        /*boolean ok = validate(side);
-        if (!ok && (pipe == null || pipe.blocksSide(side.getOpposite())) && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
+        boolean ok = validate(side);
+        if (!ok && (pipe == null) && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
             connection = Connectivity.clear(connection, side.get3DDataValue());
             return;
-        }*/
+        }
 
         refreshConnection();
         if (pipe != null) {
@@ -214,6 +214,10 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     @Override
     public boolean validate(Direction dir) {
         if (!connects(dir)) return false;
+        BlockState state = level.getBlockState(worldPosition.relative(dir));
+        if (state.getBlock() instanceof BlockPipe && !state.getValue(BlockPipe.TICKING)) {
+            return false;
+        }
         return !blocksSide(dir);
     }
 
