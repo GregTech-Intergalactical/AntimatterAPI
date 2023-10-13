@@ -21,6 +21,7 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -71,6 +72,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
             }
             return true;
         }));
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> AntimatterDynamics.setInitialized());
         AntimatterAPI.all(AntimatterFluid.class, f -> {
             Fluid source = f.getFluid();
             Fluid flowing = f.getFlowingFluid();

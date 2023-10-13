@@ -30,6 +30,7 @@ import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.worldgen.fabric.AntimatterFabricWorldgen;
 import net.devtech.arrp.api.RRPCallback;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -91,7 +92,9 @@ public class AntimatterImpl implements ModInitializer {
             RRPCallback.BEFORE_USER.register(resources -> AntimatterDynamics.addDataPacks(resources::add));
             Antimatter.LOGGER.info("initializing");
             ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
-            AntimatterDynamics.setInitialized();
+            if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+                AntimatterDynamics.setInitialized();
+            }
             AntimatterAPI.all(AntimatterFluid.class, f -> {
                 Fluid source = f.getFluid();
                 Fluid flowing = f.getFlowingFluid();
