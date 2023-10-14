@@ -1,6 +1,7 @@
 package muramasa.antimatter.common.event.forge;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterRemapping;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.common.event.CommonEvents;
@@ -75,6 +76,17 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent
     public static void remapMissingBlocks(final RegistryEvent.MissingMappings<Block> event) {
+        for (String modid : AntimatterRemapping.getRemappingMap().keySet()) {
+            for (RegistryEvent.MissingMappings.Mapping<Block> mapping : event.getMappings(modid)) {
+                var map = AntimatterRemapping.getRemappingMap().get(modid);
+                if (map.containsKey(mapping.key.getPath())){
+                    Block replacement = AntimatterAPI.get(Block.class, map.get(mapping.key.getPath()));
+                    if (replacement != null){
+                        mapping.remap(replacement);
+                    }
+                }
+            }
+        }
         event.getMappings(Ref.MOD_KJS).forEach(map -> {
             String domain = map.key.getNamespace();
             String id = map.key.getPath();
@@ -126,26 +138,18 @@ public class ForgeCommonEvents {
     }
 
     @SubscribeEvent
-    public static void remapMissingBlockEntities(final RegistryEvent.MissingMappings<BlockEntityType<?>> event) {
-        event.getMappings(Ref.SHARED_ID).forEach(map -> {
-            String id = map.key.getPath();
-            String replacement = "";
-            if (id.startsWith("fluid_")){
-                replacement = id.replace("fluid_", "fluid_pipe_");
-            } else if (id.startsWith("item_")){
-                replacement = id.replace("item_", "item_pipe_");
-            }
-            if (!replacement.isEmpty()) {
-                BlockEntityType<?> replacementBlock = AntimatterAPI.get(BlockEntityType.class, replacement, Ref.SHARED_ID);
-                if (replacementBlock != null){
-                    map.remap(replacementBlock);
+    public static void remapMissingItems(final RegistryEvent.MissingMappings<Item> event) {
+        for (String modid : AntimatterRemapping.getRemappingMap().keySet()) {
+            for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getMappings(modid)) {
+                var map = AntimatterRemapping.getRemappingMap().get(modid);
+                if (map.containsKey(mapping.key.getPath())){
+                    Item replacement = AntimatterAPI.get(Item.class, map.get(mapping.key.getPath()));
+                    if (replacement != null){
+                        mapping.remap(replacement);
+                    }
                 }
             }
-        });
-    }
-
-    @SubscribeEvent
-    public static void remapMissingItems(final RegistryEvent.MissingMappings<Item> event) {
+        }
         event.getMappings(Ref.ID).forEach(map -> {
             Item replacement = AntimatterAPI.get(Item.class, map.key.getPath(), Ref.SHARED_ID);
             if (replacement != null) {
@@ -177,7 +181,7 @@ public class ForgeCommonEvents {
                 replacement = id.replace("item_", "item_pipe_");
             } else if (id.contains("vanilla_basalt")){
                 replacement = id.replace("vanilla_basalt", "basalt");
-            } else if (id.contains("sad_red")){
+            } else if (id.contains("sand_red")){
                 replacement = id.replace("sand_red", "red_sand");
             }
             if (id.contains("__")){

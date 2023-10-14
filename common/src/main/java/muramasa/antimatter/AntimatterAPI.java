@@ -151,6 +151,10 @@ public final class AntimatterAPI {
         return obj;
     }
 
+    public static <T> T get(Class<T> c, ResourceLocation location) {
+        return get(c, location.getPath(), location.getNamespace());
+    }
+
     static boolean allowRegistration() {
         return PHASE == RegistrationEvent.DATA_INIT || PHASE == RegistrationEvent.CLIENT_DATA_INIT || PHASE == RegistrationEvent.WORLDGEN_INIT;
     }

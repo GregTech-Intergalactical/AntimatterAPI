@@ -3,6 +3,7 @@ package muramasa.antimatter.cover;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterRemapping;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.MenuHandler;
@@ -11,6 +12,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -120,7 +122,9 @@ public class CoverFactory implements IAntimatterObject {
             return null;
         String domain = nbt.getString(dir.get3DDataValue() + "d");
         String id = nbt.getString(dir.get3DDataValue() + "i");
-        CoverFactory factory = AntimatterAPI.get(CoverFactory.class, id, domain);
+        ResourceLocation location = new ResourceLocation(domain, id);
+        if (AntimatterRemapping.getCoverRemappingMap().containsKey(location)) location = AntimatterRemapping.getCoverRemappingMap().get(location);
+        CoverFactory factory = AntimatterAPI.get(CoverFactory.class, location);
         if (factory == null) {
             throw new IllegalStateException("Reading a cover with null factory, game in bad state");
         }
