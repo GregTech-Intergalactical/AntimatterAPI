@@ -40,7 +40,7 @@ public class AntimatterRemapping {
         BE_REMAPPING_MAP.put(old, machine.getLoc());
         machine.getTiers().forEach(t -> {
             REMAPPING_MAP.computeIfAbsent(old.getNamespace(), o -> new Object2ObjectArrayMap<>())
-                    .put(old + "_" + t.getId(), new ResourceLocation(machine.getDomain(), machine.getId() + "_" + t.getId()));
+                    .put(old.getPath() + "_" + t.getId(), new ResourceLocation(machine.getDomain(), machine.getId() + "_" + t.getId()));
         });
     }
 
