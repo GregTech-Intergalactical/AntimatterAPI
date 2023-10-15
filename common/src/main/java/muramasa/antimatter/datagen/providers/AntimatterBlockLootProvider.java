@@ -133,7 +133,9 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     protected void overrideOre(Material ore, Function<BlockOre, LootTable.Builder> builderFunction){
         if (ore.has(ORE)){
             AntimatterAPI.all(StoneType.class).stream().filter(s -> s.doesGenerateOre() && s != AntimatterStoneTypes.BEDROCK).forEach(s -> {
-                GLOBAL_TABLES.put(ORE.get().get(ore, s).asBlock(), b -> builderFunction.apply((BlockOre) b));
+                if (ORE.get().get(ore, s).asBlock() instanceof BlockOre blockOre) {
+                    GLOBAL_TABLES.put(blockOre, b -> builderFunction.apply((BlockOre) b));
+                }
             });
         }
     }
@@ -141,7 +143,9 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     protected void overrideSmallOre(Material ore, Function<BlockOre, LootTable.Builder> builderFunction){
         if (ore.has(ORE_SMALL)){
             AntimatterAPI.all(StoneType.class).stream().filter(s -> s.doesGenerateOre() && s != AntimatterStoneTypes.BEDROCK).forEach(s -> {
-                GLOBAL_TABLES.put(ORE_SMALL.get().get(ore, s).asBlock(), b -> builderFunction.apply((BlockOre) b));
+                if (ORE_SMALL.get().get(ore, s).asBlock() instanceof BlockOre blockOre) {
+                    GLOBAL_TABLES.put(blockOre, b -> builderFunction.apply((BlockOre) b));
+                }
             });
         }
     }
