@@ -6,15 +6,18 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.*;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.CobbleStoneType;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
@@ -42,9 +45,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
 
+import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE_SMALL;
+
 public class AntimatterBlockLootProvider extends BlockLoot implements DataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
+    protected static final Map<Block, Function<Block, LootTable.Builder>> GLOBAL_TABLES = new Object2ObjectOpenHashMap<>();
 
     public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.BRANCH_CUTTER.getTag()));
     public static final LootItemCondition.Builder HAMMER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.HAMMER.getTag()));
@@ -96,7 +103,15 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
 
     @Override
     public void onCompletion() {
-        for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
+        for (var e : tables.entrySet()) {
+            if (!GLOBAL_TABLES.containsKey(e.getKey())){
+                GLOBAL_TABLES.put(e.getKey(), e.getValue());
+            }
+        }
+    }
+
+    public static void afterCompletion(){
+        for (var e : GLOBAL_TABLES.entrySet()) {
             LootTable table = e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build();
             AntimatterDynamics.RUNTIME_DATA_PACK.addData(AntimatterDynamics.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterDynamics.serialize(table));
         }
@@ -111,6 +126,26 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
         }*/
     }
 
+    protected void overrideBlock(Block block, Function<Block, LootTable.Builder> builderFunction){
+        GLOBAL_TABLES.put(block, builderFunction);
+    }
+
+    protected void overrideOre(Material ore, Function<BlockOre, LootTable.Builder> builderFunction){
+        if (ore.has(ORE)){
+            AntimatterAPI.all(StoneType.class).stream().filter(s -> s.doesGenerateOre() && s != AntimatterStoneTypes.BEDROCK).forEach(s -> {
+                GLOBAL_TABLES.put(ORE.get().get(ore, s).asBlock(), b -> builderFunction.apply((BlockOre) b));
+            });
+        }
+    }
+
+    protected void overrideSmallOre(Material ore, Function<BlockOre, LootTable.Builder> builderFunction){
+        if (ore.has(ORE_SMALL)){
+            AntimatterAPI.all(StoneType.class).stream().filter(s -> s.doesGenerateOre() && s != AntimatterStoneTypes.BEDROCK).forEach(s -> {
+                GLOBAL_TABLES.put(ORE_SMALL.get().get(ore, s).asBlock(), b -> builderFunction.apply((BlockOre) b));
+            });
+        }
+    }
+
     protected void addToFortune(BlockOre block) {
         if (block.getMaterial().has(MaterialTags.CUSTOM_ORE_DROPS)){
             tables.put(block, b -> MaterialTags.CUSTOM_ORE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
@@ -120,7 +155,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     }
 
     public static Function<Block, LootTable.Builder> addToFortuneWithoutCustomDrops(BlockOre block) {
-        if (block.getOreType() == AntimatterMaterialTypes.ORE_SMALL) {
+        if (block.getOreType() == ORE_SMALL) {
             if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.CRUSHED))) return BlockLoot::createSingleItemTable;
             Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
             int multiplier = MaterialTags.ORE_MULTI.getInt(block.getMaterial());
@@ -141,7 +176,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
                 builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))).setWeight(60));
             }
             return b -> LootTable.lootTable().withPool(builder);
-        } else if (block.getOreType() == AntimatterMaterialTypes.ORE) {
+        } else if (block.getOreType() == ORE) {
             Item drop;
             if (block.getMaterial().has(AntimatterMaterialTypes.CRUSHED) || block.getMaterial().has(AntimatterMaterialTypes.DUST)){
                 drop = block.getMaterial().has(AntimatterMaterialTypes.CRUSHED) ? AntimatterMaterialTypes.CRUSHED.get(block.getMaterial()) : AntimatterMaterialTypes.DUST.get(block.getMaterial());

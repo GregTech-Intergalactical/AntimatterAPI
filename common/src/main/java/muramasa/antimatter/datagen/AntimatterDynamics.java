@@ -127,6 +127,7 @@ public class AntimatterDynamics {
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         AntimatterTagProvider.afterCompletion();
+        AntimatterBlockLootProvider.afterCompletion();
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
         if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES || !AntimatterPlatformUtils.isProduction()) {
             RUNTIME_DATA_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
