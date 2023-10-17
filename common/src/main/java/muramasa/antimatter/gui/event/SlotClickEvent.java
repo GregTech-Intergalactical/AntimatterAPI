@@ -83,7 +83,9 @@ public class SlotClickEvent implements IGuiEvent {
                 }
             };
             if (type == SlotType.FL_IN){
-                FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, stack), sink, consumer);
+                if (!FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, stack), sink, consumer)){
+                    FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), sink, consumer);
+                }
             } else {
                 FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), sink, consumer);
             }
