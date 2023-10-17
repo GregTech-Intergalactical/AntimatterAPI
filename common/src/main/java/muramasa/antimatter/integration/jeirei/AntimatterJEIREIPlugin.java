@@ -7,11 +7,13 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
@@ -21,8 +23,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static muramasa.antimatter.gui.SlotType.*;
+import static muramasa.antimatter.gui.SlotType.FL_OUT;
+
 public class AntimatterJEIREIPlugin{
     private static final List<Consumer<List<ItemLike>>> ITEMS_TO_HIDE = new ArrayList<>();
+    
+    public static final GuiData BACKUP_MAP_GUI = new GuiData(Ref.ID, "backup_map").setSlots(ISlotProvider.DEFAULT()
+            .add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34)
+            .add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 143, 16).add(IT_OUT, 107, 34)
+            .add(IT_OUT, 125, 34).add(IT_OUT, 143, 34).add(FL_IN, 17, 63).add(FL_IN, 35, 63).add(FL_IN, 53, 63)
+            .add(FL_OUT, 107, 63).add(FL_OUT, 125, 63).add(FL_OUT, 143, 63));
     public static class RegistryValue {
         public IRecipeMap map;
         public GuiData gui;
@@ -38,6 +49,14 @@ public class AntimatterJEIREIPlugin{
     }
 
     private static final Object2ObjectMap<ResourceLocation, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
+
+    public static void registerMissingMaps(){
+        AntimatterAPI.all(RecipeMap.class).forEach(r -> {
+            if (!REGISTRY.containsKey(r.getLoc())){
+                registerCategory(r, BACKUP_MAP_GUI, Tier.LV, null, false);
+            }
+        });
+    }
 
     public static void registerCategory(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (REGISTRY.containsKey(new ResourceLocation(map.getDomain(), map.getId())) && !override) {

@@ -17,6 +17,7 @@ import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
@@ -148,6 +149,9 @@ public class Antimatter extends AntimatterMod {
             AntimatterWorldGenerator.init();
         } else if (event == RegistrationEvent.DATA_READY) {
             CauldronInteractions.init();
+            if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) || AntimatterAPI.isModLoaded(Ref.MOD_REI)){
+                AntimatterJEIREIPlugin.registerMissingMaps();
+            }
             AntimatterAPI.all(Material.class).forEach(m -> {
                 Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
                 if (map != null){

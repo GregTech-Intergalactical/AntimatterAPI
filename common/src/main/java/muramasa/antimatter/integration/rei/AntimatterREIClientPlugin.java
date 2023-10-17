@@ -164,14 +164,17 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
     public void registerDisplays(DisplayRegistry registry) {
         // regular recipes
         registry.registerRecipeFiller(IRecipe.class, type -> Objects.equals(Recipe.RECIPE_TYPE, type), r -> !r.isHidden(), RecipeMapDisplay::new);
-        AntimatterAPI.all(RecipeMap.class, m -> {
-            if (m.getProxy() != null){
-                registry.registerRecipeFiller(net.minecraft.world.item.crafting.Recipe.class, m.getProxy().loc(), r -> {
-                    IRecipe recipe = m.getProxy().handler().apply(r, m.RB());
-                    if (recipe == null) return null;
-                    if (recipe.isHidden()) return null;
-                    return new RecipeMapDisplay(recipe);
-                });
+        AntimatterJEIREIPlugin.getREGISTRY().values().forEach(t -> {
+            var m = t.map;
+            if (m instanceof RecipeMap<?> rm){
+                if (m.getProxy() != null){
+                    registry.registerRecipeFiller(net.minecraft.world.item.crafting.Recipe.class, m.getProxy().loc(), r -> {
+                        IRecipe recipe = m.getProxy().handler().apply(r, rm.RB());
+                        if (recipe == null) return null;
+                        if (recipe.isHidden()) return null;
+                        return new RecipeMapDisplay(recipe);
+                    });
+                }
             }
         });
         REIUtils.EXTRA_DISPLAYS.forEach(c -> c.accept(registry));
