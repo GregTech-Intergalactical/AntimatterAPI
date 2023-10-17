@@ -280,7 +280,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
             if (!connects(tSide)) continue;
             // Covers let distribution happen, right?
             ICover cover = coverHandler.map(c -> c.get(tSide)).orElse(ICover.empty);
-            if (!cover.isEmpty() && cover.blocksOutput(FluidContainer.class, tSide)) continue;
+            if (!cover.isEmpty() && (cover.blocksOutput(FluidContainer.class, tSide) || cover.onTransfer(aTank.getStoredFluid().copyHolder(), false, true))) continue;
             // No Tank? Nothing to do then.
             if (fluidHandlers[tSide.get3DDataValue()] == null) continue;
             // Check if the Tank can be filled with this Fluid.
