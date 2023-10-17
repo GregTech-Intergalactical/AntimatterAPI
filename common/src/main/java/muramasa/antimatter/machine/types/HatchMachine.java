@@ -52,9 +52,4 @@ public class HatchMachine extends Machine<HatchMachine> {
     public Direction handlePlacementFacing(BlockPlaceContext ctxt, Property<?> which, Direction dir) {
         return dir.getOpposite();
     }
-
-    @Override
-    public String getLang(String lang) {
-        return Utils.lowerUnderscoreToUpperSpacedRotated(this.getId());
-    }
 }
