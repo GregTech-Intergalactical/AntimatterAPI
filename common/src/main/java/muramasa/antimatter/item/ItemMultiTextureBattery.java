@@ -11,8 +11,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
 public class ItemMultiTextureBattery extends ItemBattery {
+
     public ItemMultiTextureBattery(String domain, String id, Tier tier, long cap, boolean reusable) {
-        super(domain, id, tier, cap, reusable);
+        this(domain, id, tier, cap, 1, reusable);
+    }
+
+    public ItemMultiTextureBattery(String domain, String id, Tier tier, long cap, int amps, boolean reusable) {
+        super(domain, id, tier, cap, amps, reusable);
         Utils.unsafeRunForDistVoid(() -> () -> RenderHelper.registerBatteryPropertyOverrides(this), () -> () -> {});
     }
 

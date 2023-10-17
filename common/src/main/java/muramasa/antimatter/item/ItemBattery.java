@@ -30,12 +30,18 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     protected Tier tier;
     protected final long cap;
+    protected final int amps;
     protected final boolean reusable;
 
     public ItemBattery(String domain, String id, Tier tier, long cap, boolean reusable) {
+        this(domain, id, tier, cap, 1, reusable);
+    }
+
+    public ItemBattery(String domain, String id, Tier tier, long cap, int amps, boolean reusable) {
         super(domain, id);
         this.tier = tier;
         this.cap = cap;
+        this.amps = amps;
         this.reusable = reusable;
     }
 
@@ -123,6 +129,10 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         if (reusable) {
             tooltip.add(Utils.translatable("item.reusable"));
         }
+        if (amps > 1){
+            boolean red = worldIn == null || worldIn.getGameTime() % 20 < 10;
+            tooltip.add(Utils.translatable("item.amps", amps).withStyle(red ? ChatFormatting.DARK_RED : ChatFormatting.WHITE));
+        }
         long energy = TesseractCapUtils.getEnergyHandlerItem(stack).map(IGTNode::getEnergy).orElse(0L);
         tooltip.add(Utils.translatable("item.charge").append(": ").append(Utils.literal(energy + "/" + cap).withStyle(energy == 0 ? ChatFormatting.RED : ChatFormatting.GREEN)).append(" (" + tier.getId().toUpperCase() + ")"));
         super.appendHoverText(stack, worldIn, tooltip, flag);
@@ -130,6 +140,6 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     @Override
     public IEnergyHandlerItem createEnergyHandler(TesseractItemContext context) {
-        return new ItemEnergyHandler(context, cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
+        return new ItemEnergyHandler(context, cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, amps);
     }
 }
