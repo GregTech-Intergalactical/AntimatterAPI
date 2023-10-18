@@ -106,7 +106,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
         }
     }
 
-    protected int offsetTank(int tank) {
+    public int offsetTank(int tank) {
         FluidTanks in = getInputTanks();
         if (in != null && tank >= getInputTanks().getSize())
             return tank - in.getSize();
