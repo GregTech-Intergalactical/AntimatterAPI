@@ -7,21 +7,31 @@ import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ScaffoldingBlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.ScaffoldingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -49,13 +59,21 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
                 if (!state.is(AntimatterMaterialTypes.FRAME.getTag())) return ctx;
                 BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(actualPos.getX(), actualPos.getY(), actualPos.getZ());
-                while (ctx.getLevel().getMaxBuildHeight() > mutablePos.getY() + 1) {
-                    if (ctx.getLevel().getBlockState(mutablePos.move(Direction.UP)).canBeReplaced(ctx)) {
-                        ctx.getPlayer().swing(ctx.getHand());
-                        ctx.getLevel().setBlockAndUpdate(mutablePos, ((BlockItem) ctx.getItemInHand().getItem()).getBlock().defaultBlockState());
-                        if (!ctx.getPlayer().isCreative()) ctx.getItemInHand().shrink(1);
-                        ctx.getLevel().playSound(ctx.getPlayer(), mutablePos, soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
-                        return ctx;
+                while (true) {
+                    mutablePos.move(Direction.UP);
+                    if (!ctx.getLevel().isClientSide && !ctx.getLevel().isInWorldBounds(mutablePos)) {
+                        Player player = ctx.getPlayer();
+                        int j = ctx.getLevel().getMaxBuildHeight();
+                        if (player instanceof ServerPlayer serverPlayer && mutablePos.getY() >= j) {
+                            serverPlayer.sendMessage((Utils.translatable("build.tooHigh", j - 1)).withStyle(ChatFormatting.RED), ChatType.GAME_INFO, Util.NIL_UUID);
+                        }
+                        break;
+                    }
+                    BlockState upState = ctx.getLevel().getBlockState(mutablePos);
+                    if (upState.canBeReplaced(ctx)) {
+                        return BlockPlaceContext.at(ctx, mutablePos, Direction.UP);
+                    } else if (upState.getBlock() != state.getBlock() && !upState.is(AntimatterMaterialTypes.FRAME.getTag())){
+                        break;
                     }
                 }
                 return ctx;
