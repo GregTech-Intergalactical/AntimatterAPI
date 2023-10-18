@@ -55,7 +55,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                         ctx.getLevel().setBlockAndUpdate(mutablePos, ((BlockItem) ctx.getItemInHand().getItem()).getBlock().defaultBlockState());
                         if (!ctx.getPlayer().isCreative()) ctx.getItemInHand().shrink(1);
                         ctx.getLevel().playSound(ctx.getPlayer(), mutablePos, soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
-                        return null;
+                        return ctx;
                     }
                 }
                 return ctx;
