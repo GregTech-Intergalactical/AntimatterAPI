@@ -46,10 +46,12 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     @Override
     public void onContentsChanged(int slot) {
         if (tile instanceof BlockEntityMachine<?> machine){
-            machine.setChanged();
+            if (machine.getLevel() == null) return;
+            machine.getLevel().blockEntityChanged(machine.getBlockPos());
             machine.onMachineEvent(type, slot);
         } else if (tile instanceof ICover cover){
-            cover.source().getTile().setChanged();
+            if (cover.source().getTile().getLevel() == null) return;
+            cover.source().getTile().getLevel().blockEntityChanged(cover.source().getTile().getBlockPos());
             cover.onMachineEvent(cover, type, slot);
         }
     }
