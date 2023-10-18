@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static muramasa.antimatter.machine.Tier.NONE;
+
 public class AntimatterRemapping {
     private static final Map<String, Map<String, ResourceLocation>> REMAPPING_MAP = new Object2ObjectArrayMap<>();
 
@@ -39,16 +41,18 @@ public class AntimatterRemapping {
     public static void remapMachine(ResourceLocation old, Machine<?> machine){
         BE_REMAPPING_MAP.put(old, machine.getLoc());
         machine.getTiers().forEach(t -> {
+            String suffix = t == NONE ? "" : "_" + t.getId();
             REMAPPING_MAP.computeIfAbsent(old.getNamespace(), o -> new Object2ObjectArrayMap<>())
-                    .put(old.getPath() + "_" + t.getId(), new ResourceLocation(machine.getDomain(), machine.getId() + "_" + t.getId()));
+                    .put(old.getPath() + suffix, new ResourceLocation(machine.getDomain(), machine.getId() + suffix));
         });
     }
 
     public static void remapMachine(String old, Machine<?> machine){
         BE_REMAPPING_MAP.put(new ResourceLocation(machine.getDomain(), old), machine.getLoc());
         machine.getTiers().forEach(t -> {
+            String suffix = t == NONE ? "" : "_" + t.getId();
             REMAPPING_MAP.computeIfAbsent(machine.getDomain(), o -> new Object2ObjectArrayMap<>())
-                    .put(old + "_" + t.getId(), new ResourceLocation(machine.getDomain(), machine.getId() + "_" + t.getId()));
+                    .put(old + suffix, new ResourceLocation(machine.getDomain(), machine.getId() + suffix));
         });
     }
 
