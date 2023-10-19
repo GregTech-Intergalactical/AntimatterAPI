@@ -1122,7 +1122,16 @@ public class Utils {
     }
 
     public static String lowerUnderscoreToUpperSpaced(String string) {
-        return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string)), ' ');
+        String[] split = StringUtils.split(string, "_");
+        String[] split2 = new String[split.length];
+        for (int i = 0; i < split.length; i++){
+            String str = split[i];
+            if (str.isEmpty() || !Character.isDigit(str.charAt(0))){
+                str = underscoreToUpperCamel(str);
+            }
+            split2[i] = str;
+        }
+        return StringUtils.join(split2, ' ');
     }
 
     public static String lowerUnderscoreToUpperSpacedRotated(String string) {
