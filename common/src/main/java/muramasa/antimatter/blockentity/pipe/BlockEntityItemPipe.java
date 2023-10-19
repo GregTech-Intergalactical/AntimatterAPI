@@ -20,6 +20,7 @@ import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemPipe;
+import tesseract.util.Pos;
 
 import java.util.Optional;
 
@@ -51,7 +52,6 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        TesseractGraphWrappers.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override

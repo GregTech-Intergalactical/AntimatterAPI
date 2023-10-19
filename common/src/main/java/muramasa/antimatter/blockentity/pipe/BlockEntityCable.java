@@ -72,7 +72,6 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        TesseractGraphWrappers.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override

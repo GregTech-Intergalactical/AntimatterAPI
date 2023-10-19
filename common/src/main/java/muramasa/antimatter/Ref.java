@@ -120,6 +120,7 @@ public class Ref {
     public static final String TAG_MACHINE_COVER_SIDE = "vs";
 
     public static final String TAG_PIPE_TILE_CONNECTIVITY = "c";
+    public static final String TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY = "vc";
     public static final String TAG_PIPE_TILE_INTERACT = "i";
     public static final String KEY_PIPE_TILE_COVER = "v";
     public static final String KEY_PIPE_TILE_CONFIG = "f";

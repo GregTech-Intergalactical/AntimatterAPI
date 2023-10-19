@@ -56,7 +56,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     /**
      * Connection data
      **/
-    private byte connection;
+    private byte connection, virtualConnection;
 
     protected Holder pipeCapHolder;
 
@@ -95,6 +95,22 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
+        if (canConnect(facing.get3DDataValue())){
+            BlockEntityPipe<?> pipe = getPipe(neighbor);
+            if (pipe == null){
+                if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
+                    if (!validate(facing)){
+                        Connectivity.clear(virtualConnection, facing.get3DDataValue());
+                        refreshConnection();
+                    }
+                } else {
+                    if (validate(facing)){
+                        Connectivity.set(virtualConnection, facing.get3DDataValue());
+                        refreshConnection();
+                    }
+                }
+            }
+        }
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
     }
 
@@ -154,8 +170,11 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         BlockEntityPipe<?> pipe = getPipe(side);
         //If it is a tile but invalid do not connect.
         connection = Connectivity.set(connection, side.get3DDataValue());
-        /*boolean ok = validate(side);
-        if (!ok && (pipe == null) && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
+        boolean ok = validate(side) || pipe != null;
+        if (ok){
+            virtualConnection = Connectivity.set(virtualConnection, side.get3DDataValue());
+        }
+        /*if (!ok && (pipe == null) && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
             connection = Connectivity.clear(connection, side.get3DDataValue());
             return;
         }*/
@@ -170,6 +189,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         //If we don't check for connection pipes can cause stackoverflow!
         if (!connects(side)) return;
         connection = Connectivity.clear(connection, side.get3DDataValue());
+        virtualConnection = Connectivity.clear(virtualConnection, side.get3DDataValue());
         dispatch.invalidate(side);
         refreshConnection();
         BlockEntityPipe<?> pipe = getPipe(side);
@@ -297,6 +317,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
             coverHandler.ifPresent(t -> t.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
+        virtualConnection = tag.getByte(Ref.TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY);
         if (newConnection != connection && (level != null && level.isClientSide)) {
             Utils.markTileForRenderUpdate(this);
         }
@@ -325,6 +346,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         super.saveAdditional(tag);
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize(new CompoundTag())));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
+        tag.putByte(Ref.TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY, virtualConnection);
     }
 
     public CompoundTag getUpdateTag() {
