@@ -95,17 +95,17 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
-        if (canConnect(facing.get3DDataValue())){
+        if (level != null && level.isLoaded(this.getBlockPos()) && canConnect(facing.get3DDataValue())){
             BlockEntityPipe<?> pipe = getPipe(neighbor);
             if (pipe == null){
                 if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
                     if (!validate(facing)){
-                        Connectivity.clear(virtualConnection, facing.get3DDataValue());
+                        virtualConnection = Connectivity.clear(virtualConnection, facing.get3DDataValue());
                         refreshConnection();
                     }
                 } else {
                     if (validate(facing)){
-                        Connectivity.set(virtualConnection, facing.get3DDataValue());
+                        virtualConnection = Connectivity.set(virtualConnection, facing.get3DDataValue());
                         refreshConnection();
                     }
                 }
