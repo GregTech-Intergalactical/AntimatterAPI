@@ -32,6 +32,8 @@ public interface ICoverHandler<T extends BlockEntity> extends Serializable {
 
     void onUpdate();
 
+    void onFirstTick();
+
     // If the player uses a cover in hand -> place cover if none exists.. Otherwises
     // interact with the cover, if present.
     InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type);
@@ -108,6 +110,11 @@ public interface ICoverHandler<T extends BlockEntity> extends Serializable {
 
         @Override
         public void onUpdate() {
+
+        }
+
+        @Override
+        public void onFirstTick() {
 
         }
 

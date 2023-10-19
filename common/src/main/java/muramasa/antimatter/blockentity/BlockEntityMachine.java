@@ -172,6 +172,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             this.energyHandler.ifPresent(MachineEnergyHandler::init);
             this.rfHandler.ifPresent(MachineRFHandler::init);
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
+            this.coverHandler.ifPresent(CoverHandler::onFirstTick);
         }
     }
 

@@ -146,6 +146,11 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
     }
 
     @Override
+    public void onFirstTick() {
+        covers.forEach((s,c) -> c.onFirstTick());
+    }
+
+    @Override
     public void onRemove() {
         covers.forEach((s, c) -> c.onRemove());
     }

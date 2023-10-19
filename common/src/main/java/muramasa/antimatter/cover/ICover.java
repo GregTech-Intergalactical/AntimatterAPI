@@ -99,6 +99,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
     }
 
+    default void onFirstTick(){
+
+    }
+
     default void onBlockUpdate() {
 
     }
