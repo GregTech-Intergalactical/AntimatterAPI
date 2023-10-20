@@ -26,6 +26,7 @@ public class TextureSet implements IAntimatterObject {
     public static final TextureSet WOOD = new TextureSet(Ref.ID, "wood");
     public static final TextureSet REDSTONE = new TextureSet(Ref.ID, "redstone");
     public static final TextureSet RAD = new TextureSet(Ref.ID, "rad");
+    public static final TextureSet RUBBER = new TextureSet(Ref.ID, "rubber");
 
     private String domain, id;
     private boolean force;
