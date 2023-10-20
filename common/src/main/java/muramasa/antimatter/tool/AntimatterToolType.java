@@ -109,7 +109,6 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         }
         this.TOOL_TYPES.add(this.TOOL_TYPE);
         setBrokenItems(ImmutableMap.of(id, (i) -> ItemStack.EMPTY));
-        AntimatterAPI.register(AntimatterToolType.class, this);
     }
 
     public AntimatterToolType(String domain, String id, AntimatterToolType inheritType) {
