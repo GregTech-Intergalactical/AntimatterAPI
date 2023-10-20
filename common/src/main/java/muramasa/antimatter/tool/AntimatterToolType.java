@@ -44,7 +44,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
     private final List<Component> tooltip = new ObjectArrayList<>();
-    private boolean powered, repairable, blockBreakability, hasContainer, simple, hasSecondary;
+    private boolean powered, repairable, blockBreakability, hasContainer, simple, hasSecondary, originalTag = true;
     private long baseMaxEnergy;
     private int[] energyTiers;
     private final int useDurability, attackDurability, craftingDurability;
@@ -214,6 +214,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     }
 
     public AntimatterToolType setTag(AntimatterToolType tag) {
+        this.originalTag = false;
         this.tag = tag.getTag();
         this.forgeTag = tag.getForgeTag();
         return this;
@@ -226,6 +227,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
     public AntimatterToolType setTag(ResourceLocation loc) {
+        this.originalTag = false;
         this.tag = TagUtils.getItemTag(loc);
         this.forgeTag = TagUtils.getForgelikeItemTag("tools/" + loc.getPath());
         return this;
@@ -414,6 +416,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public boolean hasContainer() {
         return hasContainer;
+    }
+
+    public boolean hasOriginalTag(){
+        return originalTag;
     }
 
     public long getBaseMaxEnergy() {

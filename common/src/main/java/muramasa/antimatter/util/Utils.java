@@ -1301,6 +1301,7 @@ public class Utils {
     public static AntimatterToolType getToolType(Player player) {
         ItemStack stack = player.getMainHandItem();
         for (AntimatterToolType ty : AntimatterAPI.all(AntimatterToolType.class)) {
+            if (!ty.hasOriginalTag()) continue;
             if (stack.is(ty.getTag())){
                 return ty;
             }
