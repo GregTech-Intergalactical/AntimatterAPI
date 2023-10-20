@@ -2,6 +2,8 @@ package muramasa.antimatter.material;
 
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
@@ -27,6 +29,7 @@ import static muramasa.antimatter.material.TextureSet.NONE;
 public class Material implements ISharedAntimatterObject {
 
     public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE));
+    @Getter
     final Set<MaterialType<?>> types = new HashSet<>();
     /**
      * Basic Members
@@ -34,13 +37,21 @@ public class Material implements ISharedAntimatterObject {
     private final String domain;
     private final String id;
     private Component displayName;
+    @Getter
+    @Setter
     private String displayNameString;
+    @Getter
     private final int rgb;
+    @Getter
     private final TextureSet set;
 
     /**
      * Element Members
-     **/
+     *
+     * -- GETTER --
+     *  Element Getters
+     */
+    @Getter
     private Element element;
     private String chemicalFormula = null;
     private int massMultiplier = 1, massDivider = 1;
@@ -105,19 +116,10 @@ public class Material implements ISharedAntimatterObject {
         return true;
     }
 
-    public Material setDisplayName(String displayNameString) {
-        this.displayNameString = displayNameString;
-        return this;
-    }
-
     public Material setMassMultiplierAndDivider(int massMultiplier, int massDivider){
         this.massMultiplier = massMultiplier;
         this.massDivider = massDivider;
         return this;
-    }
-
-    public String getDisplayNameString() {
-        return displayNameString;
     }
 
     public Material flags(IMaterialTag... tags) {
@@ -155,16 +157,8 @@ public class Material implements ISharedAntimatterObject {
         return displayName == null ? displayName = Utils.translatable("material." + getId()) : displayName;
     }
 
-    public Set<MaterialType<?>> getTypes() {
-        return types;
-    }
-
     public int getRGB() {
         return rgb;
-    }
-
-    public TextureSet getSet() {
-        return set;
     }
 
     public long getProtons() {
@@ -224,13 +218,6 @@ public class Material implements ISharedAntimatterObject {
 
     private long getMultiplier() {
         return (U * massMultiplier) / massDivider;
-    }
-
-    /**
-     * Element Getters
-     **/
-    public Element getElement() {
-        return element;
     }
 
     public String getChemicalFormula() {

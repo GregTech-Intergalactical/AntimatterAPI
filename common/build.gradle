@@ -40,6 +40,9 @@ dependencies{
     modImplementation("earth.terrarium:botarium-common-1.18.2:${project.botarium_version}")
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-1.18.2:${project.resourcefullib_version}"
 
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
 }
 
 architectury {

@@ -5,6 +5,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
@@ -37,31 +39,64 @@ import java.util.function.Supplier;
 public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
-    private TagKey<Block> TOOL_TYPE;
-    private final Set<TagKey<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
-    private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
-    private final Set<net.minecraft.world.level.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
+    @Getter
+    private TagKey<Block> toolType;
+    private final Set<TagKey<Block>> toolTypes = new ObjectOpenHashSet<>();
+    @Getter
+    private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
+    @Getter
+    private final Set<net.minecraft.world.level.material.Material> effectiveMaterials = new ObjectOpenHashSet<>();
+    @Getter
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
+    @Getter
+    @Setter
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
+    @Getter
     private final List<Component> tooltip = new ObjectArrayList<>();
-    private boolean powered, repairable, blockBreakability, hasContainer, simple, hasSecondary, originalTag = true;
+    @Getter
+    private boolean powered, blockBreakability;
+    @Getter
+    @Setter
+    private boolean hasContainer, hasSecondary, simple, repairable;
+    @Getter
+    private boolean originalTag = true;
+    @Getter
     private long baseMaxEnergy;
+    @Getter
     private int[] energyTiers;
+    @Getter
     private final int useDurability, attackDurability, craftingDurability;
+    @Getter
+    @Setter
     private float durabilityMultiplier = 1;
+    @Getter
     private float miningSpeedMultiplier = 1.0f;
+    @Getter
     private int baseQuality, overlayLayers;
+    @Getter
     private final float baseAttackDamage, baseAttackSpeed;
+    @Getter
+    @Setter
     private CreativeModeTab itemGroup;
+    @Getter
     protected TagKey<Item> tag, forgeTag; // Set?
+    @Getter
+    @Setter
     private UseAnim useAction;
+    @Setter
     private Class<? extends IAntimatterTool> toolClass;
+    @Setter
     private IToolSupplier toolSupplier = null;
     @Nullable
+    @Getter
+    @Setter
     private SoundEvent useSound;
+    @Getter
     @Nullable
     private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
     @Nullable
+    @Getter
+    @Setter
     private MaterialTypeItem<?> materialTypeItem;
 
     /**
@@ -103,11 +138,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.simple = true;
         hasSecondary = true;
         if (vanillaType) {
-            this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation("minecraft","mineable/".concat(id)));
+            this.toolType = TagUtils.getBlockTag(new ResourceLocation("minecraft","mineable/".concat(id)));
         } else {
-            this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "mineable/".concat(id)));
+            this.toolType = TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "mineable/".concat(id)));
         }
-        this.TOOL_TYPES.add(this.TOOL_TYPE);
+        this.toolTypes.add(this.toolType);
         setBrokenItems(ImmutableMap.of(id, (i) -> ItemStack.EMPTY));
     }
 
@@ -203,16 +238,6 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setBrokenItems(ImmutableMap<String, Function<ItemStack, ItemStack>> map) {
-        this.brokenItems = map;
-        return this;
-    }
-
-    public AntimatterToolType setMaterialType(MaterialTypeItem<?> materialTypeItem){
-        this.materialTypeItem = materialTypeItem;
-        return this;
-    }
-
     public AntimatterToolType setTag(AntimatterToolType tag) {
         this.originalTag = false;
         this.tag = tag.getTag();
@@ -221,9 +246,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     }
 
     public AntimatterToolType setType(AntimatterToolType tag) {
-        this.TOOL_TYPES.remove(this.TOOL_TYPE);
-        this.TOOL_TYPE = tag.getToolType();
-        this.TOOL_TYPES.add(this.TOOL_TYPE);
+        this.toolTypes.remove(this.toolType);
+        this.toolType = tag.getToolType();
+        this.toolTypes.add(this.toolType);
         return this;
     }
     public AntimatterToolType setTag(ResourceLocation loc) {
@@ -241,39 +266,24 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setSimple(boolean simple){
-        this.simple = simple;
-        return this;
-    }
-
-    public AntimatterToolType setHasSecondary(boolean hasSecondary){
-        this.hasSecondary = hasSecondary;
-        return this;
-    }
-
-    public AntimatterToolType setHasContainer(boolean container) {
-        this.hasContainer = container;
-        return this;
-    }
-
     public AntimatterToolType addTags(String... types) {
         if (types.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
-        Arrays.stream(types).map(t -> TagUtils.getForgelikeBlockTag(t)).forEach(t -> this.TOOL_TYPES.add(t));
+        Arrays.stream(types).map(t -> TagUtils.getForgelikeBlockTag(t)).forEach(t -> this.toolTypes.add(t));
         return this;
     }
 
     public AntimatterToolType addEffectiveBlocks(Block... blocks) {
         if (blocks.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective blocks even when it was explicitly called!");
-        this.EFFECTIVE_BLOCKS.addAll(Arrays.asList(blocks));
+        this.effectiveBlocks.addAll(Arrays.asList(blocks));
         return this;
     }
 
     public AntimatterToolType addEffectiveMaterials(net.minecraft.world.level.material.Material... materials) {
         if (materials.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
-        this.EFFECTIVE_MATERIALS.addAll(Arrays.asList(materials));
+        this.effectiveMaterials.addAll(Arrays.asList(materials));
         return this;
     }
 
@@ -288,16 +298,6 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         if (tag == null)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no secondary material requirement even when it was explicitly called!");
         this.secondaryMaterialRequirement = tag;
-        return this;
-    }
-
-    public AntimatterToolType setToolClass(Class<? extends IAntimatterTool> toolClass) {
-        this.toolClass = toolClass;
-        return this;
-    }
-
-    public AntimatterToolType setToolSupplier(IToolSupplier toolSupplier) {
-        this.toolSupplier = toolSupplier;
         return this;
     }
 
@@ -324,40 +324,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-
-    public AntimatterToolType setUseSound(SoundEvent sound) {
-        this.useSound = sound;
-        return this;
-    }
-
-    public boolean getRepairability() {
-        return repairable;
-    }
-
-    public AntimatterToolType setRepairability(boolean repairable) {
-        this.repairable = repairable;
-        return this;
-    }
-
-    public AntimatterToolType setDurabilityMultiplier(float durabilityMultiplier){
-        this.durabilityMultiplier = durabilityMultiplier;
-        return this;
-    }
-
     public AntimatterToolType setOverlayLayers(int layers) {
         if (layers < 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have less than 0 overlayer layers!");
         this.overlayLayers = layers;
-        return this;
-    }
-
-    public AntimatterToolType setItemGroup(CreativeModeTab itemGroup) {
-        this.itemGroup = itemGroup;
-        return this;
-    }
-
-    public AntimatterToolType setUseAction(UseAnim useAction) {
-        this.useAction = useAction;
         return this;
     }
 
@@ -391,27 +361,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     }
 
     public Set<TagKey<Block>> getActualTags() {
-        return TOOL_TYPES;
-    }
-
-    public TagKey<Block> getToolType() {
-        return TOOL_TYPE;
-    }
-
-    public List<Component> getTooltip() {
-        return tooltip;
-    }
-
-    public ImmutableMap<String, Function<ItemStack, ItemStack>> getBrokenItems() {
-        return brokenItems;
-    }
-
-    public boolean isPowered() {
-        return powered;
-    }
-
-    public boolean isSimple() {
-        return simple;
+        return toolTypes;
     }
 
     public boolean hasContainer() {
@@ -420,102 +370,6 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public boolean hasOriginalTag(){
         return originalTag;
-    }
-
-    public long getBaseMaxEnergy() {
-        return baseMaxEnergy;
-    }
-
-    public int[] getEnergyTiers() {
-        return energyTiers;
-    }
-
-    public Class<? extends IAntimatterTool> getToolClass() {
-        return toolClass;
-    }
-
-    public int getBaseQuality() {
-        return baseQuality;
-    }
-
-    public float getBaseAttackDamage() {
-        return baseAttackDamage;
-    }
-
-    public float getBaseAttackSpeed() {
-        return baseAttackSpeed;
-    }
-
-    public int getUseDurability() {
-        return useDurability;
-    }
-
-    public int getAttackDurability() {
-        return attackDurability;
-    }
-
-    public int getCraftingDurability() {
-        return craftingDurability;
-    }
-
-    public float getDurabilityMultiplier() {
-        return durabilityMultiplier;
-    }
-
-    public float getMiningSpeedMultiplier() {
-        return miningSpeedMultiplier;
-    }
-
-    public int getOverlayLayers() {
-        return overlayLayers;
-    }
-
-    public CreativeModeTab getItemGroup() {
-        return itemGroup;
-    }
-
-    public TagKey<Item> getTag() {
-        return tag;
-    }
-
-    public TagKey<Item> getForgeTag() {
-        return forgeTag;
-    }
-
-    public UseAnim getUseAction() {
-        return useAction;
-    }
-
-    @Nullable
-    public SoundEvent getUseSound() {
-        return useSound;
-    }
-
-    @Nullable
-    public IMaterialTag getPrimaryMaterialRequirement() {
-        return primaryMaterialRequirement;
-    }
-
-    @Nullable
-    public IMaterialTag getSecondaryMaterialRequirement() {
-        return secondaryMaterialRequirement;
-    }
-
-    public Set<Block> getEffectiveBlocks() {
-        return EFFECTIVE_BLOCKS;
-    }
-
-    public Set<net.minecraft.world.level.material.Material> getEffectiveMaterials() {
-        return EFFECTIVE_MATERIALS;
-    }
-
-    public Object2ObjectMap<String, IBehaviour<IAntimatterTool>> getBehaviours() {
-        return behaviours;
-    }
-
-    @Nullable
-    public MaterialTypeItem<?> getMaterialTypeItem() {
-        return materialTypeItem;
     }
 
     public interface IToolSupplier{
