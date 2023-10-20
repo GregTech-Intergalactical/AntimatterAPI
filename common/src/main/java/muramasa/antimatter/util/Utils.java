@@ -1300,10 +1300,9 @@ public class Utils {
     //Not deprecated so you don't have to call methods multiple times.
     public static AntimatterToolType getToolType(Player player) {
         ItemStack stack = player.getMainHandItem();
-        if (!stack.isEmpty()) {
-            Item item = stack.getItem();
-            if (item instanceof IAntimatterTool) {
-                return ((IAntimatterTool) item).getAntimatterToolType();
+        for (AntimatterToolType ty : AntimatterAPI.all(AntimatterToolType.class)) {
+            if (stack.is(ty.getTag())){
+                return ty;
             }
         }
         return null;
