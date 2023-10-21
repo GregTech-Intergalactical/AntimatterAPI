@@ -238,6 +238,16 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
+    @Deprecated
+    public AntimatterToolType setMaterialType(MaterialTypeItem<?> materialTypeItem){
+        return setMaterialTypeItem(materialTypeItem);
+    }
+
+    @Deprecated
+    public AntimatterToolType setRepairability(boolean repairable){
+        return setRepairable(repairable);
+    }
+
     public AntimatterToolType setTag(AntimatterToolType tag) {
         this.originalTag = false;
         this.tag = tag.getTag();

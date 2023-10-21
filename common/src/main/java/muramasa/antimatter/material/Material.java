@@ -122,6 +122,11 @@ public class Material implements ISharedAntimatterObject {
         return this;
     }
 
+    @Deprecated
+    public Material setDisplayName(String displayNameString){
+        return setDisplayNameString(displayNameString);
+    }
+
     public Material flags(IMaterialTag... tags) {
         if (!enabled) return this;
         for (IMaterialTag t : tags) {
