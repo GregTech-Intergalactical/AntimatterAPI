@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.item;
 
+import lombok.Getter;
 import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
 import muramasa.antimatter.capability.IFilterableHandler;
 import muramasa.antimatter.capability.IGuiHandler;
@@ -13,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiPredicate;
 
+
+@Getter
 public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler implements ITrackedHandler {
 
     private final T tile;
