@@ -29,7 +29,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setBlock(BlockMultiMachine::new);
         setItemBlockClass(() -> BlockMultiMachine.class);
         addFlags(MULTI, COVERABLE);
-        setClientTick();
+        setClientTicking();
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);
         setTooltipInfo((machine, stack, world, tooltip, flag) -> {

@@ -4,7 +4,6 @@ import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.*;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
-import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.MenuHandlerPipe;
@@ -99,7 +98,7 @@ public class Data {
         }
     };
 
-    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setAllowVerticalFacing(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
+    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setVerticalFacingAllowed(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
             .noCovers();
 
     public static void init(Side side) {

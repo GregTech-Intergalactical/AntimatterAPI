@@ -12,6 +12,6 @@ public class GeneratorMachine extends Machine<GeneratorMachine> {
         setTile(BlockEntityGenerator::new);
         setGUI(Data.BASIC_MENU_HANDLER);
         noCovers();
-        setAllowVerticalFacing(true);
+        setVerticalFacingAllowed(true);
     }
 }

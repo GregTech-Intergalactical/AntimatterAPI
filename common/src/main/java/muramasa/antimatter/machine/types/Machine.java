@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
@@ -71,6 +72,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
     protected ITooltipInfo tooltipFunction = (m, s,w,t,f) -> {};
     protected String domain, id;
+    @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
     protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
@@ -84,6 +86,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * GUI Members
      **/
     protected GuiData guiData;
+    @Getter
     protected CreativeModeTab group = Ref.TAB_MACHINES;
 
     /**
@@ -113,9 +116,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * Behaviours
      **/
     protected boolean allowFrontCovers = false;
-    protected boolean allowVerticalFacing = false;
+    @Getter
+    protected boolean verticalFacingAllowed = false;
     protected boolean frontIO = false;
-    protected boolean allowClientTicking = false;
+    @Getter
+    protected boolean clientTicking = false;
+    @Getter
     protected boolean ambientTicking = false;
 
     /**
@@ -433,8 +439,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T setAllowVerticalFacing(boolean allowVerticalFacing) {
-        this.allowVerticalFacing = allowVerticalFacing;
+    public T setVerticalFacingAllowed(boolean verticalFacingAllowed) {
+        this.verticalFacingAllowed = verticalFacingAllowed;
         return (T) this;
     }
 
@@ -452,16 +458,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return Utils.translatable("machine." + id + keyAddition, Utils.literal(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting()));
     }
 
-    public boolean canClientTick() {
-        return allowClientTicking;
-    }
-
-    public boolean isAmbientTicking() {
-        return ambientTicking;
-    }
-
-    public T setClientTick() {
-        this.allowClientTicking = true;
+    public T setClientTicking() {
+        this.clientTicking = true;
         return (T) this;
     }
 
@@ -627,10 +625,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tileType;
     }
 
-    public Collection<Tier> getTiers() {
-        return tiers;
-    }
-
     //TODO needed?
     public Tier getFirstTier() {
         return tiers.get(0);
@@ -640,16 +634,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return guiData;
     }
 
-    public CreativeModeTab getGroup() {
-        return group;
-    }
-
     public Structure getStructure(Tier tier) {
         return structures.get(tier);
-    }
-
-    public boolean allowVerticalFacing() {
-        return allowVerticalFacing;
     }
 
     /**

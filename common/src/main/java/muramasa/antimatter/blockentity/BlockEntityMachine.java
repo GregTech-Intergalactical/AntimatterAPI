@@ -377,19 +377,19 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (state == AIR.defaultBlockState()) {
             return Direction.SOUTH;
         }
-        if (getMachineType().allowVerticalFacing()) {
+        if (getMachineType().isVerticalFacingAllowed()) {
             return state.getValue(BlockStateProperties.FACING);
         }
         return state.getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public boolean setFacing(Direction side) {
-        if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().allowVerticalFacing()))
+        if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().isVerticalFacingAllowed()))
             return false;
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {
             BlockState state = getBlockState();
-            if (getMachineType().allowVerticalFacing()) {
+            if (getMachineType().isVerticalFacingAllowed()) {
                 state = state.setValue(BlockStateProperties.FACING, side);
             } else {
                 state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, side);

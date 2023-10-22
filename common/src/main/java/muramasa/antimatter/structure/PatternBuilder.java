@@ -48,7 +48,7 @@ public class PatternBuilder {
     public PatternBuilder at(String key, Machine<?> machine, Tier tier, Direction frontSide) {
         BlockMachine block = machine.getBlockState(tier);
         BlockState state;
-        if (block.getType().allowVerticalFacing()) {
+        if (block.getType().isVerticalFacingAllowed()) {
             state = block.defaultBlockState().setValue(BlockStateProperties.FACING, frontSide.getAxis() == Direction.Axis.Y ? frontSide : frontSide.getOpposite());
         } else {
             state = block.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, frontSide);

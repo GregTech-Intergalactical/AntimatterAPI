@@ -99,7 +99,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
-        if (type.allowVerticalFacing()) {
+        if (type.isVerticalFacingAllowed()) {
             builder.add(BlockStateProperties.FACING).add(MACHINE_STATE);
         } else {
             builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);
@@ -114,7 +114,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (type.allowVerticalFacing()) {
+        if (type.isVerticalFacingAllowed()) {
             Direction dir = context.getNearestLookingDirection().getOpposite();
             dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
             return this.defaultBlockState().setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
@@ -348,7 +348,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide() && !getType().canClientTick()) return null;
+        if (level.isClientSide() && !getType().isClientTicking()) return null;
         return BlockEntityTickable::commonTick;
     }
 

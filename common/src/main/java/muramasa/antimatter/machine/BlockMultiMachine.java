@@ -20,7 +20,7 @@ public class BlockMultiMachine extends BlockMachine {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
-        if (type.allowVerticalFacing()) {
+        if (type.isVerticalFacingAllowed()) {
             builder.add(BlockStateProperties.FACING).add(MACHINE_STATE);
         } else {
             builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);

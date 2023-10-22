@@ -43,7 +43,7 @@ public class StructureHandle<T extends BlockEntityBasicMultiMachine<T>> {
 
     public void register() {
         BlockState state = source.getBlockState();
-        boolean vertical = source.getMachineType().allowVerticalFacing();
+        boolean vertical = source.getMachineType().isVerticalFacingAllowed();
         Direction facing = vertical ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         int3 newOff = new int3(facing);
         for (int3 offset : offsets) {
@@ -54,7 +54,7 @@ public class StructureHandle<T extends BlockEntityBasicMultiMachine<T>> {
 
     public void deregister() {
         BlockState state = source.getBlockState();
-        boolean vertical = source.getMachineType().allowVerticalFacing();
+        boolean vertical = source.getMachineType().isVerticalFacingAllowed();
         Direction facing = vertical ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         int3 newOff = new int3(facing);
         for (int3 offset : offsets) {
