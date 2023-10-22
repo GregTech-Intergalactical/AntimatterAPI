@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -116,10 +117,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         AntimatterAPI.all(Machine.class, domain).forEach(i -> {
             if (!i.hasTierSpecificLang()){
                 add("machine." + i.getId(), i.getLang(locale).concat(" (%s)"));
-                return;
             }
             Collection<Tier> tiers = i.getTiers();
-            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(t == Tier.NONE ? "" : " (%s)")));
+            tiers.forEach(t -> {
+                if (i.hasTierSpecificLang()) {
+                    add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(t == Tier.NONE ? "" : " (%s)"));
+                }
+                add(i.getBlockState(t), i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")"));
+            });
         });
         AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {
             add("enchantment." + d + "." + i, lowerUnderscoreToUpperSpaced(i));
