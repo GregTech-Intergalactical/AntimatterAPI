@@ -147,6 +147,7 @@ public class Antimatter extends AntimatterMod {
             PropertyIngredient.Serializer.init();
         } else if (event == RegistrationEvent.WORLDGEN_INIT) {
             AntimatterWorldGenerator.init();
+            AntimatterDefaultTools.postInit();
         } else if (event == RegistrationEvent.DATA_READY) {
             CauldronInteractions.init();
             if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) || AntimatterAPI.isModLoaded(Ref.MOD_REI)){

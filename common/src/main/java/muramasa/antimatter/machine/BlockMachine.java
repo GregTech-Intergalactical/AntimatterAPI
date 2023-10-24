@@ -154,7 +154,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         }
                     }
                     //Handle tool types.
-                    if (type == AntimatterDefaultTools.WRENCH || type == AntimatterDefaultTools.ELECTRIC_WRENCH) {
+                    if (type == AntimatterDefaultTools.WRENCH) {
                         if (tile.wrenchMachine(player, hit, player.isCrouching())) {
                             Utils.damageStack(stack, hand, player);
                             return InteractionResult.SUCCESS;
@@ -180,7 +180,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                                 return InteractionResult.SUCCESS;
                             }
                         }
-                    } else if (type == AntimatterDefaultTools.SCREWDRIVER || type == AntimatterDefaultTools.ELECTRIC_SCREWDRIVER) {
+                    } else if (type == AntimatterDefaultTools.SCREWDRIVER) {
                         ICover instance = tile.getCoverHandler().map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                         if (!player.isCrouching()) {
                             if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {

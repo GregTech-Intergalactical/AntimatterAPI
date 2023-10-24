@@ -8,7 +8,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import tesseract.TesseractCapUtils;
 
-// TODO: REPLACE WITH CAPABILITY
 public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
 
     public static final BehaviourPoweredDebug INSTANCE = new BehaviourPoweredDebug();
@@ -20,7 +19,7 @@ public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
 
     @Override
     public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
-        if (instance.getAntimatterToolType().isPowered() && c.getLevel().getBlockState(c.getClickedPos()) == Blocks.REDSTONE_BLOCK.defaultBlockState() && c.getPlayer() != null) {
+        if (instance.getAntimatterToolType().isPowered() && c.getLevel().getBlockState(c.getClickedPos()) == Blocks.REDSTONE_BLOCK.defaultBlockState() && c.getPlayer() != null && c.getPlayer().isCreative()) {
             ItemStack stack = c.getPlayer().getItemInHand(c.getHand());
             TesseractCapUtils.getEnergyHandlerItem(stack).ifPresent(i -> {
                 if (i.getCapacity() - i.getEnergy() <= 50000)

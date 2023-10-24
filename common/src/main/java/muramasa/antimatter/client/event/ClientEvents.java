@@ -72,7 +72,7 @@ public class ClientEvents {
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getAntimatterToolType();
-        if (player.isCrouching() && type != AntimatterDefaultTools.WRENCH && type != AntimatterDefaultTools.ELECTRIC_WRENCH && type != AntimatterDefaultTools.CROWBAR && type != AntimatterDefaultTools.WIRE_CUTTER)
+        if (player.isCrouching() && type != AntimatterDefaultTools.WRENCH && type != AntimatterDefaultTools.CROWBAR && type != AntimatterDefaultTools.WIRE_CUTTER)
             return false;
         //Perform highlight of wrench
         InteractionResult res = item.onGenericHighlight(player, levelRenderer, camera, target, partialTick, poseStack, bufferSource);

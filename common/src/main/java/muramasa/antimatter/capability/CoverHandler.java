@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.data.AntimatterDefaultTools.ELECTRIC_WRENCH;
 import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
 
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
@@ -187,7 +186,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
                 player.drop(dropped, false);
             }
         }
-        if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH) {
+        if (Utils.getToolType(player) != WRENCH) {
             player.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
         } else {
             player.getLevel().playSound(null, tile.getBlockPos(), Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
