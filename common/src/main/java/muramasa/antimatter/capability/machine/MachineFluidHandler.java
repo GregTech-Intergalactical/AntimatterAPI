@@ -49,7 +49,7 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
     }
 
     public MachineFluidHandler(T tile) {
-        this(tile, 8000 * (1 + tile.getMachineTier().getIntegerId()), 1000 * (250 + tile.getMachineTier().getIntegerId()));
+        this(tile, 32000, 1000 * (250 + tile.getMachineTier().getIntegerId()));
     }
 
     @Override
