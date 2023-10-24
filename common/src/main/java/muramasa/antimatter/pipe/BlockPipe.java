@@ -275,11 +275,11 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 return InteractionResult.PASS;
             }
             if (type == AntimatterDefaultTools.SCREWDRIVER) {
-                if (player.isCrouching()) {
+                /*if (player.isCrouching()) {
                     AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
                     Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
-                }
+                }*/
                 ICover instance = tile.getCoverHandler().map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
