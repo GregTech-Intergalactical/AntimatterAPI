@@ -227,7 +227,7 @@ public class BlockEntityMultiMachine<T extends BlockEntityMultiMachine<T>> exten
 
     @Override
     public long getMaxInputVoltage() {
-        List<IComponentHandler> hatches = getComponents("hatch_energy");
+        List<IComponentHandler> hatches = getComponentsByHandlerId("energy");
         return hatches.size() >= 1 ? hatches.stream().mapToLong(t -> t.getEnergyHandler().map(eh -> eh.getInputAmperage() * eh.getInputVoltage()).orElse(0L)).sum() : Ref.V[0];
     }
 
