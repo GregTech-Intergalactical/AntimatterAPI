@@ -38,7 +38,7 @@ public class AntimatterFluidTagProvider extends AntimatterTagProvider<Fluid> imp
                 }
             }
         });
-        if (domain.equals(Ref.ID)){
+        if (domain.equals(Ref.SHARED_ID)){
             tag(getForgelikeFluidTag("water")).add(Fluids.WATER);
         }
     }
