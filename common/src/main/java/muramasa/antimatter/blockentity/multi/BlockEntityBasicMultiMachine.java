@@ -189,13 +189,14 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         validStructure = structure.check((T)this);
         boolean[] fail = new boolean[1];
         fail[0] = false;
-        components.forEach((s, l) -> {
-            if (!structure.getMinMaxMap().containsKey(s)){
-                return;
+        structure.getMinMaxMap().forEach((s, p) -> {
+            int min = p.left();
+            int max = p.right();
+            int size = 0;
+            if (components.containsKey(s)){
+                size = components.get(s).size();
             }
-            int min = structure.getMinMaxMap().get(s).left();
-            int max = structure.getMinMaxMap().get(s).right();
-            if (l.size() < min || l.size() > max){
+            if (size < min || size > max){
                 fail[0] = true;
             }
         });
