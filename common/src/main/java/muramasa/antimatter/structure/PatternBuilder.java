@@ -53,9 +53,7 @@ public class PatternBuilder {
         } else {
             state = block.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, frontSide);
         }
-        //TODO 1.18
-        BlockEntity te = block.newBlockEntity(null, state);
-        return at(key, new BlockInfo(state, te));
+        return at(key, new BlockInfo(state));
     }
 
     public PatternBuilder shallowCopy() {

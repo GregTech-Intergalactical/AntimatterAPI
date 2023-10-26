@@ -83,9 +83,6 @@ public class TrackedDummyWorld extends Level {
     public void addBlock(BlockPos pos, BlockInfo blockInfo) {
         if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
             return;
-        if (blockInfo.getTileEntity() != null) {
-            blockInfo.getTileEntity().setLevel(this);
-        }
         this.renderedBlocks.put(pos, blockInfo);
         minPos.set(Math.min(minPos.x(), pos.getX()), Math.min(minPos.y(), pos.getY()), Math.min(minPos.z(), pos.getZ()));
         maxPos.set(Math.max(maxPos.x(), pos.getX()), Math.max(maxPos.y(), pos.getY()), Math.max(maxPos.z(), pos.getZ()));
@@ -93,12 +90,12 @@ public class TrackedDummyWorld extends Level {
 
     @Override
     public void setBlockEntity(BlockEntity entity) {
-        renderedBlocks.put(entity.getBlockPos(), new BlockInfo(renderedBlocks.getOrDefault(entity.getBlockPos(), BlockInfo.EMPTY).getBlockState(), entity));
+        renderedBlocks.put(entity.getBlockPos(), new BlockInfo(renderedBlocks.getOrDefault(entity.getBlockPos(), BlockInfo.EMPTY).getBlockState()));
 
     }
     @Override
     public boolean setBlock(@NotNull BlockPos pos, BlockState state, int a, int b) {
-        renderedBlocks.put(pos, new BlockInfo(state, renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity()));
+        renderedBlocks.put(pos, new BlockInfo(state));
         return true;
     }
 
