@@ -39,6 +39,9 @@ dependencies{
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modImplementation("earth.terrarium:botarium-common-1.18.2:${project.botarium_version}")
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-1.18.2:${project.resourcefullib_version}"
+    modCompileOnly("com.simibubi.create:create-fabric-${minecraft_version}:0.5.0.i-944+1.18.2"){
+        transitive = false
+    }
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
