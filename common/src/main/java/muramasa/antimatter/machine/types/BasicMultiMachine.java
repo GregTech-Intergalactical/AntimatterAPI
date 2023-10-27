@@ -5,8 +5,10 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.widget.ProgressWidget;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
@@ -60,8 +62,19 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     
     public final void setStructurePattern(Pattern... patterns) {
         if (AntimatterAPI.getSIDE().isClient()) {
-            if (patterns.length <= 0) return;
-            AntimatterPlatformUtils.addMultiMachineInfo(this, Arrays.stream(patterns).collect(Collectors.toList()));
+            if (patterns.length == 0) return;
+            AntimatterJEIREIPlugin.registerPatternForJei(this, Arrays.stream(patterns).collect(Collectors.toList()));
+        }
+    }
+
+    public final void setStructurePattern(Tier tier, Function<PatternBuilder, Pattern> patterns) {
+        setStructurePattern(tier, patterns.apply(new PatternBuilder()));
+    }
+
+    public final void setStructurePattern(Tier tier,  Pattern... patterns) {
+        if (AntimatterAPI.getSIDE().isClient()) {
+            if (patterns.length == 0) return;
+            AntimatterJEIREIPlugin.registerPatternForJei(this, tier, Arrays.stream(patterns).collect(Collectors.toList()));
         }
     }
 }

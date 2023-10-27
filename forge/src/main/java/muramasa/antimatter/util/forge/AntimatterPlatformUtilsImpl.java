@@ -245,8 +245,9 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
-        if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
+        /*if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
             MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(machine, patterns));
+        }*/
         }
     }
 

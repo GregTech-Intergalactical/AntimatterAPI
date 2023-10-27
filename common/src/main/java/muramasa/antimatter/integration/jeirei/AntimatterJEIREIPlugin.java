@@ -3,24 +3,31 @@ package muramasa.antimatter.integration.jeirei;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.integration.create.client.PonderIntegration;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static muramasa.antimatter.gui.SlotType.*;
@@ -28,6 +35,7 @@ import static muramasa.antimatter.gui.SlotType.FL_OUT;
 
 public class AntimatterJEIREIPlugin{
     private static final List<Consumer<List<ItemLike>>> ITEMS_TO_HIDE = new ArrayList<>();
+    private static final Map<Block, List<Pattern>> STRUCTURES = new Object2ObjectOpenHashMap<>();
     
     public static final GuiData BACKUP_MAP_GUI = new GuiData(Ref.ID, "backup_map").setSlots(ISlotProvider.DEFAULT()
             .add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34)
@@ -75,6 +83,18 @@ public class AntimatterJEIREIPlugin{
             if (value.tier != tier){
                 value.tier = tier;
             }
+        }
+    }
+
+    public static void registerPatternForJei(BasicMultiMachine<?> machine, List<Pattern> patternList){
+        machine.getTiers().forEach(t -> {
+            registerPatternForJei(machine, t, patternList);
+        });
+    }
+    public static void registerPatternForJei(BasicMultiMachine<?> machine, Tier tier, List<Pattern> patternList){
+        STRUCTURES.put(machine.getBlockState(tier), patternList);
+        if (AntimatterAPI.isModLoaded("create") && AntimatterAPI.getSIDE().isClient()){
+            PonderIntegration.registerMultiblock(machine, tier, patternList);
         }
     }
 
