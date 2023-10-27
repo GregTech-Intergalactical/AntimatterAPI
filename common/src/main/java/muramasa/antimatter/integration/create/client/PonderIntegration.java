@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.simibubi.create.foundation.ponder.PonderRegistrationHelper;
 import com.simibubi.create.foundation.ponder.PonderRegistry;
 import com.simibubi.create.foundation.ponder.PonderStoryBoardEntry;
+import com.simibubi.create.foundation.ponder.Selection;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
@@ -16,8 +17,10 @@ import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
@@ -42,21 +45,15 @@ public class PonderIntegration {
                 ListTag blockTags = new ListTag();
                 List<BlockState> states =new ArrayList<>();
                 BlockInfo[][][] blocks = pattern.getBlockInfos();
-                for (int y = 0; y < blocks.length; y++) {
-                    BlockInfo[][] aisle = blocks[y];
+                for (int y = 0; y < blocks.length + 1; y++) {
+                    BlockInfo[][] aisle = blocks[y == 0 ? y: y - 1];
                     for (int x = 0; x < aisle.length; x++) {
                         BlockInfo[] column = aisle[x];
                         for (int z = 0; z < column.length; z++) {
                             // fill XYZ instead of YZX
                             BlockPos blockPos = new BlockPos(x, y, z);
-                            BlockInfo info = column[z];
-                            BlockState state = info.getBlockState();
-                            if (!states.contains(info.getBlockState())){
-                                states.add(info.getBlockState());
-                            }
-                            int index = states.indexOf(state);
                             CompoundTag entry = new CompoundTag();
-                            entry.putInt("state", index);
+                            entry.putInt("state", 0);
                             ListTag pos = new ListTag();
                             pos.add(IntTag.valueOf(blockPos.getX()));
                             pos.add(IntTag.valueOf(blockPos.getY()));
@@ -66,12 +63,9 @@ public class PonderIntegration {
                         }
                     }
                 }
-                if (blockTags.isEmpty() || states.isEmpty()) return;
                 nbt.put("blocks", blockTags);
                 ListTag palette = new ListTag();
-                states.forEach(s -> {
-                    palette.add(NbtUtils.writeBlockState(s));
-                });
+                palette.add(NbtUtils.writeBlockState(Blocks.AIR.defaultBlockState()));
                 nbt.put("palette", palette);
                 nbt.putInt("DataVersion", SharedConstants.getCurrentVersion().getWorldVersion());
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -86,8 +80,24 @@ public class PonderIntegration {
                 var storyBoardentry = new PonderStoryBoardEntry((scene, util) -> {
                     scene.title(machine.getId(), machine.getLang("en_us") + " Multiblock");
                     scene.rotateCameraY(180f);
-                    scene.configureBasePlate(0, 0, Math.max(pattern.getBlockInfos()[0].length, pattern.getBlockInfos()[0][0].length));
+                    scene.configureBasePlate(0, 0, Math.max(pattern.getBlockInfos()[0].length, pattern.getBlockInfos()[0][0].length) + 1);
                     scene.showBasePlate();
+                    scene.scaleSceneView(0.5f);
+                    scene.idleSeconds(4);
+                    scene.world.setBlock(new BlockPos(1, 0, 1), Blocks.AIR.defaultBlockState(), false);
+                    for (int y = 1; y < blocks.length + 1; y++) {
+                        BlockInfo[][] aisle = blocks[y - 1];
+                        Selection selection = util.select.fromTo(0, y, 0, pattern.getBlockInfos()[0].length - 1, y, pattern.getBlockInfos()[0][0].length - 1);
+                        for (int x = 0; x < aisle.length; x++) {
+                            BlockInfo[] column = aisle[x];
+                            for (int z = 0; z < column.length; z++) {
+                                BlockInfo blockInfo = column[z];
+                                scene.world.setBlock(util.grid.at(x, y, z), blockInfo.getBlockState(), false);
+                            }
+                        }
+                        scene.world.showSection(selection, Direction.UP);
+                        scene.idleSeconds(4);
+                    }
                     scene.markAsFinished();
                 }, machine.getDomain(), new ResourceLocation(machine.getDomain(), machine.getBlockState(t).getId() + "/" +  i), machine.getBlockState(t).getLoc());
                 PonderRegistry.addStoryBoard(storyBoardentry);
