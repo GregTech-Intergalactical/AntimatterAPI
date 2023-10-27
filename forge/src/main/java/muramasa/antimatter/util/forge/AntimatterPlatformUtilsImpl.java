@@ -248,7 +248,6 @@ public class AntimatterPlatformUtilsImpl {
         /*if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
             MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(machine, patterns));
         }*/
-        }
     }
 
     public static Matrix4f createMatrix4f(float[] values){
