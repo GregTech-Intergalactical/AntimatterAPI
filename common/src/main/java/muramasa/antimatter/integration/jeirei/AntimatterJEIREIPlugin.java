@@ -98,7 +98,7 @@ public class AntimatterJEIREIPlugin{
     }
     public static void registerPatternForJei(BasicMultiMachine<?> machine, Tier tier, List<Pattern> patternList){
         STRUCTURES.put(machine.getBlockState(tier), patternList);
-        if (AntimatterAPI.isModLoaded("create") && AntimatterAPI.getSIDE().isClient()){
+        if (AntimatterAPI.isModLoaded(Ref.MOD_CREATE) && AntimatterAPI.getSIDE().isClient()){
             PonderIntegration.registerMultiblock(machine, tier, patternList);
         }
     }

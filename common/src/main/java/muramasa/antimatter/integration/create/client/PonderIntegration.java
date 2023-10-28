@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.Vec3;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -110,6 +111,15 @@ public class PonderIntegration {
                             });
                         }
                         scene.world.showSection(selection, Direction.UP);
+                        if (pattern.getPonderTooltipMap().containsKey(y - 1)){
+                            scene.idle(5);
+                            int finalY = y;
+                            pattern.getPonderTooltipMap().get(y - 1).forEach(tip -> {
+                                Vec3 centerTop = util.vector.topOf(util.grid.at(tip.x(), finalY, tip.z()));
+                                scene.overlay.showText(40).attachKeyFrame().text(tip.tooltip()).pointAt(centerTop);
+                                scene.idle(40);
+                            });
+                        }
                         scene.idleSeconds(4);
                     }
                     scene.markAsFinished();

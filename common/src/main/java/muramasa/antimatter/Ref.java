@@ -55,6 +55,7 @@ public class Ref {
      */
     public static final long L = AntimatterPlatformUtils.isForge() ? 144L : 9000L;
 
+
     /**
      * Debug Options
      **/
@@ -149,6 +150,7 @@ public class Ref {
     /**
      * Mod IDs
      **/
+    public static final String MOD_CREATE = "create";
     public static final String MOD_JEI = "jei";
     public static final String MOD_REI = "roughlyenoughitems";
     public static final String MOD_TOP = "theoneprobe";
