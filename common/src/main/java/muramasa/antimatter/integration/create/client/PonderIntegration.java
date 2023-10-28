@@ -94,7 +94,7 @@ public class PonderIntegration {
                 AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addAsset(new ResourceLocation(machine.getDomain(), "ponder/" + machine.getBlockState(t).getId() + "/" +  i + ".nbt"), stream.toByteArray());
                 AntimatterDynamics.RUNTIME_DATA_PACK.addData(new ResourceLocation(machine.getDomain(), "structures/" + machine.getBlockState(t).getId() + "/" +  i + ".nbt"), stream.toByteArray());
                 var storyBoardentry = new PonderStoryBoardEntry((scene, util) -> {
-                    scene.title(machine.getId(), machine.getLang("en_us") + " Multiblock");
+                    scene.title(machine.getBlockState(t).getId(), machine.getLang("en_us") + " Multiblock");
                     scene.rotateCameraY(180f);
                     scene.configureBasePlate(0, 0, Math.max(pattern.getBlockInfos()[0].length, pattern.getBlockInfos()[0][0].length) + 1);
                     scene.showBasePlate();

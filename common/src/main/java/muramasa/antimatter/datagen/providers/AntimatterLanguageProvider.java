@@ -11,6 +11,7 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.item.*;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
@@ -124,6 +125,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(t == Tier.NONE ? "" : " (%s)"));
                 }
                 add(i.getBlockState(t), i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")"));
+                if (i instanceof BasicMultiMachine<?>) {
+                    add(i.getDomain() + ".ponder." + i.getId() + (t == Tier.NONE ? "" : "_" + t.getId()) + ".header", i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")").concat(" Multiblock"));
+                }
             });
         });
         AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {

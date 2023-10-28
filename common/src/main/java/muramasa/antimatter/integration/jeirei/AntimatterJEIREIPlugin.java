@@ -4,6 +4,7 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import lombok.Getter;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -12,6 +13,8 @@ import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.integration.create.client.PonderIntegration;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.rei.REIUtils;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
@@ -35,7 +38,8 @@ import static muramasa.antimatter.gui.SlotType.FL_OUT;
 
 public class AntimatterJEIREIPlugin{
     private static final List<Consumer<List<ItemLike>>> ITEMS_TO_HIDE = new ArrayList<>();
-    private static final Map<Block, List<Pattern>> STRUCTURES = new Object2ObjectOpenHashMap<>();
+    @Getter
+    private static final Map<BlockMachine, List<Pattern>> STRUCTURES = new Object2ObjectOpenHashMap<>();
     
     public static final GuiData BACKUP_MAP_GUI = new GuiData(Ref.ID, "backup_map").setSlots(ISlotProvider.DEFAULT()
             .add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34)
@@ -56,6 +60,7 @@ public class AntimatterJEIREIPlugin{
         }
     }
 
+    @Getter
     private static final Object2ObjectMap<ResourceLocation, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public static void registerMissingMaps(){
@@ -121,10 +126,6 @@ public class AntimatterJEIREIPlugin{
             case '9' -> "⁹";
             default -> String.valueOf(c);
         };
-    }
-
-    public static Object2ObjectMap<ResourceLocation, RegistryValue> getREGISTRY() {
-        return REGISTRY;
     }
 
     public static void showCategory(Machine<?> type, Tier tier) {
