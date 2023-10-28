@@ -1,5 +1,6 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -9,7 +10,6 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -20,6 +20,9 @@ public class PatternBuilder {
     private List<String[]> slices = new ObjectArrayList<>();
     private Object2ObjectMap<String, BlockInfo> elementLookup = new Object2ObjectOpenHashMap<>();
     private Component description = Utils.translatable("");
+    //private Int2ObjectMap<>
+
+    float scale = 1.0f;
 
     public PatternBuilder of(String... slices) {
         this.slices.add(slices);
@@ -55,6 +58,10 @@ public class PatternBuilder {
         }
         return at(key, new BlockInfo(state));
     }
+    public PatternBuilder scale(float scale){
+        this.scale = scale;
+        return this;
+    }
 
     public PatternBuilder shallowCopy() {
         PatternBuilder builder = new PatternBuilder();
@@ -74,7 +81,7 @@ public class PatternBuilder {
     }
 
     public Pattern build() {
-        return new Pattern(bakeArray(), description);
+        return new Pattern(bakeArray(), description, scale);
     }
 
     private BlockInfo[][][] bakeArray() {
