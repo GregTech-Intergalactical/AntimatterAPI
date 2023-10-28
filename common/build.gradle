@@ -18,11 +18,11 @@ boolean hasTesseract = findProject(':tesseract-common') != null
 
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
+    compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.19.2:${rootProject.crafttweaker_version}")
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     implementation(project(path: ":tesseract-common", configuration: "namedElements"))
     modCompileOnly("net.fabricmc.fabric-api:fabric-transfer-api-v1:${rootProject.fabric_transfer_api_version}")
-    modImplementation("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable"){
+    modImplementation("io.github.fabricators_of_create.Porting-Lib:base:${rootProject.port_lib_version}+1.19.2"){
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")
     }
@@ -33,7 +33,7 @@ dependencies{
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
-    modCompileOnly("com.github.Trinsdar:ARRP:0.6.7-hotfix")
+    modCompileOnly("com.github.Trinsdar:ARRP:0.6.7.1")
     modImplementation("com.gtnewhorizon.structurelib:structurelib-common:${project.structurelib_version}-${project.minecraft_version}")
     modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")

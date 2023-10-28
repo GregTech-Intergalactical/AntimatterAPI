@@ -32,7 +32,7 @@ dependencies{
     afterEvaluate {
         include(project(path: ":tesseract-fabric"))
     }
-    modImplementation(include("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable")){
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:base:${rootProject.port_lib_version}+1.19.2")){
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")
     }
@@ -48,7 +48,7 @@ dependencies{
     modImplementation(include("net.feltmc:felt-enchanting-api:1.0.0-${project.minecraft_version}")) { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
-    modImplementation(include("com.github.Trinsdar:ARRP:0.6.7-hotfix"))
+    modImplementation(include("com.github.Trinsdar:ARRP:0.6.7.1"))
     modCompileOnly(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"))
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}"){
@@ -61,13 +61,13 @@ dependencies{
     modImplementation("earth.terrarium:botarium-fabric-1.18.2:${project.botarium_version}"){
         transitive = false
     }
-    modImplementation("com.teamresourceful.resourcefullib:resourcefullib-fabric-1.18.2:${project.resourcefullib_version}")
+    modImplementation("com.teamresourceful.resourcefullib:resourcefullib-fabric-1.19.2:${project.resourcefullib_version}")
     implementation("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     implementation("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
+    modImplementation("net.minecraftforge:forgeconfigapiport-fabric:4.2.11")
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
 }
