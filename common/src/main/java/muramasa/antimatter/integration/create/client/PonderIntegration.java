@@ -102,15 +102,16 @@ public class PonderIntegration {
                     scene.idle(5);
                     for (int y = 1; y < blocks.length + 1; y++) {
                         Selection selection = util.select.fromTo(0, y, 0, pattern.getBlockInfos()[0].length - 1, y, pattern.getBlockInfos()[0][0].length - 1);
+                        if (y == blocks.length){
+                            controllerPositions.forEach(pos -> {
+                                scene.world.modifyTileEntity(pos, BlockEntityBasicMultiMachine.class, b -> {
+                                    b.setMachineState(MachineState.IDLE);
+                                });
+                            });
+                        }
                         scene.world.showSection(selection, Direction.UP);
                         scene.idleSeconds(4);
                     }
-                    controllerPositions.forEach(pos -> {
-                        scene.world.modifyTileEntity(pos, BlockEntityBasicMultiMachine.class, b -> {
-                            b.checkStructure();
-                            b.setMachineState(MachineState.IDLE);
-                        });
-                    });
                     scene.markAsFinished();
                 }, machine.getDomain(), new ResourceLocation(machine.getDomain(), machine.getBlockState(t).getId() + "/" +  i), machine.getBlockState(t).getLoc());
                 PonderRegistry.addStoryBoard(storyBoardentry);
