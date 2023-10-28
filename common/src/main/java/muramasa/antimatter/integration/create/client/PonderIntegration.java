@@ -110,9 +110,7 @@ public class PonderIntegration {
                             b.checkStructure();
                             b.setMachineState(MachineState.IDLE);
                         });
-                        scene.idle(5);
                     });
-
                     scene.markAsFinished();
                 }, machine.getDomain(), new ResourceLocation(machine.getDomain(), machine.getBlockState(t).getId() + "/" +  i), machine.getBlockState(t).getLoc());
                 PonderRegistry.addStoryBoard(storyBoardentry);
