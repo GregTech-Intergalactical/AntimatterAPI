@@ -109,12 +109,12 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     protected void english(String domain, String locale) {
-        AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemFluidCell.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(DebugScannerItem.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemMultiTextureBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> {
+            add(i, lowerUnderscoreToUpperSpaced(i.getId()));
+            if (!i.getTooltip().isEmpty()){
+                add("tooltip." + i.getDomain() + "." + i.getId().replace("/", "."), i.getTooltip());
+            }
+        });
         AntimatterAPI.all(Machine.class, domain).forEach(i -> {
             if (!i.hasTierSpecificLang()){
                 add("machine." + i.getId(), i.getLang(locale).concat(" (%s)"));
