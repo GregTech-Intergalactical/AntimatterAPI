@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.RecipeUtil;
@@ -23,7 +24,9 @@ import java.util.Objects;
 
 public class FluidIngredient {
     private FluidHolder[] stacks = new FluidHolder[0];
+    @Getter
     private TagKey<Fluid> tag;
+    @Getter
     private long amount = 0;
     private boolean evaluated = false;
 
@@ -52,14 +55,6 @@ public class FluidIngredient {
             this.stacks = list.toArray(new FluidHolder[0]);
         }
         return stacks;
-    }
-
-    public TagKey<Fluid> getTag() {
-        return tag;
-    }
-
-    public long getAmount() {
-        return amount;
     }
 
     public int getAmountInMB(){

@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterShapelessRecipeBuilder;
+import muramasa.antimatter.datagen.builder.SequencedAssemblyBuilder;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -46,6 +47,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     @Override
     public void run(HashCache cache) {
 
+    }
+
+    public SequencedAssemblyBuilder getSequencedAssemblyRecipe(Ingredient input){
+        return new SequencedAssemblyBuilder(input);
     }
 
     public void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
