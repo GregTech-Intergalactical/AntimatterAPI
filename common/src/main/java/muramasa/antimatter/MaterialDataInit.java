@@ -12,6 +12,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.PLATE;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.ROD;
 import static muramasa.antimatter.material.MaterialTags.MOLTEN;
 import static muramasa.antimatter.material.MaterialTags.QUARTZ_LIKE_BLOCKS;
 import static net.minecraft.world.item.Tiers.*;
@@ -47,7 +49,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Glowstone).asDust();
         event.setMaterial(AntimatterMaterials.Sugar).asDust();
         event.setMaterial(AntimatterMaterials.Bone).addHandleStat(12, 0.0F);
-        event.setMaterial(AntimatterMaterials.Wood).asDust(AntimatterMaterialTypes.PLATE, MaterialTags.RUBBERTOOLS, MaterialTags.WOOD)
+        event.setMaterial(AntimatterMaterials.Wood).asDust(PLATE, MaterialTags.RUBBERTOOLS, MaterialTags.WOOD)
                 .tool().toolDamage(WOOD.getAttackDamageBonus()).toolSpeed(WOOD.getSpeed()).toolDurability(16).toolQuality(WOOD.getLevel()).allowedToolTypes(List.of(AntimatterDefaultTools.SOFT_HAMMER)).build();
         event.setMaterial(AntimatterMaterials.Blaze).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
 
@@ -65,7 +67,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Lapis).asGemBasic(false).asOre(2, 5, true).harvestLevel(1);
         event.setMaterial(AntimatterMaterials.Redstone).asOre(1, 5, true, MOLTEN).harvestLevel(2);
         event.setMaterial(AntimatterMaterials.Quartz).asOre(1, 5, true, QUARTZ_LIKE_BLOCKS).harvestLevel(1);
-        event.setMaterial(AntimatterMaterials.Netherite).asMetal(2246);
+        event.setMaterial(AntimatterMaterials.Netherite).asMetal(2246, PLATE, ROD);
                 //.addTools(3.0F, 10, 500, NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
         event.setMaterial(AntimatterMaterials.NetherizedDiamond).asGemBasic(false)
                 .tool().toolDamage(4).toolSpeed(12).toolDurability(NETHERITE.getUses()).toolQuality(NETHERITE.getLevel()).toolEnchantments(of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).build()
