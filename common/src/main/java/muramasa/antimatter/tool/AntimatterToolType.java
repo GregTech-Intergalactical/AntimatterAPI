@@ -217,7 +217,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
             MaterialTags.TOOLS.getAll().forEach((m, t) -> {
                 if (primaryMaterialRequirement != null && !m.has(primaryMaterialRequirement)) return;
                 if (t.toolTypes().contains(this)){
-                    tools.add(instantiateTool(domain, AntimatterItemTier.getOrCreate(m, hasSecondary ? AntimatterMaterials.Wood : Material.NULL), properties));
+                    tools.add(instantiateTool(domain, AntimatterItemTier.getOrCreate(m, hasSecondary ? t.handleMaterial() : Material.NULL), properties));
                 }
             });
         } else {
