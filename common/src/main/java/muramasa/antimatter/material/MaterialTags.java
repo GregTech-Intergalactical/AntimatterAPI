@@ -1,6 +1,7 @@
 package muramasa.antimatter.material;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.data.ArmorData;
 import muramasa.antimatter.material.data.HandleData;
 import muramasa.antimatter.material.data.ToolData;
@@ -75,7 +76,7 @@ public class MaterialTags {
     public static TypeMaterialTag<ToolData> TOOLS = new TypeMaterialTag<>("tools"){
         @Override
         public ToolData get(Material mat) {
-            if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new ToolData(5.0f, 5.0f, Integer.MAX_VALUE, 3, ImmutableMap.of(), List.of()));
+            if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new ToolData(5.0f, 5.0f, Integer.MAX_VALUE, 3, AntimatterMaterials.Wood, ImmutableMap.of(), List.of()));
             return super.get(mat);
         }
     };
