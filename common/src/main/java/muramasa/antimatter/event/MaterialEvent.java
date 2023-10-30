@@ -375,7 +375,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public ToolBuiler tool(Material derivedMaterial){
         ToolData data = MaterialTags.TOOLS.get(derivedMaterial);
-        return tool().toolDamage(data.toolDamage()).toolDurability(data.toolDurability()).toolQuality(data.toolQuality()).toolSpeed(data.toolSpeed()).allowedToolTypes(data.toolTypes());
+        return tool().toolDamage(data.toolDamage()).toolDurability(data.toolDurability()).toolQuality(data.toolQuality()).toolSpeed(data.toolSpeed());
     }
 
     @Accessors(fluent = true)
@@ -386,7 +386,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         float toolSpeed;
         int toolDurability;
         int toolQuality;
-        ImmutableMap<Enchantment, Integer> toolEnchantments;
+        ImmutableMap<Enchantment, Integer> toolEnchantments = ImmutableMap.of();
         Material handleMaterial;
         public ToolBuiler(){
             allowedToolTypes = AntimatterAPI.all(AntimatterToolType.class);
