@@ -55,6 +55,10 @@ public class SequencedAssemblyBuilder {
         return this;
     }
 
+    public SequencedAssemblyBuilder addDummySequence(){
+        return addSequence(new ResourceLocation(Ref.MOD_CREATE, "pressing"), transitionalItem, Ingredient.of(transitionalItem));
+    }
+
     public SequencedAssemblyBuilder addSequence(ResourceLocation type, ItemLike result, Ingredient... inputs){
         this.sequences.add(new Sequence(type.toString(), Arrays.stream(inputs).map(Ingredient::toJson).toArray(JsonElement[]::new), result));
         return this;
@@ -111,7 +115,10 @@ public class SequencedAssemblyBuilder {
      * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void build(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
-        consumer.accept(new Result(id));
+        if (sequences.size() != 3){
+            throw new IllegalStateException("Must have exactly 3 sequences, no more, no less");
+        }
+        consumer.accept(new Result(new ResourceLocation(id.getNamespace(), "sequenced_assembly/" + id.getPath())));
     }
 
     private record Sequence(String type, JsonElement[] ingredients, ItemLike result){}
@@ -163,7 +170,9 @@ public class SequencedAssemblyBuilder {
             }
             json.add("sequence", nestedRecipes);
             json.add("results", resultArray);
-            json.addProperty("transitionalItem", AntimatterPlatformUtils.getIdFromItem(transitionalItem.asItem()).toString());
+            JsonObject transitionalItemObject = new JsonObject();
+            transitionalItemObject.addProperty("item", AntimatterPlatformUtils.getIdFromItem(transitionalItem.asItem()).toString());
+            json.add("transitionalItem", transitionalItemObject);
             json.addProperty("loops", loops);
         }
 
