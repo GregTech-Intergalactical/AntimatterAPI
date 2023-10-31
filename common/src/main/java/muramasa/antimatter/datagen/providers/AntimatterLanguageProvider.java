@@ -134,20 +134,19 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             add("enchantment." + d + "." + i, lowerUnderscoreToUpperSpaced(i));
         });
 
-        AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
-            if (t.getAntimatterToolType().isPowered()) {
-                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
-            } else {
-                if (t.getAntimatterToolType().isSimple()){
-                    add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + Utils.getLocalizedType(t.getAntimatterToolType()));
-                } else {
-                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
-                }
-            }
-
-        });
-
         if (domain.equals(Ref.ID)) {
+            AntimatterAPI.all(IAntimatterTool.class, t -> {
+                if (t.getAntimatterToolType().isPowered()) {
+                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+                } else {
+                    if (t.getAntimatterToolType().isSimple()){
+                        add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + Utils.getLocalizedType(t.getAntimatterToolType()));
+                    } else {
+                        add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+                    }
+                }
+
+            });
             AntimatterAPI.all(BlockPipe.class).forEach(s -> {
                 String str = s.getSize().getId();
                 //hmmmm
@@ -297,13 +296,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             });
             customTranslations();
             pipeTranslations();
+            AntimatterAPI.all(RecipeMap.class, t -> {
+                String id = "jei.category." + t.getId();
+                add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
+            });
         }
 
 
-        AntimatterAPI.all(RecipeMap.class, domain, t -> {
-            String id = "jei.category." + t.getId();
-            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
-        });
+
 
 
     }
