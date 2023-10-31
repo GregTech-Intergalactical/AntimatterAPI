@@ -42,11 +42,11 @@ public class Pipes {
             Material m = f.getMaterial();
             if (f.getSizes().contains(PipeSize.QUADRUPLE) && f.getSizes().contains(PipeSize.NORMAL)){
                 provider.addItemRecipe(consumer, Ref.ID, "", "antimatter_pipes", f.getBlock(PipeSize.QUADRUPLE), of('P', f.getBlock(PipeSize.NORMAL)), "PP", "PP");
-                provider.shapeless(consumer, Ref.ID, "", "antimatter_pipes", new ItemStack(f.getBlock(PipeSize.SMALL), 4), f.getBlock(PipeSize.QUADRUPLE));
+                provider.shapeless(consumer, Ref.ID, "", "antimatter_pipes", new ItemStack(f.getBlock(PipeSize.NORMAL), 4), f.getBlock(PipeSize.QUADRUPLE));
             }
             if (f.getSizes().contains(PipeSize.NONUPLE) && f.getSizes().contains(PipeSize.SMALL)){
                 provider.addItemRecipe(consumer, Ref.ID, "", "antimatter_pipes", f.getBlock(PipeSize.NONUPLE), of('P', f.getBlock(PipeSize.SMALL)), "PPP", "PPP", "PPP");
-                provider.shapeless(consumer, Ref.ID, "", "antimatter_pipes", new ItemStack(f.getBlock(PipeSize.TINY), 9), f.getBlock(PipeSize.NONUPLE));
+                provider.shapeless(consumer, Ref.ID, "", "antimatter_pipes", new ItemStack(f.getBlock(PipeSize.SMALL), 9), f.getBlock(PipeSize.NONUPLE));
             }
             if (!m.has(PLATE) || m == AntimatterMaterials.Wood) return;
             if (f.getSizes().contains(PipeSize.TINY)){
