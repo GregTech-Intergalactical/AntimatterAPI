@@ -68,18 +68,19 @@ public class Tools {
            if (m.has(INGOT) || m.has(GEM) || m == Wood){
                TagKey<Item> plateGem = m.has(GEM) ? GEM.getMaterialTag(m) : m.has(PLATE) ? PLATE.getMaterialTag(m) : INGOT.getMaterialTag(m);
                TagKey<Item> ingotGem = m.has(GEM) ? GEM.getMaterialTag(m) : INGOT.getMaterialTag(m);
+               TagKey<Item> rod = t.handleMaterial().has(ROD) ? ROD.getMaterialTag(t.handleMaterial()) : ROD.getMaterialTag(Wood);
                if (t.toolTypes().contains(WRENCH)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, WRENCH.getToolStack(m),
                            of('H', HAMMER.getTag(), 'P', plateGem), "PHP", "PPP", " P ");
                }
                if (t.toolTypes().contains(HAMMER)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, HAMMER.getToolStack(m),
-                           of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "PP ", "PPR", "PP ");
+                           of('R', rod, 'P', ingotGem), "PP ", "PPR", "PP ");
                }
                if (t.toolTypes().contains(SOFT_HAMMER) && m.has(RUBBERTOOLS)){
                    TagKey<Item> ingotGem1 = m == Wood ? ItemTags.PLANKS : m.has(GEM) ? GEM.getMaterialTag(m) : INGOT.getMaterialTag(m);
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SOFT_HAMMER.getToolStack(m),
-                           of('R', ROD.getMaterialTag(Wood), 'P', ingotGem1), "PP ", "PPR", "PP ");
+                           of('R', rod, 'P', ingotGem1), "PP ", "PPR", "PP ");
                }
                if (t.toolTypes().contains(MORTAR)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, MORTAR.getToolStack(m),
@@ -87,26 +88,26 @@ public class Tools {
                }
                if (t.toolTypes().contains(FILE)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, FILE.getToolStack(m),
-                           of('R', ROD.getMaterialTag(Wood), 'P', plateGem), "P", "P", "R");
+                           of('R', rod, 'P', plateGem), "P", "P", "R");
                }
                if (t.toolTypes().contains(SCREWDRIVER) && m.has(ROD)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SCREWDRIVER.getToolStack(m),
-                           of('R', ROD.getMaterialTag(Wood), 'P', ROD.getMaterialTag(m),'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), " FP", " PH", "R  ");
+                           of('R', rod, 'P', ROD.getMaterialTag(m),'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), " FP", " PH", "R  ");
                }
                if (t.toolTypes().contains(PLUNGER) && m.has(ROD)){
                    RUBBERTOOLS.all().stream().filter(r -> r.has(PLATE) && r != Wood).forEach(r -> {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, m.getId() + "_plunger_with_" + r.getId(), "", "has_wrench", in, PLUNGER.getToolStack(m),
-                               of('P', ROD.getMaterialTag(m), 'R', PLATE.getMaterialTag(r),'F', AntimatterDefaultTools.FILE.getTag(), 'W', WIRE_CUTTER.getTag()), "WRR", " PR", "P F");
+                               of('P', rod, 'R', PLATE.getMaterialTag(r),'F', AntimatterDefaultTools.FILE.getTag(), 'W', WIRE_CUTTER.getTag()), "WRR", " PR", "P F");
                    });
 
                }
                if (t.toolTypes().contains(SAW)){
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SAW.getToolStack(m),
-                           of('R', ROD.getMaterialTag(Wood), 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PPR", "FH ");
+                           of('R', rod, 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PPR", "FH ");
                }
                if (t.toolTypes().contains(WIRE_CUTTER)){
                    ImmutableMap.Builder<Character, Object> builder = ImmutableMap.builder();
-                   builder.put('R', ROD.getMaterialTag(Wood)).put('P', plateGem).put('F', AntimatterDefaultTools.FILE.getTag()).put('H', AntimatterDefaultTools.HAMMER.getTag()).put('S', SCREWDRIVER.getTag());
+                   builder.put('R', rod).put('P', plateGem).put('F', AntimatterDefaultTools.FILE.getTag()).put('H', AntimatterDefaultTools.HAMMER.getTag()).put('S', SCREWDRIVER.getTag());
                    if (m.has(SCREW)) builder.put('W', SCREW.getMaterialTag(m));
                    String last = m.has(SCREW) ? "RWR" : "R R";
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, WIRE_CUTTER.getToolStack(m),
@@ -114,7 +115,7 @@ public class Tools {
                }
                if (t.toolTypes().contains(BRANCH_CUTTER)){
                    ImmutableMap.Builder<Character, Object> builder = ImmutableMap.builder();
-                   builder.put('R', ROD.getMaterialTag(Wood)).put('P', plateGem).put('F', AntimatterDefaultTools.FILE.getTag()).put('S', SCREWDRIVER.getTag());
+                   builder.put('R', rod).put('P', plateGem).put('F', AntimatterDefaultTools.FILE.getTag()).put('S', SCREWDRIVER.getTag());
                    if (m.has(SCREW)) builder.put('W', SCREW.getMaterialTag(m));
                    String last = m.has(SCREW) ? "RWR" : "R R";
                    provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, BRANCH_CUTTER.getToolStack(m),
@@ -128,60 +129,60 @@ public class Tools {
                if (t.toolTypes().contains(PICKAXE)){
                    if (m.has(FLINT)){
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, PICKAXE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "PPP", " R ");
+                               of('R', rod, 'P', ingotGem), "PPP", " R ");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, PICKAXE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem, 'I', ingotGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PII", "FRH", " R ");
+                               of('R', rod, 'P', plateGem, 'I', ingotGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PII", "FRH", " R ");
                    }
                }
 
                if (t.toolTypes().contains(AXE)){
                    if (m.has(FLINT)){
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, AXE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "PP", "PR");
+                               of('R', rod, 'P', ingotGem), "PP", "PR");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, AXE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem, 'I', ingotGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PIH", "PR ", "FR ");
+                               of('R', rod, 'P', plateGem, 'I', ingotGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PIH", "PR ", "FR ");
                    }
                }
 
                if (t.toolTypes().contains(SHOVEL)){
                    if (m.has(FLINT)){
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SHOVEL.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "P", "R");
+                               of('R', rod, 'P', ingotGem), "P", "R");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SHOVEL.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FPH", " R ", " R ");
+                               of('R', rod, 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FPH", " R ", " R ");
                    }
                }
 
                if (t.toolTypes().contains(SWORD)){
                    if (m.has(FLINT)){
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SWORD.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "P", "P", "R");
+                               of('R', rod, 'P', ingotGem), "P", "P", "R");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, SWORD.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FPH", " P ", " R ");
+                               of('R', rod, 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FPH", " P ", " R ");
                    }
                }
 
                if (t.toolTypes().contains(HOE)){
                    if (m.has(FLINT)){
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, HOE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "PP", " R");
+                               of('R', rod, 'P', ingotGem), "PP", " R");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, HOE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem, 'I', ingotGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PIH", "FR ", " R ");
+                               of('R', rod, 'P', plateGem, 'I', ingotGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PIH", "FR ", " R ");
                    }
                }
 
                if (t.toolTypes().contains(KNIFE)){
                    if (m.has(FLINT)){
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, KNIFE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', ingotGem), "R", "P");
+                               of('R', rod, 'P', ingotGem), "R", "P");
                    } else {
                        provider.addStackRecipe(consumer, Ref.SHARED_ID, "", "", "has_wrench", in, KNIFE.getToolStack(m),
-                               of('R', ROD.getMaterialTag(Wood), 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FP", "HR");
+                               of('R', rod, 'P', plateGem,'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FP", "HR");
                    }
                }
 
