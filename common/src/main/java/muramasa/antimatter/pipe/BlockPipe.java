@@ -108,8 +108,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     private void buildShapes() {
         if (size.ordinal() > 5) return;
-        recursiveShapeBuild(0, (byte) 0);
-        shapes.put(getPipeID(0, 0), Shapes.create(size.getAABB()));
+        recursiveShapeBuild(0, (short) 0);
+        shapes.put(0, Shapes.create(size.getAABB()));
     }
 
     @Override
@@ -127,19 +127,22 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         }
     }
 
-    private void recursiveShapeBuild(int index, byte acc) {
-        if (index > 5) {
-            shapes.put(getPipeID(acc, 0), makeShapes(acc));
+    private void recursiveShapeBuild(int index, short acc) {
+        if (index > 11) {
+            shapes.put(acc, makeShapes(acc));
             return;
         }
-        recursiveShapeBuild(index + 1, (byte) (acc | (1 << index)));
+        short which = (short) (acc | (1 << index));
+        String whichBinary = Integer.toBinaryString(which);
+        String accBinary = Integer.toBinaryString(acc);
+        recursiveShapeBuild(index + 1, which);
         recursiveShapeBuild(index + 1, acc);
     }
 
-    private VoxelShape makeShapes(byte which) {
+    private VoxelShape makeShapes(short which) {
         float offset = 0.0625f * size.ordinal();
         VoxelShape shape = Shapes.create(size.getAABB());
-        if ((which & (1 << 0)) > 0)
+        if ((which & (1)) > 0)
             shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0, 0.4375 - offset,0.5625 + offset, 0.4375 - offset, 0.5625 + offset));
         if ((which & (1 << 1)) > 0)
             shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
