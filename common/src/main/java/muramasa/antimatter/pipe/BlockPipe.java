@@ -1,5 +1,6 @@
 package muramasa.antimatter.pipe;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -24,12 +25,10 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -67,10 +66,14 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, EntityBlock, IColorHandler, SimpleWaterloggedBlock, ISharedAntimatterObject {
 
+    @Getter
     protected T type;
+    @Getter
     protected PipeSize size;
 
+    @Getter
     protected final int modelId;
+    @Getter
     protected Texture side;
     protected Texture overlay;
     protected Texture[] faces;
@@ -148,27 +151,23 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             shape = Shapes.or(shape, Shapes.box(0, 0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset));
         if ((which & (1 << 5)) > 0)
             shape = Shapes.or(shape, Shapes.box(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
+        if ((which & (1 << 6)) > 0)
+            shape = Shapes.or(shape, Shapes.box(0, 0, 0, 1, 0.0625f, 1));
+        if ((which & (1 << 7)) > 0)
+            shape = Shapes.or(shape, Shapes.box(0, 0.9375, 0, 1, 1, 1));
+        if ((which & (1 << 8)) > 0)
+            shape = Shapes.or(shape, Shapes.box(0, 0, 0, 1, 1, 0.0625f));
+        if ((which & (1 << 9)) > 0)
+            shape = Shapes.or(shape, Shapes.box(0, 0, 0.9375, 1, 1, 1));
+        if ((which & (1 << 10)) > 0)
+            shape = Shapes.or(shape, Shapes.box(0, 0, 0, 0.0625f, 1, 1));
+        if ((which & (1 << 11)) > 0)
+            shape = Shapes.or(shape, Shapes.box(0.9375, 0, 0, 1, 1, 1));
         return shape;
-    }
-
-    public T getType() {
-        return type;
-    }
-
-    public PipeSize getSize() {
-        return size;
     }
 
     public int getRGB() {
         return type.getMaterial().getRGB();
-    }
-
-    public int getModelId() {
-        return modelId;
-    }
-
-    public Texture getSide() {
-        return side;
     }
 
     public Texture getFace() {
@@ -321,7 +320,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 return Shapes.block();
             }
         }
-        int config = getConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()[0];
+        int config = getShapeConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos);
         VoxelShape shape = this.shapes.get(config);
         return shape != null ? shape : Shapes.block();
     }
@@ -336,15 +335,40 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return tile instanceof BlockEntityPipe ? (BlockEntityPipe<?>) tile : null;
     }
 
-    @Override
-    public ModelConfig getConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+    public int getShapeConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos){
         int ct = 0;
-        BlockEntityPipe tile = getTilePipe(world, pos);
+        BlockEntityPipe<?> tile = getTilePipe(world, pos);
         if (tile != null) {
             for (int s = 0; s < 6; s++) {
                 if (tile.canConnect(s)) {
                     ct += 1 << s;
                 }
+                if (tile.coverHandler.isPresent()){
+                    var coverHandler = tile.coverHandler.get();
+                    if (!coverHandler.get(Direction.from3DDataValue(s)).isEmpty()){
+                        ct += 1 << (s + 6);
+                    }
+                }
+            }
+        }
+        return ct;
+    }
+
+    @Override
+    public ModelConfig getConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+        int ct = 0;
+        BlockEntityPipe<?> tile = getTilePipe(world, pos);
+        if (tile != null) {
+            for (int s = 0; s < 6; s++) {
+                if (tile.canConnect(s)) {
+                    ct += 1 << s;
+                }
+                /*if (tile.coverHandler.isPresent()){
+                    var coverHandler = tile.coverHandler.get();
+                    if (!coverHandler.get(Direction.from3DDataValue(s)).isEmpty()){
+                        ct += 1 << (s + 6);
+                    }
+                }*/
             }
         }
         return config.set(pos, new int[]{getPipeID(ct, 0)});
