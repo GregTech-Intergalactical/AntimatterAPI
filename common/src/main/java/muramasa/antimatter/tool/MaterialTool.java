@@ -3,6 +3,7 @@ package muramasa.antimatter.tool;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
@@ -55,6 +56,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     protected final AntimatterToolType type;
     protected final AntimatterItemTier itemTier;
 
+    /**
+     * -- GETTER --
+     *  Returns -1 if its not a powered tool
+     */
+    @Getter
     protected final int energyTier;
     protected final long maxEnergy;
 
@@ -106,13 +112,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     public Set<Tag<Block>> getToolTypes(ItemStack stack) {
         return getToolTypes();
     }*/
-
-    /**
-     * Returns -1 if its not a powered tool
-     **/
-    public int getEnergyTier() {
-        return energyTier;
-    }
 
     @NotNull
     @Override

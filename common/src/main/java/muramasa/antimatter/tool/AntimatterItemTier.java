@@ -28,7 +28,7 @@ public class AntimatterItemTier implements Tier {
 
     AntimatterItemTier(@NotNull Material primary, @NotNull Material secondary) {
         this.primary = primary.has(MaterialTags.TOOLS) ? primary : Material.NULL;
-        this.secondary = secondary.has(MaterialTags.HANDLE) ? secondary : Material.NULL;
+        this.secondary = secondary;
     }
 
     public static Optional<AntimatterItemTier> get(int key) {
