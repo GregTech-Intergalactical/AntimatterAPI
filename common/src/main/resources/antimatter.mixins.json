@@ -22,6 +22,7 @@
     "BiomeGenerationBuilderAccessor",
     "BlockEntityMixin",
     "BlockLootTablesAccessor",
+    "BlockStateBaseMixin",
     "BucketItemAccessor",
     "ChestBlockMixin",
     "GrindstoneContainerMixin",

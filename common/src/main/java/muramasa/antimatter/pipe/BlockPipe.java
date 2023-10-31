@@ -37,10 +37,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -133,8 +130,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             return;
         }
         short which = (short) (acc | (1 << index));
-        String whichBinary = Integer.toBinaryString(which);
-        String accBinary = Integer.toBinaryString(acc);
         recursiveShapeBuild(index + 1, which);
         recursiveShapeBuild(index + 1, acc);
     }
