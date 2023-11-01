@@ -1,5 +1,8 @@
 package muramasa.antimatter.pipe;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -56,6 +59,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder.SIMPLE;
@@ -75,6 +79,10 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     protected Texture overlay;
     protected Texture[] faces;
 
+    public static long ticksTotal;
+
+    protected static Map<PipeSize, Int2ObjectLinkedOpenHashMap<VoxelShape>> shapes = new Object2ObjectLinkedOpenHashMap<>();
+
     public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
@@ -83,6 +91,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId, Properties properties) {
         super(type.domain, prefix + "_" + size.getId(), size.ordinal() < 6 ? properties.noOcclusion() : properties);
+        shapes.computeIfAbsent(size, s -> new Int2ObjectLinkedOpenHashMap<>());
 
         this.type = type;
         this.size = size;
@@ -100,13 +109,18 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         AntimatterAPI.register(BlockPipe.class, this);
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(TICKING, false));
         this.modelId = modelId;
+        //long time = System.nanoTime();
         buildShapes();
+        //time = System.nanoTime() - time;
+        //ticksTotal += time;
     }
 
     private void buildShapes() {
         if (size.ordinal() > 5) return;
-        recursiveShapeBuild(0, (short) 0);
-        shapes.put(0, Shapes.create(size.getAABB()));
+        //recursiveShapeBuild(0, (short) 0);
+        if (!getShapes().containsKey(0)) {
+            getShapes().put(0, Shapes.create(size.getAABB()));
+        }
     }
 
     @Override
@@ -124,9 +138,15 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         }
     }
 
+    protected Int2ObjectMap<VoxelShape> getShapes(){
+        return shapes.get(size);
+    }
+
     private void recursiveShapeBuild(int index, short acc) {
         if (index > 11) {
-            shapes.put(acc, makeShapes(acc));
+            if (!getShapes().containsKey(acc)) {
+                getShapes().put(acc, makeShapes(acc));
+            }
             return;
         }
         short which = (short) (acc | (1 << index));
@@ -319,7 +339,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             }
         }
         int config = getShapeConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos);
-        VoxelShape shape = this.shapes.get(config);
+        VoxelShape shape = getShapes().computeIfAbsent(config, s -> makeShapes((short) s));
         return shape != null ? shape : Shapes.block();
     }
 
