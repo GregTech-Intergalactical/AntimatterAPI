@@ -331,17 +331,10 @@ public class RenderHelper {
             back = Connectivity.has(sides, dir.getOpposite().get3DDataValue());
             front = Connectivity.has(sides, dir.get3DDataValue());
             if (dir.getAxis().isVertical()) {
-                if (dir == Direction.UP) {
-                    right = Connectivity.has(sides, 4);
-                    left = Connectivity.has(sides, 5);
-                    up = Connectivity.has(sides, 2);
-                    down = Connectivity.has(sides, 3);
-                } else {
-                    right = Connectivity.has(sides, 5);
-                    left = Connectivity.has(sides, 4);
-                    up = Connectivity.has(sides, 3);
-                    down = Connectivity.has(sides, 2);
-                }
+                right = Connectivity.has(sides, 4);
+                left = Connectivity.has(sides, 5);
+                up = Connectivity.has(sides, 2);
+                down = Connectivity.has(sides, 3);
             } else {
                 if (dir == Direction.EAST || dir == Direction.NORTH) {
                     right = Connectivity.has(sides, dir.getCounterClockWise().get3DDataValue());
