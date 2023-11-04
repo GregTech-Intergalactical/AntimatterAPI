@@ -25,6 +25,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -32,6 +33,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     protected Tier guiTier;
     private final IRecipeInfoRenderer infoRenderer;
 
-    public RecipeMapCategory(IRecipeMap map, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
+    public RecipeMapCategory(IRecipeMap map, GuiData gui, Tier defaultTier, ResourceLocation iconId) {
         loc = CategoryIdentifier.of(map.getLoc());
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName();
@@ -65,8 +67,9 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 this.icon = EntryStacks.of(itemLike);
             }
         } else {
-            Machine<?> machine = blockItemModel == null ? null : AntimatterAPI.get(Machine.class, blockItemModel.getPath(), blockItemModel.getNamespace());
-            this.icon = machine == null || !machine.getTiers().contains(defaultTier) ? EntryStacks.of(Data.DEBUG_SCANNER) : EntryStacks.of(machine.getItem(defaultTier));
+            ItemLike item = iconId == null ? Data.DEBUG_SCANNER : AntimatterPlatformUtils.getItemFromID(iconId);
+            if (item == Items.AIR) item = Data.DEBUG_SCANNER;
+            this.icon = EntryStacks.of(item);
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();

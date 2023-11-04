@@ -333,8 +333,19 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public void registerJei() {
         if (this.guiData != null) {
             tierRecipeMaps.forEach((s, r) -> {
-                //If the recipe map has another GUI present don't register it.
+                if (s.isEmpty()){
+                    for (int i = 0; i < tiers.size(); i++) {
+                        Tier tier = tiers.get(i);
+                        if (i == 0 && r.getGui() == null){
+                            AntimatterAPI.registerJEICategory(r, this.guiData, this, tier, false);
+                        } else {
+                            AntimatterAPI.registerJEICategoryWorkstation(r, this, tier);
+                        }
+                    }
+                    return;
+                }
                 Tier t = AntimatterAPI.get(Tier.class, s);
+                //If the recipe map has another GUI present don't register it.
                 if (r.getGui() == null) {
                     AntimatterAPI.registerJEICategory(r, this.guiData, this, t, false);
                 } else {

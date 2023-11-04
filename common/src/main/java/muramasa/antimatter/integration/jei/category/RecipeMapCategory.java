@@ -38,7 +38,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import tesseract.FluidPlatformUtils;
@@ -65,7 +67,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
     protected Tier guiTier;
     private final IRecipeInfoRenderer infoRenderer;
 
-    public RecipeMapCategory(IRecipeMap map, RecipeType<IRecipe> type, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
+    public RecipeMapCategory(IRecipeMap map, RecipeType<IRecipe> type, GuiData gui, Tier defaultTier, ResourceLocation iconId) {
         loc = map.getLoc();
         this.type = type;
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
@@ -76,18 +78,16 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         progressBackground = guiHelper.drawableBuilder(gui.getMachineData().getProgressTexture(this.guiTier), 0, 0, progress.z, progress.w).setTextureSize(progress.z, progress.w * 2).build();
         Object icon = map.getIcon();
         if (icon != null) {
-            if (icon instanceof ItemStack) {
-                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, (ItemStack) icon);
+            if (icon instanceof ItemStack itemStack) {
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, itemStack);
             }
-            if (icon instanceof ItemLike) {
-                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack((ItemLike) icon));
-            }
-            if (icon instanceof IDrawable) {
-                this.icon = (IDrawable) icon;
+            if (icon instanceof ItemLike item) {
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(item));
             }
         } else {
-            Machine<?> machine = blockItemModel == null ? null : AntimatterAPI.get(Machine.class, blockItemModel.getPath(), blockItemModel.getNamespace());
-            this.icon = machine == null || !machine.getTiers().contains(defaultTier) ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(machine.getItem(defaultTier), 1));
+            Item item = iconId == null ? Data.DEBUG_SCANNER : AntimatterPlatformUtils.getItemFromID(iconId);
+            if (item == Items.AIR) item = Data.DEBUG_SCANNER;
+            this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(item, 1));
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();

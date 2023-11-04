@@ -49,8 +49,7 @@ public class AntimatterJEIREIPlugin{
         public IRecipeMap map;
         public GuiData gui;
         public Tier tier;
-        public ResourceLocation model;
-        public List<Supplier<ItemLike>> workstations = new ArrayList<>();
+        public List<ResourceLocation> workstations = new ArrayList<>();
 
         public RegistryValue(IRecipeMap map, GuiData gui, Tier tier) {
             this.map = map;
@@ -58,8 +57,8 @@ public class AntimatterJEIREIPlugin{
             this.tier = tier;
         }
 
-        public RegistryValue addWorkstation(Supplier<ItemLike> supplier){
-            if (supplier != null) {
+        public RegistryValue addWorkstation(ResourceLocation supplier){
+            if (supplier != null && !workstations.contains(supplier)) {
                 workstations.add(supplier);
             }
             return this;
@@ -82,13 +81,13 @@ public class AntimatterJEIREIPlugin{
             Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }
-        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier).addWorkstation(model == null ? null : () -> AntimatterPlatformUtils.getItemFromID(model)));//new Tuple<>(map, new Tuple<>(gui, tier)));
+        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier).addWorkstation(model));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
     public static void registerCategoryWorkstation(IRecipeMap map, ResourceLocation model){
         RegistryValue value = REGISTRY.get(map.getLoc());
         if (value != null) {
-            value.addWorkstation(() -> AntimatterPlatformUtils.getItemFromID(model));
+            value.addWorkstation(model);
         }
     }
 

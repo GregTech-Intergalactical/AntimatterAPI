@@ -40,6 +40,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +100,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
                 RecipeType<IRecipe> type = new RecipeType<>(tuple.map.getLoc(), IRecipe.class);
                 RECIPE_TYPES.put(type.getUid().toString(), type);
-                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, type, tuple.gui, tuple.tier, tuple.model));
+                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, type, tuple.gui, tuple.tier, tuple.workstations.isEmpty() ? null : tuple.workstations.get(0)));
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });
@@ -205,14 +206,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
-        AntimatterAPI.all(Machine.class, machine -> {
-            ((Machine<?>)machine).getTiers().forEach(t -> {
-                IRecipeMap map = machine.getRecipeMap(t);
-                if (map == null) return;
-                ItemStack stack = new ItemStack(machine.getItem(t));
-                if (!stack.isEmpty()) {
-                    registration.addRecipeCatalyst(stack, map.getLoc());
-                }
+        AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
+            if (tuple.workstations.isEmpty()) return;
+            tuple.workstations.forEach(s -> {
+                ItemLike item = AntimatterPlatformUtils.getItemFromID(s);
+                if (item == Items.AIR) return;
+                registration.addRecipeCatalyst(new ItemStack(item), tuple.map.getLoc());
             });
         });
     }
