@@ -14,7 +14,6 @@ import muramasa.antimatter.integration.create.client.PonderIntegration;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
@@ -25,13 +24,13 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static muramasa.antimatter.gui.SlotType.*;
 import static muramasa.antimatter.gui.SlotType.FL_OUT;
@@ -51,12 +50,19 @@ public class AntimatterJEIREIPlugin{
         public GuiData gui;
         public Tier tier;
         public ResourceLocation model;
+        public List<Supplier<ItemLike>> workstations = new ArrayList<>();
 
-        public RegistryValue(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model) {
+        public RegistryValue(IRecipeMap map, GuiData gui, Tier tier) {
             this.map = map;
             this.gui = gui;
             this.tier = tier;
-            this.model = model;
+        }
+
+        public RegistryValue addWorkstation(Supplier<ItemLike> supplier){
+            if (supplier != null) {
+                workstations.add(supplier);
+            }
+            return this;
         }
     }
 
@@ -76,18 +82,13 @@ public class AntimatterJEIREIPlugin{
             Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }
-        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier, model));//new Tuple<>(map, new Tuple<>(gui, tier)));
+        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier).addWorkstation(model == null ? null : () -> AntimatterPlatformUtils.getItemFromID(model)));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
-    public static void registerCategoryModel(IRecipeMap map, ResourceLocation model, Tier tier){
+    public static void registerCategoryWorkstation(IRecipeMap map, ResourceLocation model){
         RegistryValue value = REGISTRY.get(map.getLoc());
         if (value != null) {
-            if (value.model == null) {
-                value.model = model;
-            }
-            if (value.tier != tier){
-                value.tier = tier;
-            }
+            value.addWorkstation(() -> AntimatterPlatformUtils.getItemFromID(model));
         }
     }
 

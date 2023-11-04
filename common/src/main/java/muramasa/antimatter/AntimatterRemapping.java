@@ -43,7 +43,7 @@ public class AntimatterRemapping {
         machine.getTiers().forEach(t -> {
             String suffix = t == NONE ? "" : "_" + t.getId();
             REMAPPING_MAP.computeIfAbsent(old.getNamespace(), o -> new Object2ObjectArrayMap<>())
-                    .put(old.getPath() + suffix, new ResourceLocation(machine.getDomain(), machine.getId() + suffix));
+                    .put(old.getPath() + suffix, new ResourceLocation(machine.getDomain(), machine.getIdFromTier(t)));
         });
     }
 
@@ -52,7 +52,7 @@ public class AntimatterRemapping {
         machine.getTiers().forEach(t -> {
             String suffix = t == NONE ? "" : "_" + t.getId();
             REMAPPING_MAP.computeIfAbsent(machine.getDomain(), o -> new Object2ObjectArrayMap<>())
-                    .put(old + suffix, new ResourceLocation(machine.getDomain(), machine.getId() + suffix));
+                    .put(old + suffix, new ResourceLocation(machine.getDomain(), machine.getIdFromTier(t)));
         });
     }
 

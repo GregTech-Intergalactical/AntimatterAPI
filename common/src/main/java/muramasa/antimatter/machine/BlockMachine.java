@@ -79,7 +79,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     }
 
     public BlockMachine(Machine<?> type, Tier tier, Properties properties) {
-        super(type.getDomain(), type.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), properties.isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
+        super(type.getDomain(), type.getIdFromTier(tier), properties.isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
         StateDefinition.Builder<Block, BlockState> builder = new StateDefinition.Builder<>(this);
         this.type = type;
         this.tier = tier;

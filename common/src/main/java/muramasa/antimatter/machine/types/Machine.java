@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
+import static muramasa.antimatter.machine.Tier.NONE;
 
 /**
  * Machine represents the base class for an Antimatter Machine. It provides tile entities, blocks as well as
@@ -309,7 +310,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
-        return AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
+        return AntimatterAPI.get(itemClassSupplier.get(), this.getIdFromTier(tier), this.getDomain());
     }
 
     /**
@@ -319,7 +320,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), getDomain()));
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getIdFromTier(tier), getDomain()));
     }
 
     public ITooltipInfo getTooltipFunction() {
@@ -337,7 +338,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
                 if (r.getGui() == null) {
                     AntimatterAPI.registerJEICategory(r, this.guiData, this, t, false);
                 } else {
-                    AntimatterAPI.registerJEICategoryModel(r, this, t);
+                    AntimatterAPI.registerJEICategoryWorkstation(r, this, t);
                 }
             });
 
@@ -453,6 +454,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return id;
     }
 
+    public String getIdFromTier(Tier tier){
+        return id + (tier == NONE ? "" : "_" + tier.getId());
+    }
+
     public Component getDisplayName(Tier tier) {
         String keyAddition = tierSpecificLang ? "." + tier.getId() : "";
         return Utils.translatable("machine." + id + keyAddition, Utils.literal(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting()));
@@ -536,7 +541,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public T setTiers(Tier... tiers) {
         boolean none = false;
         for (Tier t : tiers){
-            if (t == Tier.NONE) none = true;
+            if (t == NONE) none = true;
         }
         if (none) this.setTierSpecificLang();
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));

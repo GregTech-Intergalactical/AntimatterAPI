@@ -479,15 +479,16 @@ public final class AntimatterAPI {
 
     public static void registerJEICategory(IRecipeMap map, GuiData gui, Machine<?> machine, @Nullable Tier tier, boolean override) {
         if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
-            AntimatterJEIREIPlugin.registerCategory(map, gui, tier != null ? tier : machine.getFirstTier(),
-                    new ResourceLocation(machine.getDomain(), machine.getId()), override);
+            if (tier == null) tier = machine.getFirstTier();
+            AntimatterJEIREIPlugin.registerCategory(map, gui, tier,
+                    new ResourceLocation(machine.getDomain(), machine.getIdFromTier(tier)), override);
         }
     }
 
-    public static void registerJEICategoryModel(IRecipeMap map, Machine<?> machine,  @Nullable Tier tier) {
+    public static void registerJEICategoryWorkstation(IRecipeMap map, Machine<?> machine, @Nullable Tier tier) {
         if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
-            AntimatterJEIREIPlugin.registerCategoryModel(map,
-                    new ResourceLocation(machine.getDomain(), machine.getId()), tier != null ? tier : machine.getFirstTier());
+            AntimatterJEIREIPlugin.registerCategoryWorkstation(map,
+                    new ResourceLocation(machine.getDomain(), machine.getIdFromTier(tier != null ? tier : machine.getFirstTier())));
         }
     }
 

@@ -126,7 +126,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 }
                 add(i.getBlockState(t), i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")"));
                 if (i instanceof BasicMultiMachine<?>) {
-                    add(i.getDomain() + ".ponder." + i.getId() + (t == Tier.NONE ? "" : "_" + t.getId()) + ".header", i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")").concat(" Multiblock"));
+                    add(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")").concat(" Multiblock"));
                 }
             });
         });
