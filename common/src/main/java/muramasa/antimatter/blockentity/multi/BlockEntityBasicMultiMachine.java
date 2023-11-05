@@ -215,7 +215,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
                         setMachineState(MachineState.IDLE);
                     }
                     this.recipeHandler.ifPresent(
-                            t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
+                            t -> t.onMultiBlockStateChange(true, AntimatterConfig.INPUT_RESET_MULTIBLOCK.get()));
                 } else {
                     this.components.forEach((k, v) -> v.forEach(c -> {
                         Utils.markTileForRenderUpdate(c.getTile());
@@ -337,7 +337,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         if (isServerSide()) {
             onStructureInvalidated();
             recipeHandler.ifPresent(
-                    t -> t.onMultiBlockStateChange(false, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
+                    t -> t.onMultiBlockStateChange(false, AntimatterConfig.INPUT_RESET_MULTIBLOCK.get()));
             components.clear();
         } else {
             this.components.forEach((k, v) -> v.forEach(c -> {

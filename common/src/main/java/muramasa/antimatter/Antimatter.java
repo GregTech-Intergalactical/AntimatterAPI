@@ -90,6 +90,7 @@ public class Antimatter extends AntimatterMod {
                 () -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us"));
         AntimatterAPI.init();
         AntimatterNetwork.register();
+        AntimatterConfig.createConfig();
     }
 
     public void addCraftingLoaders(CraftingEvent ev) {

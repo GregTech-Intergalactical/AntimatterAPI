@@ -31,11 +31,9 @@ dependencies{
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-    compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
-    compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modCompileOnly("com.github.Trinsdar:ARRP:0.6.7-hotfix")
     modImplementation("com.gtnewhorizon.structurelib:structurelib-common:${project.structurelib_version}-${project.minecraft_version}")
-    modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
+    modImplementation "maven.modrinth:carbon-config:2ngFmmhP"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modImplementation("earth.terrarium:botarium-common-1.18.2:${project.botarium_version}")
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-1.18.2:${project.resourcefullib_version}"

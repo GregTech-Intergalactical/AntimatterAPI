@@ -196,12 +196,12 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
             int veinCount = veins.size();
-            if (oreVeinPercentageRoll < AntimatterConfig.WORLD.ORE_VEIN_CHANCE && WorldGenVeinLayer.TOTAL_WEIGHT > 0 && veinCount > 0) {
+            if (oreVeinPercentageRoll < AntimatterConfig.ORE_VEIN_CHANCE.get() && WorldGenVeinLayer.TOTAL_WEIGHT > 0 && veinCount > 0) {
                 int placementAttempts = 0;
                 boolean oreVeinFound = false;
                 int i;
 
-                for (i = 0; i < AntimatterConfig.WORLD.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < AntimatterConfig.WORLD.ORE_VEIN_PLACE_ATTEMPTS; i++) {
+                for (i = 0; i < AntimatterConfig.ORE_VEIN_FIND_ATTEMPTS.get() && !oreVeinFound && placementAttempts < AntimatterConfig.ORE_VEIN_PLACE_ATTEMPTS.get(); i++) {
                     int tRandomWeight = oreVeinRNG.nextInt(WorldGenVeinLayer.TOTAL_WEIGHT);
                     for (WorldGenVeinLayer vein : veins) {
                         tRandomWeight -= vein.weight;
@@ -240,9 +240,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                         Antimatter.LOGGER.info("Empty oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                     VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
                 }
-            } else if (oreVeinPercentageRoll >= AntimatterConfig.WORLD.ORE_VEIN_CHANCE) {
+            } else if (oreVeinPercentageRoll >= AntimatterConfig.ORE_VEIN_CHANCE.get()) {
                 if (Ref.debugOreVein)
-                    Antimatter.LOGGER.info("Skipped oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.WORLD.ORE_VEIN_CHANCE + " dimension=" + world.getLevel().dimension().location());
+                    Antimatter.LOGGER.info("Skipped oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.ORE_VEIN_CHANCE.get() + " dimension=" + world.getLevel().dimension().location());
                 VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
             }
         } else {
@@ -321,8 +321,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
 
         //Place small ores for the vein
-        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
-            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 20 * AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+        if (AntimatterConfig.ORE_VEIN_SMALL_ORE_MARKERS.get()) {
+            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 20 * AntimatterConfig.ORE_VEIN_SMALL_ORE_MARKERS_MULTI.get();
             generateMarkers(world, rand, posX, posZ, nSmallOres, 7);
         }
         // Something (at least the bottom layer must have 1 block) must have been placed, return true
@@ -360,16 +360,16 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         for (int rockCount = 0; rockCount < nRocks; rockCount++) {
             int tX = rand.nextInt(16) + posX;
             int tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0], AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE);
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0], AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get());
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE*3/2);
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*3/2);
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE*2);
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*2);
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE*5/2);
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*5/2);
         }
     }
 

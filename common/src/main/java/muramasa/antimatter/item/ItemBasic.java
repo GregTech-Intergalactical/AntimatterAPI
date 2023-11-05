@@ -79,10 +79,6 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
         return id;
     }
 
-    public boolean isEnabled() {
-        return enabled || AntimatterConfig.DATA.ALL_MATERIAL_ITEMS;
-    }
-
     /*
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {

@@ -35,10 +35,10 @@ public class AntimatterFabricWorldgen {
     }
 
     private static void handleFeatureRemoval(Biome biome, BiomeModificationContext.GenerationSettingsContext context) {
-        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN) {
+        if (AntimatterConfig.VANILLA_ORE_GEN.get()) {
             removeOreFeatures(biome, context);
         }
-        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN) {
+        if (AntimatterConfig.VANILLA_STONE_GEN.get()) {
             removeStoneFeatures(biome, context);
         }
     }

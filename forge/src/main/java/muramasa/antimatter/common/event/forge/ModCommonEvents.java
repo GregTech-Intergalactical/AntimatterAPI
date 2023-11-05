@@ -14,10 +14,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @Mod.EventBusSubscriber(modid = Ref.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModCommonEvents {
-    @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent e) {
-        AntimatterConfig.onModConfigEvent(e.getConfig());
-    }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent

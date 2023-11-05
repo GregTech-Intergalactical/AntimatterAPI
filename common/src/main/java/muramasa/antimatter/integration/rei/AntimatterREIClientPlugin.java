@@ -56,13 +56,13 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerCollapsibleEntries(CollapsibleEntryRegistry registry) {
-        if (!AntimatterConfig.CLIENT.ADD_REI_GROUPS) return;
+        if (!AntimatterConfig.ADD_REI_GROUPS.get()) return;
 
         AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeItem<?> || t instanceof MaterialTypeBlock<?>).forEach(t -> {
             if (t.get() instanceof MaterialTypeBlock.IOreGetter getter){
                 AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.CLIENT.SHOW_ALL_ORES && t != AntimatterMaterialTypes.ROCK) return;
-                    if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.CLIENT.SHOW_ROCKS) return;
+                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.SHOW_ALL_ORES.get() && t != AntimatterMaterialTypes.ROCK) return;
+                    if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.SHOW_ROCKS.get()) return;
                     List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, getter.get((Material) m, s).asStack())).toList();
                     registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
                 });
@@ -70,7 +70,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                     return;
                 }
             }
-            if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
+            if (AntimatterConfig.GROUP_ORES_ONLY.get()) return;
             Function<Material, ItemStack> func = null;
             if (t instanceof MaterialTypeItem<?> typeItem){
                 func = m -> typeItem.get(m, 1);
@@ -86,7 +86,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, finalFunc.apply((Material) m))).toList();
             registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId()), entries);
         });
-        if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
+        if (AntimatterConfig.GROUP_ORES_ONLY.get()) return;
         AntimatterAPI.all(StoneType.class, s -> {
             if (s instanceof CobbleStoneType cobble){
                 List<EntryStack<ItemStack>> entries = cobble.getBlocks().values().stream().map(b -> EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(b.asItem()))).toList();
@@ -97,7 +97,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerBasicEntryFiltering(BasicFilteringRule<?> rule) {
-        if (!AntimatterConfig.CLIENT.SHOW_ALL_ORES){
+        if (!AntimatterConfig.SHOW_ALL_ORES.get()){
             AntimatterMaterialTypes.ORE.all().forEach(m -> {
                 AntimatterAPI.all(StoneType.class, s -> {
                     if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.doesGenerateOre()){
@@ -115,7 +115,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 });
             });
         }
-        if (!AntimatterConfig.CLIENT.SHOW_ROCKS){
+        if (!AntimatterConfig.SHOW_ROCKS.get()){
             AntimatterMaterialTypes.ROCK.all().forEach(m -> {
                 AntimatterAPI.all(StoneType.class, s -> {
                     if (s.doesGenerateOre()) {

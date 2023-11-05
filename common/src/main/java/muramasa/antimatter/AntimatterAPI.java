@@ -430,7 +430,7 @@ public final class AntimatterAPI {
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar instanceof Antimatter)
             INTERNAL_REGISTRAR = registrar;
-        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) {
+        else if (registrar.isEnabled()) {
             synchronized (OBJECTS){
                 registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar.getDomain(), registrar);
             }

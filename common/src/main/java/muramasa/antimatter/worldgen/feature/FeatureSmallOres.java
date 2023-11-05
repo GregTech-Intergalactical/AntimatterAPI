@@ -35,7 +35,7 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
 
     @Override
     public boolean enabled() {
-        return AntimatterConfig.WORLD.SMALL_ORES && getRegistry().size() > 0;
+        return AntimatterConfig.SMALL_ORES.get() && getRegistry().size() > 0;
     }
 
     @Override

@@ -32,8 +32,6 @@ public class AntimatterImpl {
     public AntimatterImpl(){
         AntimatterAPI.setSIDE(FMLEnvironment.dist.isClient() ? Side.CLIENT : Side.SERVER);
         new Antimatter();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 
         /* Lifecycle events */
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();

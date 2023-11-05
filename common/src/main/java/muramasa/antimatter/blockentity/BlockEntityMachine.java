@@ -271,7 +271,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     protected boolean allowExplosionsInRain(){
-        return AntimatterConfig.GAMEPLAY.RAIN_EXPLODES_MACHINES;
+        return AntimatterConfig.RAIN_EXPLODES_MACHINES.get();
     }
 
     @Override

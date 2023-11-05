@@ -70,7 +70,7 @@ public class CommonEvents {
     }
 
     public static void onItemCrafted(Container inv, Player player){
-        if (!AntimatterConfig.GAMEPLAY.PLAY_CRAFTING_SOUNDS) return;
+        if (!AntimatterConfig.PLAY_CRAFTING_SOUNDS.get()) return;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             if (inv.getItem(i).getItem() instanceof IAntimatterTool tool) {
                 SoundEvent type = tool.getAntimatterToolType().getUseSound();

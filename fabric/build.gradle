@@ -62,12 +62,10 @@ dependencies{
         transitive = false
     }
     modImplementation("com.teamresourceful.resourcefullib:resourcefullib-fabric-1.18.2:${project.resourcefullib_version}")
-    implementation("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
-    implementation("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
+    modImplementation "maven.modrinth:carbon-config:2ngFmmhP"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
 }

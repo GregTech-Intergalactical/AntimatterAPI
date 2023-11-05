@@ -1,5 +1,9 @@
 package muramasa.antimatter.util.forge;
 
+import carbonconfiglib.CarbonConfig;
+import carbonconfiglib.config.Config;
+import carbonconfiglib.config.ConfigHandler;
+import carbonconfiglib.config.ConfigSettings;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;
 import com.terraformersmc.terraform.utils.TerraformFlammableBlockRegistry;
@@ -272,5 +276,13 @@ public class AntimatterPlatformUtilsImpl {
 
     public static Path getConfigDir(){
         return FMLPaths.CONFIGDIR.get();
+    }
+
+    public static ConfigHandler createConfig(String modid, Config config){
+        return CarbonConfig.CONFIGS.createConfig(config);
+    }
+
+    public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
+        return CarbonConfig.CONFIGS.createConfig(config, settings);
     }
 }

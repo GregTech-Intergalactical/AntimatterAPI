@@ -1012,7 +1012,7 @@ public class Utils {
      * @return if tree logging was successful
      */
     public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
-        if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
+        if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
             BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
             BlockState tpCompare = world.getBlockState(tempPos);
             if (!BehaviourTreeFelling.isLog(tpCompare)) return false;

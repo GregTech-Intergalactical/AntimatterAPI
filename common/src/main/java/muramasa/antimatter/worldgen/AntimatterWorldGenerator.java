@@ -206,10 +206,10 @@ public class AntimatterWorldGenerator {
     }
 
     private static void handleFeatureRemoval(BiomeGenerationSettings.Builder gen) {
-        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN) {
+        if (AntimatterConfig.VANILLA_ORE_GEN.get()) {
             removeOreFeatures(gen);
         }
-        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN) {
+        if (AntimatterConfig.VANILLA_STONE_GEN.get()) {
             removeStoneFeatures(gen);
         }
     }

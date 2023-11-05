@@ -30,7 +30,7 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
 
   @Override
   public boolean enabled() {
-    return AntimatterConfig.WORLD.ORE_VEINS && getRegistry().size() > 0;
+    return AntimatterConfig.ORE_VEINS.get() && getRegistry().size() > 0;
   }
 
   @Override

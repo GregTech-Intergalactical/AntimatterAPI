@@ -68,7 +68,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
     @Override
     protected boolean checkVoltage(long voltage) {
         if (voltage > this.getInputVoltage()) {
-            if (AntimatterConfig.GAMEPLAY.MACHINES_EXPLODE) {
+            if (AntimatterConfig.MACHINES_EXPLODE.get()) {
                 Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.DESTROY);
             } else {
                 return false;

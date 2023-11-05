@@ -31,7 +31,7 @@ public class FeatureOre extends AntimatterFeature<NoneFeatureConfiguration> {
 
     @Override
     public boolean enabled() {
-        return AntimatterConfig.WORLD.STONE_LAYER_ORES;
+        return AntimatterConfig.STONE_LAYER_ORES.get();
     }
 
     @Override

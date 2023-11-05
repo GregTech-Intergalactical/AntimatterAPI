@@ -34,7 +34,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
 
     @Override
     public boolean enabled() {
-        return AntimatterConfig.WORLD.STONE_LAYERS && getRegistry().size() > 0;
+        return AntimatterConfig.STONE_LAYERS.get() && getRegistry().size() > 0;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                         }
                     }
 
-                    if (!isAir && AntimatterConfig.WORLD.STONE_LAYER_ORES) {
+                    if (!isAir && AntimatterConfig.STONE_LAYER_ORES.get()) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
                                 if (ore.canPlace(offset, rand) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), layers[0] == layers[6])) {
@@ -108,7 +108,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.setRock(world, offset, lastMaterial, below, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
+                            WorldGenHelper.setRock(world, offset, lastMaterial, below, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
                         }
                     }
 

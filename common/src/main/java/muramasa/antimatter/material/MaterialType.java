@@ -200,7 +200,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     }
 
     public boolean isVisible() {
-        return visible || AntimatterConfig.CLIENT.SHOW_ALL_MATERIAL_ITEMS;
+        return visible || AntimatterConfig.SHOW_ALL_MATERIAL_ITEMS.get();
     }
 
     public boolean allowGen(Material material) {
