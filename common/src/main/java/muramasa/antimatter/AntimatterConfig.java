@@ -135,16 +135,10 @@ public class AntimatterConfig {
         }
     }
 
-    public static final Gameplay GAMEPLAY = new Gameplay();
-
 
     public static class Data {
         public boolean ALL_MATERIAL_ITEMS, ITEM_REPLACEMENTS;
 
-    }
-
-    public static class Gameplay {
-        public boolean LOSSY_PART_CRAFTING = true;
     }
 
     public static class ModCompatibility {
