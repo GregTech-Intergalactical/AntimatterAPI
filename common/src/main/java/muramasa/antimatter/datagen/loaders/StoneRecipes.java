@@ -26,18 +26,18 @@ import static muramasa.antimatter.data.AntimatterMaterials.Sand;
 
 public class StoneRecipes {
     public static void loadRecipes(Consumer<FinishedRecipe> output, AntimatterRecipeProvider provider){
-        provider.addItemRecipe(output, "minecraft", "", "furnaces","has_cobble", provider.hasSafeItem(ItemTags.STONE_TOOL_MATERIALS), Items.FURNACE, ImmutableMap.of('C', ItemTags.STONE_TOOL_MATERIALS), "CCC", "C C", "CCC");
-        provider.addItemRecipe(output, "stones", "has_sand_dust", provider.hasSafeItem(DUST.getMaterialTag(Sand)), Items.SAND, of('S', DUST.getMaterialTag(Sand)), "SS", "SS");
-        provider.addItemRecipe(output, "stones", "has_sand_dust", provider.hasSafeItem(DUST.getMaterialTag(RedSand)), Items.RED_SAND, of('S', DUST.getMaterialTag(RedSand)), "SS", "SS");
+        provider.addItemRecipe(output, "minecraft", "", "furnaces", Items.FURNACE, ImmutableMap.of('C', ItemTags.STONE_TOOL_MATERIALS), "CCC", "C C", "CCC");
+        provider.addItemRecipe(output, "stones", Items.SAND, of('S', DUST.getMaterialTag(Sand)), "SS", "SS");
+        provider.addItemRecipe(output, "stones", Items.RED_SAND, of('S', DUST.getMaterialTag(RedSand)), "SS", "SS");
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             Material m = s.getMaterial();
             if (m.has(AntimatterMaterialTypes.ROD)){
-                provider.addStackRecipe(output, Ref.ID, s.getId() + "_to_" + m.getId() + "_rod", "rods", "has_stone", provider.hasSafeItem(s.getState().getBlock()), AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', s.getState().getBlock()), "S", "S");
+                provider.addStackRecipe(output, Ref.ID, s.getId() + "_to_" + m.getId() + "_rod", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', s.getState().getBlock()), "S", "S");
                 if (s == AntimatterStoneTypes.STONE){
-                    provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", "has_stone", provider.hasSafeItem(Items.COBBLESTONE), AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', Items.COBBLESTONE), "S", "S");
+                    provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', Items.COBBLESTONE), "S", "S");
                 }
                 if (s instanceof CobbleStoneType){
-                    provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", "has_stone", provider.hasSafeItem(((CobbleStoneType)s).getBlock("cobble")), AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', ((CobbleStoneType)s).getBlock("cobble")), "S", "S");
+                    provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', ((CobbleStoneType)s).getBlock("cobble")), "S", "S");
                 }
             }
             if (s instanceof CobbleStoneType){
@@ -48,16 +48,16 @@ public class StoneRecipes {
                 String[] types = new String[]{"bricks_mossy", "cobble_mossy", "bricks", "cobble", "smooth", ""};
                 for (String type : types){
                     String i = type.isEmpty() ? "" : "_";
-                    provider.addStackRecipe(output, Ref.ID, "slab_" + m.getId() + i + type, "slabs", "has_stone", provider.hasSafeItem(c.getBlock(type)), new ItemStack(c.getBlock(type + i + "slab"), 6), of('S', c.getBlock(type)), "SSS");
-                    provider.addStackRecipe(output, Ref.ID, "stairs_" + m.getId() + i + type, "stairs", "has_stone", provider.hasSafeItem(c.getBlock(type)), new ItemStack(c.getBlock(type + i + "stairs"), 4), of('S', c.getBlock(type)), "S  ", "SS ", "SSS");
-                    provider.addStackRecipe(output, Ref.ID, "wall_" + m.getId() + i + type, "walls", "has_stone", provider.hasSafeItem(c.getBlock(type)), new ItemStack(c.getBlock(type + i + "wall"), 6), of('S', c.getBlock(type)), "SSS", "SSS");
+                    provider.addStackRecipe(output, Ref.ID, "slab_" + m.getId() + i + type, "slabs", new ItemStack(c.getBlock(type + i + "slab"), 6), of('S', c.getBlock(type)), "SSS");
+                    provider.addStackRecipe(output, Ref.ID, "stairs_" + m.getId() + i + type, "stairs", new ItemStack(c.getBlock(type + i + "stairs"), 4), of('S', c.getBlock(type)), "S  ", "SS ", "SSS");
+                    provider.addStackRecipe(output, Ref.ID, "wall_" + m.getId() + i + type, "walls", new ItemStack(c.getBlock(type + i + "wall"), 6), of('S', c.getBlock(type)), "SSS", "SSS");
                     String[] pattern = type.equals("bricks") ? new String[]{"SS"} : new String[]{"S", "S"};
-                    provider.addStackRecipe(output, Ref.ID, m.getId() + i + type + "_from_slabs", "slabs", "has_stone", provider.hasSafeItem(c.getBlock(type + i + "slab")), new ItemStack(c.getBlock(type), 1), of('S', c.getBlock(type + i + "slab")), pattern);
+                    provider.addStackRecipe(output, Ref.ID, m.getId() + i + type + "_from_slabs", "slabs", new ItemStack(c.getBlock(type), 1), of('S', c.getBlock(type + i + "slab")), pattern);
                 }
-                provider.addStackRecipe(output, Ref.ID, "bricks_" + m.getId(), "bricks", "has_stone", provider.hasSafeItem(c.getBlock("")), new ItemStack(c.getBlock("bricks"), 4), of('S', c.getBlock("")), "SS", "SS");
-                provider.addStackRecipe(output, Ref.ID, "bricks_chiseled_" + m.getId(), "bricks", "has_stone", provider.hasSafeItem(c.getBlock("bricks_slab")), new ItemStack(c.getBlock("bricks_chiseled"), 1), of('S', c.getBlock("bricks_slab")), "S", "S");
-                provider.shapeless(output, "bricks_mossy_" + m.getId(), "bricks", "has_vines", provider.hasSafeItem(Items.VINE), new ItemStack(c.getBlock("bricks_mossy")), c.getBlock("bricks"), Items.VINE);
-                provider.shapeless(output, "cobble_mossy_" + m.getId(), "bricks", "has_vines", provider.hasSafeItem(Items.VINE), new ItemStack(c.getBlock("cobble_mossy")), c.getBlock("cobble"), Items.VINE);
+                provider.addStackRecipe(output, Ref.ID, "bricks_" + m.getId(), "bricks", new ItemStack(c.getBlock("bricks"), 4), of('S', c.getBlock("")), "SS", "SS");
+                provider.addStackRecipe(output, Ref.ID, "bricks_chiseled_" + m.getId(), "bricks", new ItemStack(c.getBlock("bricks_chiseled"), 1), of('S', c.getBlock("bricks_slab")), "S", "S");
+                provider.shapeless(output, "bricks_mossy_" + m.getId(), "bricks", new ItemStack(c.getBlock("bricks_mossy")), c.getBlock("bricks"), Items.VINE);
+                provider.shapeless(output, "cobble_mossy_" + m.getId(), "bricks", new ItemStack(c.getBlock("cobble_mossy")), c.getBlock("cobble"), Items.VINE);
                 types = new String[]{"stairs", "slab", "wall", "bricks_slab", "bricks_stairs", "bricks_chiseled", "bricks_wall", "bricks"};
                 for (String type : types){
                     int amount = type.contains("slab") ? 2 : 1;

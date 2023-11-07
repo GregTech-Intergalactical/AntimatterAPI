@@ -26,19 +26,19 @@ public class MaterialRecipes {
     public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
         final CriterionTriggerInstance in = provider.hasSafeItem(AntimatterDefaultTools.WRENCH.getTag());
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
-            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_small", "antimatter_dusts", "has_wrench", in, AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_SMALL.getMaterialTag(m)), "DD", "DD");
-            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_tiny", "antimatter_dusts", "has_wrench", in, AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_TINY.getMaterialTag(m)), "DDD", "DDD", "DDD");
+            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_small", "antimatter_dusts", AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_SMALL.getMaterialTag(m)), "DD", "DD");
+            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_tiny", "antimatter_dusts", AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_TINY.getMaterialTag(m)), "DDD", "DDD", "DDD");
         });
         AntimatterMaterialTypes.INGOT.all().forEach(m -> {
             if (m.has(AntimatterMaterialTypes.NUGGET) && m != AntimatterMaterials.Iron && m != AntimatterMaterials.Gold){
-                provider.addItemRecipe(consumer, Ref.ID, m.getId() + "_ingot", "ingots", "has_nugget", provider.hasSafeItem(AntimatterMaterialTypes.NUGGET.getMaterialTag(m)), AntimatterMaterialTypes.INGOT.get(m), ImmutableMap.of('I', AntimatterMaterialTypes.NUGGET.getMaterialTag(m)), "III", "III", "III");
-                provider.shapeless(consumer,"nugget_" + m.getId() + "_from_ingot", "ingots", "has_ingot", provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(m)), AntimatterMaterialTypes.NUGGET.get(m, 9), AntimatterMaterialTypes.INGOT.getMaterialTag(m));
+                provider.addItemRecipe(consumer, Ref.ID, m.getId() + "_ingot", "ingots", AntimatterMaterialTypes.INGOT.get(m), ImmutableMap.of('I', AntimatterMaterialTypes.NUGGET.getMaterialTag(m)), "III", "III", "III");
+                provider.shapeless(consumer,"nugget_" + m.getId() + "_from_ingot", "ingots", AntimatterMaterialTypes.NUGGET.get(m, 9), AntimatterMaterialTypes.INGOT.getMaterialTag(m));
             }
         });
 
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
             if (m.has(AntimatterMaterialTypes.INGOT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_ingot", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_ingot", "antimatter_material",
                         AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
                                 .put('M', AntimatterDefaultTools.MORTAR.getTag())
                                 .put('I', AntimatterMaterialTypes.INGOT.getMaterialTag(m))
@@ -46,17 +46,17 @@ public class MaterialRecipes {
                         "MI");
             }
             if (m.has(AntimatterMaterialTypes.ROCK)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_rock", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()),
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_rock", "antimatter_material",
                         AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
                                 .put('M', AntimatterDefaultTools.MORTAR.getTag())
                                 .put('I', AntimatterMaterialTypes.ROCK.getMaterialTag(m))
                                 .build(),
                         "II ", "IIM");
-                provider.shapeless(consumer, m.getId() + "_grind_rock_2", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()), AntimatterMaterialTypes.DUST_SMALL.get(m, 1),
+                provider.shapeless(consumer, m.getId() + "_grind_rock_2", "antimatter_material", "has_mortar", AntimatterMaterialTypes.DUST_SMALL.get(m, 1),
                         AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.ROCK.getMaterialTag(m));
             }
             if (m.has(AntimatterMaterialTypes.CRUSHED)){
-                provider.shapeless(consumer, m.getId() + "_grind_crushed", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()), AntimatterMaterialTypes.DUST_IMPURE.get(m, 1),
+                provider.shapeless(consumer, m.getId() + "_grind_crushed", "antimatter_material", "has_mortar", AntimatterMaterialTypes.DUST_IMPURE.get(m, 1),
                         AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.CRUSHED.getMaterialTag(m));
             }
         });
