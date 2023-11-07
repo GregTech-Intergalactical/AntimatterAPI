@@ -9,9 +9,7 @@ import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
-import muramasa.antimatter.datagen.loaders.Pipes;
 import muramasa.antimatter.datagen.loaders.StoneRecipes;
-import muramasa.antimatter.datagen.loaders.Tools;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -96,8 +94,6 @@ public class Antimatter extends AntimatterMod {
     public void addCraftingLoaders(CraftingEvent ev) {
         ev.addLoader(StoneRecipes::loadRecipes);
         ev.addLoader(MaterialRecipes::init);
-        ev.addLoader(Pipes::loadRecipes);
-        ev.addLoader(Tools::init);
     }
 
     public void providers(ProvidersEvent ev) {
