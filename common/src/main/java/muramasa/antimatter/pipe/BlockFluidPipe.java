@@ -32,7 +32,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         ITickingController<?, ?, ?> controller = TesseractGraphWrappers.FLUID.getController(world, pos.asLong());
         controller.getInfo(pos.asLong(), info);
         info.add("Pressure: " + getType().getPressure(getSize()));
-        info.add("Max temperature: " + getType().getTemperature());
+        info.add("Max temperature: " + getType().getMaxTemperature());
         info.add(getType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
         info.add(getType().isAcidProof() ? "Acid proof." : "Cannot handle acids.");
         return info;
@@ -49,7 +49,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         if (getType().isAcidProof()){
             tooltip.add(Utils.translatable("antimatter.tooltip.acid_proof").withStyle(ChatFormatting.GOLD));
         }
-        tooltip.add(Utils.translatable("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()).withStyle(ChatFormatting.DARK_RED));
+        tooltip.add(Utils.translatable("antimatter.tooltip.max_temperature").append(": " +getType().getMaxTemperature()).withStyle(ChatFormatting.DARK_RED));
     }
 
     @Override

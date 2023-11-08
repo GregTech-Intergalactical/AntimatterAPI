@@ -1,5 +1,6 @@
 package muramasa.antimatter.pipe.types;
 
+import lombok.Getter;
 import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -13,14 +14,17 @@ import java.util.stream.Collectors;
 
 public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
 
-    protected int maxTemp;
+    @Getter
+    protected int maxTemperature;
+    @Getter
     protected boolean gasProof;
+    @Getter
     protected boolean acidProof = false;
     protected int[] caps, pressures;
 
-    public FluidPipe(String domain, Material material, int maxTemp, boolean gasProof) {
+    public FluidPipe(String domain, Material material, int maxTemperature, boolean gasProof) {
         super(domain, material, BlockEntityFluidPipe::new);
-        this.maxTemp = maxTemp;
+        this.maxTemperature = maxTemperature;
         this.gasProof = gasProof;
         material.flags(MaterialTags.FLUIDPIPE);
         sizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE, PipeSize.QUADRUPLE, PipeSize.NONUPLE);
@@ -41,14 +45,6 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         return sizes.stream().map(s -> new BlockFluidPipe(this, s)).collect(Collectors.toSet());
     }
 
-    public int getTemperature() {
-        return maxTemp;
-    }
-
-    public boolean isGasProof() {
-        return gasProof;
-    }
-    
 
     public int getPressure(PipeSize size) {
         if (size == PipeSize.NONUPLE) return getPressure(PipeSize.SMALL);
@@ -84,7 +80,4 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         return (T) this;
     }
 
-    public boolean isAcidProof() {
-        return acidProof;
-    }
 }
