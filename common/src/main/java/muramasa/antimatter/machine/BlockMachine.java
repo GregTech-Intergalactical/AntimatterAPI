@@ -1,6 +1,7 @@
 package muramasa.antimatter.machine;
 
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
@@ -70,7 +71,9 @@ import static muramasa.antimatter.machine.MachineFlag.RF;
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
     public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
 
+    @Getter
     protected Machine<?> type;
+    @Getter
     protected Tier tier;
     protected final StateDefinition<Block, BlockState> stateContainer;
 
@@ -86,14 +89,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         this.createBlockStateDefinition(builder);
         this.stateContainer = builder.create(Block::defaultBlockState, BlockState::new);
         this.registerDefaultState(this.stateContainer.any());
-    }
-
-    public Machine<?> getType() {
-        return type;
-    }
-
-    public Tier getTier() {
-        return tier;
     }
 
     @Override
@@ -234,8 +229,8 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tileentity instanceof BlockEntityMachine<?> machine){
             machine.onDrop(state, builder, list);
-            machine.itemHandler.ifPresent(t -> list.addAll(t.getAllItems()));
-            machine.coverHandler.ifPresent(t -> list.addAll(t.getDrops()));
+            machine.dropInventory(state, builder, list);
+            machine.dropCovers(state, builder, list);
         }
         return list;
     }

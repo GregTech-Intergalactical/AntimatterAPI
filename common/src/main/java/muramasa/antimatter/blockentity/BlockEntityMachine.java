@@ -299,6 +299,14 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
     }
 
+    public void dropInventory(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
+        itemHandler.ifPresent(t -> drops.addAll(t.getAllItems()));
+    }
+
+    public void dropCovers(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
+        coverHandler.ifPresent(t -> drops.addAll(t.getDrops()));
+    }
+
     public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 
     }
