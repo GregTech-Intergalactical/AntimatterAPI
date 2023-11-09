@@ -10,7 +10,6 @@ import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
-import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -41,6 +40,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private final String domain, id;
     @Getter
     private TagKey<Block> toolType;
+    @Getter
     private final Set<TagKey<Block>> toolTypes = new ObjectOpenHashSet<>();
     @Getter
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
@@ -279,7 +279,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     public AntimatterToolType addTags(String... types) {
         if (types.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
-        Arrays.stream(types).map(t -> TagUtils.getForgelikeBlockTag(t)).forEach(t -> this.toolTypes.add(t));
+        Arrays.stream(types).map(t -> {
+            String domain = t.equals("pickaxe") || t.equals("axe") || t.equals("shovel") || t.equals("hoe") || t.equals("sword") ? "minecraft" : Ref.ID;
+            return TagUtils.getBlockTag(new ResourceLocation(domain, "mineable/" + t));
+        }).forEach(t -> this.toolTypes.add(t));
         return this;
     }
 
@@ -368,10 +371,6 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Override
     public String getId() {
         return id;
-    }
-
-    public Set<TagKey<Block>> getActualTags() {
-        return toolTypes;
     }
 
     public boolean hasContainer() {

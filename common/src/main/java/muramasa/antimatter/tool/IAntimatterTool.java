@@ -106,7 +106,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     }
 
     default Set<TagKey<Block>> getActualTags() {
-        return getAntimatterToolType().getActualTags();
+        return getAntimatterToolType().getToolTypes();
     }
 
     default int getSubColour(ItemStack stack) {
