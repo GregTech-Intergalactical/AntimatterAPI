@@ -118,7 +118,7 @@ public class WorldGenHelper {
     public static BlockState getStoneStateForRock(int y, BlockPos pos, LevelAccessor world){
       BlockState fill = world.getBlockState(new BlockPos(pos.getX(), y, pos.getZ()));
       StoneType stone = STONE_MAP.get(fill);
-      if (stone == AntimatterStoneTypes.BEDROCK){
+      if (y <= world.getMinBuildHeight() || stone == AntimatterStoneTypes.BEDROCK){
           return fill;
       }
       if (stone == null || !stone.doesGenerateOre()){
