@@ -44,12 +44,10 @@ public class CoverOutput extends CoverInput {
     public void onUpdate() {
         super.onUpdate();
         if (handler.getTile().getLevel().isClientSide) return;
-        if (handler.getTile().getLevel().getGameTime() % 50 == 0) {
-            if (shouldOutputFluids())
-                processFluidOutput();
-            if (shouldOutputItems())
-                processItemOutput();
-        }
+        if (shouldOutputFluids())
+            processFluidOutput();
+        if (shouldOutputItems())
+            processItemOutput();
     }
 
     @Override
