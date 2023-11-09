@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool.behaviour;
 
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IAddInformation;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
@@ -22,6 +23,7 @@ import java.util.List;
 
 public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IItemRightClick<IAntimatterTool>, IAddInformation<IAntimatterTool> {
 
+    @Getter
     protected int column, row, depth;
     protected String tooltipKey;
 
@@ -31,18 +33,6 @@ public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IIte
         this.row = row;
         this.depth = depth;
         this.tooltipKey = tooltipKey;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     @Override
