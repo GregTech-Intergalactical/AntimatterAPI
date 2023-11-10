@@ -139,10 +139,14 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (type.getEffectiveBlocks().contains(state.getBlock())) {
             return true;
         }
+        boolean isType = false;
         for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
-            if (!state.is(toolType)) return false;
+            if (state.is(toolType)){
+                isType = true;
+                break;
+            }
         }
-        return ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
     }
 
     //fabric method
