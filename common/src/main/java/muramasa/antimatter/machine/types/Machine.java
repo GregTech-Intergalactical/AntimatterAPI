@@ -1,10 +1,7 @@
 package muramasa.antimatter.machine.types;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.*;
 import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -134,6 +131,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Covers
      **/
+    @Getter
     protected CoverFactory outputCover = COVEROUTPUT;
 
     /**
@@ -143,6 +141,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
 
     private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>(1);
+    private static final Map<String, Set<Machine<?>>> FLAG_MAP = new Object2ObjectOpenHashMap<>();
 
     public Machine(String domain, String id) {
         this.domain = domain;
@@ -223,10 +222,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public T setOutputCover(CoverFactory cover) {
         this.outputCover = cover;
         return (T) this;
-    }
-
-    public CoverFactory getOutputCover() {
-        return outputCover;
     }
 
     public boolean allowsFrontCovers() {
@@ -539,13 +534,34 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
-            flag.add(this);
+            FLAG_MAP.computeIfAbsent(flag.toString(), s -> new ObjectOpenHashSet<>()).add(this);
+        }
+        return (T) this;
+    }
+
+    public T addFlags(String... flags) {
+        for (String flag : flags) {
+            FLAG_MAP.computeIfAbsent(flag, s -> new ObjectOpenHashSet<>()).add(this);
+        }
+        return (T) this;
+    }
+
+    public T removeFlags(MachineFlag... flags) {
+        for (MachineFlag flag : flags) {
+            FLAG_MAP.computeIfAbsent(flag.toString(), s -> new ObjectOpenHashSet<>()).remove(this);
+        }
+        return (T) this;
+    }
+
+    public T removeFags(String... flags) {
+        for (String flag : flags) {
+            FLAG_MAP.computeIfAbsent(flag, s -> new ObjectOpenHashSet<>()).remove(this);
         }
         return (T) this;
     }
 
     public void setFlags(MachineFlag... flags) {
-        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.remove(this));
+        FLAG_MAP.forEach((s, m) -> m.remove(this));
         addFlags(flags);
     }
 
@@ -628,10 +644,20 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * Whether or not this machine has the given machine flag.
      *
      * @param flag the flag.
-     * @return if it has itreturn IAntimatterObject.super.getLang(lang);.
+     * @return if it has it;.
      */
     public boolean has(MachineFlag flag) {
-        return flag.getTypes().contains(this);
+        return has(flag.toString());
+    }
+
+    /**
+     * Whether or not this machine has the given machine flag.
+     *
+     * @param flag the flag.
+     * @return if it has it;.
+     */
+    public boolean has(String flag) {
+        return FLAG_MAP.containsKey(flag) && FLAG_MAP.get(flag).contains(this);
     }
 
     /**
@@ -665,7 +691,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
         List<Machine<?>> types = new ObjectArrayList<>();
         for (MachineFlag flag : flags) {
-            types.addAll(flag.getTypes());
+            if (FLAG_MAP.containsKey(flag.toString())){
+                types.addAll(FLAG_MAP.get(flag.toString()));
+            }
+
         }
         return types;
     }

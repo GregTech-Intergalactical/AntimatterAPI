@@ -33,7 +33,7 @@ import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
 
 import static muramasa.antimatter.gui.ButtonOverlay.*;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
+import static muramasa.antimatter.machine.MachineFlag.EU;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static muramasa.antimatter.machine.Tier.MAX;
 
@@ -98,7 +98,7 @@ public class Data {
         }
     };
 
-    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setVerticalFacingAllowed(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
+    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(EU, GUI).setTiers(MAX).setVerticalFacingAllowed(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
             .noCovers();
 
     public static void init(Side side) {

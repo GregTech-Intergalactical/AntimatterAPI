@@ -38,7 +38,7 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         this.hatchMachine = type;
         componentHandler = Optional
                 .of(new HatchComponentHandler<>((T)this));
-        if (type.has(ENERGY)) {
+        if (type.has(EU)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
                     type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
                     type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,

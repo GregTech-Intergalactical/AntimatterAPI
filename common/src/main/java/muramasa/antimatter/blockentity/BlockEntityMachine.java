@@ -137,7 +137,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (type.has(FLUID)) {
             fluidHandler.set(() -> new MachineFluidHandler<>((T) this));
         }
-        if (type.has(ENERGY)) {
+        if (type.has(EU)) {
             if (type.has(RF)){
                 rfHandler.set(() -> new MachineRFHandler<>((T)this, this.getMachineTier().getVoltage() * 100, type.has(MachineFlag.GENERATOR)));
             } else {

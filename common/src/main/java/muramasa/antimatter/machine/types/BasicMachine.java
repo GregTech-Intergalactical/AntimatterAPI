@@ -13,7 +13,7 @@ public class BasicMachine extends Machine<BasicMachine> {
 
     public BasicMachine(String domain, String id) {
         super(domain, id);
-        addFlags(BASIC, ENERGY, COVERABLE);
+        addFlags(BASIC, EU, COVERABLE);
         setTile(BlockEntityMachine::new);
         setGUI(Data.BASIC_MENU_HANDLER);
     }

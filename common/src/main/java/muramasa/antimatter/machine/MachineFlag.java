@@ -5,8 +5,11 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.types.Machine;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public enum MachineFlag {
 
@@ -24,7 +27,7 @@ public enum MachineFlag {
     FLUID_INPUT,
     FLUID_OUTPUT,
     FLUID,
-    ENERGY, //Needs power
+    EU, //Needs power
     RF, //Uses RF instead of EU
     HEAT,
     RECIPE, //Has a recipe map
@@ -38,26 +41,23 @@ public enum MachineFlag {
         VALUES = values();
     }
 
-    private final Set<Machine<?>> types = new ObjectOpenHashSet<>();
-
+    @Deprecated
     public void add(Machine<?> machine) {
-        this.types.add(machine);
+        machine.addFlags(this);
     }
 
+    @Deprecated
     public void remove(Machine<?> machine) {
-        this.types.remove(machine);
+        machine.removeFlags(this);
     }
 
+    @Deprecated
     public Set<Machine<?>> getTypes() {
-        return types;
+        return new HashSet<>(Machine.getTypes(this));
     }
 
-    public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
-        List<Machine<?>> types = new ObjectArrayList<>();
-        for (MachineFlag flag : flags) {
-            types.addAll(flag.getTypes());
-        }
-        return types;
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase();
     }
-
 }
