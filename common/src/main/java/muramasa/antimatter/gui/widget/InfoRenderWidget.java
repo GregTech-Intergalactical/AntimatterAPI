@@ -80,7 +80,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         public long voltAverage = 0;
         public long ampAverage = 0;
         //public int cableAverage = 0;
-        public long loss = 0;
+        public double loss = 0;
 
         protected TesseractGTWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractGTWidget> renderer) {
             super(gui, parent, renderer);
@@ -109,9 +109,9 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 GTController gt = (GTController) controller;
                 return gt.cableFrameAverage(pos);
             }, a -> this.cableAverage = a, SERVER_TO_CLIENT);*/
-            gui.syncLong(() -> {
+            gui.syncDouble(() -> {
                 ITickingController controller = TesseractGraphWrappers.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
-                if (controller == null) return 0L;
+                if (controller == null) return 0.0;
                 GTController gt = (GTController) controller;
                 return gt.totalLoss();
             }, a -> this.loss = a, SERVER_TO_CLIENT);
