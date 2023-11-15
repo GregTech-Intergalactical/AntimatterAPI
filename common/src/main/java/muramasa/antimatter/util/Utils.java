@@ -408,15 +408,18 @@ public class Utils {
      * @return if energy was inserted
      */
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        long amps = from.extractAmps(from.getOutputVoltage(), from.availableAmpsOutput(), true);
-        if (amps > 0){
-            long insertAmps = to.insertAmps(from.getOutputVoltage(), amps, true);
-            if (insertAmps > 0){
-                from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), amps, false), false);
-                return true;
+        boolean transferred = false;
+        for (long amp = 0; amp < from.availableAmpsOutput(); amp++) {
+            long ampInserted = from.extractAmps(from.getOutputVoltage(), 1, true);
+            if (ampInserted > 0){
+                long insertAmps = to.insertAmps(from.getOutputVoltage(), ampInserted, true);
+                if (insertAmps > 0){
+                    from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), ampInserted, false), false);
+                    transferred = true;
+                }
             }
         }
-        return false;
+        return transferred;
     }
 
     public static boolean transferEnergy(PlatformEnergyManager from, PlatformEnergyManager to) {
