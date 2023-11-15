@@ -1,5 +1,6 @@
 package muramasa.antimatter.pipe.types;
 
+import lombok.Getter;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -13,15 +14,21 @@ import java.util.stream.Collectors;
 
 public class Cable<T extends Cable<T>> extends PipeType<T> {
 
-    protected int loss;
+    @Getter
+    protected double loss;
+    @Getter
     protected Tier tier;
     protected int[] amps;
 
-    public Cable(String domain, Material material, int loss, Tier tier) {
+    public Cable(String domain, Material material, double loss, Tier tier) {
         super(domain, material, BlockEntityCable::new);
         this.loss = loss;
         this.tier = tier;
         material.flags(MaterialTags.CABLE);
+    }
+
+    public Cable(String domain, Material material, int loss, Tier tier) {
+        this(domain, material, (double) loss, tier);
     }
 
     @Override
@@ -39,14 +46,6 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
         return sizes.stream().map(s -> new BlockCable(this, s, true)).collect(Collectors.toSet());
     }
 
-    public int getLoss() {
-        return loss;
-    }
-
-    public Tier getTier() {
-        return tier;
-    }
-
     public int getAmps(PipeSize size) {
         return amps[size.ordinal()];
     }
@@ -58,6 +57,11 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
 
     public T amps(int... amps) {
         this.amps = amps;
+        return (T) this;
+    }
+
+    public T loss(double loss){
+        this.loss = loss;
         return (T) this;
     }
 }
