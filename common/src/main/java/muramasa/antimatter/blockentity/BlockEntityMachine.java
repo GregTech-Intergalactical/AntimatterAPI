@@ -2,6 +2,7 @@ package muramasa.antimatter.blockentity;
 
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.AntimatterProperties;
@@ -92,12 +93,14 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
      **/
     protected Machine<?> type;
     protected Tier tier;
+    @Getter
     protected MachineState machineState;
 
     protected MachineState disabledState;
 
     protected long lastSoundTime;
 
+    @Getter
     protected boolean muffled = false;
 
     @Environment(EnvType.CLIENT)
@@ -138,11 +141,10 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             fluidHandler.set(() -> new MachineFluidHandler<>((T) this));
         }
         if (type.has(EU)) {
-            if (type.has(RF)){
-                rfHandler.set(() -> new MachineRFHandler<>((T)this, this.getMachineTier().getVoltage() * 100, type.has(MachineFlag.GENERATOR)));
-            } else {
-                energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
-            }
+            energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
+        }
+        if (type.has(RF)){
+            rfHandler.set(() -> new MachineRFHandler<>((T)this, this.getMachineTier().getVoltage() * 100, type.has(MachineFlag.GENERATOR)));
         }
         if (type.has(HEAT)){
             heatHandler.set(() -> new DefaultHeatHandler(this, (int) (this.getMachineTier().getVoltage() * 4), type.has(GENERATOR) ? 0 : (int) this.getMachineTier().getVoltage(), type.has(GENERATOR) ? (int) this.getMachineTier().getVoltage() : 0));
@@ -353,10 +355,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         return getMachineTier();
     }
 
-    public boolean isMuffled() {
-        return muffled;
-    }
-
     public boolean has(MachineFlag flag) {
         return getMachineType().has(flag);
     }
@@ -466,10 +464,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
     public boolean setOutputFacing(Player player, Direction side) {
         return coverHandler.map(h -> h.setOutputFacing(player, side)).orElse(false);
-    }
-
-    public MachineState getMachineState() {
-        return machineState;
     }
 
     public MachineState getDefaultMachineState() {
