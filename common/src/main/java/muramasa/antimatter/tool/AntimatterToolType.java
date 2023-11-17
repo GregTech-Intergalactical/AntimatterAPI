@@ -368,6 +368,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, Material.NULL);
     }
 
+    public Item getToolItem(Material material){
+        String id = simple ? material.getId() + "_" + this.id : this.id;
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).getItem();
+    }
+
     @Override
     public String getId() {
         return id;
