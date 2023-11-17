@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.container;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import lombok.Getter;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 public abstract class ContainerMachine<T extends BlockEntityMachine<T>> extends AntimatterContainer {
 
+    @Getter
     protected final T tile;
     public final Map<SlotType<?>, List<Slot>> slotMap = new Object2ObjectOpenHashMap<>();
 
@@ -32,17 +34,23 @@ public abstract class ContainerMachine<T extends BlockEntityMachine<T>> extends 
         //if (!(playerInv.player instanceof ServerPlayerEntity)) {
         //    tile.recipeHandler.ifPresent(t -> t.setClientProgress(0));
         //}
-        tile.addOpenContainer(this);
+        tile.addOpenContainer(this, playerInv.player);
     }
 
-    public T getTile() {
-        return tile;
+    @Override
+    protected int getXPlayerOffset() {
+        return tile.getMachineType().getGui().getPlayerXOffset();
+    }
+
+    @Override
+    protected int getYPlayerOffset() {
+        return tile.getMachineType().getGui().getPlayerYOffset();
     }
 
     @Override
     public void removed(Player playerIn) {
         super.removed(playerIn);
-        tile.onContainerClose(this);
+        tile.onContainerClose(this, playerIn);
     }
 
     @Override

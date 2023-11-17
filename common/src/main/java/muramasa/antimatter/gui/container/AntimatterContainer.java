@@ -55,18 +55,26 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
 
     protected void addPlayerSlots() {
         if (playerInv == null) return;
-        for (int i = 0; i < 3; ++i) { //Inventory Slots
-            for (int j = 0; j < 9; ++j) {
-                Slot slot = new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18);
+        for (int y = 0; y < 3; ++y) { //Inventory Slots
+            for (int x = 0; x < 9; ++x) {
+                Slot slot = new Slot(playerInv, x + y * 9 + 9, getXPlayerOffset() +8 + (x * 18), getYPlayerOffset() + 84 + (y * 18));
                 this.addSlot(slot);
                 playerSlots.add(slot);
             }
         }
-        for (int k = 0; k < 9; ++k) { //HotBar Slots
-            Slot slot = new Slot(playerInv, k, 8 + k * 18, 142);
+        for (int x = 0; x < 9; ++x) { //HotBar Slots
+            Slot slot = new Slot(playerInv, x, getXPlayerOffset() + 8 + (x * 18), getYPlayerOffset() + 142);
             this.addSlot(slot);
             playerSlots.add(slot);
         }
+    }
+
+    protected int getXPlayerOffset(){
+        return 0;
+    }
+
+    protected int getYPlayerOffset(){
+        return 0;
     }
 
     @Override

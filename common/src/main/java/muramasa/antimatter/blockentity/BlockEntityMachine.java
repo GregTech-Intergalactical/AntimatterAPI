@@ -157,11 +157,11 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         }
         multiTexturer = new LazyLoadedValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER)); }
 
-    public void addOpenContainer(ContainerMachine<T> c) {
+    public void addOpenContainer(ContainerMachine<T> c, Player player) {
         this.openContainers.add(c);
     }
 
-    public void onContainerClose(ContainerMachine<T> c) {
+    public void onContainerClose(ContainerMachine<T> c, Player player) {
         this.openContainers.remove(c);
     }
 

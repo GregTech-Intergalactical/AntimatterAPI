@@ -173,7 +173,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     protected void setupGui() {
-        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
+        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight(), t.handler.guiTextureSize(), t.handler.guiTextureHeight())));
     }
 
     /**
