@@ -112,7 +112,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         if (type.isVerticalFacingAllowed()) {
             Direction dir = context.getNearestLookingDirection().getOpposite();
-            dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
             return this.defaultBlockState().setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
         } else {
             return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
