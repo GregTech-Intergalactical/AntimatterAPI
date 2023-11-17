@@ -65,10 +65,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BlockEntityType<? extends BlockEntityMachine<?>> tileType;
     protected BlockEntityBase.BlockEntitySupplier<BlockEntityMachine<?>, T> tileFunc = BlockEntityMachine::new;
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
+    @Getter
     protected Function<BlockMachine, AntimatterItemBlock> itemBlockFunction = AntimatterItemBlock::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
-    protected ITooltipInfo tooltipFunction = (m, s,w,t,f) -> {};
+    @Getter
+    protected ITooltipInfo tooltipFunction = (m, s, w, t, f) -> {};
     protected String domain, id;
     @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
@@ -299,10 +301,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return blockFunc.apply(type, tier);
     }
 
-    public Function<BlockMachine, AntimatterItemBlock> getItemBlockFunction() {
-        return itemBlockFunction;
-    }
-
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
         return AntimatterAPI.get(itemClassSupplier.get(), this.getIdFromTier(tier), this.getDomain());
@@ -316,10 +314,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public Item getItem(Tier tier) {
         return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getIdFromTier(tier), getDomain()));
-    }
-
-    public ITooltipInfo getTooltipFunction() {
-        return tooltipFunction;
     }
 
     /**
@@ -451,6 +445,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    @Override
     public String getDomain() {
         return domain;
     }
@@ -553,7 +548,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T removeFags(String... flags) {
+    public T removeFlags(String... flags) {
         for (String flag : flags) {
             FLAG_MAP.computeIfAbsent(flag, s -> new ObjectOpenHashSet<>()).remove(this);
         }
