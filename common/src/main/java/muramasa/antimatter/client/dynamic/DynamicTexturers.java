@@ -101,10 +101,14 @@ public class DynamicTexturers {
                 ((BlockModelAccessor)m).getTextureMap().put("base", Either.left(
                     ModelUtils.getBlockMaterial(machine.getMultiTexture().apply(side))));
                    AntimatterProperties.MachineProperties prop = t.key.properties;
-                ((BlockModelAccessor)m).getTextureMap().put("overlay",
-                    Either
-                            .left(ModelUtils.getBlockMaterial(prop.type.getOverlayTextures(
-                                    prop.state, prop.tier)[side.get3DDataValue()])));
+                for (int i = 0; i < prop.type.getOverlayLayers(); i++) {
+                    String suffix = i == 0 ? "" : String.valueOf(i);
+                    ((BlockModelAccessor)m).getTextureMap().put("overlay" + suffix,
+                            Either
+                                    .left(ModelUtils.getBlockMaterial(prop.type.getOverlayTextures(
+                                            prop.state, prop.tier, i)[side.get3DDataValue()])));
+                }
+
                 BakedModel b = model.bake(ModelUtils.getModelBakery(), ModelUtils.getDefaultTextureGetter(),
                         new SimpleModelState(RenderHelper.faceRotation(t.state)),
                         new ResourceLocation(t.source.getId()));

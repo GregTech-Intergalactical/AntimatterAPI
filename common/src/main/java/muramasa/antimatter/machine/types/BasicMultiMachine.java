@@ -39,7 +39,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
                 tooltip.add(Utils.translatable("machine.structure.form"));
             }
         });
-        this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
+        this.baseTexture((type, tier, state) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
      }
 
     @Override
@@ -51,8 +51,12 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     @Override
     public List<Texture> getTextures() {
         List<Texture> textures = super.getTextures();
-        getTiers().forEach(t -> textures.addAll(Arrays.asList(getBaseTexture(t))));
-        getTiers().forEach(t -> textures.addAll(Arrays.asList(getOverlayTextures(MachineState.INVALID_STRUCTURE, t))));
+        getTiers().forEach(t -> textures.addAll(Arrays.asList(getBaseTexture(t, MachineState.INVALID_STRUCTURE))));
+        for (int i = 0; i < overlayLayers; i++) {
+            int finalI = i;
+            getTiers().forEach(t -> textures.addAll(Arrays.asList(getOverlayTextures(MachineState.INVALID_STRUCTURE, t, finalI))));
+        }
+
         return textures;
     }
 

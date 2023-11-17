@@ -411,7 +411,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     }
 
     public Texture getTextureForHatches(Direction dir, BlockPos hatchPos){
-        Texture[] tex = this.getMachineType().getBaseTexture(this.getMachineTier());
+        Texture[] tex = this.getMachineType().getBaseTexture(this.getMachineTier(), this.getMachineState().getTextureState());
         if (tex.length == 1) return tex[0];
         return tex[dir.get3DDataValue()];
     }

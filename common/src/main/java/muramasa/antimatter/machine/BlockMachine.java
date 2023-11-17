@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import com.google.common.collect.ImmutableMap;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import lombok.Getter;
 import muramasa.antimatter.Ref;
@@ -277,17 +278,21 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
-        Texture[] base = type.getBaseTexture(tier);
+        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier, MachineState.IDLE)[0]);
+        Texture[] base = type.getBaseTexture(tier, MachineState.ACTIVE);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
                 b.texture("base" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), base[s]);
             }
         }
-        Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier);
-        for (int s = 0; s < 6; s++) {
-            b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), overlays[s]);
+        for (int i = 0; i < type.getOverlayLayers(); i++) {
+            Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier, i);
+            for (int s = 0; s < 6; s++) {
+                String suffix = i == 0 ? "" : String.valueOf(i);
+                b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName() + suffix, overlays[s]);
+            }
         }
+
     }
 
     @Override
@@ -296,16 +301,21 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         buildModelsForState(builder, MachineState.IDLE);
         buildModelsForState(builder, MachineState.ACTIVE);
         builder.loader(AntimatterModelManager.LOADER_MACHINE);
-        builder.property("particle", getType().getBaseTexture(tier)[0].toString());
+        builder.property("particle", getType().getBaseTexture(tier, MachineState.IDLE)[0].toString());
         prov.state(block, builder);
     }
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
-        Texture[] overlays = type.getOverlayTextures(state, tier);
         List<JLoaderModel> arr = new ArrayList<>();
 
         for (Direction dir : Ref.DIRS) {
-            JLoaderModel obj = builder.addModelObject(JLoaderModel.modelKeepElements(), this.getType().getOverlayModel(state, dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
+            ImmutableMap.Builder<String, String> builder1 = ImmutableMap.builder();
+            builder1.put("base", getType().getBaseTexture(tier, dir, state).toString());
+            for (int i = 0; i < type.getOverlayLayers(); i++) {
+                String suffix = i == 0 ? "" : String.valueOf(i);
+                builder1.put("overlay" + suffix, type.getOverlayTextures(state, tier, i)[dir.get3DDataValue()].toString());
+            }
+            JLoaderModel obj = builder.addModelObject(JLoaderModel.modelKeepElements(), this.getType().getOverlayModel(state, dir).toString(), builder1.build());
             //obj.loader(AntimatterModelManager.LOADER_MACHINE_SIDE.getLoc().toString());
             arr.add(obj);
         }

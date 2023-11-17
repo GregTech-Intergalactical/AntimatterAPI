@@ -3,6 +3,7 @@ package muramasa.antimatter.machine.types;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.*;
 import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
@@ -129,6 +130,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     protected boolean renderTesr = false;
     protected boolean renderContainedLiquids = false;
+    @Getter
+    @Setter
+    protected int overlayLayers = 1;
 
     /**
      * Covers
@@ -149,7 +153,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.domain = domain;
         this.id = id;
         //Default implementation.
-        overlayTextures = (type, state, tier) -> {
+        overlayTextures = (type, state, tier, i) -> {
             state = state.getTextureState();
             String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
             return new Texture[]{
@@ -161,7 +165,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
             };
         };
-        baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
+        baseTexture = (m, tier, state) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         overlayModels = (a,s,d) -> {
             return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
         };
@@ -374,7 +378,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T baseTexture(Texture tex) {
-        this.baseTexture = (m, state) -> new Texture[]{tex};
+        this.baseTexture = (m, tier, state) -> new Texture[]{tex};
         return (T) this;
     }
 
@@ -490,30 +494,33 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         List<Texture> textures = new ObjectArrayList<>();
         for (Tier tier : getTiers()) {
             //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
-            textures.addAll(Arrays.asList(getBaseTexture(tier)));
-            textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE, tier)));
-            textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE, tier)));
+            textures.addAll(Arrays.asList(getBaseTexture(tier, MachineState.IDLE)));
+            textures.addAll(Arrays.asList(getBaseTexture(tier, MachineState.ACTIVE)));
+            for (int i = 0; i < overlayLayers; i++) {
+                textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE, tier, i)));
+                textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE, tier, i)));
+            }
         }
         return textures;
     }
 
-    public Texture[] getBaseTexture(Tier tier) {
-        return getDatedBaseHandler().getBase(this, tier);
+    public Texture[] getBaseTexture(Tier tier, MachineState state) {
+        return getDatedBaseHandler().getBase(this, tier, state);
     }
 
-    public Texture getBaseTexture(Tier tier, Direction dir) {
-        Texture[] texes = getDatedBaseHandler().getBase(this, tier);
+    public Texture getBaseTexture(Tier tier, Direction dir, MachineState state) {
+        Texture[] texes = getDatedBaseHandler().getBase(this, tier, state);
         if (texes.length == 1) return texes[0];
         return texes[dir.get3DDataValue()];
     }
 
 
-    public Texture[] getOverlayTextures(MachineState state, Tier tier) {
-        return getDatedOverlayHandler().getOverlays(this, state, tier);
+    public Texture[] getOverlayTextures(MachineState state, Tier tier, int index) {
+        return getDatedOverlayHandler().getOverlays(this, state, tier, index);
     }
 
-    public Texture[] getOverlayTextures(MachineState state) {
-        return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier());
+    public Texture[] getOverlayTextures(MachineState state, int index) {
+        return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier(), index);
     }
 
     public ResourceLocation getOverlayModel(MachineState state,Direction side) {
@@ -709,7 +716,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return getOverlayModel(MachineState.IDLE, dir);
     }
 
-    public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier) -> new Texture[] {
+    public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier, i) -> new Texture[] {
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
@@ -718,7 +725,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             new Texture(Ref.ID, "block/machine/troll"),
     };
 
-    public static final ITextureHandler TROLL_BASE_HANDLER = (type, tier) -> new Texture[] {
+    public static final ITextureHandler TROLL_BASE_HANDLER = (type, tier, state) -> new Texture[] {
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
