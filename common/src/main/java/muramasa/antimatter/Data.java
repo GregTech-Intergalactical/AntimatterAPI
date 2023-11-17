@@ -75,6 +75,11 @@ public class Data {
         public ContainerMachine<?> getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
             return tile instanceof BlockEntityMachine ? new ContainerBasicMachine((BlockEntityMachine<?>) tile, playerInv, this, windowId) : null;
         }
+
+        @Override
+        public String screenID() {
+            return "machine";
+        }
     };
 
     public static MenuHandlerPipe<?> PIPE_MENU_HANDLER = new MenuHandlerPipe<>(Ref.ID, "container_pipe");
