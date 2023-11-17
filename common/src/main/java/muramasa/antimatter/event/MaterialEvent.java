@@ -399,6 +399,13 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         }
 
         public T build(){
+            List<AntimatterToolType> toRemove = new ArrayList<>(allowedToolTypes);
+            for (AntimatterToolType allowedToolType : allowedToolTypes) {
+                if (allowedToolType.getPrimaryMaterialRequirement() != null && !material.has(allowedToolType.getPrimaryMaterialRequirement())){
+                    toRemove.remove(allowedToolType);
+                }
+            }
+            allowedToolTypes = ImmutableList.copyOf(toRemove);
             return MaterialEvent.this.buildTool(new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, handleMaterial, toolEnchantments, allowedToolTypes));
         }
     }
