@@ -23,6 +23,7 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
 
     public AntimatterContainerScreen(T container, Inventory invPlayer, Component title) {
         super(container, invPlayer, title);
+        
         container.source().initClient(this);
     }
 

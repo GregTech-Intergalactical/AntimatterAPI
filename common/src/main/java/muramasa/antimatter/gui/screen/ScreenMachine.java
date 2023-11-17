@@ -18,8 +18,13 @@ public class ScreenMachine<T extends BlockEntityMachine<T>, U extends ContainerM
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
+    }
+
+    @Override
+    protected void init() {
         this.imageHeight = container.handler.handler.guiHeight();
         this.imageWidth = container.handler.handler.guiSize();
+        super.init();
     }
 
     protected void drawTitle(PoseStack stack, int mouseX, int mouseY) {
