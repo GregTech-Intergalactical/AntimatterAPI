@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.*;
@@ -399,13 +400,14 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         }
 
         public T build(){
-            List<AntimatterToolType> toRemove = new ArrayList<>(allowedToolTypes);
+            List<AntimatterToolType> toolTypes = new ArrayList<>(allowedToolTypes);
             for (AntimatterToolType allowedToolType : allowedToolTypes) {
                 if (allowedToolType.getPrimaryMaterialRequirement() != null && !material.has(allowedToolType.getPrimaryMaterialRequirement())){
-                    toRemove.remove(allowedToolType);
+                    toolTypes.remove(allowedToolType);
                 }
             }
-            allowedToolTypes = ImmutableList.copyOf(toRemove);
+            if (toolTypes.contains(AntimatterDefaultTools.WRENCH) && !toolTypes.contains(AntimatterDefaultTools.WRENCH_ALT)) toolTypes.add(AntimatterDefaultTools.WRENCH_ALT);
+            allowedToolTypes = ImmutableList.copyOf(toolTypes);
             return MaterialEvent.this.buildTool(new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, handleMaterial, toolEnchantments, allowedToolTypes));
         }
     }
