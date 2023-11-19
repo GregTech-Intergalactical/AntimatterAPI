@@ -35,31 +35,6 @@ public class MaterialRecipes {
                 provider.shapeless(consumer,"nugget_" + m.getId() + "_from_ingot", "ingots", AntimatterMaterialTypes.NUGGET.get(m, 9), AntimatterMaterialTypes.INGOT.getMaterialTag(m));
             }
         });
-
-        AntimatterMaterialTypes.DUST.all().forEach(m -> {
-            if (m.has(AntimatterMaterialTypes.INGOT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_ingot", "antimatter_material",
-                        AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
-                                .put('M', AntimatterDefaultTools.MORTAR.getTag())
-                                .put('I', AntimatterMaterialTypes.INGOT.getMaterialTag(m))
-                                .build(),
-                        "MI");
-            }
-            if (m.has(AntimatterMaterialTypes.ROCK)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_rock", "antimatter_material",
-                        AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
-                                .put('M', AntimatterDefaultTools.MORTAR.getTag())
-                                .put('I', AntimatterMaterialTypes.ROCK.getMaterialTag(m))
-                                .build(),
-                        "II ", "IIM");
-                provider.shapeless(consumer, m.getId() + "_grind_rock_2", "antimatter_material", AntimatterMaterialTypes.DUST_SMALL.get(m, 1),
-                        AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.ROCK.getMaterialTag(m));
-            }
-            if (m.has(AntimatterMaterialTypes.CRUSHED)){
-                provider.shapeless(consumer, m.getId() + "_grind_crushed", "antimatter_material", AntimatterMaterialTypes.DUST_IMPURE.get(m, 1),
-                        AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.CRUSHED.getMaterialTag(m));
-            }
-        });
         AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(HAS_CUSTOM_SMELTING) && SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
             if (m != AntimatterMaterials.Iron && m != AntimatterMaterials.Copper && m != AntimatterMaterials.Gold) {
                 addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.INGOT, 1, m, SMELT_INTO.getMapping(m));
