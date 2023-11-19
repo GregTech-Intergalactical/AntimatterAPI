@@ -57,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.data.AntimatterStoneTypes.BEDROCK;
+
 //import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 
 
@@ -183,7 +185,7 @@ public class Antimatter extends AntimatterMod {
                 if (!AntimatterConfig.SHOW_ROCKS.get()){
                     AntimatterMaterialTypes.ROCK.all().forEach(m -> {
                         AntimatterAPI.all(StoneType.class, s -> {
-                            if (s.doesGenerateOre()) {
+                            if (s.doesGenerateOre() && s != BEDROCK) {
                                 l.add(AntimatterMaterialTypes.ROCK.get().get(m, s).asBlock());
                             }
                         });
