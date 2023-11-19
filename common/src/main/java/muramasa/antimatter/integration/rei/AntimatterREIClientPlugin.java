@@ -97,33 +97,6 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerBasicEntryFiltering(BasicFilteringRule<?> rule) {
-        if (!AntimatterConfig.SHOW_ALL_ORES.get()){
-            AntimatterMaterialTypes.ORE.all().forEach(m -> {
-                AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.doesGenerateOre()){
-                        Block ore = AntimatterMaterialTypes.ORE.get().get(m, s).asBlock();
-                        if (ore instanceof BlockOre){
-                            rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
-                        }
-                        if (m.has(AntimatterMaterialTypes.ORE_SMALL)){
-                            ore = AntimatterMaterialTypes.ORE_SMALL.get().get(m, s).asBlock();
-                            if (ore instanceof BlockOre){
-                                rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
-                            }
-                        }
-                    }
-                });
-            });
-        }
-        if (!AntimatterConfig.SHOW_ROCKS.get()){
-            AntimatterMaterialTypes.ROCK.all().forEach(m -> {
-                AntimatterAPI.all(StoneType.class, s -> {
-                    if (s.doesGenerateOre()) {
-                        rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, AntimatterMaterialTypes.ROCK.get().get(m, s).asStack()));
-                    }
-                });
-            });
-        }
         List<ItemLike> list = new ArrayList<>();
         AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         list.forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));

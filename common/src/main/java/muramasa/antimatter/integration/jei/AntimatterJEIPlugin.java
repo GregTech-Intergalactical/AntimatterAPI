@@ -21,6 +21,8 @@ import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
+import muramasa.antimatter.item.ItemBattery;
+import muramasa.antimatter.item.ItemMultiTextureBattery;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
@@ -44,6 +46,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
+import tesseract.TesseractCapUtils;
+import tesseract.api.gt.IGTNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,13 +75,6 @@ public class AntimatterJEIPlugin implements IModPlugin {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         runtime = jeiRuntime;
         //Remove fluid "blocks".
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BY_BLOCK.get(t.getFluidBlock()))).collect(Collectors.toList()));
-        AntimatterAPI.all(MaterialTypeItem.class, t -> {
-            if (!t.hidden()) return;
-            List<ItemStack> stacks = (List<ItemStack>) t.all().stream().map(obj -> t.get((Material)obj, 1)).collect(Collectors.toList());
-            if (stacks.isEmpty()) return;
-            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, stacks);
-        });
         List<ItemLike> list = new ArrayList<>();
         AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         if (!list.isEmpty()) {
@@ -86,6 +83,19 @@ public class AntimatterJEIPlugin implements IModPlugin {
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
+    }
+
+
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+        if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
+        AntimatterAPI.all(ItemMultiTextureBattery.class).forEach(i -> {
+            registration.registerSubtypeInterpreter(i, (s, c) -> {
+                long energy = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
+                return "e:" + energy + "/" + i.getCapacity();
+            });
+        });
     }
 
     @Override

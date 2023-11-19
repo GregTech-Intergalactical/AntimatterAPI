@@ -13,6 +13,7 @@ import muramasa.antimatter.datagen.loaders.StoneRecipes;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
@@ -21,6 +22,8 @@ import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.network.AntimatterNetwork;
+import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
@@ -34,18 +37,25 @@ import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 
@@ -150,6 +160,44 @@ public class Antimatter extends AntimatterMod {
             if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) || AntimatterAPI.isModLoaded(Ref.MOD_REI)){
                 AntimatterJEIREIPlugin.registerMissingMaps();
             }
+            AntimatterJEIREIPlugin.addItemsToHide(l -> {
+                if (!AntimatterConfig.SHOW_ALL_ORES.get()){
+                    AntimatterAPI.all(StoneType.class, s -> {
+                        if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.doesGenerateOre()){
+                            AntimatterMaterialTypes.ORE.all().forEach(m -> {
+                                Block ore = AntimatterMaterialTypes.ORE.get().get(m, s).asBlock();
+                                if (ore instanceof BlockOre){
+                                    l.add(ore);
+                                }
+                            });
+                            AntimatterMaterialTypes.ORE_SMALL.all().forEach(m -> {
+                                Block ore = AntimatterMaterialTypes.ORE_SMALL.get().get(m, s).asBlock();
+                                if (ore instanceof BlockOre){
+                                    l.add(ore);
+                                }
+                            });
+                        }
+                    });
+
+                }
+                if (!AntimatterConfig.SHOW_ROCKS.get()){
+                    AntimatterMaterialTypes.ROCK.all().forEach(m -> {
+                        AntimatterAPI.all(StoneType.class, s -> {
+                            if (s.doesGenerateOre()) {
+                                l.add(AntimatterMaterialTypes.ROCK.get().get(m, s).asBlock());
+                            }
+                        });
+                    });
+                }
+                AntimatterAPI.all(MaterialTypeItem.class, t -> {
+                    if (!t.hidden()) return;
+                    List<ItemLike> stacks = (List<ItemLike>) t.all().stream().map(obj -> t.get((Material)obj)).collect(Collectors.toList());
+                    if (stacks.isEmpty()) return;
+                    l.addAll(stacks);
+                });
+                AntimatterAPI.all(IAntimatterTool.class).stream().filter(t -> t.getAntimatterToolType() == AntimatterDefaultTools.WRENCH_ALT).forEach(tool -> l.add(tool.getItem()));
+                AntimatterAPI.all(AntimatterFluid.class).forEach(t -> l.add(t.getFluidBlock()));
+            });
             AntimatterAPI.all(Material.class).forEach(m -> {
                 Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
                 if (map != null){
