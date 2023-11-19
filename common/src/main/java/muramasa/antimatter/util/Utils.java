@@ -19,6 +19,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -1264,6 +1265,7 @@ public class Utils {
             if (type instanceof MaterialType<?> matType) {
                 return StringUtils.join(getLocalizedMaterialType(matType));
             }
+            if (type == AntimatterDefaultTools.WRENCH_ALT) return "Wrench (Alt)";
             return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id), '_', ' ');
         }
         return StringUtils.capitalize(id);
