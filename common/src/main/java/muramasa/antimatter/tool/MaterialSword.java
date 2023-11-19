@@ -217,6 +217,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     }
 
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if (type.getBlacklistedEnchantments().contains(enchantment)) return false;
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : enchantment.category.canEnchant(stack.getItem());
     }
 

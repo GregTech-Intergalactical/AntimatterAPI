@@ -25,6 +25,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -51,6 +52,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     @Setter
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
+    @Getter
+    @Setter
+    private Set<Enchantment> blacklistedEnchantments = new HashSet<>();
     @Getter
     private final List<Component> tooltip = new ObjectArrayList<>();
     @Getter
@@ -297,6 +301,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         if (materials.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
         this.effectiveMaterials.addAll(Arrays.asList(materials));
+        return this;
+    }
+    public AntimatterToolType addBlacklistedEnchantments(Enchantment... enchantments){
+        blacklistedEnchantments.addAll(Arrays.asList(enchantments));
         return this;
     }
 
