@@ -1,5 +1,7 @@
 package muramasa.antimatter.blockentity.multi;
 
+import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
@@ -11,18 +13,22 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.HatchMachine;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.structure.IComponent;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERENERGY;
@@ -32,6 +38,9 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
 
     public final Optional<HatchComponentHandler<T>> componentHandler;
     public final HatchMachine hatchMachine;
+    @Getter
+    @Setter
+    private ITextureProvider textureBlock = null;
 
     public BlockEntityHatch(HatchMachine type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -84,6 +93,20 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
     @Override
     public Optional<HatchComponentHandler<T>> getComponentHandler() {
         return componentHandler;
+    }
+
+    public Texture getBaseTexture(Direction side){
+        if (textureBlock == null || textureBlock.getTextures().length == 0) return null;
+        if (textureBlock.getTextures().length >= 6){
+            return textureBlock.getTextures()[side.get3DDataValue()];
+        }
+        return textureBlock.getTextures()[0];
+    }
+
+    @Override
+    public Function<Direction, Texture> getMultiTexture() {
+        if (textureBlock == null || textureBlock.getTextures().length == 0) return null;
+        return this::getBaseTexture;
     }
 
     @Override

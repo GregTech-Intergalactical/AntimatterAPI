@@ -1,7 +1,9 @@
 package muramasa.antimatter.machine.types;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.widget.ProgressWidget;
@@ -14,6 +16,7 @@ import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +27,9 @@ import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.MULTI;
 
 public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
+
+    @Getter
+    Function<Tier, BlockBasic> textureBlock;
 
     public BasicMultiMachine(String domain, String name) {
         super(domain, name);
@@ -80,5 +86,15 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
             if (patterns.length == 0) return;
             AntimatterJEIREIPlugin.registerPatternForJei(this, tier, Arrays.stream(patterns).collect(Collectors.toList()));
         }
+    }
+
+    public T setTextureBlock(BlockBasic textureBlock){
+        this.textureBlock = t -> textureBlock;
+        return (T) this;
+    }
+
+    public T setTextureBlock(Function<Tier, BlockBasic> textureBlock){
+        this.textureBlock = textureBlock;
+        return (T) this;
     }
 }

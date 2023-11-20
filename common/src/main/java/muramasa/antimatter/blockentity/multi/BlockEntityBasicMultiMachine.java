@@ -21,8 +21,10 @@ import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureHandle;
@@ -39,6 +41,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
@@ -414,6 +417,13 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         Texture[] tex = this.getMachineType().getBaseTexture(this.getMachineTier(), this.getMachineState().getTextureState());
         if (tex.length == 1) return tex[0];
         return tex[dir.get3DDataValue()];
+    }
+
+    public ITextureProvider getHatchBlock(BlockPos pos){
+        if (this.getMachineType() instanceof BasicMultiMachine<?> multiMachine && multiMachine.getTextureBlock() != null){
+            return multiMachine.getTextureBlock().apply(tier);
+        }
+        return () -> this.getMachineType().getBaseTexture(this.getMachineTier(), this.getMachineState().getTextureState());
     }
 
     @Override
