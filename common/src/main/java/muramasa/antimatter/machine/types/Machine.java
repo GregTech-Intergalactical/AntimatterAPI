@@ -71,7 +71,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
     @Getter
-    protected ITooltipInfo tooltipFunction = (m, s, w, t, f) -> {};
+    protected List<ITooltipInfo> tooltipFunctions = new ArrayList<>();
     protected String domain, id;
     @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
@@ -431,16 +431,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T setTooltipInfo(String translationKey){
-        return setTooltipInfo((m, s,w,t,f) -> t.add(Utils.translatable(translationKey)));
+    public T addTooltipInfo(String translationKey){
+        return addTooltipInfo((m, s,w,t,f) -> t.add(Utils.translatable(translationKey)));
     }
 
-    public T setTooltipInfo(Component tooltip){
-        return setTooltipInfo((m, s,w,t,f) -> t.add(tooltip));
+    public T addTooltipInfo(Component tooltip){
+        return addTooltipInfo((m, s,w,t,f) -> t.add(tooltip));
     }
 
+    @Deprecated
     public T setTooltipInfo(ITooltipInfo info){
-        this.tooltipFunction = info;
+        return this.addTooltipInfo(info);
+    }
+
+    public T addTooltipInfo(ITooltipInfo info){
+        this.tooltipFunctions.add(info);
         return (T) this;
     }
 

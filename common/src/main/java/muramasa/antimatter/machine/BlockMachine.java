@@ -272,7 +272,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                 tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
             }
         }
-        this.type.getTooltipFunction().getTooltips(this, stack, world, tooltip, flag);
+        this.type.getTooltipFunctions().forEach(t -> t.getTooltips(this, stack, world, tooltip, flag));
     }
 
     @Override

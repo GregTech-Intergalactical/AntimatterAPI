@@ -28,7 +28,7 @@ public class TankMachine extends Machine<TankMachine> {
         super(domain, name);
         this.capacityPerTier = capacityPerTier;
         setTile(BlockEntityTank::new);
-        setTooltipInfo((machine, stack, world, tooltip, flag) -> {
+        addTooltipInfo((machine, stack, world, tooltip, flag) -> {
             tooltip.add(Utils.translatable("machine.tank.capacity", capacityPerTier.apply(machine.getTier())));
         });
         addFlags(ITEM, FLUID, COVERABLE);

@@ -40,7 +40,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setClientTicking();
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);
-        setTooltipInfo((machine, stack, world, tooltip, flag) -> {
+        addTooltipInfo((machine, stack, world, tooltip, flag) -> {
             if (machine.getType().getStructure(machine.getTier()) != null) {
                 tooltip.add(Utils.translatable("machine.structure.form"));
             }
