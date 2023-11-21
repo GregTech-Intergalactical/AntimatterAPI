@@ -88,13 +88,13 @@ public class BlockEntityDigitalTransformer<T extends BlockEntityDigitalTransform
                 if (isDefaultMachineState()) {
                     h.setInputVoltage(getMachineTier().getVoltage());
                     h.setOutputVoltage(voltage);
-                    h.setInputAmperage(amperage);
-                    h.setOutputVoltage(1);
+                    h.setOutputAmperage(amperage);
+                    h.setInputAmperage(1);
                 } else {
                     h.setInputVoltage(voltage);
                     h.setOutputVoltage(getMachineTier().getVoltage());
-                    h.setInputAmperage(1);
-                    h.setOutputVoltage(amperage);
+                    h.setOutputAmperage(1);
+                    h.setInputAmperage(amperage);
                 }
             });
         }
