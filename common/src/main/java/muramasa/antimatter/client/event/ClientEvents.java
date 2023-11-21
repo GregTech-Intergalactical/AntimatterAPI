@@ -71,7 +71,8 @@ public class ClientEvents {
             return true;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
-        AntimatterToolType type = item.getAntimatterToolType();
+        AntimatterToolType type = Utils.getToolType(player);
+        if (type == null) return false;
         if (player.isCrouching() && type != AntimatterDefaultTools.WRENCH && type != AntimatterDefaultTools.CROWBAR && type != AntimatterDefaultTools.WIRE_CUTTER)
             return false;
         //Perform highlight of wrench
