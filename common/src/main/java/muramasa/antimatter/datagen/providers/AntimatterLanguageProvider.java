@@ -136,13 +136,15 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
         if (domain.equals(Ref.ID)) {
             AntimatterAPI.all(IAntimatterTool.class, t -> {
+                String customName = t.getAntimatterToolType().getCustomName().isEmpty() ? Utils.getLocalizedType(t.getAntimatterToolType()) : t.getAntimatterToolType().getCustomName();
                 if (t.getAntimatterToolType().isPowered()) {
-                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+                    String defaultName = Utils.getLocalizedType(t.getAntimatterToolType());
+                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()).replace(defaultName, customName));
                 } else {
                     if (t.getAntimatterToolType().isSimple()){
-                        add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + Utils.getLocalizedType(t.getAntimatterToolType()));
+                        add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + customName);
                     } else {
-                        add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+                        add(t.getItem().getDescriptionId(), customName);
                     }
                 }
 

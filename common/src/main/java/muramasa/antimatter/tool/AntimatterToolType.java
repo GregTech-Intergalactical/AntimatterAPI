@@ -102,6 +102,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     @Setter
     private MaterialTypeItem<?> materialTypeItem;
+    @Getter
+    @Setter
+    private String customName = "";
 
     /**
      * Instantiates a AntimatterToolType with its basic values

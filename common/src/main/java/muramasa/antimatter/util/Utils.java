@@ -1265,7 +1265,6 @@ public class Utils {
             if (type instanceof MaterialType<?> matType) {
                 return StringUtils.join(getLocalizedMaterialType(matType));
             }
-            if (type == AntimatterDefaultTools.WRENCH_ALT) return "Wrench (Alt)";
             return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id), '_', ' ');
         }
         return StringUtils.capitalize(id);
