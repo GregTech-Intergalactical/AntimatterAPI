@@ -88,6 +88,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
     @Override
     public long insertAmps(long voltage, long amps, boolean simulate) {
         if (voltage < 0 || amps < 0) return 0;
+        if (getState().getAmpsReceived() >= getInputAmperage()) return 0;
         int loss = canInput() && canOutput() ? 1 : 0;
         if (getInputVoltage() == 0) return 0;
         amps = Math.min((getCapacity() - getEnergy()) / getInputVoltage(), amps);
@@ -154,6 +155,9 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
         }
         if (euInserted > 0){
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED);
+        }
+        if (leftover == 0){
+            this.state.receive(simulate, 1);
         }
         return euInserted;
     }
