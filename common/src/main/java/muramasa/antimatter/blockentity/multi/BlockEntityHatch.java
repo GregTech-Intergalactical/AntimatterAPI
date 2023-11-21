@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
@@ -47,6 +48,9 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         this.hatchMachine = type;
         componentHandler = Optional
                 .of(new HatchComponentHandler<>((T)this));
+        if (type.has(FLUID)) {
+            fluidHandler.set(() -> new MachineFluidHandler<>((T) this, 16000 * (getMachineTier().getIntegerId()), 1000 * (250 + getMachineTier().getIntegerId())));
+        }
         if (type.has(EU)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
                     type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
