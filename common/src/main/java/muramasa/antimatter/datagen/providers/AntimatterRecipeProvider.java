@@ -102,12 +102,12 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         return recipeBuilder;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void shapeless(Consumer<FinishedRecipe> consumer, String recipeID, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Object... inputs) {
         shapeless(consumer, Ref.ID, recipeID, groupName, output, inputs);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void shapeless(Consumer<FinishedRecipe> consumer, String domain, String recipeID, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Object... inputs) {
         shapeless(consumer, domain, recipeID, groupName, output, inputs);
     }
@@ -151,12 +151,12 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         }
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void addItemRecipe(Consumer<FinishedRecipe> consumer, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         addStackRecipe(consumer, "", "", groupName, criterionName, criterion, new ItemStack(output), inputs, inputPattern);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void addItemRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         addStackRecipe(consumer, recipeDomain, recipeName, groupName, criterionName, criterion, new ItemStack(output), inputs, inputPattern);
     }
@@ -173,7 +173,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         addStackRecipe(consumer, recipeDomain, recipeName, groupName, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void addStackRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, false, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
@@ -196,7 +196,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, criterionName, criterion, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void addToolRecipe(String builder, Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, output, inputs, inputPattern);
     }
