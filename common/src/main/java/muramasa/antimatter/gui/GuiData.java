@@ -113,4 +113,13 @@ public class GuiData {
         this.backgroundTextures.put(tier.getId(), new ResourceLocation(loc.getNamespace(), "textures/gui/background/" + textureName + ".png"));
         return this;
     }
+
+    public GuiData setBackgroundTexture(ResourceLocation textureName){
+        this.backgroundTextures.put("", new ResourceLocation(textureName.getNamespace(), "textures/gui/background/" + textureName.getPath() + ".png"));
+        return this;
+    }
+    public GuiData setBackgroundTexture(Tier tier, ResourceLocation textureName){
+        this.backgroundTextures.put(tier.getId(), new ResourceLocation(textureName.getNamespace(), "textures/gui/background/" + textureName.getPath() + ".png"));
+        return this;
+    }
 }
