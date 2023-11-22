@@ -180,16 +180,18 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
             return false;
         if (get(side).isEmpty() || !set(side, ICover.empty, !onlyRemove))
             return false;
-        if (!onlyRemove && !player.isCreative()) {
+        if (!onlyRemove  && player != null && !player.isCreative()) {
             ItemStack dropped = oldCover.getDroppedStack();
             if (!player.addItem(dropped)) {
                 player.drop(dropped, false);
             }
         }
-        if (Utils.getToolType(player) != WRENCH) {
-            player.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
-        } else {
-            player.getLevel().playSound(null, tile.getBlockPos(), Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
+        if (player != null) {
+            if (Utils.getToolType(player) != WRENCH) {
+                player.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
+            } else {
+                player.getLevel().playSound(null, tile.getBlockPos(), Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
+            }
         }
         return true;
     }
