@@ -711,7 +711,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (slots.length() > 0) info.add("Slots:" + slots);
         if (type.has(RF))
             rfHandler.ifPresent(h -> info.add("RF: " + h.getStoredEnergy() + " / " + h.getMaxCapacity()));
-        else
+        if (type.has(EU))
             energyHandler.ifPresent(h -> info.add("EU: " + h.getEnergy() + " / " + h.getCapacity()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");

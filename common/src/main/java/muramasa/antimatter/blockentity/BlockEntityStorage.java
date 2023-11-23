@@ -17,7 +17,7 @@ public abstract class BlockEntityStorage<T extends BlockEntityStorage<T>> extend
     public BlockEntityStorage(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
 
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1,0) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1,1) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
@@ -27,22 +27,6 @@ public abstract class BlockEntityStorage<T extends BlockEntityStorage<T>> extend
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 super.onMachineEvent(event, data);
-            }
-
-            @Override
-            public void onUpdate() {
-                super.onUpdate();
-                if (this.energy > 0 && !cachedItems.isEmpty()){
-                    long energyToInsert = this.energy % cachedItems.size() == 0 ? this.energy / cachedItems.size() : this.energy;
-                    cachedItems.forEach(h ->{
-                        long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.right().getCapacity() - h.right().getEnergy()));
-                        if (toAdd > 0 && Utils.addEnergy(h.right(), toAdd)){
-                            h.left().setTag(h.right().getContainer().getTag());
-                            this.energy -= toAdd;
-                        }
-                    });
-                }
-
             }
 
             @Override
