@@ -333,7 +333,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         long currentEnergy = h.getEnergy();
         Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
         int energyEfficiency = enchants.getOrDefault(Data.ENERGY_EFFICIENCY, 0);
-        int energyUse = Math.min(10, 100 - (int)((energyEfficiency * 0.1f) * 100));
+        int energyUse = Math.max(10, 100 - (int)((energyEfficiency * 0.1f) * 100));
         int multipliedDamage = amount * energyUse;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
