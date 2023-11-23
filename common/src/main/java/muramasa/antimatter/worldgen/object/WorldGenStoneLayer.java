@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -19,10 +20,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Getter
 public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     private static Int2ObjectOpenHashMap<List<StoneLayerOre>> COLLISION_MAP = new Int2ObjectOpenHashMap<>();
 
+    @Nullable
     private StoneType stoneType;
     private BlockState stoneState;
     private StoneLayerOre[] ores = new StoneLayerOre[0];
@@ -45,27 +48,6 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
         }
         this.ores = ores;
         return this;
-    }
-
-    @Nullable
-    public StoneType getStoneType() {
-        return stoneType;
-    }
-
-    public BlockState getStoneState() {
-        return stoneState;
-    }
-
-    public int getMinY() {
-        return minY;
-    }
-
-    public int getMaxY() {
-        return maxY;
-    }
-
-    public StoneLayerOre[] getOres() {
-        return ores;
     }
 
     public static void setCollisionMap(Int2ObjectOpenHashMap<List<StoneLayerOre>> collisionMap) {

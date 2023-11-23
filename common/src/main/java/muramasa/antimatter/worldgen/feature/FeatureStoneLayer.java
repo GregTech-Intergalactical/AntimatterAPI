@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.*;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
@@ -105,10 +106,11 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                         }
                     }
 
-                    if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
+                    if (lastMaterial != null && lastMaterial.has(AntimatterMaterialTypes.ORE)) {
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
+                        int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.setRock(world, offset, lastMaterial, below, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
+                            WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), lastMaterial, below, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
                         }
                     }
 
