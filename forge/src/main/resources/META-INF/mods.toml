@@ -10,7 +10,7 @@ displayName="AntimatterAPI"
 displayURL="https://github.com/GregTech-Intergalactical/AntimatterAPI"
 #logoFile="examplemod.png"
 credits="mitchej123, e99999, qubka, Vliro, repolainen, Trinsdar for general implementations/fixes"
-authors="Muramasa, Rongmario, Trinsdar"
+authors="Muramasa, Rongmario, Trinsdar, Vliro"
 description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
 [[dependencies.antimatter]]
     modId="forge"
