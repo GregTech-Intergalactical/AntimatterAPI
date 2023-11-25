@@ -86,7 +86,7 @@ public class AntimatterConfig {
         ORE_VEINS = oreVeins.addBool("ore_veins", true, "Enable ore veins - Default: true");
         ORE_VEIN_MAX_SIZE = oreVeins.addInt("ore_vein_max_size", 32, "Maximum size of an ore vein - Default: 32").setMin(1);
         ORE_VEIN_CHANCE = oreVeins.addInt("ore_vein_chance", 100, "Control percentage of filled 3x3 chunks. Lower number means less ore veins would spawn - Default : 100").setMin(1);
-        ORE_VEIN_ROCK_CHANCE = oreVeins.addInt("ore_vein_rock_chance", 16, "Chance of ore veins having surface rocks. The lower the number, the higher the chance. - Default: 16").setMin(1);
+        ORE_VEIN_ROCK_CHANCE = oreVeins.addInt("ore_vein_rock_chance", 16, "Chance of ore veins having surface rocks. chance is 1/(the number) - Default: 16").setMin(1);
         ORE_VEIN_FIND_ATTEMPTS = oreVeins.addInt("ore_vein_find_attempts", 64, "Control number of attempts to find a valid ore vein,",
                         "Generally this maximum limit isn't hit, as selecting a vein is performant - Default : 64")
                 .setMin(1).setRequiredReload(ReloadMode.WORLD);
@@ -101,7 +101,7 @@ public class AntimatterConfig {
         ConfigSection stoneLayers = world.addSubSection("stone_layers");
         STONE_LAYERS = stoneLayers.addBool("stone_layers", true, "Enable stone layers - Default: true");
         STONE_LAYER_ORES = stoneLayers.addBool("stone_layer_ores", true, "Enable stone layers having ores - Default: true");
-        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 8, "Chance of stone layers having surface rocks - Default: 8");
+        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 20, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 8");
 
         ConfigSection gameplay = config.add("gameplay");
         INPUT_RESET_MULTIBLOCK = gameplay.addBool("input_reset_mulitblock", false, "Whether or not to reconsume recipe inputs on multiblock failure - Default : false");
