@@ -6,6 +6,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.behaviour.IDestroySpeed;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.item.IContainerItem;
@@ -47,6 +50,7 @@ import tesseract.api.gt.IEnergyHandlerItem;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -139,6 +143,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (type.getEffectiveBlocks().contains(state.getBlock())) {
             return true;
         }
+        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
+            if (state.is(effectiveBlockTag)){
+                return true;
+            }
+        }
         boolean isType = false;
         for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
             if (state.is(toolType)){
@@ -214,10 +223,20 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
+        float destroySpeed = isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
-            return 0.2f;
+            destroySpeed = 0.2f;
         }
-        return isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IDestroySpeed destroySpeed1)) continue;
+            float i = destroySpeed1.getDestroySpeed(this, destroySpeed, stack, state);
+            if (i > 0){
+                destroySpeed = i;
+                break;
+            }
+        }
+        return destroySpeed;
     }
 
     @Override

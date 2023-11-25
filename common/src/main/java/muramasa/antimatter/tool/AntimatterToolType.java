@@ -46,6 +46,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
     @Getter
+    private final Set<TagKey<Block>> effectiveBlockTags = new ObjectOpenHashSet<>();
+    @Getter
     private final Set<net.minecraft.world.level.material.Material> effectiveMaterials = new ObjectOpenHashSet<>();
     @Getter
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
@@ -297,6 +299,14 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         if (blocks.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective blocks even when it was explicitly called!");
         this.effectiveBlocks.addAll(Arrays.asList(blocks));
+        return this;
+    }
+
+    @SafeVarargs
+    public final AntimatterToolType addEffectiveBlockTags(TagKey<Block>... blocks) {
+        if (blocks.length == 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective block tags even when it was explicitly called!");
+        this.effectiveBlockTags.addAll(Arrays.asList(blocks));
         return this;
     }
 
