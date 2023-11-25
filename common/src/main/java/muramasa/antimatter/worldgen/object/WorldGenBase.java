@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -17,9 +18,13 @@ import java.util.stream.Collectors;
 
 public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObject {
 
+    @Getter
     private final String id;
+    @Getter
     private boolean enabled = true;
-    private final Set<ResourceLocation> dimensions;
+    @Getter
+    protected final Set<ResourceLocation> dimensions;
+    @Getter
     private boolean custom;
     public final Class<? extends WorldGenBase<?>> toRegister;
 
@@ -35,22 +40,6 @@ public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObjec
         this.dimensions = dimensions.stream().map(ResourceKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
         this.toRegister = c;
         //AntimatterWorldGenerator.register(c, this);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public Set<ResourceLocation> getDims() {
-        return dimensions;
-    }
-
-    public boolean isCustom() {
-        return custom;
     }
 
     public WorldGenBase<T> asCustom() {

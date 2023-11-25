@@ -108,7 +108,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         json.addProperty("between", between);
         json.addProperty("sporadic", sporadic);
         JsonArray array2 = new JsonArray();
-        getDims().forEach(r -> array2.add(r.toString()));
+        getDimensions().forEach(r -> array2.add(r.toString()));
         if (!array2.isEmpty()){
             json.add("dims", array2);
         }

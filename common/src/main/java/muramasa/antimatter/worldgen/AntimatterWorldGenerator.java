@@ -100,7 +100,7 @@ public class AntimatterWorldGenerator {
     public static void register(Class<?> c, WorldGenBase<?> base) {
         AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
         if (feature != null)
-            base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
+            base.getDimensions().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
     }
 
     public static void register(BiomeLoadEvent consumer, String id, String domain, Predicate<Biome.BiomeCategory> validator) {

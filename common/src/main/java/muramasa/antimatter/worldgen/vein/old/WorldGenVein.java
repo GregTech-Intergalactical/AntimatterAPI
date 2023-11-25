@@ -82,7 +82,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
     }
 
     static List<WorldGenVein> getFlat(WorldGenVein vein){
-        return getFlat(vein.getId(), vein.layer, vein.weight, vein.minY, vein.maxY, vein.density, vein.minSize, vein.maxSize, vein.heightScale, vein.fill, vein.variants, vein.getDims().stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
+        return getFlat(vein.getId(), vein.layer, vein.weight, vein.minY, vein.maxY, vein.density, vein.minSize, vein.maxSize, vein.heightScale, vein.fill, vein.variants, vein.getDimensions().stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
     }
 
     public static Set<Integer> getAllLayers() {
@@ -136,7 +136,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
             json.add("variants", array);
         }
         JsonArray array2 = new JsonArray();
-        getDims().forEach(r -> array2.add(r.toString()));
+        getDimensions().forEach(r -> array2.add(r.toString()));
         if (!array2.isEmpty()){
             json.add("dims", array2);
         }
