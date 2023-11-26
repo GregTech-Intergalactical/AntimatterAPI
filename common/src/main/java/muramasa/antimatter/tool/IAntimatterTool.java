@@ -240,6 +240,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         if (getAntimatterToolType().getUseSound() != null)
             target.getCommandSenderWorld().playSound(null, target.getX(), target.getY(), target.getZ(), getAntimatterToolType().getUseSound(), SoundSource.HOSTILE, volume, pitch);
         Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
+        if (attacker instanceof Player player) refillTool(stack, player);
         return true;
     }
 
@@ -252,7 +253,6 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             if (state.getDestroySpeed(world, pos) != 0.0F) {
                 int damage = isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1;
                 Utils.damageStack(damage, stack, entity);
-                refillTool(stack, player);
             }
         }
         boolean returnValue = true;
@@ -261,6 +261,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             if (!(b instanceof IBlockDestroyed)) continue;
             returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos, entity);
         }
+        if (entity instanceof Player player) refillTool(stack, player);
         return returnValue;
     }
 
