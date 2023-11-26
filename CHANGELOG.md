@@ -8,4 +8,4 @@
 - Added rei support, it's mostly finished.
 - Added The One Probe support
 - Added Raw ore block flags
-- Some other small misc things, see the commits for a better understanding
+- Some other things, see the commit log [here](https://github.com/GregTech-Intergalactical/AntimatterAPI/compare/1.18.2-port...dev-1.18) for a full list of everything that changed.
