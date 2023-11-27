@@ -59,7 +59,7 @@ dependencies{
         transitive = false
     }
     implementation(annotationProcessor(include("io.github.llamalad7:mixinextras-fabric:0.2.0-beta.11")))
-    modImplementation("earth.terrarium:botarium-fabric-1.18.2:${project.botarium_version}"){
+    modImplementation("earth.terrarium:botarium-fabric-1.19.2:${project.botarium_version}"){
         transitive = false
     }
     modImplementation("com.teamresourceful.resourcefullib:resourcefullib-fabric-1.19.2:${project.resourcefullib_version}")
@@ -68,7 +68,7 @@ dependencies{
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation "maven.modrinth:carbon-config:2ngFmmhP"
+    modImplementation "maven.modrinth:carbon-config:yIKfSms3"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
     modCompileOnly "lol.bai.megane:megane-api:${project.megane_version}"
