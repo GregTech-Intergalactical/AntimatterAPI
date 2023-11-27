@@ -34,9 +34,11 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
@@ -54,13 +56,13 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerCollapsibleEntries(CollapsibleEntryRegistry registry) {
-        if (!AntimatterConfig.CLIENT.ADD_REI_GROUPS) return;
+        if (!AntimatterConfig.ADD_REI_GROUPS.get()) return;
 
         AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeItem<?> || t instanceof MaterialTypeBlock<?>).forEach(t -> {
             if (t.get() instanceof MaterialTypeBlock.IOreGetter getter){
                 AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.CLIENT.SHOW_ALL_ORES && t != AntimatterMaterialTypes.ROCK) return;
-                    if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.CLIENT.SHOW_ROCKS) return;
+                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.SHOW_ALL_ORES.get() && t != AntimatterMaterialTypes.ROCK) return;
+                    if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.SHOW_ROCKS.get()) return;
                     List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, getter.get((Material) m, s).asStack())).toList();
                     registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
                 });
@@ -68,7 +70,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                     return;
                 }
             }
-            if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
+            if (AntimatterConfig.GROUP_ORES_ONLY.get()) return;
             Function<Material, ItemStack> func = null;
             if (t instanceof MaterialTypeItem<?> typeItem){
                 func = m -> typeItem.get(m, 1);
@@ -84,7 +86,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, finalFunc.apply((Material) m))).toList();
             registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId()), entries);
         });
-        if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
+        if (AntimatterConfig.GROUP_ORES_ONLY.get()) return;
         AntimatterAPI.all(StoneType.class, s -> {
             if (s instanceof CobbleStoneType cobble){
                 List<EntryStack<ItemStack>> entries = cobble.getBlocks().values().stream().map(b -> EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(b.asItem()))).toList();
@@ -95,33 +97,6 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerBasicEntryFiltering(BasicFilteringRule<?> rule) {
-        if (!AntimatterConfig.CLIENT.SHOW_ALL_ORES){
-            AntimatterMaterialTypes.ORE.all().forEach(m -> {
-                AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.doesGenerateOre()){
-                        Block ore = AntimatterMaterialTypes.ORE.get().get(m, s).asBlock();
-                        if (ore instanceof BlockOre){
-                            rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
-                        }
-                        if (m.has(AntimatterMaterialTypes.ORE_SMALL)){
-                            ore = AntimatterMaterialTypes.ORE_SMALL.get().get(m, s).asBlock();
-                            if (ore instanceof BlockOre){
-                                rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
-                            }
-                        }
-                    }
-                });
-            });
-        }
-        if (!AntimatterConfig.CLIENT.SHOW_ROCKS){
-            AntimatterMaterialTypes.ROCK.all().forEach(m -> {
-                AntimatterAPI.all(StoneType.class, s -> {
-                    if (s.doesGenerateOre()) {
-                        rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, AntimatterMaterialTypes.ROCK.get().get(m, s).asStack()));
-                    }
-                });
-            });
-        }
         List<ItemLike> list = new ArrayList<>();
         AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         list.forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
@@ -133,29 +108,17 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
-                RecipeMapCategory category = new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model);
+                RecipeMapCategory category = new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.workstations.isEmpty() ? null : tuple.workstations.get(0));
                 registry.add(category);
-                /*Machine<?> machine = tuple.model == null ? null : AntimatterAPI.get(Machine.class, tuple.model.getPath(), tuple.model.getNamespace());
-                if (machine != null){
-                    machine.getTiers().forEach(t -> {
-                        registry.addWorkstations(category.getCategoryIdentifier(), EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(machine.getItem(t))));
+                if (!tuple.workstations.isEmpty()){
+                    tuple.workstations.forEach(s -> {
+                        ItemLike item = AntimatterPlatformUtils.getItemFromID(s);
+                        if (item == Items.AIR) return;
+                        registry.addWorkstations(category.getCategoryIdentifier(), EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(item)));
                     });
-                } else {
-                    registry.addWorkstations(category.getCategoryIdentifier(), (EntryStack<?>) category.getIcon());
-                }*/
+                }
                 registeredMachineCats.add(tuple.map.getLoc());
             }
-        });
-        AntimatterAPI.all(Machine.class, machine -> {
-
-            ((Machine<?>)machine).getTiers().forEach(t -> {
-                IRecipeMap map = machine.getRecipeMap(t);
-                if (map == null) return;
-                ItemStack stack = new ItemStack(machine.getItem(t));
-                if (!stack.isEmpty()) {
-                    registry.addWorkstations(CategoryIdentifier.of(map.getLoc()), EntryStack.of(VanillaEntryTypes.ITEM, stack));
-                }
-            });
         });
         REIUtils.EXTRA_CATEGORIES.forEach(c -> c.accept(registry));
     }

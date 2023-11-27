@@ -6,7 +6,6 @@ import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallba
 import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
@@ -44,15 +43,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.api.ModLoadingContext;
-import net.minecraftforge.api.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.config.ModConfig;
 import team.reborn.energy.api.EnergyStorage;
 import tesseract.api.fabric.TesseractLookups;
 import tesseract.api.fabric.wrapper.ExtendedContainerWrapper;
 import tesseract.fabric.TesseractImpl;
-
-import static muramasa.antimatter.Ref.ID;
 
 public class AntimatterImpl implements ModInitializer {
     @Override
@@ -62,10 +56,6 @@ public class AntimatterImpl implements ModInitializer {
 
     public void initialize(boolean run){
         if (run){
-            ModConfigEvent.LOADING.register(AntimatterConfig::onModConfigEvent);
-            ModConfigEvent.RELOADING.register(AntimatterConfig::onModConfigEvent);
-            ModLoadingContext.registerConfig(ID, ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
-            ModLoadingContext.registerConfig(ID, ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
             FabricLoader.getInstance().getEntrypointContainers("antimatter", IAntimatterRegistrarInitializer.class).forEach(r -> r.getEntrypoint().onRegistrarInit());
             AntimatterRegistration.onRegister();
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);

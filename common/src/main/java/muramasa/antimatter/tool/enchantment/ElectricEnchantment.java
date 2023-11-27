@@ -25,6 +25,12 @@ public class ElectricEnchantment extends Enchantment {
 
     @Override
     public boolean canEnchant(ItemStack stack) {
-        return stack.getItem() instanceof IAntimatterTool tool && tool.getAntimatterToolType().isPowered() && super.canEnchant(stack);
+        return stack.getItem() instanceof IAntimatterTool tool && tool.getAntimatterToolType().isPowered();
     }
+
+    //TODO implement interface on fabric side
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
+        return this.canEnchant(stack);
+    }
+
 }

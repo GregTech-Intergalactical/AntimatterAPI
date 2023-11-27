@@ -55,6 +55,7 @@ public class Ref {
      */
     public static final long L = AntimatterPlatformUtils.isForge() ? 144L : 9000L;
 
+
     /**
      * Debug Options
      **/
@@ -149,19 +150,22 @@ public class Ref {
     /**
      * Mod IDs
      **/
+    public static final String MOD_CREATE = "create";
     public static final String MOD_JEI = "jei";
     public static final String MOD_REI = "roughlyenoughitems";
     public static final String MOD_TOP = "theoneprobe";
     public static final String MOD_CT = "crafttweaker";
     public static final String MOD_FR = "forestry";
     public static final String MOD_IC2 = "ic2";
-    public static final String MOD_IC2C = "ic2-classic-spmod";
+    public static final String MOD_IC2C = "ic2c";
     public static final String MOD_AE = "ae2";
     public static final String MOD_GC = "galacticraft";
     public static final String MOD_GC_PLANETS = "GalacticraftPlanets";
     public static final String MOD_TE = "thermalexpansion";
     public static final String MOD_TF = "thermalfoundation";
     public static final String MOD_UB = "undergroundbiomes";
+    public static final String MOD_TWILIGHT = "twilightforest";
+    public static final String MOD_TFC = "tfc";
     public static final String MOD_KJS = "kubejs";
 
     /**

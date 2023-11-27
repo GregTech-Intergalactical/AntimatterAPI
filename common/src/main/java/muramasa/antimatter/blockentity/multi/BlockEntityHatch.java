@@ -1,28 +1,39 @@
 package muramasa.antimatter.blockentity.multi;
 
+import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.HatchMachine;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.structure.IComponent;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERENERGY;
@@ -32,13 +43,19 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
 
     public final Optional<HatchComponentHandler<T>> componentHandler;
     public final HatchMachine hatchMachine;
+    @Getter
+    @Setter
+    private ITextureProvider textureBlock = null;
 
     public BlockEntityHatch(HatchMachine type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.hatchMachine = type;
         componentHandler = Optional
                 .of(new HatchComponentHandler<>((T)this));
-        if (type.has(ENERGY)) {
+        if (type.has(FLUID)) {
+            fluidHandler.set(() -> new MachineFluidHandler<>((T) this, 16000 * (getMachineTier().getIntegerId()), 1000 * (250 + getMachineTier().getIntegerId())));
+        }
+        if (type.has(EU)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
                     type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
                     type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
@@ -86,6 +103,20 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         return componentHandler;
     }
 
+    public Texture getBaseTexture(Direction side){
+        if (textureBlock == null || textureBlock.getTextures().length == 0) return null;
+        if (textureBlock.getTextures().length >= 6){
+            return textureBlock.getTextures()[side.get3DDataValue()];
+        }
+        return textureBlock.getTextures()[0];
+    }
+
+    @Override
+    public Function<Direction, Texture> getMultiTexture() {
+        if (textureBlock == null || textureBlock.getTextures().length == 0) return null;
+        return this::getBaseTexture;
+    }
+
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (isClientSide())
@@ -120,6 +151,12 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
                 return;
             ((CoverOutput) cover).setEjects(has(FLUID), has(ITEM));
         });
+    }
+
+    @Override
+    public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.onPlacedBy(world, pos, state, placer, stack);
+        setOutputFacing(null, this.getFacing());
     }
 
     @Override

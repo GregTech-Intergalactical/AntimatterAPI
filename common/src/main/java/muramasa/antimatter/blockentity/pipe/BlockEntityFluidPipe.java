@@ -156,7 +156,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
 
     @Override
     public int getTemperature() {
-        return getPipeType().getTemperature();
+        return getPipeType().getMaxTemperature();
     }
 
     @SuppressWarnings("ConstantValue")
@@ -394,7 +394,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));
-        list.add("Max temperature: " + getPipeType().getTemperature());
+        list.add("Max temperature: " + getPipeType().getMaxTemperature());
         list.add(getPipeType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
         list.add(getPipeType().isAcidProof() ? "Acid proof." : "Cannot handle acids.");
         return list;

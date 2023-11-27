@@ -13,7 +13,7 @@ import muramasa.antimatter.tool.behaviour.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -27,14 +27,15 @@ public class AntimatterDefaultTools {
     public static final AntimatterToolType AXE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "axe", 1, 1, 10, 6.0F, -3.0F, true)).addEffectiveMaterials(PLANT, REPLACEABLE_PLANT, BAMBOO).setHasContainer(false).setMaterialTypeItem(AXE_HEAD);
     public static final AntimatterToolType HOE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "hoe", 1, 2, 10, -2.0F, -1.0F, true)).setHasContainer(false).setMaterialTypeItem(HOE_HEAD);
     public static final AntimatterToolType HAMMER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "hammer", 1, 2, 2, 3.0F, -3.0F, false)).addTags("pickaxe").addEffectiveMaterials(net.minecraft.world.level.material.Material.METAL, STONE).setUseSound(SoundEvents.ANVIL_PLACE).setRepairable(false);
-    public static final AntimatterToolType WRENCH = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "wrench", 2, 2, 2, 1.5F, -2.8F, false)).setUseSound(Ref.WRENCH).addEffectiveBlocks(Blocks.HOPPER).setHasSecondary(false).setOverlayLayers(0).setRepairable(false);
+    public static final AntimatterToolType WRENCH = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "wrench", 2, 2, 2, 1.5F, -2.8F, false)).setUseSound(Ref.WRENCH).addEffectiveBlocks(Blocks.HOPPER).setHasSecondary(false).setOverlayLayers(0).setRepairable(false).addBlacklistedEnchantments(Enchantments.BLOCK_EFFICIENCY);
+    public static final AntimatterToolType WRENCH_ALT = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "wrench_alt", 2, 2, 2, 1.5F, -2.8F, false)).setUseSound(Ref.WRENCH).addEffectiveBlocks(Blocks.HOPPER).addTags("wrench").setHasSecondary(false).setOverlayLayers(0).setRepairable(false).addBlacklistedEnchantments(Enchantments.BLOCK_EFFICIENCY).setCustomName("Wrench (Alt)");
     public static final AntimatterToolType SAW = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "saw", 2, 2, 2, 2.0F, -2.8F, false)).addEffectiveBlocks(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE).setRepairable(false).setMaterialTypeItem(SAW_HEAD);
      public static final AntimatterToolType FILE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "file", 2, 2, 2, -2.0F, -2.4F, false)).setRepairable(false).setMaterialTypeItem(FILE_HEAD);
     public static final AntimatterToolType CROWBAR = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F, false)).setUseSound(SoundEvents.ITEM_BREAK).setHasSecondary(false).setRepairable(false);
     public static final AntimatterToolType SOFT_HAMMER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "soft_hammer", 2, 2, 2, 1.0F, -3.0F, false)).setRepairable(false).setPrimaryRequirement(MaterialTags.RUBBERTOOLS);//.setUseSound();
     public static final AntimatterToolType SCREWDRIVER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F, false)).setUseSound(Ref.WRENCH).setRepairable(false);
     public static final AntimatterToolType MORTAR = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "mortar", 5, 5, 2, -2.0F, 0.0F, false)).setUseSound(SoundEvents.GRINDSTONE_USE).setBlockBreakability(false).setRepairable(false);
-    public static final AntimatterToolType WIRE_CUTTER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F, false)).setUseSound(SoundEvents.SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CLOTH_DECORATION).setRepairable(false);
+    public static final AntimatterToolType WIRE_CUTTER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F, false)).setUseSound(SoundEvents.SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CLOTH_DECORATION).setRepairable(false).addBlacklistedEnchantments(Enchantments.BLOCK_EFFICIENCY);
     public static final AntimatterToolType BRANCH_CUTTER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "branch_cutter", 1, 3, 2, 0.0F, -1.5F, false)).addTags("grafter").addEffectiveMaterials(LEAVES).setHasContainer(false).setDurabilityMultiplier(0.25f);
     public static final AntimatterToolType KNIFE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F, false)).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setRepairable(false);
     public static final AntimatterToolType PLUNGER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F, false)).setUseSound(SoundEvents.BUCKET_EMPTY).setHasSecondary(false).setRepairable(false);
@@ -47,6 +48,8 @@ public class AntimatterDefaultTools {
         AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
         PICKAXE.addBehaviour(BehaviourTorchPlacing.INSTANCE);
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
+        WRENCH.addBehaviour(BehaviourWrenchSwitching.INSTANCE);
+        WRENCH_ALT.addBehaviour(BehaviourWrenchSwitching.INSTANCE);
         KNIFE.addBehaviour(BehaviourPumpkinCarving.INSTANCE);
         if (side == Side.CLIENT) {
             clientInit();
@@ -55,8 +58,8 @@ public class AntimatterDefaultTools {
 
     public static void postInit(){
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
-            if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_SHOVEL)) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
-            if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_HOE)) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
+            if (type.getToolTypes().contains(BlockTags.MINEABLE_WITH_SHOVEL)) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
+            if (type.getToolTypes().contains(BlockTags.MINEABLE_WITH_HOE)) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
     }

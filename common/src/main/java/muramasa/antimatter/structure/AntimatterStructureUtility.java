@@ -3,6 +3,7 @@ package muramasa.antimatter.structure;
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.HatchMachine;
@@ -15,6 +16,9 @@ public class AntimatterStructureUtility {
     public static <T extends BlockEntityBasicMultiMachine<T>> IStructureElement<T> ofHatch(HatchMachine machine){
         return ofHatch(machine, (t, world, pos, machine1, handler) -> {
             t.addComponent(machine1.getId(), handler);
+            if (world.getBlockEntity(pos) instanceof BlockEntityHatch<?> hatch) {
+                hatch.setTextureBlock(t.getHatchBlock(pos));
+            }
             return true;
         });
     }
@@ -56,6 +60,13 @@ public class AntimatterStructureUtility {
             @Override
             public boolean placeBlock(T t, Level world, int x, int y, int z, ItemStack trigger) {
                 return false;
+            }
+
+            @Override
+            public void onStructureFail(T t, Level world, int x, int y, int z) {
+                if (world.getBlockEntity(new BlockPos(x,y,z)) instanceof BlockEntityHatch<?> hatch) {
+                    hatch.setTextureBlock(null);
+                }
             }
         };
     }

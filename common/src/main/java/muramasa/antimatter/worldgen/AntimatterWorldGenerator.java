@@ -100,7 +100,7 @@ public class AntimatterWorldGenerator {
     public static void register(Class<?> c, WorldGenBase<?> base) {
         AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
         if (feature != null)
-            base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
+            base.getDimensions().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
     }
 
     public static void register(BiomeLoadEvent consumer, String id, String domain, Predicate<Biome.BiomeCategory> validator) {
@@ -206,10 +206,10 @@ public class AntimatterWorldGenerator {
     }
 
     private static void handleFeatureRemoval(BiomeGenerationSettings.Builder gen) {
-        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN) {
+        if (AntimatterConfig.VANILLA_ORE_GEN.get()) {
             removeOreFeatures(gen);
         }
-        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN) {
+        if (AntimatterConfig.VANILLA_STONE_GEN.get()) {
             removeStoneFeatures(gen);
         }
     }

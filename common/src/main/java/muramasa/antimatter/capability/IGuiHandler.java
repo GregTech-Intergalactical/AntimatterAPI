@@ -30,11 +30,19 @@ public interface IGuiHandler {
     ResourceLocation getGuiTexture();
 
     default int guiSize() {
-        return 176;
+        return getGui().getXSize();
     }
 
     default int guiHeight() {
-        return 166;
+        return getGui().getYSize();
+    }
+
+    default int guiTextureSize() {
+        return getGui().getTextureXSize();
+    }
+
+    default int guiTextureHeight() {
+        return getGui().getTextureYSize();
     }
 
     /**

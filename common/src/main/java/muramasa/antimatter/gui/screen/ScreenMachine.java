@@ -18,11 +18,19 @@ public class ScreenMachine<T extends BlockEntityMachine<T>, U extends ContainerM
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
-        //gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
+    }
+
+    @Override
+    protected void init() {
+        this.imageHeight = container.handler.handler.guiHeight();
+        this.imageWidth = container.handler.handler.guiSize();
+        super.init();
     }
 
     protected void drawTitle(PoseStack stack, int mouseX, int mouseY) {
-        Minecraft.getInstance().font.draw(stack, name, getCenteredStringX(name), 4, 0x404040);
+        if (container.getTile().getMachineType().getGui().isTitleDrawingAllowed()) {
+            Minecraft.getInstance().font.draw(stack, name, getCenteredStringX(name), 4, 0x404040);
+        }
     }
 
     /*

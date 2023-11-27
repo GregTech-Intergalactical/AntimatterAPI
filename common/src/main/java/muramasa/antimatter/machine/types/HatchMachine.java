@@ -46,9 +46,4 @@ public class HatchMachine extends Machine<HatchMachine> {
             }
         });
     }
-
-    @Override
-    public Direction handlePlacementFacing(BlockPlaceContext ctxt, Property<?> which, Direction dir) {
-        return dir.getOpposite();
-    }
 }

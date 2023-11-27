@@ -24,7 +24,6 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
     public final MaterialType<?> materialType, secondaryType;
     public final int minY, maxY, weight, size, plateau;
     public final float secondaryChance, discardOnExposureChance;
-    public final List<ResourceLocation> dimensions;
     public final List<String> biomes;
 
     public final boolean biomeBlacklist, rare, triangle, spawnOnOceanFloor;
@@ -46,7 +45,6 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
         this.triangle = triangle;
         this.plateau = plateau;
         this.spawnOnOceanFloor = spawnOnOceanFlor;
-        this.dimensions = dimensions;
         this.biomes = biomes;
         this.biomeBlacklist = biomeBlacklist;
 
@@ -88,7 +86,7 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
         if (plateau > 0) json.addProperty("plateau", plateau);
         if (spawnOnOceanFloor) json.addProperty("spawnOnOceanFloor", true);
         JsonArray array = new JsonArray();
-        getDims().forEach(r -> array.add(r.toString()));
+        getDimensions().forEach(r -> array.add(r.toString()));
         if (!array.isEmpty()){
             json.add("dims", array);
         }

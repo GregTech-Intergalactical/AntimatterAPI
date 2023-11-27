@@ -35,7 +35,7 @@ public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
 
     @Override
     public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (!AntimatterConfig.GAMEPLAY.AXE_TIMBER) return true;
+        if (!AntimatterConfig.AXE_TIMBER.get()) return true;
         if (entity instanceof Player && !world.isClientSide) {
             Player player = (Player) entity;
             if (Utils.isToolEffective(instance, stack, state) && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates

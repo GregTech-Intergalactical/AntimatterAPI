@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.*;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
@@ -34,7 +35,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
 
     @Override
     public boolean enabled() {
-        return AntimatterConfig.WORLD.STONE_LAYERS && getRegistry().size() > 0;
+        return AntimatterConfig.STONE_LAYERS.get() && getRegistry().size() > 0;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                         }
                     }
 
-                    if (!isAir && AntimatterConfig.WORLD.STONE_LAYER_ORES) {
+                    if (!isAir && AntimatterConfig.STONE_LAYER_ORES.get()) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
                                 if (ore.canPlace(offset, rand) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), layers[0] == layers[6])) {
@@ -105,10 +106,11 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                         }
                     }
 
-                    if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
+                    if (lastMaterial != null && lastMaterial.has(AntimatterMaterialTypes.ORE)) {
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
+                        int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.setRock(world, offset, lastMaterial, below, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
+                            WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), lastMaterial, below, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
                         }
                     }
 

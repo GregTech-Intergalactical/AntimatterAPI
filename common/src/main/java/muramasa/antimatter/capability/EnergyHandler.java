@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability;
 
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +15,7 @@ public class EnergyHandler implements IEnergyHandler {
     protected long energy;
     protected long voltageIn, voltageOut, amperageIn, amperageOut;
 
+    @Getter
     protected GTConsumer.State state = new GTConsumer.State(this);
 
     public EnergyHandler(long energy, long capacity, long voltageIn, long voltageOut, int amperageIn, int amperageOut) {
@@ -157,7 +159,4 @@ public class EnergyHandler implements IEnergyHandler {
         this.amperageOut = nbt.getLong(Ref.TAG_MACHINE_AMPERAGE_OUT);
     }
 
-    public GTConsumer.State getState() {
-        return state;
-    }
 }

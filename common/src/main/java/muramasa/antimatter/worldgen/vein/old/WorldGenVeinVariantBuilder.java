@@ -52,7 +52,7 @@ public class WorldGenVeinVariantBuilder {
     final public WorldGenVeinVariantBuilder withChance(float oreChance, float smallOreChance, float markerOreChance, float surfaceStoneChance) {
         this.oreChance = oreChance;
         this.smallOreChance = smallOreChance;
-        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
+        if (AntimatterConfig.ORE_VEIN_SMALL_ORE_MARKERS.get()) {
             this.markerOreChance = markerOreChance;
         }
         this.surfaceStoneChance = surfaceStoneChance;

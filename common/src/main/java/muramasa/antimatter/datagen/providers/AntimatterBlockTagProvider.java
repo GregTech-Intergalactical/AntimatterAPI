@@ -7,6 +7,7 @@ import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.data.AntimatterStoneTypes;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.material.MaterialTags;
@@ -112,6 +113,9 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
             });
             AntimatterAPI.all(BlockMultiMachine.class, pipe -> {
                 this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
+            });
+            AntimatterAPI.all(AntimatterFluid.class, f -> {
+                this.tag(TagUtils.getBlockTag(new ResourceLocation("replaceable"))).add(f.getFluidBlock());
             });
         }
     }

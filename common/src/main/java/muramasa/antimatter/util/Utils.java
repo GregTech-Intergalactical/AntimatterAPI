@@ -19,6 +19,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -408,15 +409,18 @@ public class Utils {
      * @return if energy was inserted
      */
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        long amps = from.extractAmps(from.getOutputVoltage(), from.availableAmpsOutput(), true);
-        if (amps > 0){
-            long insertAmps = to.insertAmps(from.getOutputVoltage(), amps, true);
-            if (insertAmps > 0){
-                from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), amps, false), false);
-                return true;
+        boolean transferred = false;
+        for (long amp = 0; amp < from.availableAmpsOutput(); amp++) {
+            long ampInserted = from.extractAmps(from.getOutputVoltage(), 1, true);
+            if (ampInserted > 0){
+                long insertAmps = to.insertAmps(from.getOutputVoltage(), ampInserted, true);
+                if (insertAmps > 0){
+                    from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), ampInserted, false), false);
+                    transferred = true;
+                }
             }
         }
-        return false;
+        return transferred;
     }
 
     public static boolean transferEnergy(PlatformEnergyManager from, PlatformEnergyManager to) {
@@ -1012,7 +1016,7 @@ public class Utils {
      * @return if tree logging was successful
      */
     public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
-        if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
+        if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
             BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
             BlockState tpCompare = world.getBlockState(tempPos);
             if (!BehaviourTreeFelling.isLog(tpCompare)) return false;

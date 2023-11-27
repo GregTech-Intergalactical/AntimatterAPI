@@ -2,6 +2,9 @@ package muramasa.antimatter.gui;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.machine.Tier;
@@ -11,24 +14,40 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
 
-//@Environment(EnvType.CLIENT)
+@Accessors(chain = true)
 public class GuiData {
 
+    @Getter
     protected ResourceLocation loc;
     protected ResourceLocation override = null;
 
+    @Getter
     protected MenuHandler<?> menuHandler;
     protected ImmutableMap<Tier, Tier> guiTiers;
 
     protected Map<String, ResourceLocation> backgroundTextures = new Object2ObjectOpenHashMap<>();
 
     protected boolean enablePlayerSlots = true;
+    @Getter
     protected int4 area = new int4(3, 3, 170, 80);
 
-    protected MachineWidgetData machineWidgetData = new MachineWidgetData(this);
+    @Getter
+    protected MachineWidgetData machineData = new MachineWidgetData(this);
 
     private final int buttons = 0;
+
+    @Setter
     private ISlotProvider<?> slots;
+    @Getter
+    @Setter
+    private int playerYOffset = 0, playerXOffset = 0;
+    @Getter
+    @Setter
+    private int xSize = 176, textureXSize = 256, ySize = 166, textureYSize = 256;
+
+    @Getter
+    @Setter
+    private boolean titleDrawingAllowed = true;
 
     public GuiData(String domain, String id) {
         this.loc = new ResourceLocation(domain, id);
@@ -45,11 +64,6 @@ public class GuiData {
         this.menuHandler = menuHandler;
     }
 
-    public GuiData setSlots(ISlotProvider<?> slots) {
-        this.slots = slots;
-        return this;
-    }
-
     public GuiData setTieredGui(ImmutableMap.Builder<Tier, Tier> guiTiers) {
         this.guiTiers = guiTiers.build();
         return this;
@@ -60,26 +74,10 @@ public class GuiData {
         return slots;
     }
 
-    public MenuHandler<?> getMenuHandler() {
-        return this.menuHandler;
-    }
-
     public ResourceLocation getTexture(Tier tier, String type) {
         if (override != null) return override;
        if (backgroundTextures.containsKey(tier.getId())) return backgroundTextures.get(tier.getId());
        return backgroundTextures.get("");
-    }
-
-    public ResourceLocation getLoc() {
-        return loc;
-    }
-
-    public int4 getArea() {
-        return area;
-    }
-
-    public MachineWidgetData getMachineData() {
-        return machineWidgetData;
     }
 
     /*public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
@@ -113,6 +111,15 @@ public class GuiData {
     }
     public GuiData setBackgroundTexture(Tier tier, String textureName){
         this.backgroundTextures.put(tier.getId(), new ResourceLocation(loc.getNamespace(), "textures/gui/background/" + textureName + ".png"));
+        return this;
+    }
+
+    public GuiData setBackgroundTexture(ResourceLocation textureName){
+        this.backgroundTextures.put("", new ResourceLocation(textureName.getNamespace(), "textures/gui/background/" + textureName.getPath() + ".png"));
+        return this;
+    }
+    public GuiData setBackgroundTexture(Tier tier, ResourceLocation textureName){
+        this.backgroundTextures.put(tier.getId(), new ResourceLocation(textureName.getNamespace(), "textures/gui/background/" + textureName.getPath() + ".png"));
         return this;
     }
 }

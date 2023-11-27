@@ -1,6 +1,7 @@
 package muramasa.antimatter.structure;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PatternBuilder {
@@ -20,7 +22,7 @@ public class PatternBuilder {
     private List<String[]> slices = new ObjectArrayList<>();
     private Object2ObjectMap<String, BlockInfo> elementLookup = new Object2ObjectOpenHashMap<>();
     private Component description = Utils.translatable("");
-    //private Int2ObjectMap<>
+    private final Int2ObjectMap<List<Pattern.PonderTooltip>> ponderTooltipMap = new Int2ObjectOpenHashMap<>();
 
     float scale = 1.0f;
 
@@ -63,6 +65,11 @@ public class PatternBuilder {
         return this;
     }
 
+    public PatternBuilder tip(int x, int y, int z, String tip){
+        ponderTooltipMap.computeIfAbsent(y, i -> new ArrayList<>()).add(new Pattern.PonderTooltip(x, z, tip));
+        return this;
+    }
+
     public PatternBuilder shallowCopy() {
         PatternBuilder builder = new PatternBuilder();
         builder.slices = new ObjectArrayList<>(this.slices);
@@ -81,7 +88,7 @@ public class PatternBuilder {
     }
 
     public Pattern build() {
-        return new Pattern(bakeArray(), description, scale);
+        return new Pattern(bakeArray(), description, scale, ponderTooltipMap);
     }
 
     private BlockInfo[][][] bakeArray() {

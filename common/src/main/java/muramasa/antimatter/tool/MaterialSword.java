@@ -174,7 +174,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
 
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
+        return type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
@@ -217,6 +217,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     }
 
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if (type.getBlacklistedEnchantments().contains(enchantment)) return false;
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : enchantment.category.canEnchant(stack.getItem());
     }
 

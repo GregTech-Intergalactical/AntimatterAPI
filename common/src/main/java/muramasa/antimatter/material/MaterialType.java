@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -32,13 +33,17 @@ import java.util.function.Supplier;
 public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, IRegistryEntryProvider {
 
     protected final String id;
+    @Getter
     protected int layers;
+    @Getter
     protected long unitValue;
+    @Getter
     protected boolean generating = true, blockType, visible, splitName;
     protected final Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
     protected final Map<MaterialType<?>, TagKey<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     private boolean hidden = false;
+    @Getter
     protected final BiMap<Material, Supplier<Item>> replacements = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
     //since we have two instances stored in antimatter.
@@ -168,14 +173,6 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         return id;
     }
 
-    public long getUnitValue() {
-        return unitValue;
-    }
-
-    public int getLayers() {
-        return layers;
-    }
-
     public <T> TagKey<T> getTag() {
         return (TagKey<T>) tagMap.get(this);
     }
@@ -200,24 +197,16 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     }
 
     public boolean isVisible() {
-        return visible || AntimatterConfig.CLIENT.SHOW_ALL_MATERIAL_ITEMS;
+        return visible || AntimatterConfig.SHOW_ALL_MATERIAL_ITEMS.get();
     }
 
     public boolean allowGen(Material material) {
         return generating && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
     }
 
-    public boolean isSplitName() {
-        return splitName;
-    }
-
     @Override
     public String toString() {
         return getId();
-    }
-
-    public BiMap<Material, Supplier<Item>> getReplacements() {
-        return replacements;
     }
 
     public static ImmutableMap<Item, Tuple<MaterialType, Material>> tooltipCache;

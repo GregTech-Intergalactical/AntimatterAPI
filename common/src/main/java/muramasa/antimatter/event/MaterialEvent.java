@@ -3,9 +3,13 @@ package muramasa.antimatter.event;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.material.data.ArmorData;
 import muramasa.antimatter.material.data.HandleData;
@@ -16,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -172,16 +177,18 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         return (T) this;
     }
 
+    @Deprecated
     public T addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
         return addTools(toolDamage, toolSpeed, toolDurability, toolQuality, ImmutableMap.of());
     }
 
+    @Deprecated
     public T addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
         if (has(AntimatterMaterialTypes.INGOT))
             flags(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD, AntimatterMaterialTypes.SCREW, AntimatterMaterialTypes.BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(AntimatterMaterialTypes.ROD);
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
-        MaterialTags.TOOLS.add(this.material, new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
+        MaterialTags.TOOLS.add(this.material, new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, Wood, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this.material, toolQuality - 1);
         for (AntimatterToolType type : toolTypesList){
             if (type.getMaterialTypeItem() != null && material != Flint && material != NULL && !material.has(RUBBERTOOLS) && material != Wood){
@@ -191,11 +198,13 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         return (T) this;
     }
 
+    @Deprecated
     public T addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         ToolData data = MaterialTags.TOOLS.get(derivedMaterial);
         return addTools(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), toolEnchantment);
     }
 
+    @Deprecated
     public T addTools(Material derivedMaterial) {
         ToolData data = MaterialTags.TOOLS.get(derivedMaterial);
         return addTools(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality());
@@ -205,7 +214,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         if (!has(MaterialTags.TOOLS)) return (T) this;
         ToolData data = MaterialTags.TOOLS.get(this.material);
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
-        MaterialTags.TOOLS.add(this.material, new ToolData(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), data.toolEnchantment(), toolTypesList));
+        MaterialTags.TOOLS.add(this.material, new ToolData(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), data.handleMaterial(), data.toolEnchantment(), toolTypesList));
         return (T) this;
     }
 
@@ -358,6 +367,63 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public T replaceBlock(MaterialTypeBlock<?> type, Supplier<Item> toReplace){
         type.replacement(this.material, toReplace);
+        return (T) this;
+    }
+
+    public ToolBuiler tool(){
+        return new ToolBuiler();
+    }
+
+    public ToolBuiler tool(Material derivedMaterial){
+        ToolData data = MaterialTags.TOOLS.get(derivedMaterial);
+        return tool().toolDamage(data.toolDamage()).toolDurability(data.toolDurability()).toolQuality(data.toolQuality()).toolSpeed(data.toolSpeed());
+    }
+
+    @Accessors(fluent = true)
+    @Setter
+    public class ToolBuiler {
+        List<AntimatterToolType> allowedToolTypes;
+        float toolDamage;
+        float toolSpeed;
+        int toolDurability;
+        int toolQuality;
+        ImmutableMap<Enchantment, Integer> toolEnchantments = ImmutableMap.of();
+        Material handleMaterial;
+        public ToolBuiler(){
+            allowedToolTypes = AntimatterAPI.all(AntimatterToolType.class);
+            handleMaterial = Wood;
+        }
+
+        public ToolBuiler blacklistToolTypes(AntimatterToolType... types){
+            allowedToolTypes.removeAll(List.of(types));
+            return this;
+        }
+
+        public T build(){
+            List<AntimatterToolType> toolTypes = new ArrayList<>(allowedToolTypes);
+            for (AntimatterToolType allowedToolType : allowedToolTypes) {
+                if (allowedToolType.getPrimaryMaterialRequirement() != null && !material.has(allowedToolType.getPrimaryMaterialRequirement())){
+                    toolTypes.remove(allowedToolType);
+                }
+            }
+            if (toolTypes.contains(AntimatterDefaultTools.WRENCH) && !toolTypes.contains(AntimatterDefaultTools.WRENCH_ALT)) toolTypes.add(AntimatterDefaultTools.WRENCH_ALT);
+            allowedToolTypes = ImmutableList.copyOf(toolTypes);
+            return MaterialEvent.this.buildTool(new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, handleMaterial, toolEnchantments, allowedToolTypes));
+        }
+    }
+
+    protected T buildTool(ToolData builder){
+        if (has(AntimatterMaterialTypes.INGOT))
+            flags(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD, AntimatterMaterialTypes.SCREW, AntimatterMaterialTypes.BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
+        else flags(AntimatterMaterialTypes.ROD);
+        List<AntimatterToolType> toolTypesList = builder.toolTypes();
+        MaterialTags.TOOLS.add(this.material, builder);
+        MaterialTags.MINING_LEVEL.add(this.material, builder.toolQuality() - 1);
+        for (AntimatterToolType type : toolTypesList){
+            if (type.getMaterialTypeItem() != null && !material.has(FLINT) && material != NULL && !material.has(RUBBERTOOLS) && !material.has(WOOD)){
+                flags(type.getMaterialTypeItem());
+            }
+        }
         return (T) this;
     }
 }

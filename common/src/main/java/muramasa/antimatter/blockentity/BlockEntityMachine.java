@@ -2,6 +2,7 @@ package muramasa.antimatter.blockentity;
 
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.AntimatterProperties;
@@ -92,12 +93,14 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
      **/
     protected Machine<?> type;
     protected Tier tier;
+    @Getter
     protected MachineState machineState;
 
     protected MachineState disabledState;
 
     protected long lastSoundTime;
 
+    @Getter
     protected boolean muffled = false;
 
     @Environment(EnvType.CLIENT)
@@ -137,12 +140,11 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (type.has(FLUID)) {
             fluidHandler.set(() -> new MachineFluidHandler<>((T) this));
         }
-        if (type.has(ENERGY)) {
-            if (type.has(RF)){
-                rfHandler.set(() -> new MachineRFHandler<>((T)this, this.getMachineTier().getVoltage() * 100, type.has(MachineFlag.GENERATOR)));
-            } else {
-                energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
-            }
+        if (type.has(EU)) {
+            energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
+        }
+        if (type.has(RF)){
+            rfHandler.set(() -> new MachineRFHandler<>((T)this, this.getMachineTier().getVoltage() * 100, type.has(MachineFlag.GENERATOR)));
         }
         if (type.has(HEAT)){
             heatHandler.set(() -> new DefaultHeatHandler(this, (int) (this.getMachineTier().getVoltage() * 4), type.has(GENERATOR) ? 0 : (int) this.getMachineTier().getVoltage(), type.has(GENERATOR) ? (int) this.getMachineTier().getVoltage() : 0));
@@ -155,11 +157,11 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         }
         multiTexturer = new LazyLoadedValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER)); }
 
-    public void addOpenContainer(ContainerMachine<T> c) {
+    public void addOpenContainer(ContainerMachine<T> c, Player player) {
         this.openContainers.add(c);
     }
 
-    public void onContainerClose(ContainerMachine<T> c) {
+    public void onContainerClose(ContainerMachine<T> c, Player player) {
         this.openContainers.remove(c);
     }
 
@@ -271,7 +273,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     protected boolean allowExplosionsInRain(){
-        return AntimatterConfig.GAMEPLAY.RAIN_EXPLODES_MACHINES;
+        return AntimatterConfig.RAIN_EXPLODES_MACHINES.get();
     }
 
     @Override
@@ -297,6 +299,14 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
     public void onDrop(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
 
+    }
+
+    public void dropInventory(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
+        itemHandler.ifPresent(t -> drops.addAll(t.getAllItems()));
+    }
+
+    public void dropCovers(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
+        coverHandler.ifPresent(t -> drops.addAll(t.getDrops()));
     }
 
     public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
@@ -343,10 +353,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     //Returns the tier level for recipe overclocking.
     public Tier getPowerLevel() {
         return getMachineTier();
-    }
-
-    public boolean isMuffled() {
-        return muffled;
     }
 
     public boolean has(MachineFlag flag) {
@@ -458,10 +464,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
     public boolean setOutputFacing(Player player, Direction side) {
         return coverHandler.map(h -> h.setOutputFacing(player, side)).orElse(false);
-    }
-
-    public MachineState getMachineState() {
-        return machineState;
     }
 
     public MachineState getDefaultMachineState() {
@@ -709,7 +711,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (slots.length() > 0) info.add("Slots:" + slots);
         if (type.has(RF))
             rfHandler.ifPresent(h -> info.add("RF: " + h.getStoredEnergy() + " / " + h.getMaxCapacity()));
-        else
+        if (type.has(EU))
             energyHandler.ifPresent(h -> info.add("EU: " + h.getEnergy() + " / " + h.getCapacity()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");

@@ -109,12 +109,12 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     protected void english(String domain, String locale) {
-        AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemFluidCell.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(DebugScannerItem.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(ItemMultiTextureBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> {
+            add(i, lowerUnderscoreToUpperSpaced(i.getId()));
+            if (!i.getTooltip().isEmpty()){
+                add("tooltip." + i.getDomain() + "." + i.getId().replace("/", "."), i.getTooltip());
+            }
+        });
         AntimatterAPI.all(Machine.class, domain).forEach(i -> {
             if (!i.hasTierSpecificLang()){
                 add("machine." + i.getId(), i.getLang(locale).concat(" (%s)"));
@@ -126,7 +126,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 }
                 add(i.getBlockState(t), i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")"));
                 if (i instanceof BasicMultiMachine<?>) {
-                    add(i.getDomain() + ".ponder." + i.getId() + (t == Tier.NONE ? "" : "_" + t.getId()) + ".header", i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")").concat(" Multiblock"));
+                    add(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")").concat(" Multiblock"));
                 }
             });
         });
@@ -134,20 +134,21 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             add("enchantment." + d + "." + i, lowerUnderscoreToUpperSpaced(i));
         });
 
-        AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
-            if (t.getAntimatterToolType().isPowered()) {
-                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
-            } else {
-                if (t.getAntimatterToolType().isSimple()){
-                    add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + Utils.getLocalizedType(t.getAntimatterToolType()));
-                } else {
-                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
-                }
-            }
-
-        });
-
         if (domain.equals(Ref.ID)) {
+            AntimatterAPI.all(IAntimatterTool.class, t -> {
+                String customName = t.getAntimatterToolType().getCustomName().isEmpty() ? Utils.getLocalizedType(t.getAntimatterToolType()) : t.getAntimatterToolType().getCustomName();
+                if (t.getAntimatterToolType().isPowered()) {
+                    String defaultName = Utils.getLocalizedType(t.getAntimatterToolType());
+                    add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()).replace(defaultName, customName));
+                } else {
+                    if (t.getAntimatterToolType().isSimple()){
+                        add(t.getItem().getDescriptionId(), Utils.getLocalizedType(t.getPrimaryMaterial(t.getItem().getDefaultInstance())) + " " + customName);
+                    } else {
+                        add(t.getItem().getDescriptionId(), customName);
+                    }
+                }
+
+            });
             AntimatterAPI.all(BlockPipe.class).forEach(s -> {
                 String str = s.getSize().getId();
                 //hmmmm
@@ -163,10 +164,11 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             });
             AntimatterAPI.all(Material.class).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
             AntimatterAPI.all(BlockOre.class, o -> {
+                String nativeSuffix = o.getMaterial().getElement() != null ? "Native " : "";
                 if (o.getOreType() == AntimatterMaterialTypes.ORE)
-                    add(o, String.join("", getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
+                    add(o, String.join("", getLocalizeStoneType(o.getStoneType()) + " ", nativeSuffix, getLocalizedType(o.getMaterial()), " Ore"));
                 else
-                    add(o, String.join("", "Small ", getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
+                    add(o, String.join("", "Small ", getLocalizeStoneType(o.getStoneType()) + " ", nativeSuffix, getLocalizedType(o.getMaterial()), " Ore"));
             });
 
             AntimatterAPI.all(BlockOreStone.class, o -> {
@@ -257,13 +259,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             AntimatterAPI.all(MaterialItem.class).forEach(item -> {
                 MaterialType<?> type = item.getType();
                 String dust = item.getMaterial().has(MaterialTags.RUBBERTOOLS) ? " Pulp" : " Dust";
+                String nativeSuffix = item.getMaterial().getElement() != null ? "Native " : "";
                 if (type == AntimatterMaterialTypes.ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
                 else if (type == AntimatterMaterialTypes.CRUSHED)
-                    add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                    add(item, String.join("", "Crushed ", nativeSuffix, getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.CRUSHED_PURIFIED)
-                    add(item, String.join("", "Purified ", getLocalizedType(item.getMaterial()), " Ore"));
+                    add(item, String.join("", "Purified ", nativeSuffix, getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.CRUSHED_REFINED)
-                    add(item, String.join("", "Refined ", getLocalizedType(item.getMaterial()), " Ore"));
+                    add(item, String.join("", "Refined ", nativeSuffix, getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.DUST_TINY)
                     add(item, String.join("", "Tiny ", getLocalizedType(item.getMaterial()), dust));
                 else if (type == AntimatterMaterialTypes.DUST_SMALL)
@@ -273,7 +276,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 else if (type == AntimatterMaterialTypes.DUST_PURE)
                     add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), dust));
                 else if (type == AntimatterMaterialTypes.RAW_ORE)
-                    add(item, String.join("", "Raw ", getLocalizedType(item.getMaterial())));
+                    add(item, String.join("", "Raw ", nativeSuffix, getLocalizedType(item.getMaterial())));
                 else if (type == AntimatterMaterialTypes.ITEM_CASING)
                     add(item, String.join("", getLocalizedType(item.getMaterial()), " Item Casings"));
                 else if (type == AntimatterMaterialTypes.GEM)
@@ -297,13 +300,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             });
             customTranslations();
             pipeTranslations();
+            AntimatterAPI.all(RecipeMap.class, t -> {
+                String id = "jei.category." + t.getId();
+                add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
+            });
         }
 
 
-        AntimatterAPI.all(RecipeMap.class, domain, t -> {
-            String id = "jei.category." + t.getId();
-            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
-        });
+
 
 
     }

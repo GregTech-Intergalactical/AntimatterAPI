@@ -1,11 +1,9 @@
 package muramasa.antimatter.machine.types;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.*;
 import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
@@ -51,6 +49,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
+import static muramasa.antimatter.machine.Tier.NONE;
 
 /**
  * Machine represents the base class for an Antimatter Machine. It provides tile entities, blocks as well as
@@ -67,10 +66,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BlockEntityType<? extends BlockEntityMachine<?>> tileType;
     protected BlockEntityBase.BlockEntitySupplier<BlockEntityMachine<?>, T> tileFunc = BlockEntityMachine::new;
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
+    @Getter
     protected Function<BlockMachine, AntimatterItemBlock> itemBlockFunction = AntimatterItemBlock::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
-    protected ITooltipInfo tooltipFunction = (m, s,w,t,f) -> {};
+    @Getter
+    protected List<ITooltipInfo> tooltipFunctions = new ArrayList<>();
     protected String domain, id;
     @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
@@ -129,10 +130,14 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     protected boolean renderTesr = false;
     protected boolean renderContainedLiquids = false;
+    @Getter
+    @Setter
+    protected int overlayLayers = 1;
 
     /**
      * Covers
      **/
+    @Getter
     protected CoverFactory outputCover = COVEROUTPUT;
 
     /**
@@ -142,12 +147,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
 
     private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>(1);
+    private static final Map<String, Set<Machine<?>>> FLAG_MAP = new Object2ObjectOpenHashMap<>();
 
     public Machine(String domain, String id) {
         this.domain = domain;
         this.id = id;
         //Default implementation.
-        overlayTextures = (type, state, tier) -> {
+        overlayTextures = (type, state, tier, i) -> {
             state = state.getTextureState();
             String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
             return new Texture[]{
@@ -159,7 +165,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
             };
         };
-        baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
+        baseTexture = (m, tier, state) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         overlayModels = (a,s,d) -> {
             return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
         };
@@ -171,7 +177,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     protected void setupGui() {
-        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
+        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight(), t.handler.guiTextureSize(), t.handler.guiTextureHeight())));
     }
 
     /**
@@ -222,10 +228,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public T setOutputCover(CoverFactory cover) {
         this.outputCover = cover;
         return (T) this;
-    }
-
-    public CoverFactory getOutputCover() {
-        return outputCover;
     }
 
     public boolean allowsFrontCovers() {
@@ -303,13 +305,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return blockFunc.apply(type, tier);
     }
 
-    public Function<BlockMachine, AntimatterItemBlock> getItemBlockFunction() {
-        return itemBlockFunction;
-    }
-
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
-        return AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
+        return AntimatterAPI.get(itemClassSupplier.get(), this.getIdFromTier(tier), this.getDomain());
     }
 
     /**
@@ -319,11 +317,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), getDomain()));
-    }
-
-    public ITooltipInfo getTooltipFunction() {
-        return tooltipFunction;
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getIdFromTier(tier), getDomain()));
     }
 
     /**
@@ -332,12 +326,23 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public void registerJei() {
         if (this.guiData != null) {
             tierRecipeMaps.forEach((s, r) -> {
-                //If the recipe map has another GUI present don't register it.
+                if (s.isEmpty()){
+                    for (int i = 0; i < tiers.size(); i++) {
+                        Tier tier = tiers.get(i);
+                        if (i == 0 && r.getGui() == null){
+                            AntimatterAPI.registerJEICategory(r, this.guiData, this, tier, false);
+                        } else {
+                            AntimatterAPI.registerJEICategoryWorkstation(r, this, tier);
+                        }
+                    }
+                    return;
+                }
                 Tier t = AntimatterAPI.get(Tier.class, s);
+                //If the recipe map has another GUI present don't register it.
                 if (r.getGui() == null) {
                     AntimatterAPI.registerJEICategory(r, this.guiData, this, t, false);
                 } else {
-                    AntimatterAPI.registerJEICategoryModel(r, this, t);
+                    AntimatterAPI.registerJEICategoryWorkstation(r, this, t);
                 }
             });
 
@@ -373,7 +378,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T baseTexture(Texture tex) {
-        this.baseTexture = (m, state) -> new Texture[]{tex};
+        this.baseTexture = (m, tier, state) -> new Texture[]{tex};
         return (T) this;
     }
 
@@ -426,16 +431,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T setTooltipInfo(String translationKey){
-        return setTooltipInfo((m, s,w,t,f) -> t.add(Utils.translatable(translationKey)));
+    public T addTooltipInfo(String translationKey){
+        return addTooltipInfo((m, s,w,t,f) -> t.add(Utils.translatable(translationKey)));
     }
 
-    public T setTooltipInfo(Component tooltip){
-        return setTooltipInfo((m, s,w,t,f) -> t.add(tooltip));
+    public T addTooltipInfo(Component tooltip){
+        return addTooltipInfo((m, s,w,t,f) -> t.add(tooltip));
     }
 
+    @Deprecated
     public T setTooltipInfo(ITooltipInfo info){
-        this.tooltipFunction = info;
+        return this.addTooltipInfo(info);
+    }
+
+    public T addTooltipInfo(ITooltipInfo info){
+        this.tooltipFunctions.add(info);
         return (T) this;
     }
 
@@ -444,6 +454,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    @Override
     public String getDomain() {
         return domain;
     }
@@ -451,6 +462,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public String getId() {
         return id;
+    }
+
+    public String getIdFromTier(Tier tier){
+        return id + (tier == NONE ? "" : "_" + tier.getId());
     }
 
     public Component getDisplayName(Tier tier) {
@@ -484,30 +499,33 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         List<Texture> textures = new ObjectArrayList<>();
         for (Tier tier : getTiers()) {
             //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
-            textures.addAll(Arrays.asList(getBaseTexture(tier)));
-            textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE, tier)));
-            textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE, tier)));
+            textures.addAll(Arrays.asList(getBaseTexture(tier, MachineState.IDLE)));
+            textures.addAll(Arrays.asList(getBaseTexture(tier, MachineState.ACTIVE)));
+            for (int i = 0; i < overlayLayers; i++) {
+                textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE, tier, i)));
+                textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE, tier, i)));
+            }
         }
         return textures;
     }
 
-    public Texture[] getBaseTexture(Tier tier) {
-        return getDatedBaseHandler().getBase(this, tier);
+    public Texture[] getBaseTexture(Tier tier, MachineState state) {
+        return getDatedBaseHandler().getBase(this, tier, state);
     }
 
-    public Texture getBaseTexture(Tier tier, Direction dir) {
-        Texture[] texes = getDatedBaseHandler().getBase(this, tier);
+    public Texture getBaseTexture(Tier tier, Direction dir, MachineState state) {
+        Texture[] texes = getDatedBaseHandler().getBase(this, tier, state);
         if (texes.length == 1) return texes[0];
         return texes[dir.get3DDataValue()];
     }
 
 
-    public Texture[] getOverlayTextures(MachineState state, Tier tier) {
-        return getDatedOverlayHandler().getOverlays(this, state, tier);
+    public Texture[] getOverlayTextures(MachineState state, Tier tier, int index) {
+        return getDatedOverlayHandler().getOverlays(this, state, tier, index);
     }
 
-    public Texture[] getOverlayTextures(MachineState state) {
-        return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier());
+    public Texture[] getOverlayTextures(MachineState state, int index) {
+        return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier(), index);
     }
 
     public ResourceLocation getOverlayModel(MachineState state,Direction side) {
@@ -523,20 +541,41 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
-            flag.add(this);
+            FLAG_MAP.computeIfAbsent(flag.toString(), s -> new ObjectOpenHashSet<>()).add(this);
+        }
+        return (T) this;
+    }
+
+    public T addFlags(String... flags) {
+        for (String flag : flags) {
+            FLAG_MAP.computeIfAbsent(flag, s -> new ObjectOpenHashSet<>()).add(this);
+        }
+        return (T) this;
+    }
+
+    public T removeFlags(MachineFlag... flags) {
+        for (MachineFlag flag : flags) {
+            FLAG_MAP.computeIfAbsent(flag.toString(), s -> new ObjectOpenHashSet<>()).remove(this);
+        }
+        return (T) this;
+    }
+
+    public T removeFlags(String... flags) {
+        for (String flag : flags) {
+            FLAG_MAP.computeIfAbsent(flag, s -> new ObjectOpenHashSet<>()).remove(this);
         }
         return (T) this;
     }
 
     public void setFlags(MachineFlag... flags) {
-        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.remove(this));
+        FLAG_MAP.forEach((s, m) -> m.remove(this));
         addFlags(flags);
     }
 
     public T setTiers(Tier... tiers) {
         boolean none = false;
         for (Tier t : tiers){
-            if (t == Tier.NONE) none = true;
+            if (t == NONE) none = true;
         }
         if (none) this.setTierSpecificLang();
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
@@ -612,10 +651,20 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * Whether or not this machine has the given machine flag.
      *
      * @param flag the flag.
-     * @return if it has itreturn IAntimatterObject.super.getLang(lang);.
+     * @return if it has it;.
      */
     public boolean has(MachineFlag flag) {
-        return flag.getTypes().contains(this);
+        return has(flag.toString());
+    }
+
+    /**
+     * Whether or not this machine has the given machine flag.
+     *
+     * @param flag the flag.
+     * @return if it has it;.
+     */
+    public boolean has(String flag) {
+        return FLAG_MAP.containsKey(flag) && FLAG_MAP.get(flag).contains(this);
     }
 
     /**
@@ -649,7 +698,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
         List<Machine<?>> types = new ObjectArrayList<>();
         for (MachineFlag flag : flags) {
-            types.addAll(flag.getTypes());
+            if (FLAG_MAP.containsKey(flag.toString())){
+                types.addAll(FLAG_MAP.get(flag.toString()));
+            }
+
         }
         return types;
     }
@@ -669,7 +721,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return getOverlayModel(MachineState.IDLE, dir);
     }
 
-    public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier) -> new Texture[] {
+    public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier, i) -> new Texture[] {
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
@@ -678,7 +730,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             new Texture(Ref.ID, "block/machine/troll"),
     };
 
-    public static final ITextureHandler TROLL_BASE_HANDLER = (type, tier) -> new Texture[] {
+    public static final ITextureHandler TROLL_BASE_HANDLER = (type, tier, state) -> new Texture[] {
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),

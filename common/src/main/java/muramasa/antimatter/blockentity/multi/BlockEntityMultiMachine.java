@@ -39,7 +39,7 @@ public class BlockEntityMultiMachine<T extends BlockEntityMultiMachine<T>> exten
         if (type.has(ITEM) || type.has(CELL)) {
             itemHandler.set(() -> new MultiMachineItemHandler<>((T) this));
         }
-        if (type.has(ENERGY)) {
+        if (type.has(EU)) {
             energyHandler.set(() -> new MultiMachineEnergyHandler<>((T) this));
         }
         if (type.has(FLUID)) {

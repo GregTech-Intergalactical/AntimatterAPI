@@ -3,8 +3,12 @@ package muramasa.antimatter.tool;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.behaviour.IDestroySpeed;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.item.IContainerItem;
@@ -18,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -34,6 +39,7 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +50,7 @@ import tesseract.api.gt.IEnergyHandlerItem;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -55,6 +62,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     protected final AntimatterToolType type;
     protected final AntimatterItemTier itemTier;
 
+    /**
+     * -- GETTER --
+     *  Returns -1 if its not a powered tool
+     */
+    @Getter
     protected final int energyTier;
     protected final long maxEnergy;
 
@@ -107,13 +119,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return getToolTypes();
     }*/
 
-    /**
-     * Returns -1 if its not a powered tool
-     **/
-    public int getEnergyTier() {
-        return energyTier;
-    }
-
     @NotNull
     @Override
     public ItemStack asItemStack(@NotNull Material primary, @NotNull Material secondary) {
@@ -138,7 +143,19 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (type.getEffectiveBlocks().contains(state.getBlock())) {
             return true;
         }
-        return state.is(getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
+            if (state.is(effectiveBlockTag)){
+                return true;
+            }
+        }
+        boolean isType = false;
+        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
+            if (state.is(toolType)){
+                isType = true;
+                break;
+            }
+        }
+        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
     }
 
     //fabric method
@@ -206,10 +223,20 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
+        float destroySpeed = isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
-            return 0.2f;
+            destroySpeed = 0.2f;
         }
-        return isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IDestroySpeed destroySpeed1)) continue;
+            float i = destroySpeed1.getDestroySpeed(this, destroySpeed, stack, state);
+            if (i > 0){
+                destroySpeed = i;
+                break;
+            }
+        }
+        return destroySpeed;
     }
 
     @Override
@@ -242,7 +269,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
+        return type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
@@ -325,7 +352,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
+        if (type.getBlacklistedEnchantments().contains(enchantment)) return false;
+        if (type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
         }
         return (!type.isPowered() || (enchantment != Enchantments.UNBREAKING && enchantment != Enchantments.MENDING)) && enchantment.category.canEnchant(stack.getItem());

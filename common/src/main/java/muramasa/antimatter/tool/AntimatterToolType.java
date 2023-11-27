@@ -10,7 +10,6 @@ import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
-import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -26,6 +25,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -41,9 +41,12 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private final String domain, id;
     @Getter
     private TagKey<Block> toolType;
+    @Getter
     private final Set<TagKey<Block>> toolTypes = new ObjectOpenHashSet<>();
     @Getter
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
+    @Getter
+    private final Set<TagKey<Block>> effectiveBlockTags = new ObjectOpenHashSet<>();
     @Getter
     private final Set<net.minecraft.world.level.material.Material> effectiveMaterials = new ObjectOpenHashSet<>();
     @Getter
@@ -51,6 +54,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     @Setter
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
+    @Getter
+    @Setter
+    private Set<Enchantment> blacklistedEnchantments = new HashSet<>();
     @Getter
     private final List<Component> tooltip = new ObjectArrayList<>();
     @Getter
@@ -98,6 +104,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     @Setter
     private MaterialTypeItem<?> materialTypeItem;
+    @Getter
+    @Setter
+    private String customName = "";
 
     /**
      * Instantiates a AntimatterToolType with its basic values
@@ -217,7 +226,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
             MaterialTags.TOOLS.getAll().forEach((m, t) -> {
                 if (primaryMaterialRequirement != null && !m.has(primaryMaterialRequirement)) return;
                 if (t.toolTypes().contains(this)){
-                    tools.add(instantiateTool(domain, AntimatterItemTier.getOrCreate(m, hasSecondary ? AntimatterMaterials.Wood : Material.NULL), properties));
+                    tools.add(instantiateTool(domain, AntimatterItemTier.getOrCreate(m, hasSecondary ? t.handleMaterial() : Material.NULL), properties));
                 }
             });
         } else {
@@ -279,7 +288,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     public AntimatterToolType addTags(String... types) {
         if (types.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
-        Arrays.stream(types).map(t -> TagUtils.getForgelikeBlockTag(t)).forEach(t -> this.toolTypes.add(t));
+        Arrays.stream(types).map(t -> {
+            String domain = t.equals("pickaxe") || t.equals("axe") || t.equals("shovel") || t.equals("hoe") || t.equals("sword") ? "minecraft" : Ref.ID;
+            return TagUtils.getBlockTag(new ResourceLocation(domain, "mineable/" + t));
+        }).forEach(t -> this.toolTypes.add(t));
         return this;
     }
 
@@ -290,10 +302,22 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
+    @SafeVarargs
+    public final AntimatterToolType addEffectiveBlockTags(TagKey<Block>... blocks) {
+        if (blocks.length == 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective block tags even when it was explicitly called!");
+        this.effectiveBlockTags.addAll(Arrays.asList(blocks));
+        return this;
+    }
+
     public AntimatterToolType addEffectiveMaterials(net.minecraft.world.level.material.Material... materials) {
         if (materials.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
         this.effectiveMaterials.addAll(Arrays.asList(materials));
+        return this;
+    }
+    public AntimatterToolType addBlacklistedEnchantments(Enchantment... enchantments){
+        blacklistedEnchantments.addAll(Arrays.asList(enchantments));
         return this;
     }
 
@@ -365,13 +389,14 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, Material.NULL);
     }
 
+    public Item getToolItem(Material material){
+        String id = simple ? material.getId() + "_" + this.id : this.id;
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).getItem();
+    }
+
     @Override
     public String getId() {
         return id;
-    }
-
-    public Set<TagKey<Block>> getActualTags() {
-        return toolTypes;
     }
 
     public boolean hasContainer() {

@@ -1,8 +1,10 @@
 package muramasa.antimatter.tool.behaviour;
 
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IAddInformation;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.behaviour.IDestroySpeed;
 import muramasa.antimatter.behaviour.IItemRightClick;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
@@ -20,34 +22,32 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IItemRightClick<IAntimatterTool>, IAddInformation<IAntimatterTool> {
+public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IItemRightClick<IAntimatterTool>, IAddInformation<IAntimatterTool>, IDestroySpeed<IAntimatterTool> {
 
+    @Getter
     protected int column, row, depth;
+    protected int destroySpedDivider;
     protected String tooltipKey;
 
-    public BehaviourAOEBreak(int column, int row, int depth, String tooltipKey) {
+    public BehaviourAOEBreak(int column, int row, int depth, int destroySpeedDivider, String tooltipKey) {
         if (column == 0 && row == 0) Utils.onInvalidData("BehaviourAOEBreak was set to break empty rows and columns!");
         this.column = column;
         this.row = row;
         this.depth = depth;
+        this.destroySpedDivider = destroySpeedDivider;
         this.tooltipKey = tooltipKey;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     @Override
     public String getId() {
         return "aoe_break";
+    }
+
+    @Override
+    public float getDestroySpeed(IAntimatterTool instance, float currentDestroySpeed, ItemStack stack, BlockState state) {
+        CompoundTag tag = instance.getDataTag(stack);
+        if (tag == null || !tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK)) return currentDestroySpeed;
+        return currentDestroySpeed / destroySpedDivider;
     }
 
     @Override

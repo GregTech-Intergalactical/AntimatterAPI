@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
@@ -93,5 +94,10 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
         return InteractionResult.FAIL;
+    }
+
+    @Override
+    public <T> boolean blocksCapability(Class<T> cap, Direction side) {
+        return super.blocksCapability(cap, side) && !(source().getTile() instanceof BlockEntityPipe<?>);
     }
 }

@@ -106,7 +106,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         ICover[] covers = machine.coverHandler.map(CoverHandler::getAll).orElse(new ICover[]{ICover.empty, ICover.empty, ICover.empty, ICover.empty, ICover.empty, ICover.empty});
         Machine<?> m = machine.getMachineType();
         Function<Direction, Texture> mText = a -> {
-            Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());
+            Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier(), machine.getMachineState().getTextureState());
             if (tex.length == 1) return tex[0];
             return tex[a.get3DDataValue()];
         };

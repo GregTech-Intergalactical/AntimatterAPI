@@ -60,7 +60,7 @@ public class WorldGenSmallOre extends WorldGenBase<WorldGenSmallOre> {
         }
         json.addProperty("amountPerChunk", amountPerChunk);
         JsonArray array = new JsonArray();
-        getDims().forEach(r -> array.add(r.toString()));
+        getDimensions().forEach(r -> array.add(r.toString()));
         if (!array.isEmpty()){
             json.add("dims", array);
         }

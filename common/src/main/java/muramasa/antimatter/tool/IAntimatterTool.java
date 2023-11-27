@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool;
 
+import com.google.common.collect.Streams;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
@@ -7,6 +8,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.*;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.registration.IColorHandler;
@@ -106,7 +108,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     }
 
     default Set<TagKey<Block>> getActualTags() {
-        return getAntimatterToolType().getActualTags();
+        return getAntimatterToolType().getToolTypes();
     }
 
     default int getSubColour(ItemStack stack) {
@@ -127,6 +129,8 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     }
 
     ItemStack asItemStack(Material primary, Material secondary);
+
+    int getEnergyTier();
 
     default CompoundTag getEnergyTag(ItemStack stack){
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_ITEM_ENERGY_DATA);
@@ -236,18 +240,19 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         if (getAntimatterToolType().getUseSound() != null)
             target.getCommandSenderWorld().playSound(null, target.getX(), target.getY(), target.getZ(), getAntimatterToolType().getUseSound(), SoundSource.HOSTILE, volume, pitch);
         Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
+        if (attacker instanceof Player player) refillTool(stack, player);
         return true;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     default boolean onGenericBlockDestroyed(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             if (getAntimatterToolType().getUseSound() != null)
                 player.playNotifySound(getAntimatterToolType().getUseSound(), SoundSource.BLOCKS, 0.84F, 0.75F);
             boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getActualTags(), state);
             if (state.getDestroySpeed(world, pos) != 0.0F) {
-                Utils.damageStack(isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1, stack, entity);
+                int damage = isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1;
+                Utils.damageStack(damage, stack, entity);
             }
         }
         boolean returnValue = true;
@@ -256,7 +261,30 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             if (!(b instanceof IBlockDestroyed)) continue;
             returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos, entity);
         }
+        if (entity instanceof Player player) refillTool(stack, player);
         return returnValue;
+    }
+
+    default void refillTool(ItemStack stack, Player player){
+        if (this.getAntimatterToolType().isPowered()) {
+            Streams.concat(player.getInventory().items.stream(), player.getInventory().offhand.stream()).forEach(s -> {
+                if (this.getCurrentEnergy(stack) < getMaxEnergy(stack)){
+                    if (s.getItem() instanceof ItemBattery battery && battery.getTier().getIntegerId() == this.getEnergyTier()){
+                        IEnergyHandlerItem batteryHandler = TesseractCapUtils.getEnergyHandlerItem(s).orElse(null);
+                        IEnergyHandlerItem toolHandler = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
+                        if (batteryHandler != null && toolHandler != null){
+                            long extracted = batteryHandler.extractEu(battery.getCapacity(), true);
+                            if (extracted > 0){
+                                long inserted = toolHandler.insertEu(extracted, true);
+                                if (inserted > 0){
+                                    toolHandler.insertEu(batteryHandler.extractEu(inserted, false), false);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -333,7 +361,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         long currentEnergy = h.getEnergy();
         Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
         int energyEfficiency = enchants.getOrDefault(Data.ENERGY_EFFICIENCY, 0);
-        int energyUse = energyEfficiency == 0 ? 100 : energyEfficiency == 1 ? 75 : energyEfficiency == 2 ? 50 : energyEfficiency == 3 ? 25 : 100;
+        int energyUse = Math.max(10, 100 - (int)((energyEfficiency * 0.1f) * 100));
         int multipliedDamage = amount * energyUse;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {

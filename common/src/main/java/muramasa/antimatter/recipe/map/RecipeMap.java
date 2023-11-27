@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,7 +60,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     private CustomRecipeSerializer recipeSerializer;
 
     @Nullable
-    private Object icon;
+    private Supplier<Object> icon;
 
     @Environment(EnvType.CLIENT)
     private IRecipeInfoRenderer infoRenderer;
@@ -97,7 +98,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     }
 
     // Object can be an IDrawable or an ItemStack or an IItemProvider.
-    public RecipeMap<B> setIcon(Object object) {
+    public RecipeMap<B> setIcon(Supplier<Object> object) {
         this.icon = object;
         return this;
     }
@@ -109,7 +110,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
 
     @Nullable
     public Object getIcon() {
-        return this.icon;
+        return this.icon != null ? this.icon.get() : null;
     }
 
     @Nullable

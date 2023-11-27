@@ -1,6 +1,8 @@
 package muramasa.antimatter.machine;
 
+import com.google.common.collect.ImmutableMap;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
@@ -70,7 +72,9 @@ import static muramasa.antimatter.machine.MachineFlag.RF;
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
     public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
 
+    @Getter
     protected Machine<?> type;
+    @Getter
     protected Tier tier;
     protected final StateDefinition<Block, BlockState> stateContainer;
 
@@ -79,21 +83,13 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     }
 
     public BlockMachine(Machine<?> type, Tier tier, Properties properties) {
-        super(type.getDomain(), type.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), properties.isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
+        super(type.getDomain(), type.getIdFromTier(tier), properties.isValidSpawn((blockState, blockGetter, blockPos, object) -> false));
         StateDefinition.Builder<Block, BlockState> builder = new StateDefinition.Builder<>(this);
         this.type = type;
         this.tier = tier;
         this.createBlockStateDefinition(builder);
         this.stateContainer = builder.create(Block::defaultBlockState, BlockState::new);
         this.registerDefaultState(this.stateContainer.any());
-    }
-
-    public Machine<?> getType() {
-        return type;
-    }
-
-    public Tier getTier() {
-        return tier;
     }
 
     @Override
@@ -116,7 +112,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         if (type.isVerticalFacingAllowed()) {
             Direction dir = context.getNearestLookingDirection().getOpposite();
-            dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
             return this.defaultBlockState().setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
         } else {
             return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
@@ -234,8 +229,8 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tileentity instanceof BlockEntityMachine<?> machine){
             machine.onDrop(state, builder, list);
-            machine.itemHandler.ifPresent(t -> list.addAll(t.getAllItems()));
-            machine.coverHandler.ifPresent(t -> list.addAll(t.getDrops()));
+            machine.dropInventory(state, builder, list);
+            machine.dropCovers(state, builder, list);
         }
         return list;
     }
@@ -272,27 +267,31 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
         if (getType().has(BASIC) && !getType().has(RF)) {
-            if (getTier().getVoltage() > 0 && getType().has(MachineFlag.ENERGY)) {
+            if (getTier().getVoltage() > 0 && getType().has(MachineFlag.EU)) {
                 tooltip.add(Utils.translatable("machine.voltage.in").append(": ").append(Utils.literal(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
                 tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
             }
         }
-        this.type.getTooltipFunction().getTooltips(this, stack, world, tooltip, flag);
+        this.type.getTooltipFunctions().forEach(t -> t.getTooltips(this, stack, world, tooltip, flag));
     }
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
-        Texture[] base = type.getBaseTexture(tier);
+        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier, MachineState.IDLE)[0]);
+        Texture[] base = type.getBaseTexture(tier, MachineState.ACTIVE);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
                 b.texture("base" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), base[s]);
             }
         }
-        Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier);
-        for (int s = 0; s < 6; s++) {
-            b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), overlays[s]);
+        for (int i = 0; i < type.getOverlayLayers(); i++) {
+            Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier, i);
+            for (int s = 0; s < 6; s++) {
+                String suffix = i == 0 ? "" : String.valueOf(i);
+                b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName() + suffix, overlays[s]);
+            }
         }
+
     }
 
     @Override
@@ -301,16 +300,21 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         buildModelsForState(builder, MachineState.IDLE);
         buildModelsForState(builder, MachineState.ACTIVE);
         builder.loader(AntimatterModelManager.LOADER_MACHINE);
-        builder.property("particle", getType().getBaseTexture(tier)[0].toString());
+        builder.property("particle", getType().getBaseTexture(tier, MachineState.IDLE)[0].toString());
         prov.state(block, builder);
     }
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
-        Texture[] overlays = type.getOverlayTextures(state, tier);
         List<JLoaderModel> arr = new ArrayList<>();
 
         for (Direction dir : Ref.DIRS) {
-            JLoaderModel obj = builder.addModelObject(JLoaderModel.modelKeepElements(), this.getType().getOverlayModel(state, dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
+            ImmutableMap.Builder<String, String> builder1 = ImmutableMap.builder();
+            builder1.put("base", getType().getBaseTexture(tier, dir, state).toString());
+            for (int i = 0; i < type.getOverlayLayers(); i++) {
+                String suffix = i == 0 ? "" : String.valueOf(i);
+                builder1.put("overlay" + suffix, type.getOverlayTextures(state, tier, i)[dir.get3DDataValue()].toString());
+            }
+            JLoaderModel obj = builder.addModelObject(JLoaderModel.modelKeepElements(), this.getType().getOverlayModel(state, dir).toString(), builder1.build());
             //obj.loader(AntimatterModelManager.LOADER_MACHINE_SIDE.getLoc().toString());
             arr.add(obj);
         }

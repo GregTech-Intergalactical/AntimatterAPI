@@ -129,7 +129,7 @@ public class AntimatterDynamics {
         AntimatterTagProvider.afterCompletion();
         AntimatterBlockLootProvider.afterCompletion();
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
-        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES || !AntimatterPlatformUtils.isProduction()) {
+        if (AntimatterConfig.EXPORT_DEFAULT_RECIPES.get() || !AntimatterPlatformUtils.isProduction()) {
             RUNTIME_DATA_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
         }
     }
@@ -288,7 +288,11 @@ public class AntimatterDynamics {
         for (WorldGenVanillaOre vanillaOre : vanillaOres){
             AntimatterWorldGenerator.register(vanillaOre.toRegister, vanillaOre);
         }
-        if (AntimatterConfig.WORLD.REGENERATE_DEFAULT_WORLDGEN_JSONS) AntimatterConfig.COMMON_CONFIG.REGENERATE_DEFAULT_WORLDGEN_JSONS.set(false);
+        if (AntimatterConfig.REGENERATE_DEFAULT_WORLDGEN_JSONS.get()) {
+            AntimatterConfig.REGENERATE_DEFAULT_WORLDGEN_JSONS.set(false);
+            AntimatterConfig.CONFIG_COMMON.save();
+            AntimatterConfig.CONFIG_COMMON.reload();
+        }
         loaders.forEach((r, l) -> {
             RecipeBuilder.setCurrentModId(r.getNamespace());
             l.init();

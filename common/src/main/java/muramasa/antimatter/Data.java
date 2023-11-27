@@ -33,7 +33,7 @@ import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
 
 import static muramasa.antimatter.gui.ButtonOverlay.*;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
+import static muramasa.antimatter.machine.MachineFlag.EU;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static muramasa.antimatter.machine.Tier.MAX;
 
@@ -75,6 +75,11 @@ public class Data {
         public ContainerMachine<?> getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
             return tile instanceof BlockEntityMachine ? new ContainerBasicMachine((BlockEntityMachine<?>) tile, playerInv, this, windowId) : null;
         }
+
+        @Override
+        public String screenID() {
+            return "machine";
+        }
     };
 
     public static MenuHandlerPipe<?> PIPE_MENU_HANDLER = new MenuHandlerPipe<>(Ref.ID, "container_pipe");
@@ -98,7 +103,7 @@ public class Data {
         }
     };
 
-    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setVerticalFacingAllowed(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
+    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(EU, GUI).setTiers(MAX).setVerticalFacingAllowed(true).allowFrontIO().setTile(BlockEntityInfiniteStorage::new)
             .noCovers();
 
     public static void init(Side side) {

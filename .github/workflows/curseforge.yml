@@ -2,7 +2,7 @@ name: Publish To Curseforge
 on:
   workflow_dispatch:
 jobs:
-  release:
+  curseforge:
     strategy:
       matrix:
         # Use these Java versions
@@ -40,6 +40,7 @@ jobs:
           curseforge-id: 462713
           curseforge-token: ${{ secrets.CURSEFORGE_API_TOKEN }}
           version-type: beta
+          name: ""
           changelog-file: CHANGELOG.md
           files-primary: forge/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar
           files-secondary: forge/build/libs/*-@(dev-shadow|sources|javadoc).jar
@@ -51,6 +52,7 @@ jobs:
           curseforge-id: 462713
           curseforge-token: ${{ secrets.CURSEFORGE_API_TOKEN }}
           version-type: beta
+          name: ""
           changelog-file: CHANGELOG.md
           files-primary: fabric/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar
           files-secondary: fabric/build/libs/*-@(dev-shadow|sources|javadoc).jar

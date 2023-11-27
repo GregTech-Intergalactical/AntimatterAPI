@@ -1,5 +1,8 @@
 package muramasa.antimatter.util;
 
+import carbonconfiglib.config.Config;
+import carbonconfiglib.config.ConfigHandler;
+import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
@@ -275,6 +278,16 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static Path getConfigDir(){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static ConfigHandler createConfig(String modid, Config config){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
         throw new AssertionError();
     }
 }

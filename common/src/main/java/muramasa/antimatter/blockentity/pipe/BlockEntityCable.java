@@ -95,7 +95,7 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
     }
 
     @Override
-    public int getLoss() {
+    public double getLoss() {
         return ((Cable<?>) getPipeType()).getLoss();
     }
 

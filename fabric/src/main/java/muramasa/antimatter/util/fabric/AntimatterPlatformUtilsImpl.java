@@ -1,5 +1,9 @@
 package muramasa.antimatter.util.fabric;
 
+import carbonconfiglib.CarbonConfig;
+import carbonconfiglib.config.Config;
+import carbonconfiglib.config.ConfigHandler;
+import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
 import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
 import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
@@ -221,5 +225,13 @@ public class AntimatterPlatformUtilsImpl {
 
     public static Path getConfigDir(){
         return FabricLoader.getInstance().getConfigDir();
+    }
+
+    public static ConfigHandler createConfig(String modid, Config config){
+        return CarbonConfig.createConfig(modid, config);
+    }
+
+    public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
+        return CarbonConfig.createConfig(modid, config, settings);
     }
 }
