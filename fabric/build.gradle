@@ -56,7 +56,7 @@ dependencies{
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}"){
         exclude(group: "mezz.jei", module: "jei-1.18.2-fabric-api")
     }
-    modRuntimeOnly("teamreborn:energy:${rootProject.energy_version}") {
+    modImplementation("teamreborn:energy:${rootProject.energy_version}") {
         transitive = false
     }
     implementation(annotationProcessor(include("io.github.llamalad7:mixinextras-fabric:0.2.0-beta.11")))
@@ -67,6 +67,8 @@ dependencies{
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+    implementation("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
+    implementation("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modImplementation "maven.modrinth:carbon-config:2ngFmmhP"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
