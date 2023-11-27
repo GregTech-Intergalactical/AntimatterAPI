@@ -5,12 +5,6 @@ import carbonconfiglib.config.*;
 import carbonconfiglib.impl.ReloadMode;
 import carbonconfiglib.utils.AutomationType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import tesseract.Tesseract;
 
