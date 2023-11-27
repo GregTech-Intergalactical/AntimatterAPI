@@ -12,17 +12,6 @@ accessible method net/minecraft/world/item/crafting/Ingredient valueFromJson (Lc
 accessible field net/minecraft/world/level/biome/Biome$ClimateSettings temperature F
 accessible field net/minecraft/world/level/biome/Biome$ClimateSettings precipitation Lnet/minecraft/world/level/biome/Biome$Precipitation;
 accessible method net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacerType <init> (Lcom/mojang/serialization/Codec;)V
-accessible method net/minecraft/data/loot/BlockLoot applyExplosionDecay (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/functions/FunctionUserBuilder;)Ljava/lang/Object;
-accessible method net/minecraft/data/loot/BlockLoot applyExplosionCondition (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/predicates/ConditionUserBuilder;)Ljava/lang/Object;
-accessible method net/minecraft/data/loot/BlockLoot createSingleItemTable (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createSingleItemTable (Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createSingleItemTableWithSilkTouch (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createSingleItemTableWithSilkTouch (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createSelfDropDispatchTable (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition$Builder;Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer$Builder;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createSilkTouchDispatchTable (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer$Builder;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createShearsDispatchTable (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer$Builder;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createSilkTouchOrShearsDispatchTable (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer$Builder;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
-accessible method net/minecraft/data/loot/BlockLoot createOreDrop (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/item/Item;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
 accessible method net/minecraft/world/item/crafting/ShapedRecipe dissolvePattern ([Ljava/lang/String;Ljava/util/Map;II)Lnet/minecraft/core/NonNullList;
 accessible method net/minecraft/world/item/crafting/ShapedRecipe patternFromJson (Lcom/google/gson/JsonArray;)[Ljava/lang/String;
 accessible method net/minecraft/world/item/crafting/ShapedRecipe keyFromJson (Lcom/google/gson/JsonObject;)Ljava/util/Map;
