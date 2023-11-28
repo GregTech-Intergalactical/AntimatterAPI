@@ -86,35 +86,21 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
     }
 
     @Override
-    public long insertAmps(long voltage, long amps, boolean simulate) {
-        if (voltage < 0 || amps < 0) return 0;
-        if (getState().getAmpsReceived() >= getInputAmperage()) return 0;
-        int loss = canInput() && canOutput() ? 1 : 0;
-        if (getInputVoltage() == 0) return 0;
-        amps = Math.min((getCapacity() - getEnergy()) / getInputVoltage(), amps);
-        voltage -= loss;
-        if (!simulate && !checkVoltage(voltage)) return amps;
-
-        if (cachedItems.isEmpty()){
-            return super.insertAmps(voltage, amps, simulate);
-        }
-        long energy = voltage * amps;
-        insertInternal(energy, simulate);
-        return amps;
-    }
-
-    @Override
     public long insertEu(long voltage, boolean simulate) {
         if (voltage < 0) return 0;
-        if (!simulate && !checkVoltage(voltage)) return voltage;
+        if (getState().getAmpsReceived() >= getInputAmperage()) return 0;
+        int loss = canInput() && canOutput() ? 1 : 0;
+        voltage -= loss;
+        if (this.getEnergy() + voltage > this.getCapacity()) return 0;
+        if (!simulate && !checkVoltage(voltage + loss)) return voltage + loss;
         if (cachedItems.isEmpty()){
             long superInsert = super.insertEu(voltage, simulate);
             if (superInsert > 0 && !simulate){
                 tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED);
             }
-            return superInsert;
+            return superInsert + loss;
         }
-        return insertInternal(voltage, simulate);
+        return insertInternal(voltage, simulate) + loss;
     }
 
     public long insertInternal(long energy, boolean simulate) {
@@ -160,14 +146,6 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
             this.state.receive(simulate, 1);
         }
         return euInserted;
-    }
-
-    @Override
-    public long extractAmps(long voltage, long amps, boolean simulate) {
-        if (amps < 0) {
-            Antimatter.LOGGER.info(amps + " Amps at: " + tile.getBlockPos() + ", Simulate: " + simulate);
-        }
-        return super.extractAmps(voltage, amps, simulate);
     }
 
     @Override

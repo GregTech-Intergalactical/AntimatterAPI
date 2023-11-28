@@ -35,11 +35,6 @@ public class BlockEntityInfiniteStorage<T extends BlockEntityInfiniteStorage<T>>
             }
 
             @Override
-            public long extractAmps(long voltage, long amps, boolean simulate) {
-                return amps;
-            }
-
-            @Override
             public boolean canOutput(Direction direction) {
                 return tile.getFacing() == direction;
             }

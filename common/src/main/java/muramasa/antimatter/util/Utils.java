@@ -411,11 +411,11 @@ public class Utils {
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
         boolean transferred = false;
         for (long amp = 0; amp < from.availableAmpsOutput(); amp++) {
-            long ampInserted = from.extractAmps(from.getOutputVoltage(), 1, true);
-            if (ampInserted > 0){
-                long insertAmps = to.insertAmps(from.getOutputVoltage(), ampInserted, true);
-                if (insertAmps > 0){
-                    from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), ampInserted, false), false);
+            long extracted = from.extractEu(from.getOutputVoltage(), true);
+            if (extracted > 0){
+                long insertEu = to.insertEu(extracted, true);
+                if (insertEu > 0){
+                    from.extractEu(to.insertEu(extracted, false), false);
                     transferred = true;
                 }
             }
@@ -484,15 +484,18 @@ public class Utils {
      * @return number of amps
      */
     public static boolean transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss) {
-        long amps = from.extractAmps(from.getOutputVoltage() - loss, from.availableAmpsOutput(), true);
-        if (amps > 0){
-            long insertAmps = to.insertAmps(from.getOutputVoltage() - loss, amps, true);
-            if (insertAmps > 0){
-                from.extractAmps(from.getOutputVoltage() - loss, to.insertAmps(from.getOutputVoltage() - loss, insertAmps, false), false);
-                return true;
+        boolean transferred = false;
+        for (long amp = 0; amp < from.availableAmpsOutput(); amp++) {
+            long extracted = from.extractEu(from.getOutputVoltage(), true);
+            if (extracted > 0){
+                long insertEu = to.insertEu(extracted - loss, true);
+                if (insertEu > 0){
+                    from.extractEu(to.insertEu(extracted - loss, false) + loss, false);
+                    transferred = true;
+                }
             }
         }
-        return false;
+        return transferred;
     }
 
     public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to, int cap, Predicate<FluidHolder> filter) {

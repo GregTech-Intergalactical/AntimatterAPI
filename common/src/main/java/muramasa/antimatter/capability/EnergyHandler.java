@@ -65,6 +65,7 @@ public class EnergyHandler implements IEnergyHandler {
     @Override
     public long insertEu(long voltage, boolean simulate) {
         if (voltage < 0) return 0;
+        if (getState().getAmpsReceived() >= getInputAmperage()) return 0;
         if (!simulate && !checkVoltage(voltage)) return voltage;
         long toAdd = Math.min(voltage, this.capacity - this.energy);
         if (!simulate) this.energy += toAdd;
@@ -76,15 +77,6 @@ public class EnergyHandler implements IEnergyHandler {
         long toAdd = Math.min(voltage, this.capacity - this.energy);
         if (!simulate) this.energy += toAdd;
         return toAdd;
-    }
-
-    @Override
-    public long insertAmps(long voltage, long amps, boolean simulate) {
-        if (voltage < 0 || amps < 0) return 0;
-        if (!simulate && !checkVoltage(voltage)) return amps;
-        amps = Math.min(amps, this.availableAmpsInput(voltage));
-        amps = Math.min(amps, (this.getCapacity() - this.getEnergy()) / this.getInputVoltage());
-        return IEnergyHandler.super.insertAmps(voltage, amps, simulate);
     }
 
     protected void overVolt() {
