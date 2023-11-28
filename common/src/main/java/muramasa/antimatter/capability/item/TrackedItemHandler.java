@@ -62,13 +62,6 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (this.type == SlotType.IT_IN && !(tile instanceof BlockEntityHatch<?>)){
-            for (int i = 0; i < size; i++){
-                if (i == slot) continue;
-                if (this.getItem(i).isEmpty()) continue;
-                if (Utils.equals(this.getItem(i), stack)) return stack;
-            }
-        }
         if (!input)
             return stack;
         boolean validate = !(tile instanceof IFilterableHandler filterableHandler) || filterableHandler.test(type, slot, stack);
