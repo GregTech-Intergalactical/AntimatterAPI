@@ -63,7 +63,6 @@ public class CombinedInvWrapper implements ExtendedItemContainer {
     @Override
     @NotNull
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-
         int index = getIndexForSlot(slot);
         ExtendedItemContainer handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
