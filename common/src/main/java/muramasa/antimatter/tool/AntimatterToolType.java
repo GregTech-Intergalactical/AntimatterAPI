@@ -65,6 +65,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Setter
     private boolean hasContainer, hasSecondary, simple, repairable;
     @Getter
+    @Setter
     private boolean originalTag = true;
     @Getter
     private long baseMaxEnergy;

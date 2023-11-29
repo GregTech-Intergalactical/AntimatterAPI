@@ -10,6 +10,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.tool.behaviour.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,7 +38,7 @@ public class AntimatterDefaultTools {
     public static final AntimatterToolType MORTAR = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "mortar", 5, 5, 2, -2.0F, 0.0F, false)).setUseSound(SoundEvents.GRINDSTONE_USE).setBlockBreakability(false).setRepairable(false);
     public static final AntimatterToolType WIRE_CUTTER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F, false)).setUseSound(SoundEvents.SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CLOTH_DECORATION).setRepairable(false).addBlacklistedEnchantments(Enchantments.BLOCK_EFFICIENCY);
     public static final AntimatterToolType BRANCH_CUTTER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "branch_cutter", 1, 3, 2, 0.0F, -1.5F, false)).addTags("grafter").addEffectiveMaterials(LEAVES).setHasContainer(false).setDurabilityMultiplier(0.25f);
-    public static final AntimatterToolType KNIFE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F, false)).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setRepairable(false);
+    public static final AntimatterToolType KNIFE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F, false)).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setRepairable(false).setTag(new ResourceLocation(Ref.ID, "knives")).setOriginalTag(true);
     public static final AntimatterToolType PLUNGER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F, false)).setUseSound(SoundEvents.BUCKET_EMPTY).setHasSecondary(false).setRepairable(false);
     public static final AntimatterArmorType HELMET = new AntimatterArmorType(Ref.ID, "helmet", 40, 0, 0.0F, 0.0F, EquipmentSlot.HEAD);
     public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 0, 0.0F, 0.0F, EquipmentSlot.CHEST);
