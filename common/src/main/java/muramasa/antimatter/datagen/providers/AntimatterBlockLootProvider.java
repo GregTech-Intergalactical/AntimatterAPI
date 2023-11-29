@@ -45,8 +45,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
 
-import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE;
-import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE_SMALL;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
 
 public class AntimatterBlockLootProvider extends BlockLoot implements DataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
@@ -160,7 +159,12 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
 
     public static Function<Block, LootTable.Builder> addToFortuneWithoutCustomDrops(BlockOre block) {
         if (block.getOreType() == ORE_SMALL) {
-            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.CRUSHED))) return BlockLoot::createSingleItemTable;
+            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.CRUSHED))) {
+                if (block.getMaterial().has(DUST)){
+                    return b -> BlockLoot.createSingleItemTable(DUST.get(block.getMaterial()));
+                }
+                return BlockLoot::createSingleItemTable;
+            }
             Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
             int multiplier = MaterialTags.ORE_MULTI.getInt(block.getMaterial());
             LootPool.Builder builder;
