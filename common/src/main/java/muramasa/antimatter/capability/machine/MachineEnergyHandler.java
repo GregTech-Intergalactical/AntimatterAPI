@@ -11,6 +11,7 @@ import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.util.Utils;
@@ -91,7 +92,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
         if (getState().getAmpsReceived() >= getInputAmperage()) return 0;
         int loss = canInput() && canOutput() ? 1 : 0;
         voltage -= loss;
-        if (this.getEnergy() + voltage > this.getCapacity()) return 0;
+        if (!this.tile.getMachineType().has(MachineFlag.PARTIAL_AMPS) && cachedItems.isEmpty() && this.getEnergy() + voltage > this.getCapacity()) return 0;
         if (!simulate && !checkVoltage(voltage + loss)) return voltage + loss;
         if (cachedItems.isEmpty()){
             long superInsert = super.insertEu(voltage, simulate);

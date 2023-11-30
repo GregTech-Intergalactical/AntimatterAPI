@@ -1,5 +1,6 @@
 package muramasa.antimatter.blockentity.pipe;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -59,6 +60,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
      **/
     private byte connection, virtualConnection;
 
+    @Getter
     protected Holder pipeCapHolder;
 
     public BlockEntityPipe(T type, BlockPos pos, BlockState state) {
@@ -84,10 +86,6 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         if (isServerSide()) {
             register();
         }
-    }
-
-    public Holder getPipeCapHolder() {
-        return pipeCapHolder;
     }
 
     public boolean isConnector() {
