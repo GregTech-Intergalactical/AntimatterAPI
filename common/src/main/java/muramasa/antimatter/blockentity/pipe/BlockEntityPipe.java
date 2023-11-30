@@ -7,6 +7,7 @@ import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.CoverPlate;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
@@ -90,7 +91,14 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public boolean isConnector() {
-        return !this.getBlockState().getValue(BlockPipe.TICKING);
+        return !this.getBlockState().getValue(BlockPipe.TICKING) || this.coverHandler.map(p -> {
+            for (ICover cover : p.getAll()) {
+                if (cover.isNode()){
+                    return false;
+                }
+            }
+            return true;
+        }).orElse(true);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
