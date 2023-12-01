@@ -147,7 +147,7 @@ public class ClientEvents {
         }
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof BlockEntityBase<?> b) {
-            left.addAll(b.getInfo());
+            left.addAll(b.getInfo(false));
         }
         if (MC.player.isCrouching()) {
             left.add("");

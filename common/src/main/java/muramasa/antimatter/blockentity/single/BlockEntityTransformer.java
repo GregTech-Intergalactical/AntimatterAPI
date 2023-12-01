@@ -102,8 +102,8 @@ public class BlockEntityTransformer<T extends BlockEntityTransformer<T>> extends
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         energyHandler.ifPresent(h -> {
             info.add("Voltage In: " + h.getInputVoltage());
             info.add("Voltage Out: " + h.getOutputVoltage());

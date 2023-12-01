@@ -140,8 +140,8 @@ public class BlockEntityInfiniteStorage<T extends BlockEntityInfiniteStorage<T>>
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         energyHandler.ifPresent(h -> {
             info.add("Voltage Out: " + h.getOutputVoltage());
             info.add("Amperage Out: " + h.getOutputAmperage());

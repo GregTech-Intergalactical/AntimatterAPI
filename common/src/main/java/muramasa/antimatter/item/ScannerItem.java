@@ -2,6 +2,8 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.blockentity.BlockEntityBase;
@@ -27,16 +29,28 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
+public class ScannerItem extends ItemBasic<ScannerItem> {
+    final boolean simple;
 
-    public DebugScannerItem(String domain, String id) {
-        super(domain, id);
+    public ScannerItem(String domain, String id, boolean simple) {
+        this(domain, id, simple, "", new Properties().tab(Ref.TAB_ITEMS));
+
     }
+
+    public ScannerItem(String domain, String id, boolean simple, String subDir, Properties properties) {
+        super(domain, id, subDir, properties);
+        this.simple = simple;
+    }
+
+    public ScannerItem(String domain, String id, boolean simple, Properties properties) {
+        this(domain, id, simple, "", properties);
+    }
+
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Utils.literal(this.tooltip));
-        if (Screen.hasShiftDown()) {
+        if (Screen.hasShiftDown() && this == Data.DEBUG_SCANNER) {
             tooltip.add(Utils.literal("Blocks: " + AntimatterAPI.all(Block.class).size()));
             tooltip.add(Utils.literal("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(Utils.literal("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
@@ -56,7 +70,7 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
         if (tile instanceof BlockEntityBase) {
-            ((BlockEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
+            ((BlockEntityBase<?>) tile).getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
             ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {

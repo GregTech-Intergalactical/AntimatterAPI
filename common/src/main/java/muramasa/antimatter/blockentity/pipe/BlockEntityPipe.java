@@ -367,8 +367,8 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;

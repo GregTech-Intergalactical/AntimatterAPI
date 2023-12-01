@@ -691,8 +691,8 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         info.add("Machine: " + getMachineType().getId() + " Tier: " + getMachineTier().getId());
         info.add("State: " + getMachineState().getId());
         String slots = "";

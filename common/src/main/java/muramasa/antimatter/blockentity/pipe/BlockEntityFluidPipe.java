@@ -385,8 +385,8 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> list = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> list = super.getInfo(simple);
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getSize(); i++) {
                 FluidHolder stack = t.getFluidInTank(i);

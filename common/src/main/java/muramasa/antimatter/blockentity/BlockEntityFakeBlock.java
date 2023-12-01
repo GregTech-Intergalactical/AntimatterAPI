@@ -172,8 +172,8 @@ public class BlockEntityFakeBlock extends BlockEntityTickable<BlockEntityFakeBlo
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> list = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> list = super.getInfo(simple);
         if (getState() != null)
             list.add("State: " + getState().toString());
         if (facing != null)
