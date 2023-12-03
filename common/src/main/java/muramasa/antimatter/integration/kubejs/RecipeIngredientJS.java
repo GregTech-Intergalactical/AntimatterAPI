@@ -74,7 +74,7 @@ public class RecipeIngredientJS extends IngredientStackJS {
             if (object.has("count")){
                 count = object.get("count").getAsInt();
             }
-            if (object.has("nbt") && object.get("nbt").getAsBoolean()){
+            if (object.has("ignoreNBT") && object.get("ignoreNBT").getAsBoolean()){
                 ignoreNBt = true;
             }
             if (object.has("noconsume") && object.get("noconsume").getAsBoolean()){
@@ -93,7 +93,7 @@ public class RecipeIngredientJS extends IngredientStackJS {
         } else if (element instanceof JsonArray){
             object.add("values", element);
         }
-        object.addProperty("nbt", ignoreNbt);
+        object.addProperty("ignoreNBT", ignoreNbt);
         object.addProperty("noconsume", nonConsume);
         return object;
     }

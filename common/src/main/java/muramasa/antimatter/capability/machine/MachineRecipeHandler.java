@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
@@ -46,6 +47,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     protected IRecipe activeRecipe;
     protected boolean consumedResources;
+    @Getter
     protected int currentProgress,
             maxProgress;
     protected int overclock;
@@ -88,14 +90,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     public float getClientProgress() {
         return ((float) currentProgress / (float) maxProgress);
-    }
-
-    public int getCurrentProgress() {
-        return currentProgress;
-    }
-
-    public int getMaxProgress() {
-        return maxProgress;
     }
 
     @Override
