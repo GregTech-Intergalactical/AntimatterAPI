@@ -8,6 +8,7 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvents;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
@@ -35,6 +36,16 @@ public class IOWidget extends Widget {
         }
         if (m.getTile().getMachineType().has(FLUID)) {
             hasFluid = true;
+        }
+    }
+
+    @Override
+    public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
+        super.mouseOver(stack, mouseX, mouseY, partialTicks);
+        if (isInside(0, 0, 18, 18, mouseX, mouseY)){
+            renderTooltip(stack, Utils.translatable("antimatter.tooltip.io_widget.fluid"), mouseX, mouseY);
+        } else if (isInside(18, 0, 18, 18, mouseX, mouseY)){
+            renderTooltip(stack, Utils.translatable("antimatter.tooltip.io_widget.item"), mouseX, mouseY);
         }
     }
 

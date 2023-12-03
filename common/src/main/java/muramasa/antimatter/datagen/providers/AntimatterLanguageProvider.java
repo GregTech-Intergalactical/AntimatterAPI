@@ -357,6 +357,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.behaviour.aoe_enabled", "%s Enabled");
         add("antimatter.tooltip.behaviour.aoe_disabled", "%s Disabled");
         add("antimatter.tooltip.behaviour.aoe_right_click", "Sneak right click to Enable/Disable %s");
+        add("antimatter.tooltip.io_widget.fluid", "Fluid Auto-Output");
+        add("antimatter.tooltip.io_widget.item", "Item Auto-Output");
         add("antimatter.behaviour.3x3", "3x3 Mining");
         add("antimatter.behaviour.1x0x2", "1x2 Mining");
     }
