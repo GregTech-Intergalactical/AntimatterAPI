@@ -170,6 +170,23 @@ public class RecipeIngredient extends Ingredient {
         return ignoreNbt;
     }
 
+    public boolean test(@Nullable ItemStack compare) {
+        if (compare == null) {
+            return false;
+        } else {
+            if (this.getItems().length == 0) {
+                return compare.isEmpty();
+            } else {
+                for (ItemStack itemstack : this.getItems()) {
+                    if (itemstack.is(compare.getItem()) && (ignoreNbt || ItemStack.tagMatches(itemstack, compare))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
     public static int count(Ingredient ing) {
         if (ing instanceof RecipeIngredient i) {
             return i.count();
