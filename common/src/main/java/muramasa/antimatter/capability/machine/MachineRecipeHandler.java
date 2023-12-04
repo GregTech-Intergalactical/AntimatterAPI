@@ -55,7 +55,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     //20 seconds per check.
     static final int WAIT_TIME = 20 * 20;
     static final int WAIT_TIME_POWER_LOSS = 20 * 5;
-    static final int WAIT_TIME_OUTPUT_FULL = 20;
+    protected static final int WAIT_TIME_OUTPUT_FULL = 20;
     protected int tickTimer = 0;
 
     //Consuming resources can call into the recipe handler, causing a loop.
@@ -299,7 +299,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             }
         }
         if (currentProgress == 0 && !consumedResources && shouldConsumeResources()) {
-            if (!this.consumeInputs()) {
+            if (!this.consumeInputs()) { //No fucking clue why this is an empty loop - Trinsdar
 
             }
         }

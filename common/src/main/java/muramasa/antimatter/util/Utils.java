@@ -160,7 +160,7 @@ public class Utils {
     }
 
     /**
-     * Merges B into A, ignoring maxStackSize
+     * Merges B into A
      **/
     public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
         int position, size = b.size();
@@ -170,7 +170,24 @@ public class Utils {
             if (position == -1) a.add(stack);
             else a.get(position).grow(stack.getCount());
         }
-        return a;
+        return splitStacks(a);
+    }
+
+    public static List<ItemStack> splitStacks(List<ItemStack> stacks){
+        List<ItemStack> returned = new ArrayList<>();
+        for (ItemStack stack : stacks) {
+            if (stack.getCount() > stack.getMaxStackSize()){
+                int left = stack.getCount();
+                while (left > 0){
+                    ItemStack toAdd = Utils.ca(Math.min(stack.getMaxStackSize(), left), stack);
+                    left -= toAdd.getCount();
+                    returned.add(toAdd);
+                }
+            } else {
+                returned.add(stack);
+            }
+        }
+        return returned;
     }
 
     /**
