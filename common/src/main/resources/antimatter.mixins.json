@@ -32,6 +32,7 @@
     "ItemStackMixin",
     "LeavesBlockMixin",
     "PlayerMixin",
+    "RecipeManagerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
     "SimpleReloadInstanceMixin",
