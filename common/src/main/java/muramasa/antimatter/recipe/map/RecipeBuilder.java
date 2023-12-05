@@ -338,6 +338,7 @@ public class RecipeBuilder {
         duration = special = 0;
         power = 0;
         hidden = false;
+        fake = false;
         tags.clear();
     }
 
