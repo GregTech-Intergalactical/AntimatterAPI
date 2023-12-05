@@ -342,6 +342,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.material_primary", "Primary Material: %s");
         add("antimatter.tooltip.material_secondary", "Secondary Material: %s");
         add("antimatter.tooltip.dye_color", "Handle Color: %s");
+        add("antimatter.tooltip.tool_speed", "Mining Speed: %s");
+        add("antimatter.tooltip.crafting_uses", "Crafting Uses: %s");
+        add("antimatter.tooltip.mining_level", "Mining Level %s");
         add("antimatter.gui.show_recipes", "Show Recipes");
         add("antimatter.tooltip.bandwidth", "Bandwidth: %s");
         add("antimatter.tooltip.capacity", "Capacity: %s");

@@ -40,6 +40,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
@@ -223,9 +224,9 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        float destroySpeed = isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
+        float destroySpeed = state.getBlock() == Blocks.AIR ||  isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
-            destroySpeed = 0.2f;
+            destroySpeed = 0.0f;
         }
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();

@@ -17,6 +17,7 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
@@ -229,6 +231,8 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(Utils.translatable("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
+        tooltip.add(Utils.translatable("antimatter.tooltip.mining_level", getTier(stack).getLevel()).withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Utils.translatable("antimatter.tooltip.tool_speed", Utils.literal("" + getItem().getDestroySpeed(stack, Blocks.AIR.defaultBlockState())).withStyle(ChatFormatting.LIGHT_PURPLE)));
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IAddInformation addInformation)) continue;
