@@ -397,7 +397,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
 
     @Override
     default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? getPrimaryMaterial(stack).getRGB() : getSubColour(stack) == 0 ? getSecondaryMaterial(stack).getRGB() : getSubColour(stack);
+        return i >= 2 ? -1 : i == 0 ? getPrimaryMaterial(stack).getRGB() : getSubColour(stack) == 0 ? getSecondaryMaterial(stack).getRGB() : getSubColour(stack);
     }
 
     @Override
