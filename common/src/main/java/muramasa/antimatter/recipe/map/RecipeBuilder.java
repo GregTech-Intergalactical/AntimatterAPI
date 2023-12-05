@@ -339,6 +339,7 @@ public class RecipeBuilder {
         power = 0;
         hidden = false;
         fake = false;
+        recipeMapOnly = false;
         tags.clear();
     }
 
