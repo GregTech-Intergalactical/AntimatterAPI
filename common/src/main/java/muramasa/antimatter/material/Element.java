@@ -1,5 +1,6 @@
 package muramasa.antimatter.material;
 
+import lombok.Getter;
 import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.LinkedHashMap;
@@ -240,8 +241,10 @@ public class Element implements IAntimatterObject {
     public static Element Fm260 = new Element(100, 160, 0,1,1,"fermium_260", "Fm260",1,null,null,"mendelevium_260",true);
     public static Element Md259 = new Element(101, 158, 0,1,1,"mendelevium_259", "Md259",5760,"einsteinium_255",null,null,true);
     public static Element Md260 = new Element(101, 159, 0,1,1,"mendelevium_260", "Md260",2419200,"einsteinium_256","fermium_260",null,true);
+    @Getter
     public final int protons, neutrons, additionalMass, hardness, density;
     public final long halfLifeSeconds;
+    @Getter
     public final String id, element, decayIntoA, decayIntoBP, decayIntoBM;
     public final boolean isIsotope;
 
@@ -277,23 +280,9 @@ public class Element implements IAntimatterObject {
         return id;
     }
 
-    public String getElement() {
-        return element;
-    }
-
-    public int getProtons() {
-        return protons;
-    }
-
-    public int getNeutrons() {return neutrons;}
-
     public int getMass() {
         return protons + neutrons + additionalMass;
     }
-
-    public int getHardness(){return hardness;}
-
-    public int getDensity(){return density;}
 
     public static Element getFromElementId(String element) {
         return ELEMENTS.get(element);
