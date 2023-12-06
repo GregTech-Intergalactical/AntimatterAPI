@@ -545,7 +545,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                                  MaterialType<?> type) {
         boolean setOre = WorldGenHelper.setOre(world, pos, existing, material, type);
         if (setOre && world instanceof ServerLevel serverLevel && type == AntimatterMaterialTypes.ORE){
-            VeinSavedData.getOrCreate(serverLevel).addOreToChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), material);
+            VeinSavedData.getOrCreate(serverLevel).addOreToChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), material, pos);
         }
         return setOre;
     }
