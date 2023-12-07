@@ -155,6 +155,10 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
+    default float getDefaultMiningSpeed(ItemStack stack){
+        return getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier();
+    }
+
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
         Item item = getItem();
         ItemStack stack = new ItemStack(item);
@@ -232,7 +236,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             tooltip.add(Utils.translatable("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
         tooltip.add(Utils.translatable("antimatter.tooltip.mining_level", getTier(stack).getLevel()).withStyle(ChatFormatting.YELLOW));
-        tooltip.add(Utils.translatable("antimatter.tooltip.tool_speed", Utils.literal("" + getItem().getDestroySpeed(stack, Blocks.AIR.defaultBlockState())).withStyle(ChatFormatting.LIGHT_PURPLE)));
+        tooltip.add(Utils.translatable("antimatter.tooltip.tool_speed", Utils.literal("" + getDefaultMiningSpeed(stack)).withStyle(ChatFormatting.LIGHT_PURPLE)));
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IAddInformation addInformation)) continue;

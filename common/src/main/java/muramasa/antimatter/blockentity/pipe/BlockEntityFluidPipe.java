@@ -202,7 +202,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     public void onServerTickPre(Level level, BlockPos pos, boolean aFirst) {
         transferredAmount = 0;
 
-        PlatformFluidHandler adjacentFluidHandlers[] = new PlatformFluidHandler[6];
+        PlatformFluidHandler[] adjacentFluidHandlers = new PlatformFluidHandler[6];
         PipeFluidHandler pipeFluidHandler = fluidHandler.orElse(null);
         if (pipeFluidHandler == null) return;
 

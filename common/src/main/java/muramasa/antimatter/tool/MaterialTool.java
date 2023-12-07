@@ -224,7 +224,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        float destroySpeed = state.getBlock() == Blocks.AIR ||  isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
+        float destroySpeed = state.getBlock() == Blocks.AIR ||  isCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
             destroySpeed = 0.0f;
         }
