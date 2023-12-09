@@ -71,12 +71,13 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> BUZZSAW_BLADE = new MaterialTypeItem<>("buzzsaw_blade", 2, true, U * 4);
     public static final MaterialTypeItem<?> PICKAXE_HEAD = new MaterialTypeItem<>("pickaxe_head", 2, true, U * 3);
     public static final MaterialTypeItem<?> AXE_HEAD = new MaterialTypeItem<>("axe_head", 2, true, U * 3);
-    public static final MaterialTypeItem<?> SWORD_HEAD = new MaterialTypeItem<>("sword_head", 2, true, U * 2);
+    public static final MaterialTypeItem<?> SWORD_BLADE = new MaterialTypeItem<>("sword_blade", 2, true, U * 2);
     public static final MaterialTypeItem<?> SHOVEL_HEAD = new MaterialTypeItem<>("shovel_head", 2, true, U);
     public static final MaterialTypeItem<?> HOE_HEAD = new MaterialTypeItem<>("hoe_head", 2, true, U * 2);
     public static final MaterialTypeItem<?> HAMMER_HEAD = new MaterialTypeItem<>("hammer_head", 2, true, U * 6);
     public static final MaterialTypeItem<?> FILE_HEAD = new MaterialTypeItem<>("file_head", 2, true, U * 2);
-    public static final MaterialTypeItem<?> SAW_HEAD = new MaterialTypeItem<>("saw_head", 2, true, U * 2);
+    public static final MaterialTypeItem<?> SAW_BLADE = new MaterialTypeItem<>("saw_blade", 2, true, U * 2);
+    public static final MaterialTypeItem<?> SCREWDRIVER_TIP = new MaterialTypeItem<>("screwdriver_tip", 2, true, U);
     public static MaterialTypeItem<?> FISSILE_FUEL = new MaterialTypeItem<>("fissile_fuel", 2, true, U);
     public static MaterialTypeItem<?> DEPLETED_FISSILE_FUEL = new MaterialTypeItem<>("depleted_fissile_fuel", 2, true, U);
     //Block Types
@@ -258,12 +259,12 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.BUZZSAW_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.PICKAXE_HEAD.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.SHOVEL_HEAD.unSplitName().setIgnoreTextureSets();
-        AntimatterMaterialTypes.SWORD_HEAD.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.SWORD_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.AXE_HEAD.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.HOE_HEAD.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.HAMMER_HEAD.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.FILE_HEAD.unSplitName().setIgnoreTextureSets();
-        AntimatterMaterialTypes.SAW_HEAD.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.SAW_BLADE.unSplitName().setIgnoreTextureSets();
         FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         DEPLETED_FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
