@@ -155,6 +155,29 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
+    default boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+        AntimatterToolType type = this.getAntimatterToolType();
+        if (type.getEffectiveMaterials().contains(state.getMaterial())) {
+            return true;
+        }
+        if (type.getEffectiveBlocks().contains(state.getBlock())) {
+            return true;
+        }
+        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
+            if (state.is(effectiveBlockTag)){
+                return true;
+            }
+        }
+        boolean isType = false;
+        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
+            if (state.is(toolType)){
+                isType = true;
+                break;
+            }
+        }
+        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+    }
+
     default float getDefaultMiningSpeed(ItemStack stack){
         return getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier();
     }

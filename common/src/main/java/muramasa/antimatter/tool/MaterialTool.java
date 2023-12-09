@@ -136,29 +136,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return Utils.doesStackHaveToolTypes(stack, AntimatterDefaultTools.WRENCH, AntimatterDefaultTools.SCREWDRIVER, AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.WIRE_CUTTER); // ???
     }
 
-    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-        AntimatterToolType type = this.getAntimatterToolType();
-        if (type.getEffectiveMaterials().contains(state.getMaterial())) {
-            return true;
-        }
-        if (type.getEffectiveBlocks().contains(state.getBlock())) {
-            return true;
-        }
-        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
-            if (state.is(effectiveBlockTag)){
-                return true;
-            }
-        }
-        boolean isType = false;
-        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
-            if (state.is(toolType)){
-                isType = true;
-                break;
-            }
-        }
-        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
-    }
-
     //fabric method
     public boolean isSuitableFor(ItemStack stack, BlockState state) {
         return this.isCorrectToolForDrops(stack, state);
@@ -224,7 +201,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        float destroySpeed = state.getBlock() == Blocks.AIR ||  isCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
+        float destroySpeed = isCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
             destroySpeed = 0.0f;
         }
