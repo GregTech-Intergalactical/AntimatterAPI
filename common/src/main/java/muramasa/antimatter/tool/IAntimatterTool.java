@@ -371,6 +371,10 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return stack;
     }
 
+    default int getDefaultEnergyUse(){
+        return 100;
+    }
+
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
         IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
@@ -380,7 +384,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         long currentEnergy = h.getEnergy();
         Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
         int energyEfficiency = enchants.getOrDefault(Data.ENERGY_EFFICIENCY, 0);
-        int energyUse = Math.max(10, 100 - (int)((energyEfficiency * 0.1f) * 100));
+        int energyUse = Math.max(1, getDefaultEnergyUse() - (int)((energyEfficiency * 0.1f) * getDefaultEnergyUse()));
         int multipliedDamage = amount * energyUse;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
