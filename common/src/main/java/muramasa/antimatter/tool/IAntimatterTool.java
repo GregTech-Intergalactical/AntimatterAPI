@@ -420,7 +420,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             h.extractEu(currentEnergy, false);
             stack.setTag(h.getContainer().getTag());
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
-            return Math.max(1, leftOver / 100);
+            return Math.max(1, leftOver / getDefaultEnergyUse());
         }
     }
 
