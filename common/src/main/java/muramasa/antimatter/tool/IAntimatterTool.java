@@ -295,6 +295,17 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         }
     }
 
+    default InteractionResult genericInteractLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand){
+        InteractionResult result = InteractionResult.PASS;
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IInteractEntity interactEntity)) continue;
+            InteractionResult r = interactEntity.interactLivingEntity(this, stack, player, interactionTarget, usedHand);
+            if (result != InteractionResult.SUCCESS) result = r;
+        }
+        return result;
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     default InteractionResult onGenericItemUse(UseOnContext ctx) {
         InteractionResult result = InteractionResult.PASS;

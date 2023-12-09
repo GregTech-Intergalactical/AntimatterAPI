@@ -251,6 +251,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     }
 
     @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        return genericInteractLivingEntity(stack, player, interactionTarget, usedHand);
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         InteractionResultHolder<ItemStack> result = onGenericRightclick(level, player, usedHand);
         if (result.getResult().shouldAwardStats()){
