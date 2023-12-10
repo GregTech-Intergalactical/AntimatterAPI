@@ -29,7 +29,7 @@ public class TextBoxWidget extends Widget {
     }
 
     public static WidgetSupplier build(BiConsumer<IGuiHandler, String> consumer) {
-        return builder((i, p) -> new ProgressWidget(i, p));
+        return builder((i, p) -> new TextBoxWidget(i, p, consumer));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TextBoxWidget extends Widget {
     }
 
     @Environment(EnvType.CLIENT)
-    private void initTextBox(){
+    protected void initTextBox(){
         textBox = new EditBox(Minecraft.getInstance().font, this.getX(), this.getY(), this.getW(), this.getH(), Utils.literal(""));
         this.textBox.setMaxLength(32500);
     }
