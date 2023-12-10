@@ -5,6 +5,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.Minecraft;
 
 import java.util.function.Function;
 
@@ -19,12 +20,23 @@ public class TextWidget extends Widget {
         this.color = color;
     }
 
+    protected TextWidget(GuiInstance gui, IGuiElement parent, Function<TextWidget, String> getter, int color) {
+        super(gui, parent);
+        this.getter = getter;
+        this.color = color;
+    }
+
     public static WidgetSupplier build(String text, int color) {
         return builder((a, b) -> new TextWidget(a, b, text, color)).clientSide();
     }
 
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        this.drawText(matrixStack, Utils.literal(getter.apply(this)), realX(), realY(), color);
+        String text = getter.apply(this);
+        int textWidth = Minecraft.getInstance().font.width(text);
+        int xScaled = textWidth / 2;
+        int xCenter = (getW() / 2);
+        int xPosition = xCenter - xScaled;
+        this.drawText(matrixStack, Utils.literal(text), realX() + xPosition, realY(), color);
     }
 }

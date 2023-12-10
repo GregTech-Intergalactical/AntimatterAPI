@@ -28,9 +28,13 @@ public class TextBoxWidget extends Widget {
         this.consumer = consumer;
     }
 
+    public static WidgetSupplier build(BiConsumer<IGuiHandler, String> consumer) {
+        return builder((i, p) -> new ProgressWidget(i, p));
+    }
+
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-
+        textBox.render(matrixStack, (int) mouseX, (int) mouseY, partialTicks);
     }
 
     @Override
