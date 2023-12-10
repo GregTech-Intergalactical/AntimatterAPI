@@ -45,6 +45,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -171,6 +172,34 @@ public class Utils {
             else a.get(position).grow(stack.getCount());
         }
         return splitStacks(a);
+    }
+
+    public static void tryCondenseInventory(PlatformItemHandler itemHandler){
+        tryCondenseInventory(itemHandler, 0, itemHandler.getSlots());
+    }
+
+    public static void tryCondenseInventory(PlatformItemHandler tile, int startSlot, int endSlot) {
+        for (int i = startSlot; i < endSlot; ++i) {
+            for (int j = startSlot; j < endSlot; ++j) {
+                if (i == j) {
+                    continue;
+                }
+                ItemStack stack1 = tile.getStackInSlot(i);
+                ItemStack stack2 = tile.getStackInSlot(j);
+                if (!stack1.isEmpty() && !stack2.isEmpty()
+                        && (Utils.equals(stack1, stack2) && stack1.getCount() < stack1.getMaxStackSize())) {
+                    int max = stack1.getMaxStackSize() - stack1.getCount();
+                    int available = stack2.getCount();
+                    int size = Mth.clamp(available, 1, max);
+                    stack1.grow(size);
+                    stack2.shrink(size);
+                }
+                if (stack2.isEmpty() && !stack1.isEmpty() && j < i) {
+                    tile.setStackInSlot(j, stack1.copy());
+                    tile.setStackInSlot(i, ItemStack.EMPTY);
+                }
+            }
+        }
     }
 
     public static List<ItemStack> splitStacks(List<ItemStack> stacks){
