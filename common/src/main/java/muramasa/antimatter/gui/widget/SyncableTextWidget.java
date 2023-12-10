@@ -14,14 +14,14 @@ import java.util.function.Function;
 public class SyncableTextWidget extends TextWidget {
     String text = "";
     final Function<IGuiHandler, String> syncFunction;
-    protected SyncableTextWidget(@NotNull GuiInstance gui, @Nullable IGuiElement parent, int color, Function<IGuiHandler, String> syncFunction) {
-        super(gui, parent, a-> ((SyncableTextWidget)a).text, color);
+    protected SyncableTextWidget(@NotNull GuiInstance gui, @Nullable IGuiElement parent, Function<IGuiHandler, String> syncFunction, int color, boolean centered){
+        super(gui, parent, a-> ((SyncableTextWidget)a).text, color, centered);
         this.syncFunction = syncFunction;
 
     }
 
-    public static WidgetSupplier build(Function<IGuiHandler, String> textSyncFunction, int color) {
-        return builder((a, b) -> new SyncableTextWidget(a, b, color, textSyncFunction));
+    public static WidgetSupplier build(Function<IGuiHandler, String> textSyncFunction, int color, boolean centered) {
+        return builder((a, b) -> new SyncableTextWidget(a, b, textSyncFunction, color, centered));
     }
 
     @Override
