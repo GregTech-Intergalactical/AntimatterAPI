@@ -258,6 +258,7 @@ public class GuiInstance implements ICanSyncData {
     public void update() {
         List<SyncHolder> toSync = new ObjectArrayList<>();
         for (SyncHolder sync : this.syncData) {
+            if (sync.direction == SyncDirection.CLIENT_TO_SERVER) continue;
             Object value = sync.source.get();
             if (!sync.equality.apply(value, sync.current)) {
                 sync.current = value;

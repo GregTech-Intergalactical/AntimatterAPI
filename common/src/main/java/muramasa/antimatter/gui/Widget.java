@@ -3,6 +3,8 @@ package muramasa.antimatter.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,13 +29,17 @@ public abstract class Widget implements IGuiElement {
     public final GuiInstance gui;
     public final boolean isRemote;
     protected IGuiElement parent;
+    @Getter
+    @Setter
     private Component message = TextComponent.EMPTY;
     public final int id;
 
+    @Getter
     protected boolean enabled = true;
     protected boolean shouldRender = true;
     protected boolean isClicking = false;
 
+    @Setter
     private int depth;
     private int x, y, w, h = 0;
     private int realX, realY;
@@ -44,14 +50,6 @@ public abstract class Widget implements IGuiElement {
         this.parent = parent;
         this.id = 0;
         updateSize();
-    }
-
-    public void setMessage(Component message) {
-        this.message = message;
-    }
-
-    public Component getMessage() {
-        return message;
     }
 
     @Environment(EnvType.CLIENT)
@@ -77,10 +75,6 @@ public abstract class Widget implements IGuiElement {
     @Override
     public int depth() {
         return depth;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
     }
 
     public void setEnabled(boolean enabled) {
@@ -156,13 +150,13 @@ public abstract class Widget implements IGuiElement {
         return false;
     }
 
+    public boolean charTyped(char codePoint, int modifiers, double mouseX, double mouseY){
+        return false;
+    }
+
 
     @Environment(EnvType.CLIENT)
     public abstract void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks);
-
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     public boolean isVisible() {
         return shouldRender;
@@ -185,6 +179,10 @@ public abstract class Widget implements IGuiElement {
         isClicking = false;
         this.onRelease(mouseX, mouseY);
         return true;
+    }
+
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta){
+        return false;
     }
 
     @Environment(EnvType.CLIENT)
