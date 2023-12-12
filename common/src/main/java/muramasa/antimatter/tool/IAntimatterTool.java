@@ -42,7 +42,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
@@ -155,7 +154,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
-    default boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+    default boolean genericIsCorrectToolForDrops(ItemStack stack, BlockState state) {
         AntimatterToolType type = this.getAntimatterToolType();
         if (type.getEffectiveMaterials().contains(state.getMaterial())) {
             return true;

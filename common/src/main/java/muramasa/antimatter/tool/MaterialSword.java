@@ -10,7 +10,6 @@ import muramasa.antimatter.behaviour.IDestroySpeed;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -31,7 +30,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -157,7 +155,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        float destroySpeed = isCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
+        float destroySpeed = genericIsCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
             destroySpeed = 0.0f;
         }
@@ -173,7 +171,13 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return destroySpeed;
     }
 
+    public boolean isSuitableFor(ItemStack stack, BlockState state) {
+        return this.genericIsCorrectToolForDrops(stack, state);
+    }
 
+    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state){
+        return genericIsCorrectToolForDrops(stack, state);
+    }
 
     @Override
     public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
