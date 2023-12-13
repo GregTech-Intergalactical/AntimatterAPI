@@ -55,6 +55,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
@@ -90,6 +92,12 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         this.createBlockStateDefinition(builder);
         this.stateContainer = builder.create(Block::defaultBlockState, BlockState::new);
         this.registerDefaultState(this.stateContainer.any());
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        if (type.has(MachineFlag.UNCULLED)) return Shapes.empty();
+        return super.getOcclusionShape(state, level, pos);
     }
 
     @Override
