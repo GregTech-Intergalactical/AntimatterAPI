@@ -1,5 +1,6 @@
 package muramasa.antimatter.common.event;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
@@ -33,7 +34,18 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommonEvents {
+    @Getter
+    static final List<PlayerTickCallback> PLAYER_TICK_CALLBACKS = new ArrayList<>();
+
+    public static void addPlayerTickCallback(PlayerTickCallback callback){
+        PLAYER_TICK_CALLBACKS.add(callback);
+    }
+
+
     public static void lootTableLoad(LootTable table, ResourceLocation name){
         if (AntimatterPlatformUtils.getLootTableID(table).getPath().startsWith("blocks/")) {
             ResourceLocation blockId = new ResourceLocation(AntimatterPlatformUtils.getLootTableID(table).getNamespace(), name.getPath().replace("blocks/", ""));
@@ -109,5 +121,9 @@ public class CommonEvents {
             //AntimatterDynamics.onResourceReload(false);
             AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }
+    }
+
+    public interface PlayerTickCallback{
+        void onTick(boolean end, boolean logicalServer, Player player);
     }
 }

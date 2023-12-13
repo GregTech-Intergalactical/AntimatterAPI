@@ -28,6 +28,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -72,6 +73,13 @@ public class ForgeCommonEvents {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLootTableLoad(LootTableLoadEvent event) {
         CommonEvents.lootTableLoad(event.getTable(), event.getName());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event){
+        CommonEvents.getPLAYER_TICK_CALLBACKS().forEach(c -> {
+            c.onTick(event.phase == TickEvent.Phase.END, event.side == LogicalSide.SERVER, event.player);
+        });
     }
 
     @SubscribeEvent
