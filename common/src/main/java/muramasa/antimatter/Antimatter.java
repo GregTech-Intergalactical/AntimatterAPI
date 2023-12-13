@@ -158,11 +158,6 @@ public class Antimatter extends AntimatterMod {
             AntimatterRecipeSerializer.init();
             IngredientSerializer.init();
             PropertyIngredient.Serializer.init();
-            CommonEvents.addPlayerTickCallback((end, logicalServer, player) -> {
-                if (end && logicalServer && !player.isCreative() && player.getInventory().contains(AntimatterMaterialTypes.INGOT_HOT.getTag())){
-                    BlockFluidPipe.applyTemperatureDamage(player, 1700, 1.0f, 1.0f);
-                }
-            });
         } else if (event == RegistrationEvent.WORLDGEN_INIT) {
             AntimatterWorldGenerator.init();
             AntimatterDefaultTools.postInit();
