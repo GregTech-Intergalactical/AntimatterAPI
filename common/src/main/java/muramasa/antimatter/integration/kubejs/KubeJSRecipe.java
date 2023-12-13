@@ -8,6 +8,7 @@ import dev.latvian.mods.kubejs.fluid.FluidStackJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.MatchAnyIngredientJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
@@ -138,7 +139,16 @@ public class KubeJSRecipe extends RecipeJS {
 
     @Override
     public @Nullable JsonElement serializeIngredientStack(IngredientStackJS in) {
-        JsonElement element =  in.ingredient.toJson();
+        JsonElement element;
+        if (in.ingredient instanceof MatchAnyIngredientJS js){
+            var object = new JsonObject();
+            JsonArray array = new JsonArray();
+            js.ingredients.forEach(i -> array.add(i.toJson()));
+            object.add("values", array);
+            element = object;
+        } else {
+            element = in.ingredient.toJson();
+        }
         if (element instanceof JsonObject object && in.getCount() > 1){
             object.addProperty(in.countKey, in.getCount());
         }
