@@ -49,8 +49,8 @@ public class BlockBasicSlab extends SlabBlock implements IAntimatterObject, ITex
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         Texture texture = getTextures()[0];
         ResourceLocation both = prov.existing(this.getDomain(), "block/" + this.getId().replace("_slab", ""));
-        AntimatterBlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing("minecraft", "block/slab_top")).texture("bottom", texture).texture("top", texture).texture("side", texture);
-        AntimatterBlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", texture).texture("top", texture).texture("side", texture);
+        AntimatterBlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing(Ref.ID, "block/slab_top")).texture("bottom", texture).texture("top", texture).texture("side", texture);
+        AntimatterBlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing(Ref.ID, "block/slab")).texture("bottom", texture).texture("top", texture).texture("side", texture);
         ResourceLocation finalBoth = both;
         prov.getVariantBuilder(block).forAllStates(s -> {
             if (s.getValue(TYPE) == SlabType.DOUBLE) {
