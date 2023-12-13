@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -16,18 +17,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
-public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject, ITextureProvider, IModelProvider {
-    protected String domain, id, suffix;
+public class BlockStoneSlab extends BlockBasicSlab implements ISharedAntimatterObject {
+    @Getter
+    protected String suffix;
     CobbleStoneType type;
 
     public BlockStoneSlab(CobbleStoneType type, String suffix) {
-        super(getProps(type));
-        domain = type.getDomain();
-        String s = suffix.isEmpty() ? "" : "_";
-        id = type.getId() + s + suffix + "_slab";
+        super(type.getDomain(), type.getId() + (suffix.isEmpty() ? "" : "_") + suffix + "_slab", getProps(type));
         this.suffix = suffix;
         this.type = type;
-        AntimatterAPI.register(getClass(), this);
     }
 
     private static Properties getProps(StoneType type) {
@@ -36,10 +34,6 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
             props.requiresCorrectToolForDrops();
         }
         return props;
-    }
-
-    public String getSuffix() {
-        return suffix;
     }
 
     @Override
