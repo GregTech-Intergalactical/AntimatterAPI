@@ -178,6 +178,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         addStackRecipe(consumer, recipeDomain, recipeName, groupName, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
     }
 
+    public void addStackRecipe(Consumer<FinishedRecipe> consumer, String groupName, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+        addStackRecipe(consumer, "", "", groupName, output, inputs, inputPattern);
+    }
+
     @Deprecated(forRemoval = true)
     public void addStackRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, false, output, inputs, inputPattern);
