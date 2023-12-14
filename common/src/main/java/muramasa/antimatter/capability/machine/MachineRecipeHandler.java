@@ -339,8 +339,8 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     }
 
     protected boolean validateRecipe(IRecipe r) {
-        long voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps() * tile.getMaxInputVoltage();
-        boolean ok = voltage >= r.getPower() / r.getAmps();
+        long voltage = tile.getMachineType().amps() * tile.getMaxInputVoltage();
+        boolean ok = this.generator || voltage >= r.getPower() / r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
         for (IRecipeValidator validator : r.getValidators()) {
             if (!validator.validate(r, tile)) {
