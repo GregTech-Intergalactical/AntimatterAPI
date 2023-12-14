@@ -96,6 +96,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected ITextureHandler baseTexture;
     protected IOverlayTexturer overlayTextures;
     protected IOverlayModeler overlayModels;
+    @Getter
+    protected ResourceLocation itemModelParent;
 
     protected boolean tierSpecificLang = false;
 
@@ -169,6 +171,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         overlayModels = (a,s,d) -> {
             return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
         };
+        itemModelParent = new ResourceLocation(Ref.ID, "block/preset/layered");
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
         //if (FMLEnvironment.dist.isClient()) {
@@ -403,6 +406,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public T baseTexture(ITextureHandler handler) {
         this.baseTexture = handler;
+        return (T) this;
+    }
+
+    public T itemModelParent(ResourceLocation parent){
+        this.itemModelParent = parent;
         return (T) this;
     }
 

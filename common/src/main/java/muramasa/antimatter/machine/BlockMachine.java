@@ -285,7 +285,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier, MachineState.IDLE)[0]);
+        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(type.getItemModelParent()).texture("base", type.getBaseTexture(tier, MachineState.IDLE)[0]);
         Texture[] base = type.getBaseTexture(tier, MachineState.ACTIVE);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
