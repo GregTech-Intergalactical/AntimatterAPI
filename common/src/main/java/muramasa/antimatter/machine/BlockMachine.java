@@ -170,14 +170,16 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             return InteractionResult.SUCCESS;
                         }
                     } else if (type == AntimatterDefaultTools.SOFT_HAMMER) {
-                        tile.toggleMachine();
-                        if (tile.getMachineState() == MachineState.DISABLED) {
-                            player.sendMessage(Utils.literal("Disabled machine."), player.getUUID());
-                        } else {
-                            player.sendMessage(Utils.literal("Enabled machine."), player.getUUID());
+                        boolean wasDisabled = tile.toggleMachine();
+                        if (wasDisabled) {
+                            if (tile.getMachineState() == MachineState.DISABLED) {
+                                player.sendMessage(Utils.literal("Disabled machine."), player.getUUID());
+                            } else {
+                                player.sendMessage(Utils.literal("Enabled machine."), player.getUUID());
+                            }
+                            Utils.damageStack(stack, player);
+                            return InteractionResult.SUCCESS;
                         }
-                        Utils.damageStack(stack, player);
-                        return InteractionResult.SUCCESS;
                     } else if (type == AntimatterDefaultTools.CROWBAR) {
                         if (!player.isCrouching()) {
                             if (tile.getCoverHandler().map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {

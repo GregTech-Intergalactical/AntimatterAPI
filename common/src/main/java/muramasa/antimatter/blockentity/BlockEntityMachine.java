@@ -489,7 +489,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         setMachineState(getDefaultMachineState());
     }
 
-    public void toggleMachine() {
+    public boolean toggleMachine() {
         if (getMachineState() == MachineState.DISABLED) {
             setMachineState(disabledState);
             disabledState = null;
@@ -499,6 +499,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         } else {
             disableMachine();
         }
+        return true;
     }
 
     protected void disableMachine() {
