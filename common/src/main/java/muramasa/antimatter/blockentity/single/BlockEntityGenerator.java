@@ -15,15 +15,6 @@ public class BlockEntityGenerator<T extends BlockEntityGenerator<T>> extends Blo
     public BlockEntityGenerator(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, type.amps(), type.has(GENERATOR)) {
-            @Override
-            public boolean canInput(Direction direction) {
-                return false;
-            }
-
-            @Override
-            public boolean canInput() {
-                return false;
-            }
 
             @Override
             public boolean canOutput(Direction direction) {
@@ -38,5 +29,8 @@ public class BlockEntityGenerator<T extends BlockEntityGenerator<T>> extends Blo
         return Tier.getMax();
     }
 
-
+    @Override
+    public boolean toggleMachine() {
+        return false;
+    }
 }
