@@ -101,7 +101,8 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
             }
             return superInsert + loss;
         }
-        return insertInternal(voltage, simulate) + loss;
+        long internalInsert = insertInternal(voltage, simulate);
+        return internalInsert > 0 ? internalInsert + loss : 0;
     }
 
     public long insertInternal(long energy, boolean simulate) {
