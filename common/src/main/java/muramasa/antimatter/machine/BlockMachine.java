@@ -69,8 +69,7 @@ import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
-import static muramasa.antimatter.machine.MachineFlag.RF;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
     public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
@@ -285,8 +284,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
         if (getType().has(BASIC) && !getType().has(RF)) {
             if (getTier().getVoltage() > 0 && getType().has(MachineFlag.EU)) {
-                tooltip.add(Utils.translatable("machine.voltage.in").append(": ").append(Utils.literal(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
-                tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
+                String in = getType().has(GENERATOR) ? "out" : "in";
+                tooltip.add(Utils.translatable("machine.voltage." + in).append(": ").append(Utils.literal(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
+                tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * (getType().has(GENERATOR) ? 40L : 64L)))).withStyle(ChatFormatting.BLUE));
             }
         }
         this.type.getTooltipFunctions().forEach(t -> t.getTooltips(this, stack, world, tooltip, flag));
