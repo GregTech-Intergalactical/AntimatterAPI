@@ -29,7 +29,7 @@ public class PipeCoverHandler<T extends BlockEntityPipe<?>> extends CoverHandler
         ICover old = get(side);
         boolean ok = super.placeCover(player, side, stack, cover);
         if (ok){
-            boolean anyEmpty = this.covers.values().stream().anyMatch(t -> !t.isEmpty());
+            boolean anyEmpty = this.covers.values().stream().anyMatch(ICover::isNode);
             this.getTile().onCoverUpdate(false, anyEmpty, side, old, cover);
         }
         return ok;
@@ -41,7 +41,7 @@ public class PipeCoverHandler<T extends BlockEntityPipe<?>> extends CoverHandler
         boolean ok = super.removeCover(player, side, onlyRemove);
         if (ok){
             ICover stack = ICover.empty;
-            boolean anyEmpty = this.covers.values().stream().anyMatch(t -> !t.isEmpty());
+            boolean anyEmpty = this.covers.values().stream().anyMatch(ICover::isNode);
             this.getTile().onCoverUpdate(true, anyEmpty, side, old, stack);
         }
         return ok;
