@@ -23,7 +23,7 @@ public class MultiMachineItemHandler<T extends BlockEntityMultiMachine<T>> exten
 
     @Override
     public boolean canOutputsFit(ItemStack[] a) {
-        return outputs.isPresent() && a != null && this.outputs.get().getSlots() >= a.length;
+        return outputs.isPresent() && a != null && super.canOutputsFit(a);
     }
 
     @Override

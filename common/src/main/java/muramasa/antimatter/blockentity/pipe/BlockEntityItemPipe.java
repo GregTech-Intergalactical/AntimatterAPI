@@ -1,6 +1,7 @@
 package muramasa.antimatter.blockentity.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.item.SidedCombinedInvWrapper;
 import muramasa.antimatter.gui.GuiInstance;
@@ -73,7 +74,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     public boolean validate(Direction dir) {
         if (!super.validate(dir))
             return false;
-        BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
+        BlockEntity tile = BlockEntityCache.getBlockEntity(level, getBlockPos().relative(dir));
         if (tile == null)
             return false;
         return TesseractCapUtils.getItemHandler(tile, dir.getOpposite()).isPresent();

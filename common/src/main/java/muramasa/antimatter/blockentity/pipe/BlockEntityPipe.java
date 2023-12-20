@@ -1,5 +1,6 @@
 package muramasa.antimatter.blockentity.pipe;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -16,6 +17,7 @@ import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.PipeTicker;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -57,7 +59,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
      * Connection data
      **/
     private byte connection, virtualConnection;
+    private boolean refreshConnection = false;
 
+    @Getter
     protected Holder pipeCapHolder;
 
     public BlockEntityPipe(T type, BlockPos pos, BlockState state) {
@@ -85,17 +89,20 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         }
     }
 
-    public Holder getPipeCapHolder() {
-        return pipeCapHolder;
-    }
-
     public boolean isConnector() {
-        return !this.getBlockState().getValue(BlockPipe.TICKING);
+        return !this.getBlockState().getValue(BlockPipe.TICKING) || this.coverHandler.map(p -> {
+            for (ICover cover : p.getAll()) {
+                if (cover.isNode()){
+                    return false;
+                }
+            }
+            return true;
+        }).orElse(true);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
-        if (level != null && level.isLoaded(this.getBlockPos()) && canConnect(facing.get3DDataValue())){
+        if (level != null && level.isLoaded(this.getBlockPos()) && facing != null && canConnect(facing.get3DDataValue())){
             BlockEntityPipe<?> pipe = getPipe(neighbor);
             if (pipe == null){
                 if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
@@ -179,7 +186,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
             return;
         }*/
 
-        refreshConnection();
+        PipeTicker.addTickFunction(this::refreshConnection);
         if (pipe != null) {
             pipe.setConnection(side.getOpposite());
         }
@@ -191,7 +198,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         connection = Connectivity.clear(connection, side.get3DDataValue());
         virtualConnection = Connectivity.clear(virtualConnection, side.get3DDataValue());
         dispatch.invalidate(side);
-        refreshConnection();
+        PipeTicker.addTickFunction(this::refreshConnection);
         BlockEntityPipe<?> pipe = getPipe(side);
         if (pipe != null) {
             pipe.clearConnection(side.getOpposite());
@@ -285,6 +292,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
 
     @Override
     public void onFirstTick() {
+        super.onFirstTick();
         coverHandler.ifPresent(CoverHandler::onFirstTick);
     }
 
@@ -361,8 +369,8 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;

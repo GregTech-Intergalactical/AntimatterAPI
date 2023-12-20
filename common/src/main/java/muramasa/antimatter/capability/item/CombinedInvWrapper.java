@@ -1,5 +1,8 @@
 package muramasa.antimatter.capability.item;
 
+import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
+import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +62,19 @@ public class CombinedInvWrapper implements ExtendedItemContainer {
 
     @Override
     @NotNull
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
-    {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         int index = getIndexForSlot(slot);
         ExtendedItemContainer handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
+        if (handler instanceof TrackedItemHandler<?> trackedItemHandler){
+            if (trackedItemHandler.getType() == SlotType.IT_IN && !(trackedItemHandler.getTile() instanceof BlockEntityHatch<?>)){
+                for (int i = 0; i < trackedItemHandler.getSize(); i++){
+                    if (i == slot) continue;
+                    if (trackedItemHandler.getItem(i).isEmpty()) continue;
+                    if (Utils.equals(trackedItemHandler.getItem(i), stack)) return stack;
+                }
+            }
+        }
         return handler.insertItem(slot, stack, simulate);
     }
 

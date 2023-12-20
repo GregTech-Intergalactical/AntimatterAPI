@@ -342,6 +342,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.material_primary", "Primary Material: %s");
         add("antimatter.tooltip.material_secondary", "Secondary Material: %s");
         add("antimatter.tooltip.dye_color", "Handle Color: %s");
+        add("antimatter.tooltip.tool_speed", "Mining Speed: %s");
+        add("antimatter.tooltip.crafting_uses", "Crafting Uses: %s");
+        add("antimatter.tooltip.mining_level", "Mining Level %s");
         add("antimatter.gui.show_recipes", "Show Recipes");
         add("antimatter.tooltip.bandwidth", "Bandwidth: %s");
         add("antimatter.tooltip.capacity", "Capacity: %s");
@@ -357,6 +360,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.behaviour.aoe_enabled", "%s Enabled");
         add("antimatter.tooltip.behaviour.aoe_disabled", "%s Disabled");
         add("antimatter.tooltip.behaviour.aoe_right_click", "Sneak right click to Enable/Disable %s");
+        add("antimatter.tooltip.io_widget.fluid", "Fluid Auto-Output");
+        add("antimatter.tooltip.io_widget.item", "Item Auto-Output");
         add("antimatter.behaviour.3x3", "3x3 Mining");
         add("antimatter.behaviour.1x0x2", "1x2 Mining");
     }

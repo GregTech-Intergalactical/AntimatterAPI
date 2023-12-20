@@ -2,6 +2,7 @@ package muramasa.antimatter.cover;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterRemapping;
 import muramasa.antimatter.Data;
@@ -18,10 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 public class CoverFactory implements IAntimatterObject {
@@ -32,7 +30,8 @@ public class CoverFactory implements IAntimatterObject {
     private final CoverSupplier supplier;
     private Map<Tier, Item> itemStacks = Collections.emptyMap();
     private Item itemStack;
-    private Iterable<Texture> textures;
+    private List<Texture> textures;
+    @Getter
     private MenuHandler<?> menuHandler = Data.COVER_MENU_HANDLER;
 
     protected boolean gui = false;
@@ -56,16 +55,12 @@ public class CoverFactory implements IAntimatterObject {
         return itemStacks.size() > 1 ? itemStacks.keySet().iterator().next() : null;
     }
 
-    public Iterable<Texture> getTextures() {
-        return textures == null ? Collections::emptyIterator : textures;
+    public List<Texture> getTextures() {
+        return textures == null ? Collections.emptyList() : textures;
     }
 
     public ItemStack getItem() {
         return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();
-    }
-
-    public MenuHandler<?> getMenuHandler() {
-        return menuHandler;
     }
 
     void setItems(Map<Tier, Item> stacks) {
@@ -75,7 +70,7 @@ public class CoverFactory implements IAntimatterObject {
         this.itemStacks = ImmutableMap.copyOf(stacks);
     }
 
-    void addTextures(Iterable<Texture> textures) {
+    void addTextures(List<Texture> textures) {
         this.textures = textures;
     }
 
@@ -144,7 +139,7 @@ public class CoverFactory implements IAntimatterObject {
         final CoverSupplier supplier;
         BiFunction<CoverFactory, Tier, Item> itemBuilder;
         boolean gui = false;
-        Iterable<Texture> textures;
+        List<Texture> textures;
         MenuHandler<?> menuHandler;
 
         public Builder(final CoverSupplier supplier) {
@@ -171,7 +166,7 @@ public class CoverFactory implements IAntimatterObject {
             return this;
         }
 
-        public Builder addTextures(Iterable<Texture> textures) {
+        public Builder addTextures(List<Texture> textures) {
             this.textures = textures;
             return this;
         }

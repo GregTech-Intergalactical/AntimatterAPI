@@ -35,11 +35,6 @@ public class BlockEntityInfiniteStorage<T extends BlockEntityInfiniteStorage<T>>
             }
 
             @Override
-            public long extractAmps(long voltage, long amps, boolean simulate) {
-                return amps;
-            }
-
-            @Override
             public boolean canOutput(Direction direction) {
                 return tile.getFacing() == direction;
             }
@@ -145,8 +140,8 @@ public class BlockEntityInfiniteStorage<T extends BlockEntityInfiniteStorage<T>>
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         energyHandler.ifPresent(h -> {
             info.add("Voltage Out: " + h.getOutputVoltage());
             info.add("Amperage Out: " + h.getOutputAmperage());

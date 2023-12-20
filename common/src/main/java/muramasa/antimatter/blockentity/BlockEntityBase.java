@@ -29,8 +29,14 @@ public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends Bloc
         onRemove();
     }
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        BlockEntityCache.addBlockEntity(this.level, this.getBlockPos(), this);
+    }
+
     public void onRemove() {
-        //NOOP
+        BlockEntityCache.removeBlockEntity(this.level, this.getBlockPos());
     }
 
     public boolean isClientSide() {
@@ -43,7 +49,7 @@ public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends Bloc
 
 
     //TODO pass constant StringBuilder
-    public List<String> getInfo() {
+    public List<String> getInfo(boolean simple) {
         List<String> info = new ObjectArrayList<>();
         info.add("Tile: " + getClass().getSimpleName());
         return info;

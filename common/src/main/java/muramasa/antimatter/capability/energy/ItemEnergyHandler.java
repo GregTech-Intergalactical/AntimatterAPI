@@ -84,6 +84,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
 
     @Override
     public long insertEu(long voltage, boolean simulate) {
+        if (!canInput()) return 0;
         long toAdd = Math.min(voltage, this.getCapacity() - this.getEnergy());
         if (!simulate) this.setEnergy(getEnergy() + toAdd);
         return toAdd;

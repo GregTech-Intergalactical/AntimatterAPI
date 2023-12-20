@@ -7,7 +7,6 @@ import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
-import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.behaviour.IDestroySpeed;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.data.AntimatterDefaultTools;
@@ -22,7 +21,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -39,7 +37,6 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
@@ -135,32 +132,13 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return Utils.doesStackHaveToolTypes(stack, AntimatterDefaultTools.WRENCH, AntimatterDefaultTools.SCREWDRIVER, AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.WIRE_CUTTER); // ???
     }
 
-    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-        AntimatterToolType type = this.getAntimatterToolType();
-        if (type.getEffectiveMaterials().contains(state.getMaterial())) {
-            return true;
-        }
-        if (type.getEffectiveBlocks().contains(state.getBlock())) {
-            return true;
-        }
-        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
-            if (state.is(effectiveBlockTag)){
-                return true;
-            }
-        }
-        boolean isType = false;
-        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
-            if (state.is(toolType)){
-                isType = true;
-                break;
-            }
-        }
-        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
-    }
-
     //fabric method
     public boolean isSuitableFor(ItemStack stack, BlockState state) {
-        return this.isCorrectToolForDrops(stack, state);
+        return this.genericIsCorrectToolForDrops(stack, state);
+    }
+
+    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state){
+        return genericIsCorrectToolForDrops(stack, state);
     }
 
     @Override
@@ -223,9 +201,9 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        float destroySpeed = isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier() : 1.0F;
+        float destroySpeed = genericIsCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
-            destroySpeed = 0.2f;
+            destroySpeed = 0.0f;
         }
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
@@ -247,6 +225,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         return onGenericItemUse(ctx);
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        return genericInteractLivingEntity(stack, player, interactionTarget, usedHand);
     }
 
     @Override

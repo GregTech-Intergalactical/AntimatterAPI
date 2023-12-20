@@ -100,4 +100,9 @@ public class CoverPlate extends CoverMaterial {
     public <T> boolean blocksCapability(Class<T> cap, Direction side) {
         return super.blocksCapability(cap, side) && !(source().getTile() instanceof BlockEntityPipe<?>);
     }
+
+    @Override
+    public boolean isNode() {
+        return false;
+    }
 }

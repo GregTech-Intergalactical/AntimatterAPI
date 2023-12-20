@@ -55,6 +55,9 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
@@ -66,12 +69,9 @@ import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
-import static muramasa.antimatter.machine.MachineFlag.RF;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
-    public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
-
     @Getter
     protected Machine<?> type;
     @Getter
@@ -93,12 +93,24 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     }
 
     @Override
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        if (type.has(MachineFlag.UNCULLED)) return Shapes.empty();
+        return super.getOcclusionShape(state, level, pos);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (type.getShapeGetter() != null) return type.getShapeGetter().getShape(state, level, pos, context);
+        return super.getShape(state, level, pos, context);
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
         if (type.isVerticalFacingAllowed()) {
-            builder.add(BlockStateProperties.FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.FACING);
         } else {
-            builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.HORIZONTAL_FACING);
         }
     }
 
@@ -155,14 +167,16 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             return InteractionResult.SUCCESS;
                         }
                     } else if (type == AntimatterDefaultTools.SOFT_HAMMER) {
-                        tile.toggleMachine();
-                        if (tile.getMachineState() == MachineState.DISABLED) {
-                            player.sendMessage(Utils.literal("Disabled machine."), player.getUUID());
-                        } else {
-                            player.sendMessage(Utils.literal("Enabled machine."), player.getUUID());
+                        boolean wasDisabled = tile.toggleMachine();
+                        if (wasDisabled) {
+                            if (tile.getMachineState() == MachineState.DISABLED) {
+                                player.sendMessage(Utils.literal("Disabled machine."), player.getUUID());
+                            } else {
+                                player.sendMessage(Utils.literal("Enabled machine."), player.getUUID());
+                            }
+                            Utils.damageStack(stack, player);
+                            return InteractionResult.SUCCESS;
                         }
-                        Utils.damageStack(stack, player);
-                        return InteractionResult.SUCCESS;
                     } else if (type == AntimatterDefaultTools.CROWBAR) {
                         if (!player.isCrouching()) {
                             if (tile.getCoverHandler().map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
@@ -268,8 +282,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
         if (getType().has(BASIC) && !getType().has(RF)) {
             if (getTier().getVoltage() > 0 && getType().has(MachineFlag.EU)) {
-                tooltip.add(Utils.translatable("machine.voltage.in").append(": ").append(Utils.literal(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
-                tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
+                String in = getType().has(GENERATOR) ? "out" : "in";
+                tooltip.add(Utils.translatable("machine.voltage." + in).append(": ").append(Utils.literal(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
+                tooltip.add(Utils.translatable("machine.power.capacity").append(": ").append(Utils.literal("" + (getTier().getVoltage() * (getType().has(GENERATOR) ? 40L : 64L)))).withStyle(ChatFormatting.BLUE));
             }
         }
         this.type.getTooltipFunctions().forEach(t -> t.getTooltips(this, stack, world, tooltip, flag));
@@ -277,7 +292,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier, MachineState.IDLE)[0]);
+        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(type.getItemModelParent()).texture("base", type.getBaseTexture(tier, MachineState.IDLE)[0]);
         Texture[] base = type.getBaseTexture(tier, MachineState.ACTIVE);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {

@@ -5,6 +5,7 @@ import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
@@ -17,7 +18,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
-import muramasa.antimatter.pipe.FluidPipeTicker;
+import muramasa.antimatter.pipe.PipeTicker;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -69,9 +70,9 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         holder = new PipeFluidHolder(this);
         super.onLoad();
         if (even(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ())) {
-            FluidPipeTicker.SERVER_TICK_PRE.add(this);
+            PipeTicker.SERVER_TICK_PRE.add(this);
         } else {
-            FluidPipeTicker.SERVER_TICK_PR2.add(this);
+            PipeTicker.SERVER_TICK_PR2.add(this);
         }
     }
 
@@ -122,8 +123,8 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     @Override
     public void onRemove() {
         fluidHandler.ifPresent(FluidHandler::onRemove);
-        FluidPipeTicker.SERVER_TICK_PR2.remove(this);
-        FluidPipeTicker.SERVER_TICK_PRE.remove(this);
+        PipeTicker.SERVER_TICK_PR2.remove(this);
+        PipeTicker.SERVER_TICK_PRE.remove(this);
         super.onRemove();
     }
 
@@ -182,7 +183,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        return TesseractCapUtils.getFluidHandler(level, getBlockPos().relative(dir), dir.getOpposite()).isPresent();
+        return BlockEntityCache.getFluidHandlerCached(level, getBlockPos().relative(dir), dir.getOpposite()).isPresent();
     }
 
     public void setLastSide(Direction lastSide, int tank) {
@@ -202,16 +203,15 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     public void onServerTickPre(Level level, BlockPos pos, boolean aFirst) {
         transferredAmount = 0;
 
-        PlatformFluidHandler adjacentFluidHandlers[] = new PlatformFluidHandler[6];
+        PlatformFluidHandler[] adjacentFluidHandlers = new PlatformFluidHandler[6];
         PipeFluidHandler pipeFluidHandler = fluidHandler.orElse(null);
         if (pipeFluidHandler == null) return;
 
         for (Direction tSide : Direction.values()) {
             if (connects(tSide)) {
-                PlatformFluidHandler fluidHandler1 = TesseractCapUtils.getFluidHandler(level, pos.relative(tSide), tSide.getOpposite()).orElse(null);
-                if (fluidHandler1 != null) {
+                BlockEntityCache.getFluidHandlerCached(level, pos.relative(tSide), tSide.getOpposite()).ifPresent(fluidHandler1 -> {
                     adjacentFluidHandlers[tSide.get3DDataValue()] = fluidHandler1;
-                }
+                });
             }
         }
 
@@ -385,8 +385,8 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     }
 
     @Override
-    public List<String> getInfo() {
-        List<String> list = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> list = super.getInfo(simple);
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getSize(); i++) {
                 FluidHolder stack = t.getFluidInTank(i);

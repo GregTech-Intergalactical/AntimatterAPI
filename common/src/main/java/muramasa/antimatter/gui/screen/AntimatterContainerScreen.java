@@ -7,6 +7,8 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
@@ -31,6 +33,10 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
     protected void init() {
         super.init();
         menu.source().rescale(this);
+    }
+
+    public  <U extends GuiEventListener & NarratableEntry> U addMCWidget(U guiEventListener) {
+        return addWidget(guiEventListener);
     }
 
     @Override
@@ -77,6 +83,15 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        for (Widget wid : menu.source().getWidgets(mouseX, mouseY)) {
+            if (!wid.isEnabled() || wid.depth() < 0) continue;
+            if (wid.mouseScrolled(mouseX, mouseY, delta)) return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         double x = mouseX();
         double y = mouseY();
@@ -85,6 +100,28 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
             if (wid.keyPressed(keyCode, scanCode, modifiers, x, y)) return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        double x = mouseX();
+        double y = mouseY();
+        for (Widget wid : menu.source().getWidgets(x, y)) {
+            if (!wid.isEnabled()) continue;
+            if (wid.keyReleased(keyCode, scanCode, modifiers, x, y)) return true;
+        }
+        return super.keyReleased(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        double x = mouseX();
+        double y = mouseY();
+        for (Widget wid : menu.source().getWidgets(x, y)) {
+            if (!wid.isEnabled()) continue;
+            if (wid.charTyped(codePoint, modifiers, x, y)) return true;
+        }
+        return super.charTyped(codePoint, modifiers);
     }
 
     @Override

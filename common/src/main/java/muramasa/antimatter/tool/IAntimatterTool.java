@@ -17,6 +17,7 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -153,6 +154,33 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
+    default boolean genericIsCorrectToolForDrops(ItemStack stack, BlockState state) {
+        AntimatterToolType type = this.getAntimatterToolType();
+        if (type.getEffectiveMaterials().contains(state.getMaterial())) {
+            return true;
+        }
+        if (type.getEffectiveBlocks().contains(state.getBlock())) {
+            return true;
+        }
+        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
+            if (state.is(effectiveBlockTag)){
+                return true;
+            }
+        }
+        boolean isType = false;
+        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
+            if (state.is(toolType)){
+                isType = true;
+                break;
+            }
+        }
+        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+    }
+
+    default float getDefaultMiningSpeed(ItemStack stack){
+        return getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier();
+    }
+
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
         Item item = getItem();
         ItemStack stack = new ItemStack(item);
@@ -229,6 +257,8 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(Utils.translatable("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
+        tooltip.add(Utils.translatable("antimatter.tooltip.mining_level", getTier(stack).getLevel()).withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Utils.translatable("antimatter.tooltip.tool_speed", Utils.literal("" + getDefaultMiningSpeed(stack)).withStyle(ChatFormatting.LIGHT_PURPLE)));
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IAddInformation addInformation)) continue;
@@ -285,6 +315,17 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
                 }
             });
         }
+    }
+
+    default InteractionResult genericInteractLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand){
+        InteractionResult result = InteractionResult.PASS;
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IInteractEntity interactEntity)) continue;
+            InteractionResult r = interactEntity.interactLivingEntity(this, stack, player, interactionTarget, usedHand);
+            if (result != InteractionResult.SUCCESS) result = r;
+        }
+        return result;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -352,6 +393,10 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return stack;
     }
 
+    default int getDefaultEnergyUse(){
+        return 100;
+    }
+
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
         IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
@@ -361,7 +406,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         long currentEnergy = h.getEnergy();
         Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
         int energyEfficiency = enchants.getOrDefault(Data.ENERGY_EFFICIENCY, 0);
-        int energyUse = Math.max(10, 100 - (int)((energyEfficiency * 0.1f) * 100));
+        int energyUse = Math.max(1, getDefaultEnergyUse() - (int)((energyEfficiency * 0.1f) * getDefaultEnergyUse()));
         int multipliedDamage = amount * energyUse;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
@@ -374,7 +419,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
             h.extractEu(currentEnergy, false);
             stack.setTag(h.getContainer().getTag());
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
-            return Math.max(1, leftOver / 100);
+            return Math.max(1, leftOver / getDefaultEnergyUse());
         }
     }
 
@@ -397,7 +442,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
 
     @Override
     default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? getPrimaryMaterial(stack).getRGB() : getSubColour(stack) == 0 ? getSecondaryMaterial(stack).getRGB() : getSubColour(stack);
+        return i >= 2 ? -1 : i == 0 ? getPrimaryMaterial(stack).getRGB() : getSubColour(stack) == 0 ? getSecondaryMaterial(stack).getRGB() : getSubColour(stack);
     }
 
     @Override

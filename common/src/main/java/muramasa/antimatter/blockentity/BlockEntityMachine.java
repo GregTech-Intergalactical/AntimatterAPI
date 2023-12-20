@@ -249,7 +249,9 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
-        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
+        if (facing != null) {
+            coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
+        }
     }
 
 
@@ -489,7 +491,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         setMachineState(getDefaultMachineState());
     }
 
-    public void toggleMachine() {
+    public boolean toggleMachine() {
         if (getMachineState() == MachineState.DISABLED) {
             setMachineState(disabledState);
             disabledState = null;
@@ -499,6 +501,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         } else {
             disableMachine();
         }
+        return true;
     }
 
     protected void disableMachine() {
@@ -513,7 +516,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             MachineState old = this.machineState;
             this.machineState = newState;
             if (level != null) {
-                setMachineStateBlockState(machineState);
                 sidedSync(true);
                 if (!level.isClientSide) {
                     if (old == MachineState.ACTIVE) {
@@ -536,14 +538,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
                     SoundHelper.clear(level, this.getBlockPos());
                 }
             }
-        }
-    }
-
-    protected void setMachineStateBlockState(MachineState newState){
-        BlockState state = getBlockState();
-        if (newState == MachineState.ACTIVE || newState == MachineState.IDLE){
-            state = state.setValue(BlockMachine.MACHINE_STATE, newState);
-            getLevel().setBlockAndUpdate(getBlockPos(), state);
         }
     }
 
@@ -691,8 +685,8 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
 
 
     @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
+    public List<String> getInfo(boolean simple) {
+        List<String> info = super.getInfo(simple);
         info.add("Machine: " + getMachineType().getId() + " Tier: " + getMachineTier().getId());
         info.add("State: " + getMachineState().getId());
         String slots = "";

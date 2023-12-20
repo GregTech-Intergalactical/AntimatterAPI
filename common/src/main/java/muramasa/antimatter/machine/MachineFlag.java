@@ -33,7 +33,9 @@ public enum MachineFlag {
     RECIPE, //Has a recipe map
     GUI,
     GENERATOR, //Has a recipe map and converts applicable recipes to power.
-    COVERABLE;
+    COVERABLE,
+    PARTIAL_AMPS,
+    UNCULLED;
 
     public static final MachineFlag[] VALUES;
 

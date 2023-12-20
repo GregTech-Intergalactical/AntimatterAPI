@@ -2,18 +2,22 @@ package muramasa.antimatter.tool;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IDestroySpeed;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -26,7 +30,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +38,7 @@ import tesseract.api.gt.IEnergyHandlerItem;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
 
 //@ParametersAreNonnullByDefault
@@ -45,6 +49,11 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     protected AntimatterToolType type;
     protected AntimatterItemTier itemTier;
 
+    /**
+     * -- GETTER --
+     *  Returns -1 if its not a powered tool
+     */
+    @Getter
     protected int energyTier;
     protected long maxEnergy;
 
@@ -83,13 +92,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     @Override
     public AntimatterItemTier getAntimatterItemTier() {
         return itemTier;
-    }
-
-    /**
-     * Returns -1 if its not a powered tool
-     **/
-    public int getEnergyTier() {
-        return energyTier;
     }
 
     @NotNull
@@ -153,8 +155,28 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        if (state.getBlock() == Blocks.COBWEB) return 15.0F;
-        return Utils.isToolEffective(this, stack, state) ? getTier(stack).getSpeed() : 1.0F;
+        float destroySpeed = genericIsCorrectToolForDrops(stack, state) ? getDefaultMiningSpeed(stack) : 1.0F;
+        if (type.isPowered() && getCurrentEnergy(stack)  == 0){
+            destroySpeed = 0.0f;
+        }
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IDestroySpeed destroySpeed1)) continue;
+            float i = destroySpeed1.getDestroySpeed(this, destroySpeed, stack, state);
+            if (i > 0){
+                destroySpeed = i;
+                break;
+            }
+        }
+        return destroySpeed;
+    }
+
+    public boolean isSuitableFor(ItemStack stack, BlockState state) {
+        return this.genericIsCorrectToolForDrops(stack, state);
+    }
+
+    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state){
+        return genericIsCorrectToolForDrops(stack, state);
     }
 
     @Override
@@ -165,6 +187,20 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         return onGenericItemUse(ctx);
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        return genericInteractLivingEntity(stack, player, interactionTarget, usedHand);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        InteractionResultHolder<ItemStack> result = onGenericRightclick(level, player, usedHand);
+        if (result.getResult().shouldAwardStats()){
+            return result;
+        }
+        return super.use(level, player, usedHand);
     }
 
     @Override

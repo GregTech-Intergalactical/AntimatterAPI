@@ -36,7 +36,6 @@ dependencies{
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")
     }
-    modImplementation(include("io.github.tropheusj:serialization-hooks:0.3.23"))
     modImplementation(include("net.feltmc:felt-recipe-api:1.0.0-${project.minecraft_version}")){
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.terraformersmc")
@@ -68,10 +67,9 @@ dependencies{
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation "maven.modrinth:carbon-config:yIKfSms3"
+    modImplementation "maven.modrinth:carbon-config:${project.carbon_config_fabric_version}"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
-    modCompileOnly "lol.bai.megane:megane-api:${project.megane_version}"
 }
 
 architectury {

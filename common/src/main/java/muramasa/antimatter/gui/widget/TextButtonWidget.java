@@ -12,6 +12,7 @@ import muramasa.antimatter.gui.ICanSyncData;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -58,7 +59,16 @@ public class TextButtonWidget<T> extends ButtonWidget {
 
     @Override
     protected void renderButtonBody(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        drawText(matrixStack, textToRender.apply(state), realX(), realY(), 4210752);
+        Component text = textToRender.apply(state);
+        int textWidth = Minecraft.getInstance().font.width(text);
+        int xScaled = textWidth / 2;
+        int xCenter = (getW() / 2);
+        int xPosition = xCenter - xScaled;
+        int textHeight = Minecraft.getInstance().font.lineHeight;
+        int yScaled = textHeight / 2;
+        int yCenter = (getH() / 2);
+        int yPosition = yCenter - yScaled;
+        drawText(matrixStack, textToRender.apply(state), realX() + xPosition, realY() + yPosition, 4210752);
     }
 
     public static <T> WidgetSupplier build(Function<IGuiHandler, T> syncFunction, Function<T, Component> textToRender, T defaultValue, IGuiEvent.IGuiEventFactory ev, int id, boolean renderBackground) {

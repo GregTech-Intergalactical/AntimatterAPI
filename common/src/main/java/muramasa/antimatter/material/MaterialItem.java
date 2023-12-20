@@ -88,11 +88,11 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
             if (Screen.hasShiftDown()) {
                 tooltip.add(Utils.translatable("antimatter.tooltip.chemical_formula").append(": ").append(Utils.literal(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));
                 tooltip.add(Utils.translatable("antimatter.tooltip.mass").append(": ").append(Utils.literal(mat.getMass() + "").withStyle(ChatFormatting.DARK_AQUA)));
-                tooltip.add(Utils.translatable("antimatter.tooltip.material_modid", AntimatterPlatformUtils.getModName(mat.materialDomain())));
             } else {
                 tooltip.add(Utils.translatable("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
             }
         }
+        tooltip.add(Utils.translatable("antimatter.tooltip.material_modid", AntimatterPlatformUtils.getModName(mat.materialDomain())));
     }
 
     @Override

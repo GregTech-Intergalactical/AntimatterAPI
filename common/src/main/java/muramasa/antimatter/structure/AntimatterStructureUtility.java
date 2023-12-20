@@ -16,9 +16,6 @@ public class AntimatterStructureUtility {
     public static <T extends BlockEntityBasicMultiMachine<T>> IStructureElement<T> ofHatch(HatchMachine machine){
         return ofHatch(machine, (t, world, pos, machine1, handler) -> {
             t.addComponent(machine1.getId(), handler);
-            if (world.getBlockEntity(pos) instanceof BlockEntityHatch<?> hatch) {
-                hatch.setTextureBlock(t.getHatchBlock(pos));
-            }
             return true;
         });
     }
@@ -44,7 +41,11 @@ public class AntimatterStructureUtility {
                     if (component.getComponentHandler().isPresent()) {
                         IComponentHandler componentHandler = component.getComponentHandler().orElse(null);
                         if (machine.getId().equals(componentHandler.getId())) {
-                            return callback.test(t, world, pos, machine, componentHandler);
+                            boolean test = callback.test(t, world, pos, machine, componentHandler);
+                            if (test && world.getBlockEntity(pos) instanceof BlockEntityHatch<?> hatch) {
+                                hatch.setTextureBlock(t.getHatchBlock(pos));
+                            }
+                            return test;
                         }
                         return false;
                     }

@@ -42,6 +42,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
 import java.util.function.*;
@@ -72,6 +73,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
     @Getter
     protected List<ITooltipInfo> tooltipFunctions = new ArrayList<>();
+    @Getter
+    protected IShapeGetter shapeGetter;
     protected String domain, id;
     @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
@@ -96,6 +99,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected ITextureHandler baseTexture;
     protected IOverlayTexturer overlayTextures;
     protected IOverlayModeler overlayModels;
+    @Getter
+    protected ResourceLocation itemModelParent;
 
     protected boolean tierSpecificLang = false;
 
@@ -169,6 +174,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         overlayModels = (a,s,d) -> {
             return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
         };
+        itemModelParent = new ResourceLocation(Ref.ID, "block/preset/layered");
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
         //if (FMLEnvironment.dist.isClient()) {
@@ -406,6 +412,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    public T itemModelParent(ResourceLocation parent){
+        this.itemModelParent = parent;
+        return (T) this;
+    }
+
     public T itemGroup(CreativeModeTab group) {
         this.group = group;
         return (T) this;
@@ -446,6 +457,16 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T addTooltipInfo(ITooltipInfo info){
         this.tooltipFunctions.add(info);
+        return (T) this;
+    }
+
+    public T customShape(VoxelShape shape){
+        this.shapeGetter = (state, world, pos, context) -> shape;
+        return (T) this;
+    }
+
+    public T customShape(IShapeGetter shapeGetter){
+        this.shapeGetter = shapeGetter;
         return (T) this;
     }
 

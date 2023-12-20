@@ -45,6 +45,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -160,7 +161,7 @@ public class Utils {
     }
 
     /**
-     * Merges B into A, ignoring maxStackSize
+     * Merges B into A
      **/
     public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
         int position, size = b.size();
@@ -170,7 +171,52 @@ public class Utils {
             if (position == -1) a.add(stack);
             else a.get(position).grow(stack.getCount());
         }
-        return a;
+        return splitStacks(a);
+    }
+
+    public static void tryCondenseInventory(PlatformItemHandler itemHandler){
+        tryCondenseInventory(itemHandler, 0, itemHandler.getSlots());
+    }
+
+    public static void tryCondenseInventory(PlatformItemHandler tile, int startSlot, int endSlot) {
+        for (int i = startSlot; i < endSlot; ++i) {
+            for (int j = startSlot; j < endSlot; ++j) {
+                if (i == j) {
+                    continue;
+                }
+                ItemStack stack1 = tile.getStackInSlot(i);
+                ItemStack stack2 = tile.getStackInSlot(j);
+                if (!stack1.isEmpty() && !stack2.isEmpty()
+                        && (Utils.equals(stack1, stack2) && stack1.getCount() < stack1.getMaxStackSize())) {
+                    int max = stack1.getMaxStackSize() - stack1.getCount();
+                    int available = stack2.getCount();
+                    int size = Mth.clamp(available, 1, max);
+                    stack1.grow(size);
+                    stack2.shrink(size);
+                }
+                if (stack2.isEmpty() && !stack1.isEmpty() && j < i) {
+                    tile.setStackInSlot(j, stack1.copy());
+                    tile.setStackInSlot(i, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
+    public static List<ItemStack> splitStacks(List<ItemStack> stacks){
+        List<ItemStack> returned = new ArrayList<>();
+        for (ItemStack stack : stacks) {
+            if (stack.getCount() > stack.getMaxStackSize()){
+                int left = stack.getCount();
+                while (left > 0){
+                    ItemStack toAdd = Utils.ca(Math.min(stack.getMaxStackSize(), left), stack);
+                    left -= toAdd.getCount();
+                    returned.add(toAdd);
+                }
+            } else {
+                returned.add(stack);
+            }
+        }
+        return returned;
     }
 
     /**
@@ -411,11 +457,11 @@ public class Utils {
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
         boolean transferred = false;
         for (long amp = 0; amp < from.availableAmpsOutput(); amp++) {
-            long ampInserted = from.extractAmps(from.getOutputVoltage(), 1, true);
-            if (ampInserted > 0){
-                long insertAmps = to.insertAmps(from.getOutputVoltage(), ampInserted, true);
-                if (insertAmps > 0){
-                    from.extractAmps(from.getOutputVoltage(), to.insertAmps(from.getOutputVoltage(), ampInserted, false), false);
+            long extracted = from.extractEu(from.getOutputVoltage(), true);
+            if (extracted > 0){
+                long insertEu = to.insertEu(extracted, true);
+                if (insertEu > 0){
+                    from.extractEu(to.insertEu(extracted, false), false);
                     transferred = true;
                 }
             }
@@ -484,15 +530,18 @@ public class Utils {
      * @return number of amps
      */
     public static boolean transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss) {
-        long amps = from.extractAmps(from.getOutputVoltage() - loss, from.availableAmpsOutput(), true);
-        if (amps > 0){
-            long insertAmps = to.insertAmps(from.getOutputVoltage() - loss, amps, true);
-            if (insertAmps > 0){
-                from.extractAmps(from.getOutputVoltage() - loss, to.insertAmps(from.getOutputVoltage() - loss, insertAmps, false), false);
-                return true;
+        boolean transferred = false;
+        for (long amp = 0; amp < from.availableAmpsOutput(); amp++) {
+            long extracted = from.extractEu(from.getOutputVoltage(), true);
+            if (extracted > 0){
+                long insertEu = to.insertEu(extracted - loss, true);
+                if (insertEu > 0){
+                    from.extractEu(to.insertEu(extracted - loss, false) + loss, false);
+                    transferred = true;
+                }
             }
         }
-        return false;
+        return transferred;
     }
 
     public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to, int cap, Predicate<FluidHolder> filter) {
@@ -802,13 +851,13 @@ public class Utils {
     }
 
     public static Direction getOffsetFacing(BlockPos center, BlockPos offset) {
-        if (center.getX() > offset.getX()) return Direction.WEST;
-        else if (center.getX() < offset.getX()) return Direction.EAST;
-        else if (center.getZ() > offset.getZ()) return Direction.NORTH;
-        else if (center.getZ() < offset.getZ()) return Direction.SOUTH;
-        else if (center.getY() > offset.getY()) return Direction.DOWN;
-        else if (center.getY() < offset.getY()) return Direction.UP;
-        else return Direction.NORTH;
+        if (center.getX() == offset.getX() + 1) return Direction.WEST;
+        else if (center.getX() + 1 == offset.getX()) return Direction.EAST;
+        else if (center.getZ() == offset.getZ() + 1) return Direction.NORTH;
+        else if (center.getZ() + 1 == offset.getZ()) return Direction.SOUTH;
+        else if (center.getY() == offset.getY() + 1) return Direction.DOWN;
+        else if (center.getY() + 1 == offset.getY()) return Direction.UP;
+        else return null;
     }
 
     final static double INTERACTION_OFFSET = 0.25;

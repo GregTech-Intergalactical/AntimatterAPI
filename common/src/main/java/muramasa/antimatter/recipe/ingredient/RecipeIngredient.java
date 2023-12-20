@@ -1,9 +1,14 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.*;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import lombok.Getter;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -67,7 +72,7 @@ public class RecipeIngredient extends Ingredient {
     public static RecipeIngredient fromJson(@Nullable JsonElement json) {
         RecipeIngredient ingredient = new RecipeIngredient(valuesFromJson(json));
         if (json instanceof JsonObject object){
-            if (object.has("nbt") && object.get("nbt").getAsBoolean()){
+            if (object.has("ignoreNBT") && object.get("ignoreNBT").getAsBoolean()){
                 ingredient.setIgnoreNbt();
             }
             if (object.has("noconsume") && object.get("noconsume").getAsBoolean()){
@@ -94,7 +99,15 @@ public class RecipeIngredient extends Ingredient {
             throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
         } else if (json.has("item")) {
             Item item = ShapedRecipe.itemFromJson(json);
-            return new RecipeValue(new ItemStack(item, count));
+            ItemStack stack = new ItemStack(item, count);
+            if (json.has("nbt")){
+                try {
+                    stack.setTag(TagParser.parseTag(json.get("nbt").getAsString()));
+                } catch (CommandSyntaxException e) {
+                    Antimatter.LOGGER.error("Nbt of a ingredient errored, defaulting to stack with no nbt", e);
+                }
+            }
+            return new RecipeValue(stack);
         } else if (json.has("tag")) {
             ResourceLocation resourceLocation = new ResourceLocation(GsonHelper.getAsString(json, "tag"));
             TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, resourceLocation);
@@ -155,6 +168,23 @@ public class RecipeIngredient extends Ingredient {
 
     public boolean ignoreNbt() {
         return ignoreNbt;
+    }
+
+    public boolean test(@Nullable ItemStack compare) {
+        if (compare == null) {
+            return false;
+        } else {
+            if (this.getItems().length == 0) {
+                return compare.isEmpty();
+            } else {
+                for (ItemStack itemstack : this.getItems()) {
+                    if (itemstack.is(compare.getItem()) && (ignoreNbt || ItemStack.tagMatches(itemstack, compare))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
     }
 
     public static int count(Ingredient ing) {
@@ -221,12 +251,23 @@ public class RecipeIngredient extends Ingredient {
         return new RecipeIngredient(new RecipeValue(tagIn, count));
     }
 
+    @SafeVarargs
+    public static RecipeIngredient of(int count, TagKey<Item>... tagIn) {
+        for (TagKey<Item> itemTagKey : tagIn) {
+            ensureRegisteredTag(itemTagKey.location());
+        }
+        return new RecipeIngredient(new MultiValue(Arrays.stream(tagIn).map(t -> new RecipeValue(t, count))));
+    }
+
     public static RecipeIngredient ofObject(Object object, int amount){
         if (object instanceof TagKey tag){
             return of(tag, amount);
         }
         if (object instanceof ItemLike item){
             return of(item, amount);
+        }
+        if (object instanceof ItemStack stack){
+            return of(stack);
         }
         if (object instanceof ResourceLocation location){
             return of(location, amount);
@@ -243,7 +284,7 @@ public class RecipeIngredient extends Ingredient {
         } else if (element instanceof JsonArray){
             object.add("values", element);
         }
-        object.addProperty("nbt", ignoreNbt);
+        object.addProperty("ignoreNBT", ignoreNbt);
         object.addProperty("noconsume", nonConsume);
         return object;
     }
@@ -286,8 +327,10 @@ public class RecipeIngredient extends Ingredient {
     }
 
     public static class RecipeValue implements Ingredient.Value {
+        @Getter
         private TagKey<Item> tag;
         private ItemStack stack;
+        @Getter
         private final int count;
 
         public RecipeValue(TagKey<Item> tag, int count) {
@@ -317,14 +360,6 @@ public class RecipeIngredient extends Ingredient {
                 return TagUtils.nc(tag).stream().map(t -> new ItemStack(t, count)).toList();
             }
             return Collections.singletonList(stack);
-        }
-
-        public TagKey<Item> getTag() {
-            return tag;
-        }
-
-        public int getCount() {
-            return count;
         }
 
         @Override

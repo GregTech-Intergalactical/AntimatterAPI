@@ -24,7 +24,8 @@ public class PipeFluidHandlerSidedWrapper extends FluidHandlerSidedWrapper{
             if (coverHandler.get(side).blocksInput(FluidContainer.class, side)) {
                 return 0;
             }
-            if(coverHandler.onTransfer(resource, side, true, simulate)) return 0;
+            long oldAmount = resource.getFluidAmount();
+            if(coverHandler.onTransfer(resource, side, true, simulate)) return oldAmount - resource.getFluidAmount();
         }
 
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)) {

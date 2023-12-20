@@ -11,7 +11,7 @@ import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.container.ContainerMultiMachine;
-import muramasa.antimatter.item.DebugScannerItem;
+import muramasa.antimatter.item.ScannerItem;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.item.ItemFluidIcon;
 import muramasa.antimatter.machine.types.BasicMachine;
@@ -43,7 +43,7 @@ public class Data {
 
     public static final Material WRENCH_MATERIAL = new Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
 
-    public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(ChatFormatting.AQUA + "" + ChatFormatting.ITALIC + "Development Item");
+    public static ScannerItem DEBUG_SCANNER = new ScannerItem(Ref.ID, "debug_scanner", false).tip(ChatFormatting.AQUA + "" + ChatFormatting.ITALIC + "Development Item");
 
     public static ItemFluidIcon FLUID_ICON = new ItemFluidIcon();
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");

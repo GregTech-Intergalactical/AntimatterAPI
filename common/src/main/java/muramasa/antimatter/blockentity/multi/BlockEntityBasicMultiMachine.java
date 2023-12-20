@@ -279,15 +279,6 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     }
 
     @Override
-    protected void setMachineStateBlockState(MachineState newState){
-        BlockState state = getBlockState();
-        if (newState == MachineState.ACTIVE || newState == MachineState.IDLE || newState == MachineState.INVALID_STRUCTURE){
-            state = state.setValue(BlockMultiMachine.MACHINE_STATE, newState);
-            getLevel().setBlockAndUpdate(getBlockPos(), state);
-        }
-    }
-
-    @Override
     public void setBlockState(BlockState p_155251_) {
         BlockState old = this.getBlockState();
         super.setBlockState(p_155251_);

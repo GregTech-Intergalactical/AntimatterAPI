@@ -218,6 +218,9 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return this == empty;
     }
 
+    default boolean isNode(){
+        return !isEmpty();
+    }
 
     ICover empty = new ICover() {
         @Override

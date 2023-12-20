@@ -43,7 +43,7 @@ public class IngredientSerializer implements IAntimatterIngredientSerializer<Rec
             values = new Ingredient.Value[]{Ingredient.valueFromJson(json)};
         }
         RecipeIngredient r = new RecipeIngredient(values);
-        if (json.get("nbt").getAsBoolean()) r.setIgnoreNbt();
+        if (json.get("ignoreNBT").getAsBoolean()) r.setIgnoreNbt();
         if (json.get("noconsume").getAsBoolean()) r.setNoConsume();
         return r;
     }

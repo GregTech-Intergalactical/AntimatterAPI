@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
@@ -18,16 +19,14 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -36,6 +35,8 @@ import static muramasa.antimatter.util.TagUtils.nc;
 public class AntimatterRecipeProvider extends RecipeProvider {
 
     protected final String providerDomain, providerName;
+    @Getter
+    private static final Set<ResourceLocation> RECIPES_TO_REMOVE = new HashSet<>();
 
     @SuppressWarnings("ConstantConditions")
     public AntimatterRecipeProvider(String providerDomain, String providerName) {
@@ -47,6 +48,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     @Override
     public void run(HashCache cache) {
 
+    }
+
+    public void removeRecipe(ResourceLocation recipeId){
+        RECIPES_TO_REMOVE.add(recipeId);
     }
 
     public SequencedAssemblyBuilder getSequencedAssemblyRecipe(Ingredient input){
@@ -171,6 +176,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
 
     public void addStackRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, ItemStack output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
         addStackRecipe(consumer, recipeDomain, recipeName, groupName, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
+    }
+
+    public void addStackRecipe(Consumer<FinishedRecipe> consumer, String groupName, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+        addStackRecipe(consumer, "", "", groupName, output, inputs, inputPattern);
     }
 
     @Deprecated(forRemoval = true)

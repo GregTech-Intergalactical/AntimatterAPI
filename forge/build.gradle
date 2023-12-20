@@ -49,7 +49,7 @@ dependencies {
     modImplementation(include("com.gtnewhorizon.structurelib:structurelib-forge:${project.structurelib_version}-${project.minecraft_version}"))
     modImplementation(include("com.teamresourceful.resourcefullib:resourcefullib-forge-1.19.2:${project.resourcefullib_version}"))
     modImplementation(include("io.github.llamalad7:mixinextras-forge:0.2.0-beta.11"))
-    modImplementation(include("maven.modrinth:carbon-config:l6LTuPIs"))
+    modImplementation(include("maven.modrinth:carbon-config:${project.carbon_config_forge_version}"))
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
     modImplementation("curse.maven:the-one-probe-245211:${rootProject.top_forge_file}")
 }

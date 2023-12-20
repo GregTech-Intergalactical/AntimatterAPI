@@ -65,6 +65,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Setter
     private boolean hasContainer, hasSecondary, simple, repairable;
     @Getter
+    @Setter
     private boolean originalTag = true;
     @Getter
     private long baseMaxEnergy;
@@ -140,8 +141,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.baseAttackSpeed = baseAttackSpeed;
         this.overlayLayers = 1;
         this.itemGroup = Ref.TAB_TOOLS;
-        this.tag = TagUtils.getItemTag(new ResourceLocation(Ref.ID, id));
-        this.forgeTag = TagUtils.getForgelikeItemTag("tools/".concat(id));
+        String tagString = id.equals("wrench") ? id + "es" : id.endsWith("s") ? id : id + "s";
+        this.tag = TagUtils.getItemTag(new ResourceLocation(Ref.ID, tagString));
+        this.forgeTag = TagUtils.getForgelikeItemTag("tools/".concat(tagString));
         this.useAction = UseAnim.NONE;
         this.toolClass = MaterialTool.class;
         this.simple = true;

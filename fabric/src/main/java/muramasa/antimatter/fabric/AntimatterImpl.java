@@ -4,6 +4,7 @@ import earth.terrarium.botarium.fabric.energy.FabricBlockEnergyContainer;
 import earth.terrarium.botarium.fabric.fluid.storage.FabricBlockFluidContainer;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -20,7 +21,7 @@ import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.fabric.FluidAttributesVariantWrapper;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
-import muramasa.antimatter.pipe.FluidPipeTicker;
+import muramasa.antimatter.pipe.PipeTicker;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.recipe.fabric.RecipeConditions;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
@@ -40,6 +41,7 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -69,7 +71,7 @@ public class AntimatterImpl implements ModInitializer {
             ProviderEvents.PROVIDERS.register(this::providers);
             ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));
             ItemCraftedCallback.EVENT.register(((player, crafted, container) -> CommonEvents.onItemCrafted(container, player)));
-            ServerTickEvents.START_SERVER_TICK.register(FluidPipeTicker::onServerWorldTick);
+            ServerTickEvents.START_SERVER_TICK.register(PipeTicker::onServerWorldTick);
             CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonEvents.tagsEvent());
             //TODO figure out variables to insert
             BlockPlaceCallback.EVENT.register(context -> {
@@ -78,6 +80,8 @@ public class AntimatterImpl implements ModInitializer {
                 CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
                 return InteractionResult.PASS;
             });
+            PlayerTickEvents.START.register(player -> CommonEvents.getPLAYER_TICK_CALLBACKS().forEach(c -> c.onTick(false, player instanceof ServerPlayer, player)));
+            PlayerTickEvents.END.register(player -> CommonEvents.getPLAYER_TICK_CALLBACKS().forEach(c -> c.onTick(true, player instanceof ServerPlayer, player)));
             RRPCallback.AFTER_VANILLA.register(resources -> AntimatterDynamics.addResourcePacks(resources::add));
             RRPCallback.BEFORE_USER.register(resources -> AntimatterDynamics.addDataPacks(resources::add));
             Antimatter.LOGGER.info("initializing");
