@@ -49,6 +49,12 @@ public class BlockEntityTickable<T extends BlockEntityTickable<T>> extends Block
      * Override this to do any initialization that requires the World and/or BlockState reference.
      */
     public void onFirstTick() {
-        //NOOP
+        BlockEntityCache.addBlockEntity(this.level, this.getBlockPos(), this);
+    }
+
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        BlockEntityCache.removeBlockEntity(this.level, this.getBlockPos());
     }
 }

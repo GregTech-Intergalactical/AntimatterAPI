@@ -291,6 +291,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
 
     @Override
     public void onFirstTick() {
+        super.onFirstTick();
         coverHandler.ifPresent(CoverHandler::onFirstTick);
     }
 
