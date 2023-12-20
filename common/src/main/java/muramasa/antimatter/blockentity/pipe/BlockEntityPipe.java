@@ -8,7 +8,6 @@ import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.CoverPlate;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
@@ -18,6 +17,7 @@ import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.PipeTicker;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -59,6 +59,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
      * Connection data
      **/
     private byte connection, virtualConnection;
+    private boolean refreshConnection = false;
 
     @Getter
     protected Holder pipeCapHolder;
@@ -185,7 +186,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
             return;
         }*/
 
-        refreshConnection();
+        PipeTicker.addTickFunction(this::refreshConnection);
         if (pipe != null) {
             pipe.setConnection(side.getOpposite());
         }
@@ -197,7 +198,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         connection = Connectivity.clear(connection, side.get3DDataValue());
         virtualConnection = Connectivity.clear(virtualConnection, side.get3DDataValue());
         dispatch.invalidate(side);
-        refreshConnection();
+        PipeTicker.addTickFunction(this::refreshConnection);
         BlockEntityPipe<?> pipe = getPipe(side);
         if (pipe != null) {
             pipe.clearConnection(side.getOpposite());

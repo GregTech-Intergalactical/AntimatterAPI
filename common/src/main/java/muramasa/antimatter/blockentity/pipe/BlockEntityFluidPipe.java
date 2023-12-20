@@ -17,7 +17,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
-import muramasa.antimatter.pipe.FluidPipeTicker;
+import muramasa.antimatter.pipe.PipeTicker;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -69,9 +69,9 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         holder = new PipeFluidHolder(this);
         super.onLoad();
         if (even(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ())) {
-            FluidPipeTicker.SERVER_TICK_PRE.add(this);
+            PipeTicker.SERVER_TICK_PRE.add(this);
         } else {
-            FluidPipeTicker.SERVER_TICK_PR2.add(this);
+            PipeTicker.SERVER_TICK_PR2.add(this);
         }
     }
 
@@ -122,8 +122,8 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     @Override
     public void onRemove() {
         fluidHandler.ifPresent(FluidHandler::onRemove);
-        FluidPipeTicker.SERVER_TICK_PR2.remove(this);
-        FluidPipeTicker.SERVER_TICK_PRE.remove(this);
+        PipeTicker.SERVER_TICK_PR2.remove(this);
+        PipeTicker.SERVER_TICK_PRE.remove(this);
         super.onRemove();
     }
 

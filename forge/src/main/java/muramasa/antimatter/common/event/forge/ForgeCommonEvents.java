@@ -8,7 +8,7 @@ import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.pipe.FluidPipeTicker;
+import muramasa.antimatter.pipe.PipeTicker;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.core.Direction;
@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.*;
@@ -52,7 +51,7 @@ public class ForgeCommonEvents {
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event){
         if (event.phase == TickEvent.Phase.START){
-            FluidPipeTicker.onServerWorldTick(ServerLifecycleHooks.getCurrentServer());
+            PipeTicker.onServerWorldTick(ServerLifecycleHooks.getCurrentServer());
         }
     }
 
