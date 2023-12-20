@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.EnergyHandler;
@@ -216,7 +217,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
         cachedItems.forEach(t -> t.right().getState().onTick());
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                BlockEntity tile = BlockEntityCache.getBlockEntity(this.tile.getLevel(), this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
                 Optional<IEnergyHandler> handle = TesseractCapUtils.getEnergyHandler(tile, dir.getOpposite());
                 if (handle.map(h -> !h.canInput(dir.getOpposite())).orElse(true)) continue;

@@ -5,6 +5,7 @@ import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
@@ -182,7 +183,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        return TesseractCapUtils.getFluidHandler(level, getBlockPos().relative(dir), dir.getOpposite()).isPresent();
+        return BlockEntityCache.getFluidHandlerCached(level, getBlockPos().relative(dir), dir.getOpposite()).isPresent();
     }
 
     public void setLastSide(Direction lastSide, int tank) {
@@ -208,10 +209,9 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
 
         for (Direction tSide : Direction.values()) {
             if (connects(tSide)) {
-                PlatformFluidHandler fluidHandler1 = TesseractCapUtils.getFluidHandler(level, pos.relative(tSide), tSide.getOpposite()).orElse(null);
-                if (fluidHandler1 != null) {
+                BlockEntityCache.getFluidHandlerCached(level, pos.relative(tSide), tSide.getOpposite()).ifPresent(fluidHandler1 -> {
                     adjacentFluidHandlers[tSide.get3DDataValue()] = fluidHandler1;
-                }
+                });
             }
         }
 

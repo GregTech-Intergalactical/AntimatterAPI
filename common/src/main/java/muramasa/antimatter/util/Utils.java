@@ -851,13 +851,13 @@ public class Utils {
     }
 
     public static Direction getOffsetFacing(BlockPos center, BlockPos offset) {
-        if (center.getX() > offset.getX()) return Direction.WEST;
-        else if (center.getX() < offset.getX()) return Direction.EAST;
-        else if (center.getZ() > offset.getZ()) return Direction.NORTH;
-        else if (center.getZ() < offset.getZ()) return Direction.SOUTH;
-        else if (center.getY() > offset.getY()) return Direction.DOWN;
-        else if (center.getY() < offset.getY()) return Direction.UP;
-        else return Direction.NORTH;
+        if (center.getX() == offset.getX() + 1) return Direction.WEST;
+        else if (center.getX() + 1 == offset.getX()) return Direction.EAST;
+        else if (center.getZ() == offset.getZ() + 1) return Direction.NORTH;
+        else if (center.getZ() + 1 == offset.getZ()) return Direction.SOUTH;
+        else if (center.getY() == offset.getY() + 1) return Direction.DOWN;
+        else if (center.getY() + 1 == offset.getY()) return Direction.UP;
+        else return null;
     }
 
     final static double INTERACTION_OFFSET = 0.25;

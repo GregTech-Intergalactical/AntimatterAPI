@@ -127,12 +127,9 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processFluidOutput() {
-        BlockEntity adjTile = BlockEntityCache.getBlockEntity(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
-        if (adjTile == null)
-            return;
         if (processing > 0) return;
         processing++;
-        TesseractCapUtils.getFluidHandler(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
+        BlockEntityCache.getFluidHandlerCached(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
                 .ifPresent(adjHandler -> {
                     FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> tryFluidTransfer(adjHandler, h, Integer.MAX_VALUE * TesseractGraphWrappers.dropletMultiplier, true));
                 });

@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -102,7 +103,7 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
 
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                BlockEntity tile = BlockEntityCache.getBlockEntity(this.tile.getLevel(),this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
                 Optional<IHeatHandler> handle = TesseractCapUtils.getHeatHandler(tile, dir.getOpposite());
                 if (handle.map(h -> !h.canInput(dir.getOpposite())).orElse(true)) continue;
