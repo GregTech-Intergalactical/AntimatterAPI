@@ -516,7 +516,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
             MachineState old = this.machineState;
             this.machineState = newState;
             if (level != null) {
-                setMachineStateBlockState(machineState);
                 sidedSync(true);
                 if (!level.isClientSide) {
                     if (old == MachineState.ACTIVE) {
@@ -539,14 +538,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
                     SoundHelper.clear(level, this.getBlockPos());
                 }
             }
-        }
-    }
-
-    protected void setMachineStateBlockState(MachineState newState){
-        BlockState state = getBlockState();
-        if (newState == MachineState.ACTIVE || newState == MachineState.IDLE){
-            state = state.setValue(BlockMachine.MACHINE_STATE, newState);
-            getLevel().setBlockAndUpdate(getBlockPos(), state);
         }
     }
 

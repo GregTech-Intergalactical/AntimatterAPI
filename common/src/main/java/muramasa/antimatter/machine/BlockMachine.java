@@ -72,8 +72,6 @@ import static muramasa.antimatter.Data.WRENCH_MATERIAL;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
-    public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
-
     @Getter
     protected Machine<?> type;
     @Getter
@@ -110,9 +108,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
         if (type.isVerticalFacingAllowed()) {
-            builder.add(BlockStateProperties.FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.FACING);
         } else {
-            builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.HORIZONTAL_FACING);
         }
     }
 

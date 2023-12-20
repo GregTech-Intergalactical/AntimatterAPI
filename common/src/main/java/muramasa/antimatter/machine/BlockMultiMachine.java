@@ -11,8 +11,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class BlockMultiMachine extends BlockMachine {
-    public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.INVALID_STRUCTURE, MachineState.IDLE, MachineState.ACTIVE);
-
     public BlockMultiMachine(Machine<?> type, Tier tier) {
         super(type, tier);
     }
@@ -21,9 +19,9 @@ public class BlockMultiMachine extends BlockMachine {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
         if (type.isVerticalFacingAllowed()) {
-            builder.add(BlockStateProperties.FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.FACING);
         } else {
-            builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.HORIZONTAL_FACING);
         }
     }
 
