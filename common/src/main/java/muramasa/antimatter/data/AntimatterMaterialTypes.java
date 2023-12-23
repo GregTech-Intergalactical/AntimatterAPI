@@ -267,6 +267,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.FILE_HEAD.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.SAW_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.SCREWDRIVER_TIP.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.SCYTHE_HEAD.unSplitName().setIgnoreTextureSets();
         FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         DEPLETED_FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
