@@ -61,6 +61,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -999,18 +1000,15 @@ public class Utils {
         BlockState state = world.getBlockState(pos);
         ServerPlayer serverPlayer = player == null ? null : ((ServerPlayer) player);
         int exp = player == null ? -1 : onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
-
-        if (exp == -1) {
-            boolean destroyed = world.removeBlock(pos, false);
-            if (destroyed) {
-                Block.dropResources(state, world, pos);
+        FluidState fluidState = world.getFluidState(pos);
+        boolean destroyed = world.setBlockAndUpdate(pos, fluidState.createLegacyBlock());// world.destroyBlock(pos, !player.isCreative(), player);
+        if (destroyed) {
+            if (player != null && canHarvestBlock(state, world, pos, player)) {
+                state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
             }
-            return destroyed;
+            stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+            Block.dropResources(state, world, pos);
         }
-        stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-        boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
-        if (destroyed && canHarvestBlock(state, world, pos, player))
-            state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
         if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
     }
@@ -1065,31 +1063,43 @@ public class Utils {
      * @return if tree logging was successful
      */
     public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
+        boolean[] harvested = new boolean[1];
         if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
             BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
             BlockState tpCompare = world.getBlockState(tempPos);
             if (!BehaviourTreeFelling.isLog(tpCompare)) return false;
             for (int y = start.getY() + 1; y < start.getY() + world.getHeight(); y++) {
-                if (stack.getDamageValue() < 2) return false;
+                if (stack.isEmpty()) break;
                 tempPos.move(Direction.UP);
                 BlockState state = world.getBlockState(tempPos);
-                if (state.getBlock() != tpCompare.getBlock()) break;
-                else if (state.is(BlockTags.LOGS)) {
-                    breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
+                if (state.is(BlockTags.LOGS)) {
+                    if (breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability())){
+                        harvested[0] = true;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
                 }
             }
         } else {
+            boolean[] stopped = new boolean[1];
             BehaviourTreeFelling.findTree(world, start).getLogs().forEach(b -> {
-                if (stack.getDamageValue() < 2) return;
+                if (stack.isEmpty()) return;
+                if (stopped[0]) return;
                 BlockState state = world.getBlockState(b);
                 if (state.isAir() || !isCorrectToolForDrops(state, player))
                     return;
                 else if (state.is(BlockTags.LOGS)) {
-                    breakBlock(world, player, stack, b, tool.getAntimatterToolType().getUseDurability());
+                    if (breakBlock(world, player, stack, b, tool.getAntimatterToolType().getUseDurability())){
+                        harvested[0] = true;
+                    } else {
+                        stopped[0] = true;
+                    }
                 }
             });
         }
-        return true;
+        return harvested[0];
     }
 
     @ExpectPlatform
