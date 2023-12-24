@@ -17,12 +17,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 
 public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 
     public static final BehaviourLogStripping INSTANCE = new BehaviourLogStripping();
 
-    private static final Object2ObjectOpenHashMap<BlockState, BlockState> STRIPPING_MAP = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<Block, Block> STRIPPING_MAP = new Object2ObjectOpenHashMap<>();
 
     static {
         new ImmutableMap.Builder<Block, Block>().put(Blocks.OAK_WOOD, Blocks.STRIPPED_OAK_WOOD).put(Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG).put(Blocks.DARK_OAK_WOOD, Blocks.STRIPPED_DARK_OAK_WOOD)
@@ -55,14 +56,19 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 
     private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
         BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
-        return eventState != originalState ? eventState : STRIPPING_MAP.get(originalState);
+        if (eventState != originalState) return eventState;
+        Block stripped = STRIPPING_MAP.get(originalState.getBlock());
+        if (stripped == null) return null;
+        BlockState state = stripped.defaultBlockState();
+        for (Property property : originalState.getProperties()) {
+            if (state.hasProperty(property)){
+                state = state.setValue(property, originalState.getValue(property));
+            }
+        }
+        return state;
     }
 
     public static void addStrippedBlock(Block from, Block to) {
-        addStrippedState(from.defaultBlockState(), to.defaultBlockState());
-    }
-
-    public static void addStrippedState(BlockState from, BlockState to) {
         STRIPPING_MAP.put(from, to);
     }
 }
