@@ -1065,12 +1065,11 @@ public class Utils {
     public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
         boolean[] harvested = new boolean[1];
         if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
-            BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
-            BlockState tpCompare = world.getBlockState(tempPos);
+            BlockState tpCompare = world.getBlockState(start);
             if (!BehaviourTreeFelling.isLog(tpCompare)) return false;
             for (int y = start.getY() + 1; y < start.getY() + world.getHeight(); y++) {
                 if (stack.isEmpty()) break;
-                tempPos.move(Direction.UP);
+                BlockPos tempPos = new BlockPos(start.getX(), y, start.getZ());
                 BlockState state = world.getBlockState(tempPos);
                 if (state.is(BlockTags.LOGS)) {
                     if (breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability())){
