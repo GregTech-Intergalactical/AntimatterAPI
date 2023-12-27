@@ -1007,7 +1007,6 @@ public class Utils {
                 state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
             }
             stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-            Block.dropResources(state, world, pos);
         }
         if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
