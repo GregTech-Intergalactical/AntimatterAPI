@@ -279,7 +279,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         if (entity instanceof Player player) {
             if (getAntimatterToolType().getUseSound() != null)
                 player.playNotifySound(getAntimatterToolType().getUseSound(), SoundSource.BLOCKS, 0.84F, 0.75F);
-            boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getActualTags(), state);
+            boolean isToolEffective = genericIsCorrectToolForDrops(stack, state);
             if (state.getDestroySpeed(world, pos) != 0.0F) {
                 int damage = isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1;
                 Utils.damageStack(damage, stack, entity);

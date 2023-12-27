@@ -1027,30 +1027,6 @@ public class Utils {
         throw new AssertionError();
     }
 
-    /**
-     * IAntimatterTool-sensitive extension of IForgeBlockState::isToolEffective
-     *
-     * @param tool  IAntimatterTool derivatives
-     * @param state BlockState that is being checked against
-     * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
-     */
-    public static boolean isToolEffective(IAntimatterTool tool, ItemStack stack, BlockState state) {
-        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) ||
-                tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) ||
-                state.is(tool.getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(tool.getTier(stack), state);
-    }
-
-    /**
-     * AntimatterToolType-sensitive extension of IForgeBlockState::isToolEffective
-     *
-     * @param type  AntimatterToolType object
-     * @param state BlockState that is being checked against
-     * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
-     */
-    public static boolean isToolEffective(AntimatterToolType type, Set<TagKey<Block>> types, BlockState state) {
-        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || types.stream().anyMatch(t -> state.is(t));
-    }
-
     private static boolean LOCK;
 
     /**
@@ -1118,7 +1094,7 @@ public class Utils {
      */
     public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
-        return totalBlocks.stream().filter(b -> isToolEffective(tool, stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
+        return totalBlocks.stream().filter(b -> tool.genericIsCorrectToolForDrops(stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
     }
 
     /**
