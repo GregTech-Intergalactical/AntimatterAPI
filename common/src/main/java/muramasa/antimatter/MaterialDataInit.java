@@ -42,7 +42,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.DarkPrismarine).asDust();
         AntimatterToolType[] vanillaToolTypes = new AntimatterToolType[]{AntimatterDefaultTools.PICKAXE, AntimatterDefaultTools.AXE, AntimatterDefaultTools.SHOVEL, AntimatterDefaultTools.SWORD, AntimatterDefaultTools.HOE};
 
-        event.setMaterial(AntimatterMaterials.Iron).asMetal(1811, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).asPlasma().tool().toolDamage(IRON.getAttackDamageBonus()).toolSpeed(IRON.getSpeed()).toolDurability(256).toolQuality(IRON.getLevel()).blacklistToolTypes(vanillaToolTypes).build();
+        event.setMaterial(AntimatterMaterials.Iron).asMetal(1811, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).tool().toolDamage(IRON.getAttackDamageBonus()).toolSpeed(IRON.getSpeed()).toolDurability(256).toolQuality(IRON.getLevel()).blacklistToolTypes(vanillaToolTypes).build();
         event.setMaterial(AntimatterMaterials.Gold).asMetal(1337, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).tool().toolDamage(GOLD.getAttackDamageBonus()).toolSpeed(GOLD.getSpeed()).toolDurability(GOLD.getUses()).toolQuality(GOLD.getLevel()).blacklistToolTypes(vanillaToolTypes).toolEnchantments(of(Enchantments.SMITE, 3)).build().harvestLevel(2);
         //cause 1.18
         event.setMaterial(AntimatterMaterials.Copper).asMetal(1357).asOre(1, 5, true).harvestLevel(1);
