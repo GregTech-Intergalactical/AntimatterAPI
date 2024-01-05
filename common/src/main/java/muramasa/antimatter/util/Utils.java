@@ -95,6 +95,10 @@ public class Utils {
         DECIMAL_SYMBOLS.setGroupingSeparator(' ');
     }
 
+    public static long divup(long number, long divider) {
+        return number / divider + (number % divider == 0 ? 0 : 1);
+    }
+
     /**
      * Returns true of A is not empty, has the same Item and damage is equal to B
      **/
