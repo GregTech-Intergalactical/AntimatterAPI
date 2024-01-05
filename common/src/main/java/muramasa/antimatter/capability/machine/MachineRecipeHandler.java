@@ -39,12 +39,15 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     protected final T tile;
     protected final boolean generator;
+    @Getter
     protected IRecipe lastRecipe = null;
     /**
      * Indices:
      * 1 -> Progress of recipe
      */
 
+    @Getter
+    @Nullable
     protected IRecipe activeRecipe;
     protected boolean consumedResources;
     @Getter
@@ -396,11 +399,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     public boolean accepts(FluidHolder stack) {
         IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
         return map == null || map.acceptsFluid(stack);
-    }
-
-    @Nullable
-    public IRecipe getActiveRecipe() {
-        return activeRecipe;
     }
 
     public boolean consumeInputs() {
