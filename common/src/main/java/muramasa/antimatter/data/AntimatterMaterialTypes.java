@@ -79,8 +79,6 @@ public class AntimatterMaterialTypes {
     public static final MaterialTypeItem<?> SAW_BLADE = new MaterialTypeItem<>("saw_blade", 2, true, U * 2);
     public static final MaterialTypeItem<?> SCREWDRIVER_TIP = new MaterialTypeItem<>("screwdriver_tip", 2, true, U);
     public static final MaterialTypeItem<?> SCYTHE_BLADE = new MaterialTypeItem<>("scythe_blade", 2, true, U * 3);
-    public static MaterialTypeItem<?> FISSILE_FUEL = new MaterialTypeItem<>("fissile_fuel", 2, true, U);
-    public static MaterialTypeItem<?> DEPLETED_FISSILE_FUEL = new MaterialTypeItem<>("depleted_fissile_fuel", 2, true, U);
     //Block Types
     public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> new BlockOre(domain, mat, s, type)));
     public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> new BlockOre(domain, mat, s, type)));
@@ -268,8 +266,6 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.SAW_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.SCREWDRIVER_TIP.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.SCYTHE_BLADE.unSplitName().setIgnoreTextureSets();
-        FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
-        DEPLETED_FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
         AntimatterMaterialTypes.RAW_ORE_BLOCK.unSplitName();
     }
