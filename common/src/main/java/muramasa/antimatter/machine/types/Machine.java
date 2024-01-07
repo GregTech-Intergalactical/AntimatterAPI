@@ -125,6 +125,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowFrontCovers = false;
     @Getter
     protected boolean verticalFacingAllowed = false;
+    @Getter
+    protected boolean noFacing = false;
     protected boolean frontIO = false;
     @Getter
     protected boolean clientTicking = false;
@@ -473,6 +475,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setVerticalFacingAllowed(boolean verticalFacingAllowed) {
         this.verticalFacingAllowed = verticalFacingAllowed;
+        return (T) this;
+    }
+
+    public T setNoFacing(boolean noFacing){
+        this.noFacing = noFacing;
+        if (noFacing){
+            allowFrontIO();
+            frontCovers();
+        }
         return (T) this;
     }
 

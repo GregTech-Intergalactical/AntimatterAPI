@@ -106,7 +106,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        if (type == null) return; // means this is the first run
+        if (type == null || type.isNoFacing()) return; // means this is the first run
         if (type.isVerticalFacingAllowed()) {
             builder.add(BlockStateProperties.FACING);
         } else {
@@ -122,6 +122,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        if (type.isNoFacing()) return this.defaultBlockState();
         if (type.isVerticalFacingAllowed()) {
             Direction dir = context.getNearestLookingDirection().getOpposite();
             return this.defaultBlockState().setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));

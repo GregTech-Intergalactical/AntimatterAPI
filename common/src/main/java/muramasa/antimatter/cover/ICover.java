@@ -318,8 +318,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         public DynamicKey(BlockState state, Texture tex, String cover) {
             if (state.hasProperty(BlockStateProperties.FACING)) {
                 this.facing = state.getValue(BlockStateProperties.FACING);
-            } else {
+            } else if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)){
                 this.facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            } else {
+                this.facing = Direction.SOUTH;
             }
             this.machineTexture = tex;
             this.coverId = cover;
