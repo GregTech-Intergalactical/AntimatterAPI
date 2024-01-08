@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import lombok.Setter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
@@ -22,6 +23,7 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     public final int heatCap;
     public final int temperaturesize;
     public final int maxInput, maxOutput;
+    @Setter
     protected int currentHeat;
 
     public final BlockEntityBase<?> tile;
