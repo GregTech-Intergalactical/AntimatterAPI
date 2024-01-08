@@ -154,12 +154,6 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
     }
 
     @Override
-    public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onPlacedBy(world, pos, state, placer, stack);
-        setOutputFacing(null, this.getFacing());
-    }
-
-    @Override
     public ResourceLocation getGuiTexture() {
         return new ResourceLocation(getMachineType().getDomain(), "textures/gui/machine/hatch.png");
     }
