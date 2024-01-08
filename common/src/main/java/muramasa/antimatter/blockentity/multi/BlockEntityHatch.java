@@ -2,6 +2,7 @@ package muramasa.antimatter.blockentity.multi;
 
 import lombok.Getter;
 import lombok.Setter;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
@@ -76,7 +77,7 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
                     if (type.getOutputCover().getId().contains("energy")) {
                         flag = voltage <= getInputVoltage();
                     }
-                    if (!flag) {
+                    if (!flag && AntimatterConfig.MACHINES_EXPLODE.get()) {
                         Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.BREAK);
                     }
                     return flag;
