@@ -8,6 +8,8 @@ import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.cover.CoverDynamo;
+import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
@@ -57,23 +59,21 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         }
         if (type.has(EU)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
-                    type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
-                    type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
-                    type.getOutputCover() == COVERENERGY ? 2 : 0, type.getOutputCover() == COVERDYNAMO ? 1 : 0) {
+                    type.getOutputCover().getId().contains("energy") ? tier.getVoltage() : 0,
+                    type.getOutputCover().getId().contains("dynamo") ? tier.getVoltage() : 0,
+                    type.getOutputCover().getId().contains("energy") ? 2 : 0, type.getOutputCover().getId().contains("dynamo") ? 1 : 0) {
                 @Override
                 public boolean canInput(Direction direction) {
                     ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
                     if (out == null)
                         return false;
-                    return out.isEqual(COVERENERGY) && direction == out.side();
+                    return out instanceof CoverEnergy && direction == out.side();
                 }
 
                 @Override
                 protected boolean checkVoltage(long voltage) {
                     boolean flag = true;
-                    if (type.getOutputCover() == COVERDYNAMO) {
-                        flag = voltage <= getOutputVoltage();
-                    } else if (type.getOutputCover() == COVERENERGY) {
+                    if (type.getOutputCover().getId().contains("energy")) {
                         flag = voltage <= getInputVoltage();
                     }
                     if (!flag) {
@@ -87,7 +87,7 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
                     ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
                     if (out == null)
                         return false;
-                    return out.isEqual(COVERDYNAMO) && direction == out.side();
+                    return out instanceof CoverDynamo && direction == out.side();
                 }
             });
         }
