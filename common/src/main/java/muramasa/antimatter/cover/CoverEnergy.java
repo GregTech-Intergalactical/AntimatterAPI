@@ -4,6 +4,7 @@ import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
@@ -14,10 +15,10 @@ public class CoverEnergy extends BaseCover {
         super(source, tier, side, factory);
     }
 
-    // @Override
-    // public ResourceLocation getModel(Direction dir, Direction facing) {
-    // return getBasicModel();
-    // }
+    @Override
+    public ResourceLocation getModel(String type, Direction dir) {
+        return getBasicModel();
+    }
 
     @Override
     public boolean ticks() {
