@@ -83,7 +83,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
             quads.addAll(ModelUtils.getQuadsFromBaked(model, state, dir, rand, level, pos));
         }
         quads.addAll(ModelUtils.getQuadsFromBaked(model, state, null, rand, level, pos));
-        if (props.type.isNoFacing()) return quads;
+        if (props.type.isNoFacing() || props.type.isNoTextureRotation()) return quads;
         Matrix4f f = new Matrix4f();
         f.setIdentity();
         Transformation mat = new Transformation(f);
@@ -95,7 +95,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }
 
     public BakedModel getModel(BlockState state, Direction dir, MachineState m, Machine<?> type) {
-        if (type.isNoFacing()) return sides.get(m)[dir.get3DDataValue()];
+        if (type.isNoFacing() || type.isNoTextureRotation()) return sides.get(m)[dir.get3DDataValue()];
         Vec3i vector3i = dir.getNormal();
         Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
         vector4f.transform(RenderHelper.faceRotation(state).inverse().getMatrix());

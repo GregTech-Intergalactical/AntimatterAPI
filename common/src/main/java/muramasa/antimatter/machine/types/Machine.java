@@ -127,6 +127,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean verticalFacingAllowed = false;
     @Getter
     protected boolean noFacing = false;
+    @Getter
+    protected boolean noTextureRotation = false;
     protected boolean frontIO = false;
     @Getter
     protected boolean clientTicking = false;
@@ -486,6 +488,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
         return (T) this;
     }
+
+    public T setNoTextureRotation(boolean noTextureRotation){
+        this.noTextureRotation = noTextureRotation;
+        return (T) this;
+    }
+
 
     @Override
     public String getDomain() {
