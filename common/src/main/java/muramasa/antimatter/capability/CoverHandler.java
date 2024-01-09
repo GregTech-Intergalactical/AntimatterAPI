@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
+import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH_ALT;
 
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
 
@@ -187,7 +188,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
             }
         }
         if (player != null) {
-            if (Utils.getToolType(player) != WRENCH) {
+            if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != WRENCH_ALT) {
                 player.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
             } else {
                 player.getLevel().playSound(null, tile.getBlockPos(), Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
