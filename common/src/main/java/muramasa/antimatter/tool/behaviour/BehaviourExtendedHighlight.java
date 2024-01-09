@@ -22,6 +22,8 @@ import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.HitResult;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -40,7 +42,12 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
         return false;
     };
 
+    public static final List<BiFunction<Direction, BlockEntity, Boolean>> EXTRA_PIPE_FUNCTIONS = new ArrayList<>();
+
     public final static BiFunction<Direction, BlockEntity, Boolean> PIPE_FUNCTION = (dir, tile) -> {
+        for (var extraPipeFunction : EXTRA_PIPE_FUNCTIONS) {
+            if (extraPipeFunction.apply(dir, tile)) return true;
+        }
         if (tile instanceof BlockEntityPipe) {
             return ((BlockEntityPipe) tile).canConnect(dir.get3DDataValue());
         }
