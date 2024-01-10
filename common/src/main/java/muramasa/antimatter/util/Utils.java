@@ -19,7 +19,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
-import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterTags;
+import muramasa.antimatter.entity.IRadiationEntity;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -29,7 +30,6 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.ToolUtils;
 import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
@@ -47,8 +47,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -93,10 +95,6 @@ public class Utils {
 
     static {
         DECIMAL_SYMBOLS.setGroupingSeparator(' ');
-    }
-
-    public static long divup(long number, long divider) {
-        return number / divider + (number % divider == 0 ? 0 : 1);
     }
 
     /**
@@ -597,6 +595,24 @@ public class Utils {
             if (ent == null) continue;
             cb.accept(dir, ent);
         }
+    }
+
+    public static boolean applyRadioactivity(Entity aEntity, int aLevel, int aAmountOfItems) {
+        if (aLevel > 0 && aEntity instanceof LivingEntity livingEntity&& aEntity.isAlive() && livingEntity.getMobType() != MobType.UNDEAD && livingEntity.getMobType() != MobType.ARTHROPOD && !isFullHazmatSuit(livingEntity)) {
+            IRadiationEntity radiationEntity = (IRadiationEntity) livingEntity;
+            radiationEntity.changeRadiation(aLevel * aAmountOfItems);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isFullHazmatSuit(LivingEntity livingEntity){
+        int radiationProof = 0;
+        for (ItemStack stack : livingEntity.getArmorSlots()) {
+            if (stack.is(AntimatterTags.RADIATION_PROOF)) radiationProof++;
+        }
+        return radiationProof == 4;
+
     }
 
     public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to) {
