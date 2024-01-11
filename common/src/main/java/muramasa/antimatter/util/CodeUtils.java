@@ -23,4 +23,12 @@ public class CodeUtils {
     public static short  bindShort(long   aBoundValue) {return (short)Math.max(Short.MIN_VALUE, Math.min(Short.MAX_VALUE, aBoundValue));}
     public static byte   bindByte (long   aBoundValue) {return (byte) Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, aBoundValue));}
     public static byte   bindStack(long   aBoundValue) {return (byte) Math.max(1, Math.min(64, aBoundValue));}
+
+    public static int getRGB(int r, int g, int b){
+        return (bind8(r) << 16) | (bind8(g) << 8) | bind8(b);
+    }
+
+    public static short getR(int rgb) {return (short)((rgb >>> 16) & 255);}
+    public static short getG(int rgb) {return (short)((rgb >>>  8) & 255);}
+    public static short getB(int rgb) {return (short) (rgb         & 255);}
 }

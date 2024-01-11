@@ -1,5 +1,7 @@
 package muramasa.antimatter.material;
 
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
@@ -11,11 +13,15 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.CodeUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.WorldGenHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -44,6 +50,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
+import static muramasa.antimatter.util.CodeUtils.bind8;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
@@ -245,7 +252,30 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? material.getRGB() : -1;
+        if (i == 0) {
+            /*if ((material.has(MaterialTags.NEGATIVE_CHANGING_RGB) || material.has(MaterialTags.POSITIVE_CHANGING_RGB)) && AntimatterAPI.getSIDE().isClient()){
+                return getChangingMaterialColor();
+            }*/
+            return material.getRGB();
+        }
+        return -1;
+    }
+
+    @Environment(EnvType.CLIENT)
+    private int getChangingMaterialColor(){
+        long currentRemainder = Minecraft.getInstance().player != null ?  Minecraft.getInstance().player.getLevel().getGameTime() % 100 : -1;
+        if (currentRemainder >= 0){
+            int direction = (int) (currentRemainder < 50 ? currentRemainder : -(currentRemainder - 50));
+            int rgb = material.getRGB();
+            int r = CodeUtils.getR(rgb);
+            int g = CodeUtils.getG(rgb);
+            int b = CodeUtils.getB(rgb);
+            int newR = material.has(MaterialTags.POSITIVE_CHANGING_RGB) ? r + direction : r - direction;
+            int newG = material.has(MaterialTags.POSITIVE_CHANGING_RGB) ? g + direction : g - direction;
+            int newB = material.has(MaterialTags.POSITIVE_CHANGING_RGB) ? b + direction : b - direction;
+            return CodeUtils.getRGB(newR, newG, newB);
+        }
+        return material.getRGB();
     }
 
     @Override
