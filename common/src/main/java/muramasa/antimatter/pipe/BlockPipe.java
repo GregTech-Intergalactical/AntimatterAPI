@@ -659,4 +659,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         }
         return null;
     }
+
+    @Override
+    public muramasa.antimatter.material.Material getMaterial() {
+        return type.getMaterial();
+    }
 }
