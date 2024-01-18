@@ -30,20 +30,20 @@ public class BlockEntityCache {
 
     public static BlockEntity getBlockEntity(Level level, BlockPos pos){
         if (level == null) return null;
-        if (BLOCK_ENTITY_CACHE.containsKey(level)){
+        /*if (BLOCK_ENTITY_CACHE.containsKey(level)){
             Long2ObjectMap<BlockEntity> map = BLOCK_ENTITY_CACHE.get(level);
             if (map.containsKey(pos.asLong())){
                 return map.get(pos.asLong());
             }
-        }
+        }*/
         return level.getBlockEntity(pos);
     }
 
     public static Optional<PlatformFluidHandler> getFluidHandlerCached(Level level, BlockPos pos, Direction side){
-        BlockEntity blockEntity = getBlockEntity(level, pos);
+        /*BlockEntity blockEntity = getBlockEntity(level, pos);
         if (blockEntity != null){
             return FluidHooks.safeGetBlockFluidManager(blockEntity, side);
-        }
+        }*/
         return TesseractCapUtils.getFluidHandler(level, pos, side);
     }
 }
