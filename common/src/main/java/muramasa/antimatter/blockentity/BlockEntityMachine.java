@@ -308,11 +308,18 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public void dropCovers(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
-        coverHandler.ifPresent(t -> drops.addAll(t.getDrops()));
+        coverHandler.ifPresent(c -> {
+            if (!drops.isEmpty()) {
+                ItemStack machine = drops.get(0);
+                if (machine.getItem() == state.getBlock().asItem()){
+                    c.writeToStack(machine);
+                }
+            }
+        });
     }
 
     public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
-
+        coverHandler.ifPresent(c -> c.readFromStack(stack));
     }
 
     protected void markDirty() {

@@ -3,7 +3,9 @@ package muramasa.antimatter.capability;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.cover.CoverFactory;
@@ -35,6 +37,7 @@ import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH_ALT;
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
 
     private final T tile;
+    @Getter
     protected final Object2ObjectMap<Direction, ICover> covers = new Object2ObjectOpenHashMap<>(6);
     protected final Object2ObjectMap<CoverFactory, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
     protected Set<ResourceLocation> validCovers = new ObjectOpenHashSet<>();
@@ -242,6 +245,12 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         if (w != null && w.isClientSide) {
             Utils.markTileForRenderUpdate(this.tile);
         }
+    }
+
+    public void writeToStack(ItemStack machine){
+    }
+
+    public void readFromStack(ItemStack stack){
     }
 
     @Override

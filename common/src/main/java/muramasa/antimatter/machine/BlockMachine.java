@@ -243,9 +243,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         List<ItemStack> list = super.getDrops(state, builder);
         BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tileentity instanceof BlockEntityMachine<?> machine){
+            machine.dropCovers(state, builder, list);
             machine.onDrop(state, builder, list);
             machine.dropInventory(state, builder, list);
-            machine.dropCovers(state, builder, list);
         }
         return list;
     }
