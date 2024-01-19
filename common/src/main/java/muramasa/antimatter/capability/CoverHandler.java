@@ -221,7 +221,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         covers.forEach((s, c) -> {
             if (!c.isEmpty()) { // Don't store EMPTY covers unnecessarily
                 sides[0] |= (1 << s.get3DDataValue());
-                CoverFactory.writeCover(tag, c);
+                CoverFactory.writeCover(tag, c, c.side());
             }
         });
         tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);

@@ -50,7 +50,7 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 if ((sides & (1 << i)) > 0) {
                     ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
-                    Direction rotated = Utils.coverRotateFacing(Ref.DIRS[i], getTileFacing());
+                    Direction rotated = Utils.rotate(getTileFacing(), Ref.DIRS[i]);
                     buildLookup(covers.get(rotated).getFactory(), cover.getFactory(), rotated);
                     covers.put(rotated, cover);
                 }
@@ -62,16 +62,23 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
     public void writeToStack(ItemStack machine){
         CompoundTag tag = new CompoundTag();
         byte[] sides = new byte[1];
+        boolean[] outputCoverOnly = {true};
         covers.forEach((s, cover) -> {
-            if (!cover.isEmpty() && cover != getOutputCover()) { // Don't store EMPTY covers unnecessarily
-                sides[0] |= (1 << s.get3DDataValue());
-                CoverFactory.writeCover(tag, cover);
+            if (!cover.isEmpty()) { // Don't store EMPTY covers unnecessarily
+                if (!isCoverDefault(cover)) outputCoverOnly[0] = false;
+                Direction inverseRotated = Utils.rotateInverse(getTileFacing(), s);
+                sides[0] |= (1 << inverseRotated.get3DDataValue());
+                CoverFactory.writeCover(tag, cover, inverseRotated);
             }
         });
-        if (!tag.isEmpty()){
+        if (!outputCoverOnly[0]){
             tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
             machine.getOrCreateTag().put("covers", tag);
         }
+    }
+
+    protected boolean isCoverDefault(ICover cover){
+        return cover == getOutputCover();
     }
 
     public boolean setOutputFacing(Player entity, Direction side) {

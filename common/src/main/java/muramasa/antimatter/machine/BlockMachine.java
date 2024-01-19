@@ -3,6 +3,9 @@ package muramasa.antimatter.machine;
 import com.google.common.collect.ImmutableMap;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import lombok.Getter;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterRemapping;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
@@ -25,10 +28,13 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -289,6 +295,33 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             }
         }
         this.type.getTooltipFunctions().forEach(t -> t.getTooltips(this, stack, world, tooltip, flag));
+        if (stack.getTag() != null && stack.getTag().contains("covers")){
+            CompoundTag covers = stack.getTag().getCompound("covers");
+            if (!Screen.hasShiftDown()) {
+                tooltip.add(Utils.translatable("antimatter.tooltip.more"));
+            } else {
+                tooltip.add(Utils.translatable("antimatter.tooltip.cover.covers_on_item"));
+                byte sides = covers.getByte(Ref.TAG_MACHINE_COVER_SIDE);
+                for (int i = 0; i < Ref.DIRS.length; i++) {
+                    if ((sides & (1 << i)) > 0) {
+                        Direction dir = Direction.from3DDataValue(i);
+                        String domain = covers.getString(dir.get3DDataValue() + "d");
+                        String id = covers.getString(dir.get3DDataValue() + "i");
+                        ResourceLocation location = new ResourceLocation(domain, id);
+                        if (AntimatterRemapping.getCoverRemappingMap().containsKey(location)) location = AntimatterRemapping.getCoverRemappingMap().get(location);
+                        CoverFactory factory = AntimatterAPI.get(CoverFactory.class, location);
+                        Tier tier = covers.contains(dir.get3DDataValue() + "t")
+                                ? AntimatterAPI.get(Tier.class, covers.getString(dir.get3DDataValue() + "t"))
+                                : null;
+                        if (factory != null) {
+                            ItemStack item = factory.getItem(tier);
+                            Component itemTip = item.isEmpty() ? Utils.translatable("cover." + domain + "."+ id) : item.getHoverName();
+                            tooltip.add(Utils.translatable("antimatter.tooltip.cover.stack", dir.getName(), itemTip));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

@@ -42,17 +42,17 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public void appendHoverText(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> tooltip, TooltipFlag p_49819_) {
-        super.appendHoverText(p_49816_, p_49817_, tooltip, p_49819_);
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter p_49817_, List<Component> tooltip, TooltipFlag p_49819_) {
         tooltip.add(Utils.translatable("antimatter.tooltip.stepsize", (type.getStepsize(getSize()) * (restricted ? 100 : 1))).withStyle(ChatFormatting.AQUA));
         tooltip.add(Utils.translatable("antimatter.tooltip.bandwidth", Utils.literal(type.getCapacity(getSize()) + "/s").withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.AQUA));
-        if (!Screen.hasShiftDown()) {
-            tooltip.add(Utils.translatable("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
-        } else {
+        if (Screen.hasShiftDown()) {
             tooltip.add(Utils.literal("----------"));
             tooltip.add(Utils.translatable("antimatter.pipe.item.info").withStyle(ChatFormatting.DARK_AQUA));
             tooltip.add(Utils.literal("----------"));
+        } else if (stack.getTag() == null || !stack.getTag().contains("covers")){
+            tooltip.add(Utils.translatable("antimatter.tooltip.more"));
         }
+        super.appendHoverText(stack, p_49817_, tooltip, p_49819_);
     }
 
     public boolean isRestricted() {

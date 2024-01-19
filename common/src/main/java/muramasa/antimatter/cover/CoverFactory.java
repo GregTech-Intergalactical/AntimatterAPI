@@ -100,15 +100,15 @@ public class CoverFactory implements IAntimatterObject {
         return id;
     }
 
-    public static CompoundTag writeCover(CompoundTag nbt, ICover cover) {
+    public static CompoundTag writeCover(CompoundTag nbt, ICover cover, Direction dir) {
         CoverFactory factory = cover.getFactory();
-        nbt.putString(cover.side().get3DDataValue() + "d", factory.getDomain());
-        nbt.putString(cover.side().get3DDataValue() + "i", factory.getId());
+        nbt.putString(dir.get3DDataValue() + "d", factory.getDomain());
+        nbt.putString(dir.get3DDataValue() + "i", factory.getId());
         if (cover.getTier() != null)
-            nbt.putString(cover.side().get3DDataValue() + "t", cover.getTier().getId());
+            nbt.putString(dir.get3DDataValue() + "t", cover.getTier().getId());
         CompoundTag inner = cover.serialize();
         if (!inner.isEmpty())
-            nbt.put(cover.side().get3DDataValue() + "c", inner);
+            nbt.put(dir.get3DDataValue() + "c", inner);
         return nbt;
     }
 

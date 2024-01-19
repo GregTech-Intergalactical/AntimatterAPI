@@ -6,13 +6,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import lombok.Getter;
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
+import muramasa.antimatter.*;
 import muramasa.antimatter.block.AntimatterItemBlock;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.client.glu.Util;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
@@ -24,6 +23,7 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.dynamic.ModelConfig;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.IMaterialObject;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -33,15 +33,21 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
@@ -54,6 +60,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -131,16 +139,55 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
+        if (stack.getTag() != null && stack.getTag().contains("covers")){
+            CompoundTag covers = stack.getTag().getCompound("covers");
+            if (!Screen.hasShiftDown()) {
+                tooltip.add(Utils.translatable("antimatter.tooltip.more"));
+            } else {
+                tooltip.add(Utils.translatable("antimatter.tooltip.cover.covers_on_item"));
+                byte sides = covers.getByte(Ref.TAG_MACHINE_COVER_SIDE);
+                for (int i = 0; i < Ref.DIRS.length; i++) {
+                    if ((sides & (1 << i)) > 0) {
+                        Direction dir = Direction.from3DDataValue(i);
+                        String domain = covers.getString(dir.get3DDataValue() + "d");
+                        String id = covers.getString(dir.get3DDataValue() + "i");
+                        ResourceLocation location = new ResourceLocation(domain, id);
+                        if (AntimatterRemapping.getCoverRemappingMap().containsKey(location)) location = AntimatterRemapping.getCoverRemappingMap().get(location);
+                        CoverFactory factory = AntimatterAPI.get(CoverFactory.class, location);
+                        Tier tier = covers.contains(dir.get3DDataValue() + "t")
+                                ? AntimatterAPI.get(Tier.class, covers.getString(dir.get3DDataValue() + "t"))
+                                : null;
+                        if (factory != null) {
+                            ItemStack item = factory.getItem(tier);
+                            Component itemTip = item.isEmpty() ? Utils.translatable("cover." + domain + "."+ id) : item.getHoverName();
+                            tooltip.add(Utils.translatable("antimatter.tooltip.cover.stack", dir.getName(), itemTip));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        List<ItemStack> list = super.getDrops(state, builder);
+        BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (tileentity instanceof BlockEntityPipe<?> pipe){
+            if (!list.isEmpty()) {
+                pipe.coverHandler.ifPresent(c -> c.writeToStack(list.get(0)));
+            }
+        }
+        return list;
+    }
+
+    @Override
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
         //Also make sure it is the covered data that actually changes.
         if (state.hasBlockEntity() && state.is(newState.getBlock()) && (state.equals(newState.setValue(TICKING, !newState.getValue(TICKING))))) {
             worldIn.removeBlockEntity(pos);
         } else if (!state.is(newState.getBlock())) {
-            BlockEntity tile = worldIn.getBlockEntity(pos);
-            if (tile == null) return;
-            BlockEntityPipe<T> pipe = (BlockEntityPipe<T>) tile;
-            pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> Containers.dropItemStack(worldIn, pipe.getBlockPos().getX(), pipe.getBlockPos().getY(), pipe.getBlockPos().getZ(), stack)));
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -218,6 +265,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 if (neighbour != null && neighbour.connects(side.getOpposite())) {
                     tile.setConnection(side);
                 }
+                tile.coverHandler.ifPresent(c -> c.readFromStack(stack));
             }
         }
     }

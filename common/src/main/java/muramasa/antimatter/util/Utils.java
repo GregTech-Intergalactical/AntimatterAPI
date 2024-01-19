@@ -849,8 +849,63 @@ public class Utils {
             }
     };
 
+    private static final Direction[][] TRANSFORM_INVERSE = new Direction[][]{
+            new Direction[]{ //DOWN
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.UP,
+                    Direction.DOWN,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{ //UP
+                    Direction.SOUTH,
+                    Direction.NORTH,
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{ //NORTH
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{ //SOUTH
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.SOUTH,
+                    Direction.NORTH,
+                    Direction.EAST,
+                    Direction.WEST,
+            },
+            new Direction[]{ //WEST
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.EAST,
+                    Direction.WEST,
+                    Direction.NORTH,
+                    Direction.SOUTH
+            },
+            new Direction[]{ //EAST
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.WEST,
+                    Direction.EAST,
+                    Direction.SOUTH,
+                    Direction.NORTH
+            }
+    };
+
     public static Direction rotate(Direction facing, Direction side) {
         return TRANSFORM[facing.get3DDataValue()][side.get3DDataValue()];
+    }
+
+    public static Direction rotateInverse(Direction facing, Direction side) {
+        return TRANSFORM_INVERSE[facing.get3DDataValue()][side.get3DDataValue()];
     }
 
     public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy) {
