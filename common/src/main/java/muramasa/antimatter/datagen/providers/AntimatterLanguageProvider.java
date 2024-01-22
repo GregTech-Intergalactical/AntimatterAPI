@@ -309,11 +309,6 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
             });
         }
-
-
-
-
-
     }
 
     protected void customTranslations() {
