@@ -1078,10 +1078,12 @@ public class Utils {
         FluidState fluidState = world.getFluidState(pos);
         boolean destroyed = world.setBlockAndUpdate(pos, fluidState.createLegacyBlock());// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed) {
-            if (player != null && canHarvestBlock(state, world, pos, player)) {
-                state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
+            if (player != null) {
+                if (canHarvestBlock(state, world, pos, player)) {
+                    state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
+                }
+                stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             }
-            stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         }
         if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
