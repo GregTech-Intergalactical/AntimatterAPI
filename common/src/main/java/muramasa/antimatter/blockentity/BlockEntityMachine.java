@@ -308,11 +308,18 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public void dropCovers(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
-        coverHandler.ifPresent(t -> drops.addAll(t.getDrops()));
+        coverHandler.ifPresent(c -> {
+            if (!drops.isEmpty()) {
+                ItemStack machine = drops.get(0);
+                if (machine.getItem() == state.getBlock().asItem()){
+                    c.writeToStack(machine);
+                }
+            }
+        });
     }
 
     public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
-
+        coverHandler.ifPresent(c -> c.readFromStack(stack));
     }
 
     protected void markDirty() {
@@ -385,6 +392,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (state == AIR.defaultBlockState()) {
             return Direction.SOUTH;
         }
+        if (getMachineType().isNoFacing()) return Direction.SOUTH;
         if (getMachineType().isVerticalFacingAllowed()) {
             return state.getValue(BlockStateProperties.FACING);
         }
@@ -392,7 +400,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public boolean setFacing(Direction side) {
-        if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().isVerticalFacingAllowed()))
+        if (getMachineType().isNoFacing() || side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().isVerticalFacingAllowed()))
             return false;
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {
@@ -417,7 +425,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public boolean wrenchMachine(Player player, BlockHitResult res, boolean crouch) {
-        if (crouch || getMachineType().getOutputCover() == ICover.emptyFactory) {
+        if ((crouch || getMachineType().getOutputCover() == ICover.emptyFactory) && !type.isNoFacing()) {
             //Machine has no output
             return setFacing(player, Utils.getInteractSide(res));
         }

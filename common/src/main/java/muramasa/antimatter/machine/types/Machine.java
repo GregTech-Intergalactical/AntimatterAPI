@@ -17,6 +17,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.machine.*;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -124,6 +125,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowFrontCovers = false;
     @Getter
     protected boolean verticalFacingAllowed = false;
+    @Getter
+    protected boolean noFacing = false;
+    @Getter
+    protected boolean noTextureRotation = false;
     protected boolean frontIO = false;
     @Getter
     protected boolean clientTicking = false;
@@ -335,7 +340,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
                 if (s.isEmpty()){
                     for (int i = 0; i < tiers.size(); i++) {
                         Tier tier = tiers.get(i);
-                        if (i == 0 && r.getGui() == null){
+                        if (i == 0 && r.getGui() == null && !AntimatterJEIREIPlugin.containsCategory(r)){
                             AntimatterAPI.registerJEICategory(r, this.guiData, this, tier, false);
                         } else {
                             AntimatterAPI.registerJEICategoryWorkstation(r, this, tier);
@@ -345,7 +350,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
                 }
                 Tier t = AntimatterAPI.get(Tier.class, s);
                 //If the recipe map has another GUI present don't register it.
-                if (r.getGui() == null) {
+                if (r.getGui() == null && !AntimatterJEIREIPlugin.containsCategory(r)) {
                     AntimatterAPI.registerJEICategory(r, this.guiData, this, t, false);
                 } else {
                     AntimatterAPI.registerJEICategoryWorkstation(r, this, t);
@@ -474,6 +479,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.verticalFacingAllowed = verticalFacingAllowed;
         return (T) this;
     }
+
+    public T setNoFacing(boolean noFacing){
+        this.noFacing = noFacing;
+        if (noFacing){
+            allowFrontIO();
+            frontCovers();
+        }
+        return (T) this;
+    }
+
+    public T setNoTextureRotation(boolean noTextureRotation){
+        this.noTextureRotation = noTextureRotation;
+        return (T) this;
+    }
+
 
     @Override
     public String getDomain() {

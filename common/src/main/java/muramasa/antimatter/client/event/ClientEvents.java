@@ -88,7 +88,7 @@ public class ClientEvents {
 
         BlockPos currentPos = target.getBlockPos();
         BlockState state = world.getBlockState(currentPos);
-        if (state.isAir() || !Utils.isToolEffective(item, stack, state) || item.getDataTag(stack) == null || !item.getDataTag(stack).getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK)) return false;
+        if (state.isAir() || !item.genericIsCorrectToolForDrops(stack, state) || item.getDataTag(stack) == null || !item.getDataTag(stack).getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK)) return false;
         Vec3 viewPosition = camera.getPosition();
         Entity entity = camera.getEntity();
         VertexConsumer builderLines = bufferSource.getBuffer(RenderType.LINES);

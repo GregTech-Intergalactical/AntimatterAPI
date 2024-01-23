@@ -13,8 +13,7 @@
     "RecipeIngredientMixin",
     "BlockEntityFakeBlockMixin",
     "BlockEntityMachineMixin",
-    "BlockEntityPipeMixin",
-    "ItemBatteryMixin"
+    "BlockEntityPipeMixin"
   ],
   "client" : [
     "client.IAntimatterBakedModelMixin",

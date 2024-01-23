@@ -50,6 +50,8 @@ public class Ref {
     public static final long[] V = new long[]{8, 32, 128, 512, 2048, 8192, 32768, 131_072, 524_288, 2_097_152, 8_388_608, 35_544_432, 134_217_728, 536_870_912, 2_147_483_648L, 8_589_934_592L};
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX", "∞"}; //TODO: Schedule to change? ZPM rename? Tier decisions?
     public static final Direction[] DIRS = Direction.values();
+    /** The first 32 Bits */
+    public static final int[] B = {1<<0,1<<1,1<<2,1<<3,1<<4,1<<5,1<<6,1<<7,1<<8,1<<9,1<<10,1<<11,1<<12,1<<13,1<<14,1<<15,1<<16,1<<17,1<<18,1<<19,1<<20,1<<21,1<<22,1<<23,1<<24,1<<25,1<<26,1<<27,1<<28,1<<29,1<<30,1<<31};
     /**
      * Fluid per Material Unit (Prime Factors: Forge: 3 * 3 * 2 * 2 * 2 * 2 Fabric: 5 * 5 * 5 * 3 * 3 * 2 * 2 * 2)
      */

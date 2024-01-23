@@ -3,7 +3,9 @@ package muramasa.antimatter.capability;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.cover.CoverFactory;
@@ -30,10 +32,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
+import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH_ALT;
 
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
 
     private final T tile;
+    @Getter
     protected final Object2ObjectMap<Direction, ICover> covers = new Object2ObjectOpenHashMap<>(6);
     protected final Object2ObjectMap<CoverFactory, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
     protected Set<ResourceLocation> validCovers = new ObjectOpenHashSet<>();
@@ -187,7 +191,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
             }
         }
         if (player != null) {
-            if (Utils.getToolType(player) != WRENCH) {
+            if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != WRENCH_ALT) {
                 player.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
             } else {
                 player.getLevel().playSound(null, tile.getBlockPos(), Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -217,7 +221,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         covers.forEach((s, c) -> {
             if (!c.isEmpty()) { // Don't store EMPTY covers unnecessarily
                 sides[0] |= (1 << s.get3DDataValue());
-                CoverFactory.writeCover(tag, c);
+                CoverFactory.writeCover(tag, c, c.side());
             }
         });
         tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
@@ -241,6 +245,12 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         if (w != null && w.isClientSide) {
             Utils.markTileForRenderUpdate(this.tile);
         }
+    }
+
+    public void writeToStack(ItemStack machine){
+    }
+
+    public void readFromStack(ItemStack stack){
     }
 
     @Override

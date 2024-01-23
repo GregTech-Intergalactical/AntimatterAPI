@@ -42,18 +42,22 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
         this.tile = tile;
         if (tile.has(GUI)) {
             Map<SlotType<?>, List<SlotData<?>>> map = tile.getMachineType().getSlots(tile.getMachineTier()).stream().collect(Collectors.groupingBy(SlotData::getType));
-            for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
+            for (var entry : map.entrySet()) {
                 SlotType<?> type = entry.getKey();
-                int count = tile.getMachineType().getCount(tile.getMachineTier(), entry.getKey());
-                if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY || type == SlotType.FLUID_DISPLAY_SETTABLE) {
-                    inventories.put(type, new FakeTrackedItemHandler<>(tile, type, count, type.output, type.input, type.tester));
-                } else {
-                    inventories.put(type, new TrackedItemHandler<>(tile, type, count, type.output, type.input, type.tester));
-                }
+                inventories.put(type, this.createTrackedHandler(type, tile));
 
             }
         }
         inventories.defaultReturnValue(new TrackedItemHandler<>(tile, SlotType.STORAGE, 0, false, false, (a, b) -> false));
+    }
+
+    protected TrackedItemHandler<T> createTrackedHandler(SlotType<?> type, T tile){
+        int count = tile.getMachineType().getCount(tile.getMachineTier(), type);
+        if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY || type == SlotType.FLUID_DISPLAY_SETTABLE) {
+            return new FakeTrackedItemHandler<>(tile, type, count, type.output, type.input, type.tester);
+        } else {
+            return new TrackedItemHandler<>(tile, type, count, type.output, type.input, type.tester);
+        }
     }
 
     public Map<SlotType<?>, ExtendedItemContainer> getAll() {

@@ -21,7 +21,7 @@ import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.fabric.FluidAttributesVariantWrapper;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
-import muramasa.antimatter.pipe.PipeTicker;
+import muramasa.antimatter.pipe.TileTicker;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.recipe.fabric.RecipeConditions;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
@@ -71,7 +71,8 @@ public class AntimatterImpl implements ModInitializer {
             ProviderEvents.PROVIDERS.register(this::providers);
             ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));
             ItemCraftedCallback.EVENT.register(((player, crafted, container) -> CommonEvents.onItemCrafted(container, player)));
-            ServerTickEvents.START_SERVER_TICK.register(PipeTicker::onServerWorldTick);
+            ServerTickEvents.START_SERVER_TICK.register(server1 -> TileTicker.onServerWorldTick(server1, true));
+            ServerTickEvents.END_SERVER_TICK.register(server1 -> TileTicker.onServerWorldTick(server1, false));
             CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonEvents.tagsEvent());
             //TODO figure out variables to insert
             BlockPlaceCallback.EVENT.register(context -> {

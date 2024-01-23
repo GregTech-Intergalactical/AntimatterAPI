@@ -84,6 +84,10 @@ public class AntimatterJEIREIPlugin{
         REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier).addWorkstation(model));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
+    public static boolean containsCategory(IRecipeMap map){
+        return REGISTRY.containsKey(map.getLoc());
+    }
+
     public static void registerCategoryWorkstation(IRecipeMap map, ResourceLocation model){
         RegistryValue value = REGISTRY.get(map.getLoc());
         if (value != null) {

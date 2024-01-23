@@ -19,7 +19,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
-import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterTags;
+import muramasa.antimatter.entity.IRadiationEntity;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -29,7 +30,6 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.ToolUtils;
 import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
@@ -47,8 +47,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -61,6 +63,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -594,6 +597,24 @@ public class Utils {
         }
     }
 
+    public static boolean applyRadioactivity(Entity aEntity, int aLevel, int aAmountOfItems) {
+        if (aLevel > 0 && aEntity instanceof LivingEntity livingEntity&& aEntity.isAlive() && livingEntity.getMobType() != MobType.UNDEAD && livingEntity.getMobType() != MobType.ARTHROPOD && !isFullHazmatSuit(livingEntity)) {
+            IRadiationEntity radiationEntity = (IRadiationEntity) livingEntity;
+            radiationEntity.changeRadiation(aLevel * aAmountOfItems);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isFullHazmatSuit(LivingEntity livingEntity){
+        int radiationProof = 0;
+        for (ItemStack stack : livingEntity.getArmorSlots()) {
+            if (stack.is(AntimatterTags.RADIATION_PROOF)) radiationProof++;
+        }
+        return radiationProof == 4;
+
+    }
+
     public static boolean transferFluids(PlatformFluidHandler from, PlatformFluidHandler to) {
         return transferFluids(from, to, -1);
     }
@@ -828,8 +849,63 @@ public class Utils {
             }
     };
 
+    private static final Direction[][] TRANSFORM_INVERSE = new Direction[][]{
+            new Direction[]{ //DOWN
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.UP,
+                    Direction.DOWN,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{ //UP
+                    Direction.SOUTH,
+                    Direction.NORTH,
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{ //NORTH
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{ //SOUTH
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.SOUTH,
+                    Direction.NORTH,
+                    Direction.EAST,
+                    Direction.WEST,
+            },
+            new Direction[]{ //WEST
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.EAST,
+                    Direction.WEST,
+                    Direction.NORTH,
+                    Direction.SOUTH
+            },
+            new Direction[]{ //EAST
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.WEST,
+                    Direction.EAST,
+                    Direction.SOUTH,
+                    Direction.NORTH
+            }
+    };
+
     public static Direction rotate(Direction facing, Direction side) {
         return TRANSFORM[facing.get3DDataValue()][side.get3DDataValue()];
+    }
+
+    public static Direction rotateInverse(Direction facing, Direction side) {
+        return TRANSFORM_INVERSE[facing.get3DDataValue()][side.get3DDataValue()];
     }
 
     public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy) {
@@ -999,18 +1075,14 @@ public class Utils {
         BlockState state = world.getBlockState(pos);
         ServerPlayer serverPlayer = player == null ? null : ((ServerPlayer) player);
         int exp = player == null ? -1 : onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
-
-        if (exp == -1) {
-            boolean destroyed = world.removeBlock(pos, false);
-            if (destroyed) {
-                Block.dropResources(state, world, pos);
+        FluidState fluidState = world.getFluidState(pos);
+        boolean destroyed = world.setBlockAndUpdate(pos, fluidState.createLegacyBlock());// world.destroyBlock(pos, !player.isCreative(), player);
+        if (destroyed) {
+            if (player != null && canHarvestBlock(state, world, pos, player)) {
+                state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
             }
-            return destroyed;
+            stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         }
-        stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-        boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
-        if (destroyed && canHarvestBlock(state, world, pos, player))
-            state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
         if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
     }
@@ -1029,30 +1101,6 @@ public class Utils {
         throw new AssertionError();
     }
 
-    /**
-     * IAntimatterTool-sensitive extension of IForgeBlockState::isToolEffective
-     *
-     * @param tool  IAntimatterTool derivatives
-     * @param state BlockState that is being checked against
-     * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
-     */
-    public static boolean isToolEffective(IAntimatterTool tool, ItemStack stack, BlockState state) {
-        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) ||
-                tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) ||
-                state.is(tool.getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(tool.getTier(stack), state);
-    }
-
-    /**
-     * AntimatterToolType-sensitive extension of IForgeBlockState::isToolEffective
-     *
-     * @param type  AntimatterToolType object
-     * @param state BlockState that is being checked against
-     * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
-     */
-    public static boolean isToolEffective(AntimatterToolType type, Set<TagKey<Block>> types, BlockState state) {
-        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || types.stream().anyMatch(t -> state.is(t));
-    }
-
     private static boolean LOCK;
 
     /**
@@ -1065,31 +1113,42 @@ public class Utils {
      * @return if tree logging was successful
      */
     public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
+        boolean[] harvested = new boolean[1];
         if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
-            BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
-            BlockState tpCompare = world.getBlockState(tempPos);
+            BlockState tpCompare = world.getBlockState(start);
             if (!BehaviourTreeFelling.isLog(tpCompare)) return false;
             for (int y = start.getY() + 1; y < start.getY() + world.getHeight(); y++) {
-                if (stack.getDamageValue() < 2) return false;
-                tempPos.move(Direction.UP);
+                if (stack.isEmpty()) break;
+                BlockPos tempPos = new BlockPos(start.getX(), y, start.getZ());
                 BlockState state = world.getBlockState(tempPos);
-                if (state.getBlock() != tpCompare.getBlock()) break;
-                else if (state.is(BlockTags.LOGS)) {
-                    breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
+                if (state.is(BlockTags.LOGS)) {
+                    if (breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability())){
+                        harvested[0] = true;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
                 }
             }
         } else {
+            boolean[] stopped = new boolean[1];
             BehaviourTreeFelling.findTree(world, start).getLogs().forEach(b -> {
-                if (stack.getDamageValue() < 2) return;
+                if (stack.isEmpty()) return;
+                if (stopped[0]) return;
                 BlockState state = world.getBlockState(b);
                 if (state.isAir() || !isCorrectToolForDrops(state, player))
                     return;
                 else if (state.is(BlockTags.LOGS)) {
-                    breakBlock(world, player, stack, b, tool.getAntimatterToolType().getUseDurability());
+                    if (breakBlock(world, player, stack, b, tool.getAntimatterToolType().getUseDurability())){
+                        harvested[0] = true;
+                    } else {
+                        stopped[0] = true;
+                    }
                 }
             });
         }
-        return true;
+        return harvested[0];
     }
 
     @ExpectPlatform
@@ -1109,7 +1168,7 @@ public class Utils {
      */
     public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
-        return totalBlocks.stream().filter(b -> isToolEffective(tool, stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
+        return totalBlocks.stream().filter(b -> tool.genericIsCorrectToolForDrops(stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
     }
 
     /**

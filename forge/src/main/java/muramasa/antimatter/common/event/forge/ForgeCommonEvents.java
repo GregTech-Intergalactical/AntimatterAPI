@@ -8,7 +8,7 @@ import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.pipe.PipeTicker;
+import muramasa.antimatter.pipe.TileTicker;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.core.Direction;
@@ -50,9 +50,7 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event){
-        if (event.phase == TickEvent.Phase.START){
-            PipeTicker.onServerWorldTick(ServerLifecycleHooks.getCurrentServer());
-        }
+        TileTicker.onServerWorldTick(ServerLifecycleHooks.getCurrentServer(), event.phase == TickEvent.Phase.START);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

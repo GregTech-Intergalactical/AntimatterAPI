@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.*;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -129,6 +130,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", i.getLang(locale).concat(t == Tier.NONE ? "" : " (" + t.getId().toUpperCase(Locale.ROOT) + ")").concat(" Multiblock"));
                 }
             });
+        });
+        AntimatterAPI.all(CoverFactory.class, domain).forEach(c -> {
+            add("cover." + domain + "." + c.getId(), Utils.lowerUnderscoreToUpperSpaced(c.getId()));
         });
         AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {
             add("enchantment." + d + "." + i, lowerUnderscoreToUpperSpaced(i));
@@ -305,11 +309,6 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
             });
         }
-
-
-
-
-
     }
 
     protected void customTranslations() {
@@ -330,6 +329,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.fluid.gas", "State: Gas");
         add("antimatter.tooltip.cover.output.no_input", "Inputs blocked");
         add("antimatter.tooltip.cover.output.allow_input", "Inputs allowed");
+        add("antimatter.tooltip.cover.covers_on_item", "Covers");
+        add("antimatter.tooltip.cover.stack", "%s: %s");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
         //Is this loss?

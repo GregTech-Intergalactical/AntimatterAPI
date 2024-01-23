@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import muramasa.antimatter.material.IMaterialObject;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockMaterialType extends BlockBasic implements IColorHandler {
+public class BlockMaterialType extends BlockBasic implements IColorHandler, IMaterialObject {
 
     protected Material material;
     protected MaterialType<?> type;

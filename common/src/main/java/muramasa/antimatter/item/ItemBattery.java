@@ -142,4 +142,12 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
     public IEnergyHandlerItem createEnergyHandler(TesseractItemContext context) {
         return new ItemEnergyHandler(context, cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, amps);
     }
+
+    public int getItemStackLimit(ItemStack stack) {
+        if (stack.getTag() != null){
+            long energy = stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).getLong(Ref.KEY_ITEM_ENERGY);
+            if (energy > 0) return 1;
+        }
+        return getMaxStackSize();
+    }
 }

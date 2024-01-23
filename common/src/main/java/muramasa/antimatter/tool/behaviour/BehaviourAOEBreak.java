@@ -78,10 +78,9 @@ public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool>, IIte
     @Override
     public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
         //if(!super.onBlockDestroyed(stack, world, state, pos, entity)) return false;
-        if (!(entity instanceof Player)) return true;
+        if (!(entity instanceof Player player)) return true;
         CompoundTag tag = instance.getDataTag(stack);
-        if (tag == null || !tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK)) return true;
-        Player player = (Player) entity;
+        if (tag == null || !tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK) || player.isCrouching() || player.getLevel().isClientSide) return true;
         for (BlockPos blockPos : Utils.getHarvestableBlocksToBreak(world, player, instance, stack, column, row, depth)) {
             if (!instance.hasEnoughDurability(stack, instance.getAntimatterToolType().getUseDurability(), instance.getAntimatterToolType().isPowered()))
                 return true;

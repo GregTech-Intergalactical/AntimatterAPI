@@ -5,15 +5,18 @@ import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +41,44 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
 
     public ICover getOutputCover() {
         return get(lookupSingle(getTile().getMachineType().getOutputCover()));
+    }
+
+    public void readFromStack(ItemStack stack){
+        if (stack.getTag() != null && stack.getTag().contains("covers")){
+            CompoundTag nbt = stack.getTag().getCompound("covers");
+            byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
+            for (int i = 0; i < Ref.DIRS.length; i++) {
+                if ((sides & (1 << i)) > 0) {
+                    ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
+                    Direction rotated = Utils.rotate(getTileFacing(), Ref.DIRS[i]);
+                    buildLookup(covers.get(rotated).getFactory(), cover.getFactory(), rotated);
+                    covers.put(rotated, cover);
+                }
+            }
+
+        }
+    }
+
+    public void writeToStack(ItemStack machine){
+        CompoundTag tag = new CompoundTag();
+        byte[] sides = new byte[1];
+        boolean[] outputCoverOnly = {true};
+        covers.forEach((s, cover) -> {
+            if (!cover.isEmpty()) { // Don't store EMPTY covers unnecessarily
+                if (!isCoverDefault(cover)) outputCoverOnly[0] = false;
+                Direction inverseRotated = Utils.rotateInverse(getTileFacing(), s);
+                sides[0] |= (1 << inverseRotated.get3DDataValue());
+                CoverFactory.writeCover(tag, cover, inverseRotated);
+            }
+        });
+        if (!outputCoverOnly[0]){
+            tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
+            machine.getOrCreateTag().put("covers", tag);
+        }
+    }
+
+    protected boolean isCoverDefault(ICover cover){
+        return cover == getOutputCover();
     }
 
     public boolean setOutputFacing(Player entity, Direction side) {

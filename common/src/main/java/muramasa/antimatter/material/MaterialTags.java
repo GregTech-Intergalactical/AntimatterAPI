@@ -21,10 +21,13 @@ public class MaterialTags {
     public static final MaterialTag TRANSPARENT = new MaterialTag("transparent");
     public static final MaterialTag METAL = new MaterialTag("metal");
     public static final MaterialTag ELEMENTAL = new MaterialTag("elemental");
-    public static final MaterialTag RADIOACTIVE = new MaterialTag("radioactive");
+    public static final NumberMaterialTag RADIOACTIVE = new NumberMaterialTag("radioactive");
     public static final MaterialTag FLINT = new MaterialTag("flint");
     public static final MaterialTag MOLTEN = new MaterialTag("molten");
     public static final MaterialTag ACID = new MaterialTag("acid");
+    public static final MaterialTag POSITIVE_CHANGING_RGB = new MaterialTag("positive_changing_rgb");
+    public static final MaterialTag NEGATIVE_CHANGING_RGB = new MaterialTag("negative_changing_rgb");
+
     public static final MaterialTag QUARTZ_LIKE_BLOCKS = new MaterialTag("quartz_like_blocks");
 
     public static final TypeMaterialTag<UniformInt> EXP_RANGE = new TypeMaterialTag<>("exp_range");

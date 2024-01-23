@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import lombok.Setter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityBase;
@@ -22,6 +23,7 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     public final int heatCap;
     public final int temperaturesize;
     public final int maxInput, maxOutput;
+    @Setter
     protected int currentHeat;
 
     public final BlockEntityBase<?> tile;
@@ -38,14 +40,24 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     public int insert(int heat, boolean simulate) {
         if (!canInput()) return 0;
         int insert = Math.min(maxInput, Math.min(heatCap - currentHeat, heat));
-        if (!simulate) add(insert);
-        return insert;
+        return insertInternal(insert, simulate);
     }
 
     @Override
     public int extract(int heat, boolean simulate) {
         if (!canOutput()) return 0;
         int extract = Math.min(maxOutput, Math.min(currentHeat, heat));
+        return extractInternal(extract, simulate);
+    }
+
+    public int insertInternal(int heat, boolean simulate) {
+        int insert = Math.min(heatCap - currentHeat, heat);
+        if (!simulate) add(insert);
+        return insert;
+    }
+
+    public int extractInternal(int heat, boolean simulate) {
+        int extract = Math.min(currentHeat, heat);
         if (!simulate) sub(extract);
         return extract;
     }

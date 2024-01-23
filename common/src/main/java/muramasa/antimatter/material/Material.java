@@ -13,6 +13,7 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.commons.lang3.tuple.Pair;
@@ -277,12 +278,16 @@ public class Material implements ISharedAntimatterObject {
         return this.getPlasma(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
-    public FluidIngredient getFluidTag(long droplets){
-        return FluidIngredient.of(TagUtils.getForgelikeFluidTag(this.getId()), droplets);
+    public FluidIngredient getFluidIngredient(long droplets){
+        return FluidIngredient.of(getFluidTag(), droplets);
     }
 
-    public FluidIngredient getFluidTag(int mb){
-        return FluidIngredient.of(TagUtils.getForgelikeFluidTag(this.getId()), mb * TesseractGraphWrappers.dropletMultiplier);
+    public FluidIngredient getFluidIngredient(int mb){
+        return FluidIngredient.of(getFluidTag(), mb * TesseractGraphWrappers.dropletMultiplier);
+    }
+
+    public TagKey<Fluid> getFluidTag(){
+        return TagUtils.getForgelikeFluidTag(this.getId());
     }
 
     /**

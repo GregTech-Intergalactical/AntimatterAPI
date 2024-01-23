@@ -2,12 +2,15 @@ package muramasa.antimatter.blockentity.multi;
 
 import lombok.Getter;
 import lombok.Setter;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.cover.CoverDynamo;
+import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
@@ -57,26 +60,24 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         }
         if (type.has(EU)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
-                    type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
-                    type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
-                    type.getOutputCover() == COVERENERGY ? 2 : 0, type.getOutputCover() == COVERDYNAMO ? 1 : 0) {
+                    type.getOutputCover().getId().contains("energy") ? tier.getVoltage() : 0,
+                    type.getOutputCover().getId().contains("dynamo") ? tier.getVoltage() : 0,
+                    type.getOutputCover().getId().contains("energy") ? 2 : 0, type.getOutputCover().getId().contains("dynamo") ? 1 : 0) {
                 @Override
                 public boolean canInput(Direction direction) {
                     ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
                     if (out == null)
                         return false;
-                    return out.isEqual(COVERENERGY) && direction == out.side();
+                    return out instanceof CoverEnergy && direction == out.side();
                 }
 
                 @Override
                 protected boolean checkVoltage(long voltage) {
                     boolean flag = true;
-                    if (type.getOutputCover() == COVERDYNAMO) {
-                        flag = voltage <= getOutputVoltage();
-                    } else if (type.getOutputCover() == COVERENERGY) {
+                    if (type.getOutputCover().getId().contains("energy")) {
                         flag = voltage <= getInputVoltage();
                     }
-                    if (!flag) {
+                    if (!flag && AntimatterConfig.MACHINES_EXPLODE.get()) {
                         Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.BREAK);
                     }
                     return flag;
@@ -87,7 +88,7 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
                     ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
                     if (out == null)
                         return false;
-                    return out.isEqual(COVERDYNAMO) && direction == out.side();
+                    return out instanceof CoverDynamo && direction == out.side();
                 }
             });
         }
@@ -151,12 +152,6 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
                 return;
             ((CoverOutput) cover).setEjects(has(FLUID), has(ITEM));
         });
-    }
-
-    @Override
-    public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onPlacedBy(world, pos, state, placer, stack);
-        setOutputFacing(null, this.getFacing());
     }
 
     @Override

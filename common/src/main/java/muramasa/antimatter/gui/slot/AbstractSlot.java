@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.slot;
 
+import lombok.Getter;
 import muramasa.antimatter.capability.IFilterableHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
@@ -16,6 +17,7 @@ public class AbstractSlot<T extends Slot> extends Slot {
     protected final int index;
     public final SlotType<T> type;
     protected final IGuiHandler holder;
+    @Getter
     private final ExtendedItemContainer container;
 
     public AbstractSlot(SlotType<T> type, IGuiHandler tile, ExtendedItemContainer stackHandler, int index, int x, int y) {
@@ -75,7 +77,4 @@ public class AbstractSlot<T extends Slot> extends Slot {
         return maxInput - remainder.getCount();
     }
 
-    public ExtendedItemContainer getContainer() {
-        return container;
-    }
 }

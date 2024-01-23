@@ -41,6 +41,7 @@ public class AntimatterDefaultTools {
     public static final AntimatterToolType KNIFE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "knife", 1, 2, 1, 2.1F, -2.0F, false)).addEffectiveBlocks(Blocks.COBWEB).setRepairable(false).setTag(new ResourceLocation(Ref.ID, "knives")).setOriginalTag(true);
     public static final AntimatterToolType SCISSORS = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "scissors", 1, 2, 2, 1.0f, -1.5f, false));
     public static final AntimatterToolType PLUNGER = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F, false)).setUseSound(SoundEvents.BUCKET_EMPTY).setHasSecondary(false).setRepairable(false);
+    public static final AntimatterToolType SCYTHE = AntimatterAPI.register(AntimatterToolType.class, new AntimatterToolType(Ref.ID, "scythe", 1, 2, 5, 6.5f, -3.1f, false)).setMaterialTypeItem(SCYTHE_BLADE);
     public static final AntimatterArmorType HELMET = new AntimatterArmorType(Ref.ID, "helmet", 40, 0, 0.0F, 0.0F, EquipmentSlot.HEAD);
     public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 0, 0.0F, 0.0F, EquipmentSlot.CHEST);
     public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 0, 0.0F, 0.0F, EquipmentSlot.LEGS);
@@ -54,6 +55,7 @@ public class AntimatterDefaultTools {
         WRENCH_ALT.addBehaviour(BehaviourWrenchSwitching.INSTANCE);
         KNIFE.addBehaviour(BehaviourPumpkinCarving.INSTANCE);
         SCISSORS.addBehaviour(BehaviourShearing.INSTANCE);
+        SCYTHE.addBehaviour(BehaviourCropHarvesting.INSTANCE);
         if (side == Side.CLIENT) {
             clientInit();
         }

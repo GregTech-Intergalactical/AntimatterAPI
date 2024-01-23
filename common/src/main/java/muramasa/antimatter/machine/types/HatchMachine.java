@@ -2,6 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.widget.TankIconWidget;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
@@ -22,7 +23,7 @@ public class HatchMachine extends Machine<HatchMachine> {
         addFlags(HATCH, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
         setVerticalFacingAllowed(true);
-        covers(cover);
+        covers(ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, cover, ICover.emptyFactory, ICover.emptyFactory);
         setOutputCover(cover);
         frontCovers();
         allowFrontIO();

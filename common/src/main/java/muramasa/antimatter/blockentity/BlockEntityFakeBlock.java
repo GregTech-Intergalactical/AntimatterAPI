@@ -160,7 +160,7 @@ public class BlockEntityFakeBlock extends BlockEntityTickable<BlockEntityFakeBlo
             compound.putInt("F", facing.ordinal());
         }
         CompoundTag n = new CompoundTag();
-        this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v));
+        this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v, v.side()));
         compound.put("C", n);
         if (!send && controller != null) {
             compound.putLong("P", controller.getBlockPos().asLong());

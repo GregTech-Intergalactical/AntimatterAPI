@@ -233,13 +233,8 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
+    public int getEnchantability(ItemStack stack) {
         return getTier(stack).getEnchantmentValue();
-    }
-
-    public int getEnchantability(ItemStack stack)
-    {
-        return getItemEnchantability(stack);
     }
 
     @Override
