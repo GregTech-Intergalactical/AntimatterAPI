@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.Getter;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -234,6 +235,10 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
+                if (cover == null){
+                    Antimatter.LOGGER.warn(nbt + "at d: " + Direction.from3DDataValue(i) + "at pos: " + tile.getBlockPos());
+                    cover = ICover.empty;
+                }
                 buildLookup(covers.get(Ref.DIRS[i]).getFactory(), cover.getFactory(), Ref.DIRS[i]);
                 covers.put(Ref.DIRS[i], cover);
             } else {
