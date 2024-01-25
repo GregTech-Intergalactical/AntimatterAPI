@@ -96,7 +96,16 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
 
     @Override
     public boolean wrenchMachine(Player player, BlockHitResult res, boolean crouch) {
-        return setFacing(player, Utils.getInteractSide(res)) && setOutputFacing(player, Utils.getInteractSide(res));
+        return setFacing(player, Utils.getInteractSide(res));
+    }
+
+    @Override
+    protected boolean setFacing(Player player, Direction side) {
+        boolean setFacing = super.setFacing(player, side);
+        if (setFacing){
+            setOutputFacing(player, side);
+        }
+        return setFacing;
     }
 
     @Override

@@ -29,7 +29,7 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
         super(tile, tile.getValidCovers());
         Arrays.stream(Ref.DIRS).forEach(d -> {
             Direction facing = getTileFacing();
-            Direction newDir = Utils.coverRotateFacing(d, facing);
+            Direction newDir = Utils.rotate(facing, d);
             covers.put(d, tile.getMachineType().defaultCover(newDir).get().get(this, null, d, tile.getMachineType().defaultCover(newDir)));
             buildLookup(ICover.emptyFactory, tile.getMachineType().defaultCover(newDir), d);
         });
