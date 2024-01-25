@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
+import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,27 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
 
     @Override
     public boolean canOutputsFit(FluidHolder[] outputs) {
-        return outputs != null && this.outputs != null && this.outputs.length >= outputs.length;
+        if (outputs != null && this.outputs != null){
+            FluidHolder[] outputCopies = new FluidHolder[outputs.length];
+            for (int i = 0; i < outputs.length; i++) {
+                outputCopies[i] = outputs[i].copyHolder();
+            }
+            int filled = 0;
+            for (FluidHolder outputCopy : outputCopies) {
+                for (MachineFluidHandler<?> output : this.outputs) {
+                    if (outputCopy.getFluidAmount() <= 0) {
+                        filled++;
+                        break;
+                    }
+                    long fill = output.fillOutput(outputCopy, true);
+                    if (fill > 0) {
+                        outputCopy.setAmount(outputCopy.getFluidAmount() - fill);
+                    }
+                }
+            }
+            return filled == outputs.length;
+        }
+        return false;
     }
 
     protected void cacheInputs() {
