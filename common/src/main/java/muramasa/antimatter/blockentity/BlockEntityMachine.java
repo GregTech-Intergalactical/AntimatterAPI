@@ -248,6 +248,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
+        super.onBlockUpdate(neighbor);
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         if (facing != null) {
             coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());

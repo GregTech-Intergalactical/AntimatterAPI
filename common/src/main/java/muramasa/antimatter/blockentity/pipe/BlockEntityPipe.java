@@ -101,6 +101,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
+        super.onBlockUpdate(neighbor);
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         if (level != null && level.isLoaded(this.getBlockPos()) && facing != null && canConnect(facing.get3DDataValue())){
             BlockEntityPipe<?> pipe = getPipe(neighbor);

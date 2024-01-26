@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -12,15 +13,32 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.List;
 
 public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends BlockEntity {
 
     protected final Dispatch dispatch;
+    protected final EnumMap<Direction, BlockEntity> blockEntityCache = new EnumMap<>(Direction.class);
 
     public BlockEntityBase(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         dispatch = new Dispatch();
+    }
+
+    public BlockEntity getCachedBlockEntity(Direction side){
+        if (level == null) return null;
+        if (!blockEntityCache.containsKey(side)){
+            blockEntityCache.put(side, level.getBlockEntity(this.getBlockPos().relative(side)));
+        }
+        return blockEntityCache.get(side);
+    }
+
+    public void onBlockUpdate(BlockPos neighbor) {
+        Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
+        if (facing != null) {
+            blockEntityCache.remove(facing);
+        }
     }
 
     @Override
