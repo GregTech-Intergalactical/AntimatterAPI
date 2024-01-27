@@ -48,8 +48,8 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
         for (var extraPipeFunction : EXTRA_PIPE_FUNCTIONS) {
             if (extraPipeFunction.apply(dir, tile)) return true;
         }
-        if (tile instanceof BlockEntityPipe) {
-            return ((BlockEntityPipe) tile).canConnect(dir.get3DDataValue());
+        if (tile instanceof BlockEntityPipe<?> pipe) {
+            return (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) ? pipe.canConnectVirtual(dir.get3DDataValue()) : pipe.canConnect(dir.get3DDataValue());
         }
         if (tile instanceof BlockEntityMachine<?> machine) {
             Direction direction = machine.getOutputFacing();

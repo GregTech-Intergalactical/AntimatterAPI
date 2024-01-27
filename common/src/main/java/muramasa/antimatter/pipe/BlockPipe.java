@@ -177,6 +177,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (!list.isEmpty()) {
                 pipe.coverHandler.ifPresent(c -> c.writeToStack(list.get(0)));
             }
+            pipe.addInventoryDrops(list);
         }
         return list;
     }

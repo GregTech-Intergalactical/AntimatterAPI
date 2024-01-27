@@ -29,6 +29,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,7 +59,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     /**
      * Connection data
      **/
-    private byte connection, virtualConnection;
+    protected byte connection, virtualConnection;
     private boolean refreshConnection = false;
 
     @Getter
@@ -100,24 +101,26 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         }).orElse(true);
     }
 
+    boolean blockUpdating = false;
+
     public void onBlockUpdate(BlockPos neighbor) {
         super.onBlockUpdate(neighbor);
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
-        if (level != null && level.isLoaded(this.getBlockPos()) && facing != null && canConnect(facing.get3DDataValue())){
+        if (!blockUpdating && level != null && level.isLoaded(this.getBlockPos()) && facing != null && canConnect(facing.get3DDataValue())){
+            blockUpdating = true;
             BlockEntityPipe<?> pipe = getPipe(neighbor);
-            if (pipe == null){
-                if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
-                    if (!validate(facing)){
-                        virtualConnection = Connectivity.clear(virtualConnection, facing.get3DDataValue());
-                        refreshConnection();
-                    }
-                } else {
-                    if (validate(facing)){
-                        virtualConnection = Connectivity.set(virtualConnection, facing.get3DDataValue());
-                        refreshConnection();
-                    }
+            if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
+                if (!validate(facing) || pipe == null){
+                    virtualConnection = Connectivity.clear(virtualConnection, facing.get3DDataValue());
+                    refreshConnection();
+                }
+            } else {
+                if (validate(facing) || pipe != null){
+                    virtualConnection = Connectivity.set(virtualConnection, facing.get3DDataValue());
+                    refreshConnection();
                 }
             }
+            blockUpdating = false;
         }
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
     }
@@ -210,6 +213,10 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         return Connectivity.has(connection, side);
     }
 
+    public boolean canConnectVirtual(int side) {
+        return Connectivity.has(virtualConnection, side);
+    }
+
     public abstract Class<?> getCapClass();
 
     @SuppressWarnings("unchecked")
@@ -247,6 +254,10 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
             return false;
         }
         return !blocksSide(dir);
+    }
+
+    public void addInventoryDrops(List<ItemStack> drops){
+
     }
 
     /**

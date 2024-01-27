@@ -8,8 +8,8 @@ import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemNode;
 
 public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItemNode {
-    Direction side;
-    CoverHandler<?> coverHandler;
+    protected Direction side;
+    protected CoverHandler<?> coverHandler;
 
     public SidedCombinedInvWrapper(Direction side, CoverHandler<?> coverHandler, ExtendedItemContainer... itemHandler) {
         super(itemHandler);
