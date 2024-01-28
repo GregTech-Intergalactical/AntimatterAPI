@@ -23,6 +23,7 @@ import muramasa.antimatter.pipe.TileTicker;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.CodeUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -303,7 +304,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         // No Targets? Nothing to do then.
         if (tTargetCount <= 1) return;
         // Amount to distribute normally.
-        tAmount = divup(tAmount, tTargetCount);
+        tAmount = CodeUtils.divup(tAmount, tTargetCount);
         // Distribute to Pipes first.
         for (PlatformFluidHandler tPipe : tPipes) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tPipe.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
         // Check if we are empty.
@@ -317,11 +318,6 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         // And then if there still is pressure, distribute to Pipes again.
         tAmount = (aTank.getStoredFluid().getFluidAmount() - aTank.getCapacity()/2) / tPipes.size();
         if (tAmount > 0) for (PlatformFluidHandler tPipe : tPipes) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tPipe.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
-    }
-
-    /** Divides but rounds up. */
-    public static long divup(long aNumber, long aDivider) {
-        return aNumber / aDivider + (aNumber % aDivider == 0 ? 0 : 1);
     }
 
     public static void burn(Level aWorld, int aX, int aY, int aZ) {
