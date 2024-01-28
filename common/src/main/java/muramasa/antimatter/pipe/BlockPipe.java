@@ -370,7 +370,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
     @Override
