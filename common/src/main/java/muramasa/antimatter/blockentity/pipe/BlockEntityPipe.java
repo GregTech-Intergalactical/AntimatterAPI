@@ -110,7 +110,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
             blockUpdating = true;
             BlockEntityPipe<?> pipe = getPipe(neighbor);
             if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
-                if (!validate(facing) || pipe == null){
+                if (!validate(facing) && pipe == null){
                     virtualConnection = Connectivity.clear(virtualConnection, facing.get3DDataValue());
                     refreshConnection();
                 }
@@ -385,6 +385,8 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         List<String> info = super.getInfo(simple);
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
+        info.add("Connection: " + connection);
+        info.add("Virtual Connection: " + virtualConnection);
         return info;
     }
 
