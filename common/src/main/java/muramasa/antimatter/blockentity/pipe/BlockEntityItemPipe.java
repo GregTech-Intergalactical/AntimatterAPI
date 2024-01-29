@@ -285,23 +285,25 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     public static Map<BlockEntityItemPipe<?>, Long> scanPipes(BlockEntityItemPipe<?> aPipe, Map<BlockEntityItemPipe<?>, Long> aMap, long aStep, boolean aSuckItems, boolean aIgnoreCapacity) {
         aStep += aPipe.getStepsize();
         // TODO Make this iterative instead of recursive.
-        if (aIgnoreCapacity || aPipe.getHolder() < aPipe.getCapacity()) if (aMap.get(aPipe) == null || aMap.get(aPipe) > aStep) {
-            aMap.put(aPipe, aStep);
-            for (Direction aSide : Direction.values()) {
-                if (aSuckItems) {
-                    if (aPipe.canAcceptItemsFrom(aSide, null)) {
-                        BlockEntity tDelegator = aPipe.getCachedBlockEntity(aSide);
-                        if (tDelegator instanceof BlockEntityItemPipe<?> pipe && pipe.connects(aSide.getOpposite()) && pipe.canEmitItemsTo(aSide.getOpposite(), null)) {
-                            scanPipes(pipe, aMap, aStep, aSuckItems, aIgnoreCapacity);
+        if (aIgnoreCapacity || aPipe.getHolder() < aPipe.getCapacity()) {
+            if (aMap.get(aPipe) == null || aMap.get(aPipe) > aStep) {
+                aMap.put(aPipe, aStep);
+                for (Direction aSide : Direction.values()) {
+                    if (aSuckItems) {
+                        if (aPipe.canAcceptItemsFrom(aSide, null)) {
+                            BlockEntity tDelegator = aPipe.getCachedBlockEntity(aSide);
+                            if (tDelegator instanceof BlockEntityItemPipe<?> pipe && pipe.connects(aSide.getOpposite()) && pipe.canEmitItemsTo(aSide.getOpposite(), null)) {
+                                scanPipes(pipe, aMap, aStep, aSuckItems, aIgnoreCapacity);
+                            }
                         }
-                    }
-                } else {
-                    if (aPipe.canEmitItemsTo(aSide, null)) {
-                        BlockEntity tDelegator = aPipe.getCachedBlockEntity(aSide);
-                        if (tDelegator instanceof BlockEntityItemPipe<?> pipe) {
-                            if (pipe.connects(aSide.getOpposite())) {
-                                if (pipe.canAcceptItemsFrom(aSide.getOpposite(), null)) {
-                                    scanPipes(aPipe, aMap, aStep, aSuckItems, aIgnoreCapacity);
+                    } else {
+                        if (aPipe.canEmitItemsTo(aSide, null)) {
+                            BlockEntity tDelegator = aPipe.getCachedBlockEntity(aSide);
+                            if (tDelegator instanceof BlockEntityItemPipe<?> pipe) {
+                                if (pipe.connects(aSide.getOpposite())) {
+                                    if (pipe.canAcceptItemsFrom(aSide.getOpposite(), null)) {
+                                        scanPipes(pipe, aMap, aStep, aSuckItems, aIgnoreCapacity);
+                                    }
                                 }
                             }
                         }

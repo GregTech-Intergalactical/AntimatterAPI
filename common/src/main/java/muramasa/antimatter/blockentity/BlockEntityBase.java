@@ -28,7 +28,7 @@ public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends Bloc
 
     public BlockEntity getCachedBlockEntity(Direction side){
         if (level == null) return null;
-        if (!blockEntityCache.containsKey(side)){
+        if (!blockEntityCache.containsKey(side) || blockEntityCache.get(side) == null){
             blockEntityCache.put(side, level.getBlockEntity(this.getBlockPos().relative(side)));
         }
         return blockEntityCache.get(side);
