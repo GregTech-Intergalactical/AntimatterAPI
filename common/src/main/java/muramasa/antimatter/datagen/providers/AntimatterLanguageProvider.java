@@ -372,6 +372,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.pipe.item.info", "Transfers up to capacity item stacks per tick. \nThis capacity is per stack and not per item transferred.");
         add("antimatter.pipe.fluid.info", "Transfers up to capacity per tick, with a buffer of 20 times the capacity. \nEvery tick the capacity of the pipe is replenished, up to 20 times. \nThis allows large transfers at once, but \n" +
                 "continuous transfers is limited by capacity");
+        add("antimatter.pipe.item.input_side.enabled", "Accepting from selected Side enabled");
+        add("antimatter.pipe.item.output_side.enabled", "Emitting to selected Side enabled");
+        add("antimatter.pipe.item.input_side.disabled", "Accepting from selected Side disabled");
+        add("antimatter.pipe.item.output_side.disabled", "Emitting to selected Side disabled");
     }
 
     private void processAntimatterTranslations() {

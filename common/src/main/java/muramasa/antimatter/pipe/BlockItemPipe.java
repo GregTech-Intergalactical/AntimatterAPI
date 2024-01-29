@@ -1,22 +1,37 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.blockentity.pipe.BlockEntityItemPipe;
+import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
+import tesseract.graph.Connectivity;
 
 import java.util.List;
 import java.util.Map;
@@ -35,8 +50,6 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     @Override
     public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;
-        ITickingController<?, ?, ?> controller = TesseractGraphWrappers.ITEM.getController(world, pos.asLong());
-        controller.getInfo(pos.asLong(), info);
         info.add("Capacity: " + getType().getCapacity(getSize()));
         return info;
     }
@@ -73,4 +86,49 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
 //        tooltip.add("Item Capacity: " + TextFormatting.BLUE + getSlotCount(size) + " Stacks/s");
 //        tooltip.add("Routing Value: " + TextFormatting.YELLOW + getStepSize(size, res));
 //    }
+
+
+    @Override
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        BlockEntityItemPipe<T> tile = (BlockEntityItemPipe) world.getBlockEntity(pos);
+        if (tile == null) {
+            return InteractionResult.PASS;
+        }
+        if (!world.isClientSide() && hand == InteractionHand.MAIN_HAND){
+            AntimatterToolType type = Utils.getToolType(player);
+            if (type == AntimatterDefaultTools.WRENCH_ALT){
+                Direction side = Utils.getInteractSide(hit);
+                if (Connectivity.has(tile.mDisabledInputs, side.get3DDataValue())){ // input disabled
+                    if (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue())){
+                        tile.mDisabledInputs = Connectivity.clear(tile.mDisabledInputs, side.get3DDataValue());
+                        tile.mDisabledOutputs = Connectivity.clear(tile.mDisabledOutputs, side.get3DDataValue());
+                    } else { // output enabled
+                        tile.mDisabledOutputs = Connectivity.set(tile.mDisabledOutputs, side.get3DDataValue());
+                    }
+                } else { // input enabled
+                    if (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue())){
+                        tile.mDisabledInputs = Connectivity.set(tile.mDisabledInputs, side.get3DDataValue());
+                        tile.mDisabledOutputs = Connectivity.clear(tile.mDisabledOutputs, side.get3DDataValue());
+                    } else { // output enabled
+                        tile.mDisabledOutputs = Connectivity.set(tile.mDisabledInputs, side.get3DDataValue());
+                    }
+                }
+                player.sendMessage(Utils.translatable("antimatter.pipe.item.input_side." + (Connectivity.has(tile.mDisabledInputs, side.get3DDataValue()) ? "disabled" : "enabled")), player.getUUID());
+                player.sendMessage(Utils.translatable("antimatter.pipe.item.output_side." + (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue()) ? "disabled" : "enabled")), player.getUUID());
+                Utils.damageStack(player.getItemInHand(hand), hand, player);
+                return InteractionResult.SUCCESS;
+            }
+        }
+        return super.use(state, world, pos, player, hand, hit);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (context instanceof EntityCollisionContext cont && cont.getEntity() instanceof Player player){
+            if (Utils.getToolType(player) == AntimatterDefaultTools.WRENCH_ALT){
+                return Shapes.block();
+            }
+        }
+        return super.getShape(state, world, pos, context);
+    }
 }
