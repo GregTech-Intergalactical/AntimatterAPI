@@ -22,6 +22,7 @@ import muramasa.antimatter.util.CodeUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractItemCapability;
+import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemPipe;
 import tesseract.graph.Connectivity;
@@ -47,7 +49,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     private boolean restricted;
     private TrackedItemHandler<BlockEntityItemPipe<?>> inventory;
 
-    public byte mLastReceivedFrom = 6, oLastReceivedFrom = 6, mRenderType = 0, mDisabledOutputs = 0, mDisabledInputs = 0;
+    public byte mLastReceivedFrom = 6, oLastReceivedFrom = 6, mDisabledOutputs = 0, mDisabledInputs = 0;
 
     public BlockEntityItemPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -156,7 +158,6 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
             if (inventory.isEmpty()) {
                 mLastReceivedFrom = 6;
                 TileTicker.addTickFunction(() -> {
-                    TileTicker.SERVER_TICK_PRE.remove(this);
                     TileTicker.SERVER_TICK_PR2.remove(this);
                 });
             }
@@ -232,9 +233,6 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     }
 
     private void addTicker(){
-        if (!TileTicker.SERVER_TICK_PRE.contains(this)) {
-            TileTicker.SERVER_TICK_PRE.add(this);
-        }
         if (!TileTicker.SERVER_TICK_PR2.contains(this)) {
             TileTicker.SERVER_TICK_PR2.add(this);
         }
@@ -245,6 +243,40 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
         TileTicker.SERVER_TICK_PR2.remove(this);
         TileTicker.SERVER_TICK_PRE.remove(this);
         super.onRemove();
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        TileTicker.SERVER_TICK_PRE.add(this);
+    }
+
+    @Override
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putByte("disabledInputs", mDisabledInputs);
+        tag.putByte("disabledOutputs", mDisabledOutputs);
+        tag.putByte("lastReceivedFrom", mLastReceivedFrom);
+        tag.putByte("oldLastReceivedFrom", oLastReceivedFrom);
+        if (!inventory.isEmpty()){
+            CompoundTag inventory = this.inventory.serialize(new CompoundTag());
+            tag.put("inventory", inventory);
+        }
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        mDisabledInputs = tag.getByte("disabledInputs");
+        mDisabledOutputs = tag.getByte("disabledOutputs");
+        mLastReceivedFrom = tag.getByte("lastReceivedFrom");
+        oLastReceivedFrom = tag.getByte("oldLastReceivedFrom");
+        if (tag.contains("inventory")){
+            inventory.deserialize(tag.getCompound("inventory"));
+            if (!inventory.isEmpty()){
+                addTicker();
+            }
+        }
     }
 
     /**
