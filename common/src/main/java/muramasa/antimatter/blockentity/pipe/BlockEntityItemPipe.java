@@ -19,6 +19,7 @@ import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.TileTicker;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.util.CodeUtils;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,7 @@ import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemPipe;
+import tesseract.api.item.PlatformItemHandler;
 import tesseract.graph.Connectivity;
 import tesseract.util.Pos;
 
@@ -182,19 +184,45 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
             BlockEntity tDelegator = getCachedBlockEntity(side);
             if (!(tDelegator instanceof BlockEntityPipe<?>)) {
                 if (!(tDelegator instanceof HopperBlockEntity || tDelegator instanceof DispenserBlockEntity)) {
-                    // special cases for the win...
-                    ICover cover = coverHandler.map(c -> c.get(side)).orElse(ICover.empty);
-                    if (!cover.isEmpty()){
+                    PlatformItemHandler itemHandler = TesseractCapUtils.getItemHandler(tDelegator, side.getOpposite()).orElse(null);
+                    if (itemHandler != null){
+                        // special cases for the win...
+                        ICover cover = coverHandler.map(c -> c.get(side)).orElse(ICover.empty);
+                        for (int i = 0; i < aSender.inventory.getSize(); i++) {
+                            ItemStack stack = aSender.inventory.getItem(i);
+                            if (!stack.isEmpty()){
+                                boolean transfered = false;
+                                if (!cover.isEmpty()){
+                                    if (cover.blocksOutput(ExtendedItemContainer.class, side)){
+                                        return false;
+                                    }
+                                    if (cover.onTransfer(stack.copy(), false, true)){
+                                        return false;
+                                    }
+                                    int count = stack.getCount();
+                                    cover.onTransfer(stack, false, false);
+                                    if (stack.getCount() < count){
+                                        transfered = true;
+                                    }
+                                }
 
+                                ItemStack inserted = Utils.insertItem(itemHandler, stack.copy(), true);
+                                if (inserted.isEmpty()){
+                                    Utils.insertItem(itemHandler, stack, false);
+                                    aSender.inventory.extractItem(i, stack.getCount(), false);
+                                    transfered = true;
+                                } else if (inserted.getCount() < stack.getCount()) {
+                                    stack = stack.copy();
+                                    int actual = stack.getCount() - inserted.getCount();
+                                    stack.setCount(stack.getCount() - inserted.getCount());
+                                    Utils.insertItem(itemHandler, stack, false);
+                                    aSender.inventory.extractItem(i, actual, false);
+                                    transfered = true;
+                                }
+                                if (transfered) return true;
+                            }
+                        }
                     }
-
-                    /*CoverData tCovers = getCoverData();
-                    if (tCovers != null && tCovers.mBehaviours[aSide] instanceof CoverFilterItem && tCovers.mNBTs[aSide] != null) {
-                        ItemStack tStack = ST.load(tCovers.mNBTs[aSide], "gt.filter.item");
-                        return ST.valid(tStack) && ST.move(new DelegatorTileEntity<>((TileEntity)aSender, SIDE_ANY), tDelegator, ST.hashset(tStack), F, F, tCovers.mVisuals[aSide] != 0, T, 64, 1, 64, 1) > 0;
-                    }
-                    // well normal case is this.
-                    return ST.move(new DelegatorTileEntity<>((TileEntity)aSender, SIDE_ANY), tDelegator) > 0;*/
                 }
             }
         }
