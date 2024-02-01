@@ -1,6 +1,10 @@
 package muramasa.antimatter.blockentity;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -15,11 +19,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends BlockEntity {
 
     protected final Dispatch dispatch;
-    protected final EnumMap<Direction, BlockEntity> blockEntityCache = new EnumMap<>(Direction.class);
+    protected final Cache<Direction, BlockEntity> blockEntityCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
     public BlockEntityBase(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -28,16 +34,25 @@ public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends Bloc
 
     public BlockEntity getCachedBlockEntity(Direction side){
         if (level == null) return null;
-        if (!blockEntityCache.containsKey(side) || blockEntityCache.get(side) == null){
-            blockEntityCache.put(side, level.getBlockEntity(this.getBlockPos().relative(side)));
+        try {
+            BlockEntity entity;
+            if (!blockEntityCache.asMap().containsKey(side)){
+                entity = level.getBlockEntity(this.getBlockPos().relative(side));
+                if (entity == null) return null;
+            } else {
+                entity = null;
+            }
+            return blockEntityCache.get(side, () -> entity);
+        } catch (ExecutionException e) {
+            Antimatter.LOGGER.error(e);
+            return null;
         }
-        return blockEntityCache.get(side);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         if (facing != null) {
-            blockEntityCache.remove(facing);
+            blockEntityCache.invalidate(facing);
         }
     }
 
