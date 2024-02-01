@@ -5,6 +5,7 @@ import earth.terrarium.botarium.forge.energy.ForgeEnergyContainer;
 import earth.terrarium.botarium.forge.fluid.ForgeFluidContainer;
 import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.blockentity.pipe.BlockEntityFluidPipe;
+import muramasa.antimatter.blockentity.pipe.BlockEntityItemPipe;
 import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
@@ -57,7 +58,6 @@ public abstract class BlockEntityPipeMixin<T extends PipeType<T>> extends BlockE
     @NotNull
     @Override
     public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction side) {
-        if (side == null && !(((Object)this) instanceof BlockEntityFluidPipe<?>)) return LazyOptional.empty();
         if (side != null && !connects(side)) return LazyOptional.empty();
         if (!pipeCapHolder.isPresent()) return LazyOptional.empty();
         if (cap == FLUID_HANDLER_CAPABILITY && getCapClass() == FluidContainer.class){
@@ -67,16 +67,17 @@ public abstract class BlockEntityPipeMixin<T extends PipeType<T>> extends BlockE
             }
             return pipeCaps[index].cast();
         }
+        if (cap == ITEM_HANDLER_CAPABILITY && getCapClass() == ExtendedItemContainer.class){
+            int index = side == null ? 6 : side.get3DDataValue();
+            if (pipeCaps[index] == null || !pipeCaps[index].isPresent()){
+                pipeCaps[index] = fromItemHolder(pipeCapHolder, side).cast();
+            }
+            return pipeCaps[index].cast();
+        }
         if (side == null) return LazyOptional.empty();
         if (cap == CapabilityEnergy.ENERGY && getCapClass() == IRFNode.class) {
             if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
                 pipeCaps[side.get3DDataValue()] = fromEnergyHolder(pipeCapHolder, side).cast();
-            }
-            return pipeCaps[side.get3DDataValue()].cast();
-        }
-        if (cap == ITEM_HANDLER_CAPABILITY && getCapClass() == ExtendedItemContainer.class){
-            if (pipeCaps[side.get3DDataValue()] == null || !pipeCaps[side.get3DDataValue()].isPresent()){
-                pipeCaps[side.get3DDataValue()] = fromItemHolder(pipeCapHolder, side).cast();
             }
             return pipeCaps[side.get3DDataValue()].cast();
         }

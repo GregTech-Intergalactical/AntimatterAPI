@@ -197,7 +197,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
                                         return false;
                                     }
                                     if (cover.onTransfer(stack.copy(), false, true)){
-                                        return false;
+                                        continue;
                                     }
                                     int count = stack.getCount();
                                     cover.onTransfer(stack, false, false);
