@@ -162,7 +162,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public BlockEntityPipe<?> getPipe(BlockPos side) {
-        BlockEntity tile = getLevel().getBlockEntity(side);
+        Direction dir = Utils.getOffsetFacing(this.getBlockPos(), side);
+        if (dir == null) return null;
+        BlockEntity tile = getCachedBlockEntity(dir);
         if (!(tile instanceof BlockEntityPipe<?> pipe)) return null;
         return pipe.getCapClass() == this.getCapClass() ?  pipe : null;
     }
@@ -333,7 +335,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public boolean blocksSide(Direction side) {
-        return coverHandler.map(t -> t.blocksCapability(getCapClass(), side)).orElse(false);
+        return coverHandler.map(t -> t.blocksCapability(getCapClass(), side) || t.get(side).blockConnection(side)).orElse(false);
     }
 
     @Override

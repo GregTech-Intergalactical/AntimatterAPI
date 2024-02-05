@@ -179,6 +179,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return false;
     }
 
+    default boolean blockConnection(Direction side){
+        return false;
+    }
+
     void setTextures(BiConsumer<String, Texture> texer);
 
     default ItemStack getDroppedStack() {
