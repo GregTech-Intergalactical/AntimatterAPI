@@ -44,13 +44,13 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
             int filled = 0;
             for (FluidHolder outputCopy : outputCopies) {
                 for (MachineFluidHandler<?> output : this.outputs) {
-                    if (outputCopy.getFluidAmount() <= 0) {
-                        filled++;
-                        break;
-                    }
                     long fill = output.fillOutput(outputCopy, true);
                     if (fill > 0) {
                         outputCopy.setAmount(outputCopy.getFluidAmount() - fill);
+                        if (outputCopy.getFluidAmount() <= 0) {
+                            filled++;
+                            break;
+                        }
                     }
                 }
             }
