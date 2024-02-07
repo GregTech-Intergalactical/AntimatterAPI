@@ -131,7 +131,12 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     @Override
     public void onServerTickPre(Level level, BlockPos pos, boolean aFirst) {
         if (aFirst) {
-            if (level.getGameTime() % 20 == 0) holder = 0;
+            if (level.getGameTime() % 20 == 0) {
+                holder = 0;
+                if(!inventory.isEmpty() && !TileTicker.SERVER_TICK_PR2.contains(this)){
+                    addTicker();
+                }
+            }
         } else if (level.getGameTime() % 10 == 0) {
             if (oLastReceivedFrom == mLastReceivedFrom && mLastReceivedFrom < 6) {
                 boolean tUpdate = false;
@@ -182,7 +187,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
         Direction side = Direction.values()[aSide];
         if (!Connectivity.has(mDisabledOutputs, aSide) && canEmitItemsTo(side, aSender)) {
             BlockEntity tDelegator = getCachedBlockEntity(side);
-            if (!(tDelegator instanceof BlockEntityPipe<?>)) {
+            if (!(tDelegator instanceof BlockEntityPipe<?>) && tDelegator != null) {
                 if (!(tDelegator instanceof HopperBlockEntity || tDelegator instanceof DispenserBlockEntity)) {
                     PlatformItemHandler itemHandler = TesseractCapUtils.getItemHandler(tDelegator, side.getOpposite()).orElse(null);
                     if (itemHandler != null){
