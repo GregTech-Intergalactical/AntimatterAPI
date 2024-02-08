@@ -125,7 +125,6 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        //TODO: Translateable
         if (reusable) {
             tooltip.add(Utils.translatable("item.reusable"));
         }

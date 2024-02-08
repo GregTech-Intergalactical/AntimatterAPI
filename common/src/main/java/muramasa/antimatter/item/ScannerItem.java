@@ -66,20 +66,21 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
     @NotNull
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getLevel().isClientSide) return super.useOn(context);
+        if (context.getLevel().isClientSide) return InteractionResult.CONSUME;
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (tile instanceof BlockEntityBase) {
-            ((BlockEntityBase<?>) tile).getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
+        boolean success = false;
+        if (tile instanceof BlockEntityBase<?> base) {
+            base.getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
+            success = true;
         }
-        if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
-            ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
+        if (state.getBlock() instanceof BlockDynamic dynamic && context.getPlayer() != null) {
+            dynamic.getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
                 context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID());
             });
-            return InteractionResult.SUCCESS;
-        } else {
-
+            success = true;
         }
+        if (success) return InteractionResult.SUCCESS;
         return super.useOn(context);
     }
 
