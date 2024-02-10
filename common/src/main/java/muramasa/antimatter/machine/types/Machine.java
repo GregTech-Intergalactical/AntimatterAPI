@@ -102,6 +102,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IOverlayModeler overlayModels;
     @Getter
     protected ResourceLocation itemModelParent;
+    @Getter
+    protected IMachineColorHandlerBlock blockColorHandler = (state, world, pos, machine, i) -> -1;
+    @Getter
+    protected IMachineColorHandlerItem itemColorHandler = (stack, block, i) -> -1;
 
     protected boolean tierSpecificLang = false;
 
@@ -419,6 +423,16 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T itemModelParent(ResourceLocation parent){
         this.itemModelParent = parent;
+        return (T) this;
+    }
+
+    public T blockColorHandler(IMachineColorHandlerBlock handlerBlock){
+        this.blockColorHandler = handlerBlock;
+        return (T) this;
+    }
+
+    public T itemColorHandler(IMachineColorHandlerItem handlerItem){
+        this.itemColorHandler = handlerItem;
         return (T) this;
     }
 
