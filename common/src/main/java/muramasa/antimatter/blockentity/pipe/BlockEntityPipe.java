@@ -86,6 +86,22 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     //@Override
     public void onLoad() {
         if (isServerSide()) {
+            for (Direction facing : Ref.DIRS){
+                if (connects(facing)) {
+                    BlockEntityPipe<?> pipe = getPipe(facing);
+                    if (Connectivity.has(virtualConnection, facing.get3DDataValue())){
+                        if (!validate(facing) && pipe == null){
+                            virtualConnection = Connectivity.clear(virtualConnection, facing.get3DDataValue());
+                            refreshConnection();
+                        }
+                    } else {
+                        if (validate(facing) || pipe != null){
+                            virtualConnection = Connectivity.set(virtualConnection, facing.get3DDataValue());
+                            refreshConnection();
+                        }
+                    }
+                }
+            }
             register();
         }
     }
