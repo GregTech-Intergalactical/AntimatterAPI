@@ -48,7 +48,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static FluidProperties.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
-        int density = material.has(MaterialTags.FLUID_DENSITY) ? MaterialTags.FLUID_DENSITY.getInt(material) : type == AntimatterMaterialTypes.GAS ? -1000 : material.has(MOLTEN) ? 3000 : 1000;
+        int density = material.has(MaterialTags.FLUID_DENSITY) ? MaterialTags.FLUID_DENSITY.getInt(material) : type == AntimatterMaterialTypes.GAS ? 1 : material.has(MOLTEN) ? 3000 : 1000;
         if (type == AntimatterMaterialTypes.GAS) {
             return FluidProperties.create().still(GAS_TEXTURE).flowing(GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).tintColor((70 << 24) | (material.getRGB() & 0x00ffffff))
                     .viscosity(200).density(density).supportsBloating(true).temperature(MaterialTags.GAS_TEMPERATURE.getInt(material))

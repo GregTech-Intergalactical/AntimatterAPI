@@ -156,6 +156,11 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         return (T) this;
     }
 
+    public T fluidDensity(int density){
+        FLUID_DENSITY.add(this.material, density);
+        return (T) this;
+    }
+
     public T harvestLevel(int harvestLevel) {
         MaterialTags.MINING_LEVEL.add(this.material, harvestLevel);
         return (T) this;
