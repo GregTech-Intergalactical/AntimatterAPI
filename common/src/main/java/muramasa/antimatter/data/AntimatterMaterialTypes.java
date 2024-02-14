@@ -89,7 +89,6 @@ public class AntimatterMaterialTypes {
     //Fluid Types
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> LIQUID = new MaterialTypeFluid<>("liquid", 1, true, -1);
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> GAS = new MaterialTypeFluid<>("gas", 1, true, -1);
-    public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> PLASMA = new MaterialTypeFluid<>("plasma", 1, true, -1);
 
     static {
         AntimatterMaterialTypes.ROCK.set((m, s) -> {
@@ -164,12 +163,6 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.GAS.set((m, i) -> {
             if (m == null || !AntimatterMaterialTypes.GAS.allowGen(m)) return MaterialTypeFluid.getEmptyFluidAndLog(AntimatterMaterialTypes.GAS, m);
             AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, AntimatterMaterialTypes.GAS.getId() + "_" + m.getId());
-            if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
-            return FluidPlatformUtils.createFluidStack(fluid.getFluid(), i);
-        });
-        AntimatterMaterialTypes.PLASMA.set((m, i) -> {
-            if (m == null || !AntimatterMaterialTypes.PLASMA.allowGen(m)) return MaterialTypeFluid.getEmptyFluidAndLog(AntimatterMaterialTypes.PLASMA, m);
-            AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, AntimatterMaterialTypes.PLASMA.getId() + "_" + m.getId());
             if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
             return FluidPlatformUtils.createFluidStack(fluid.getFluid(), i);
         });
@@ -273,7 +266,6 @@ public class AntimatterMaterialTypes {
     public static void postInit() {
         AntimatterMaterialTypes.LIQUID.all().stream().filter(l -> !l.getId().equals("water") && !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.LIQUID)));
         AntimatterMaterialTypes.GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.GAS)));
-        AntimatterMaterialTypes.PLASMA.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.PLASMA)));
         //if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) AntimatterMaterialTypes.ORE.all().forEach(m -> m.flags(AntimatterMaterialTypes.ORE_SMALL));
     }
 }

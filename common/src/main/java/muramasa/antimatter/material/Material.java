@@ -241,10 +241,6 @@ public class Material implements ISharedAntimatterObject {
         return AntimatterMaterialTypes.GAS.get().get(this, 1).getFluid();
     }
 
-    public Fluid getPlasma() {
-        return AntimatterMaterialTypes.PLASMA.get().get(this, 1).getFluid();
-    }
-
     public FluidHolder getLiquid(long droplets) {
         if (!this.has(AntimatterMaterialTypes.LIQUID)){
             throw new RuntimeException("Material: " + this.getId() + " does not have liquid");
@@ -259,13 +255,6 @@ public class Material implements ISharedAntimatterObject {
         return AntimatterMaterialTypes.GAS.get().get(this, droplets);
     }
 
-    public FluidHolder getPlasma(long droplets) {
-        if (!this.has(AntimatterMaterialTypes.PLASMA)){
-            throw new RuntimeException("Material: " + this.getId() + " does not have plasma");
-        }
-        return AntimatterMaterialTypes.PLASMA.get().get(this, droplets);
-    }
-
     public FluidHolder getLiquid(int mb) {
         return this.getLiquid(mb * TesseractGraphWrappers.dropletMultiplier);
     }
@@ -274,9 +263,6 @@ public class Material implements ISharedAntimatterObject {
         return this.getGas(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
-    public FluidHolder getPlasma(int mb) {
-        return this.getPlasma(mb * TesseractGraphWrappers.dropletMultiplier);
-    }
 
     public FluidIngredient getFluidIngredient(long droplets){
         return FluidIngredient.of(getFluidTag(), droplets);
@@ -313,11 +299,6 @@ public class Material implements ISharedAntimatterObject {
 
     public ItemStack getCellGas(int amount, ItemFluidCell cell) {
         return Utils.ca(amount, cell.fill(getGas()));
-        //return ItemStack.EMPTY;
-    }
-
-    public ItemStack getCellPlasma(int amount, ItemFluidCell cell) {
-        return Utils.ca(amount, cell.fill(getPlasma()));
         //return ItemStack.EMPTY;
     }
 

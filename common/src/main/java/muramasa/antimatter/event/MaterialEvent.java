@@ -156,22 +156,6 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         return (T) this;
     }
 
-
-
-    public T asPlasma() {
-        return asPlasma(0);
-    }
-
-    public T asPlasma(int fuelPower) {
-        int meltingPoint = this.has(MaterialTags.MELTING_POINT) ? MaterialTags.MELTING_POINT.getInt(this.material) : 295;
-        return asPlasma(fuelPower, meltingPoint);
-    }
-
-    public T asPlasma(int fuelPower,int temp) {
-        flags(AntimatterMaterialTypes.PLASMA);
-        return asGas(fuelPower,temp);
-    }
-
     public T harvestLevel(int harvestLevel) {
         MaterialTags.MINING_LEVEL.add(this.material, harvestLevel);
         return (T) this;
