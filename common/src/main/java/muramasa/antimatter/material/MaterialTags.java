@@ -58,6 +58,7 @@ public class MaterialTags {
     public static final NumberMaterialTag FUEL_POWER = new NumberMaterialTag("fuel_power");
     public static final NumberMaterialTag LIQUID_TEMPERATURE = new NumberMaterialTag("liquid_temperature");
     public static final NumberMaterialTag GAS_TEMPERATURE = new NumberMaterialTag("gas_temperature");
+    public static final NumberMaterialTag FLUID_DENSITY = new NumberMaterialTag("fluid_density");
     public static final NumberMaterialTag ORE_MULTI = new NumberMaterialTag("ore_multi");
     public static final NumberMaterialTag SMELTING_MULTI = new NumberMaterialTag("smelting_multi");
     public static final NumberMaterialTag BY_PRODUCT_MULTI = new NumberMaterialTag("by_product_multi");

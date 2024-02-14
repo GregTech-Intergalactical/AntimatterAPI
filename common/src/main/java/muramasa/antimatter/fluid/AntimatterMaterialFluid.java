@@ -48,15 +48,16 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static FluidProperties.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
+        int density = material.has(MaterialTags.FLUID_DENSITY) ? MaterialTags.FLUID_DENSITY.getInt(material) : type == AntimatterMaterialTypes.GAS ? -1000 : material.has(MOLTEN) ? 3000 : 1000;
         if (type == AntimatterMaterialTypes.GAS) {
             return FluidProperties.create().still(GAS_TEXTURE).flowing(GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).tintColor((70 << 24) | (material.getRGB() & 0x00ffffff))
-                    .viscosity(200).density(-1000).supportsBloating(true).temperature(MaterialTags.GAS_TEMPERATURE.getInt(material))
+                    .viscosity(200).density(density).supportsBloating(true).temperature(MaterialTags.GAS_TEMPERATURE.getInt(material))
                     .sounds("bucket_fill", SoundEvents.BUCKET_FILL).sounds("bucket_empty", SoundEvents.BUCKET_EMPTY);
                     //.translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
         } else {
-            FluidProperties.Builder b = getDefaultAttributesBuilder(material.has(MOLTEN));
+            FluidProperties.Builder b = getDefaultAttributesBuilder(material.has(MOLTEN)).density(density);
             if (material.has(MOLTEN)){
-                b = b.density(3000).viscosity(6000).lightLevel(15);
+                b = b.viscosity(6000).lightLevel(15);
             }
             int alpha = material.has(MOLTEN) ? 0xFF000000 : (155 << 24);
             return b.tintColor(alpha | (material.getRGB() & 0x00FFFFFF))
