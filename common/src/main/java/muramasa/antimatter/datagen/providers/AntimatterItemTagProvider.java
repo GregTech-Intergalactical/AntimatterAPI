@@ -106,6 +106,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
             AntimatterAPI.all(StoneType.class, s -> {
                 if (s instanceof CobbleStoneType c){
                     this.tag(ItemTags.STONE_TOOL_MATERIALS).add(c.getBlock("cobble").asItem());
+                    this.tag(ItemTags.STONE_CRAFTING_MATERIALS).add(c.getBlock("cobble").asItem());
                 }
             });
             AntimatterAPI.all(BlockOreStone.class, domain, s -> {
