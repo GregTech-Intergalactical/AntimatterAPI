@@ -80,7 +80,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
+    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory};
 
     /**
      * Recipe Members
