@@ -269,6 +269,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @param covers if null, disable covers. (Icover[] null, not 1 null cover)
      *               1 cover sets 1 cover + output
      *               6 covers configures all covers.
+     *               sides are bottom, top, front, back, right, left
      * @return this
      */
     public T covers(CoverFactory... covers) {
@@ -279,7 +280,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
         if (covers.length == 1) {
             setOutputCover(covers[0]);
-            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory,covers[0], ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, covers[0], ICover.emptyFactory, ICover.emptyFactory};
         } else {
             this.DEFAULT_COVERS = covers;
         }
