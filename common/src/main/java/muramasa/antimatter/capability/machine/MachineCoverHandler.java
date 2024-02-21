@@ -96,7 +96,7 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
 
     @Override
     public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
-        if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
+        if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers() && !stack.isEmpty()) return false;
         boolean ok = super.set(side, old, stack, sync);
         if (ok && getTile().getLevel() != null) {
             if (!getTile().getLevel().isClientSide) {
