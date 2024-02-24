@@ -2,13 +2,17 @@ package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -20,6 +24,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiPredicate;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE_SMALL;
 
@@ -81,8 +86,25 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
 
     private boolean setOreBlock(WorldGenLevel level, BlockPos pos, WorldGenSmallOre smallOre){
         Holder<Biome> biome = level.getBiome(pos);
-        ResourceLocation biomeKey = biome.unwrapKey().get().location();
-        if (smallOre.biomes.contains(biomeKey) == smallOre.biomeBlacklist) return false;
+        boolean failed = !smallOre.biomeBlacklist;
+        if (!smallOre.biomes.isEmpty()){
+            for (String filteredBiome : smallOre.biomes) {
+                BiPredicate<String, Holder<Biome>> predicate = (s, biomeHolder) -> {
+                    if (s.startsWith("#")){
+                        TagKey<Biome> compare = TagUtils.getBiomeTag(new ResourceLocation(filteredBiome.replace("#", "")));
+                        return biomeHolder.is(compare);
+                    } else {
+                        ResourceKey<Biome> compare = ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(filteredBiome));
+                        return biomeHolder.is(compare);
+                    }
+                };
+                if (predicate.test(filteredBiome, biome)){
+                    failed = smallOre.biomeBlacklist;
+                    break;
+                }
+            }
+            if (failed) return false;
+        }
         return WorldGenHelper.setOre(level, pos, smallOre.material, AntimatterMaterialTypes.ORE_SMALL);
     }
 }

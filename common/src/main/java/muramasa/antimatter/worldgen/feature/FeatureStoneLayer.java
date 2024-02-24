@@ -91,14 +91,14 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     if (!isAir && AntimatterConfig.STONE_LAYER_ORES.get()) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
-                                if (ore.canPlace(offset, rand) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), layers[0] == layers[6])) {
+                                if (ore.canPlace(offset, rand, world) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), layers[0] == layers[6])) {
                                     lastMaterial = ore.getMaterial();
                                     break;
                                 }
                             }
                         } else {
                             for (StoneLayerOre ore : WorldGenStoneLayer.getCollision(layers[3].getStoneType(), layers[5].getStoneState(), layers[1].getStoneState())) {
-                                if (ore.canPlace(offset, rand) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), true)) {
+                                if (ore.canPlace(offset, rand, world) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), true)) {
                                     lastMaterial = ore.getMaterial();
                                     break;
                                 }
