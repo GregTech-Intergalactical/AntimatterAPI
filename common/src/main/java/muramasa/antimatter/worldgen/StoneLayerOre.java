@@ -19,6 +19,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import org.checkerframework.checker.units.qual.min;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class StoneLayerOre {
     @Getter
     private BlockState oreState, oreSmallState;
     @Getter
-    private final int chance;
+    private final long chance;
     @Getter
     private final int minY;
     @Getter
@@ -45,9 +46,9 @@ public class StoneLayerOre {
     @Setter
     private boolean filteredBiomesBlacklist = false;
 
-    public StoneLayerOre(Material material, int chance, int minY, int maxY) {
+    public StoneLayerOre(Material material, long chance, int minY, int maxY) {
         this.material = material;
-        this.chance = bind(1, Ref.O, chance);
+        this.chance = bind(1, Ref.U, chance);
         this.minY = minY;
         this.maxY = maxY;
     }
@@ -95,10 +96,10 @@ public class StoneLayerOre {
             }
             if (failed) return false;
         }
-        return pos.getY() >= minY && pos.getY() <= maxY && rand.nextInt(Ref.O) < chance;
+        return pos.getY() >= minY && pos.getY() <= maxY && rand.nextLong(Ref.U) < chance;
     }
 
-    public static int bind(int min, int max, int boundValue) {
+    public static long bind(long min, long max, long boundValue) {
         return min > max ? Math.max(max, Math.min(min, boundValue)) : Math.max(min, Math.min(max, boundValue));
     }
 
@@ -132,7 +133,7 @@ public class StoneLayerOre {
         }
         StoneLayerOre  stoneLayerOre = new StoneLayerOre(
                 Material.get(json.get("material").getAsString()),
-                json.get("chance").getAsInt(),
+                json.get("chance").getAsLong(),
                 json.has("minY") ? json.get("minY").getAsInt() : Integer.MIN_VALUE,
                 json.has("maxY") ? json.get("maxY").getAsInt() : Integer.MAX_VALUE);
         if (stoneType != null){

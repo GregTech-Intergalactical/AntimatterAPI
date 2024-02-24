@@ -51,7 +51,12 @@ public class WorldGenEvent {
         VANILLA_ORES.add(veins);
     }
 
-    public void addCollision(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
+    public void addCollisionTopBottom(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
         COLLISION_MAP.computeIfAbsent(Objects.hash(top, bottom), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
+    }
+
+    public void addCollisionBothSides(BlockState first, BlockState second, StoneLayerOre... oresToAdd) {
+        COLLISION_MAP.computeIfAbsent(Objects.hash(first, second), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
+        COLLISION_MAP.computeIfAbsent(Objects.hash(second, first), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
     }
 }
