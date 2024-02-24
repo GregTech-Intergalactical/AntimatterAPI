@@ -95,7 +95,7 @@ public class AntimatterConfig {
         ConfigSection stoneLayers = world.addSubSection("stone_layers");
         STONE_LAYERS = stoneLayers.addBool("stone_layers", true, "Enable stone layers - Default: true");
         STONE_LAYER_ORES = stoneLayers.addBool("stone_layer_ores", true, "Enable stone layers having ores - Default: true");
-        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 20, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 8");
+        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 20, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 20");
 
         ConfigSection gameplay = config.add("gameplay");
         INPUT_RESET_MULTIBLOCK = gameplay.addBool("input_reset_mulitblock", false, "Whether or not to reconsume recipe inputs on multiblock failure - Default : false");

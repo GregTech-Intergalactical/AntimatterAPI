@@ -113,7 +113,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), lastMaterial, below, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
+                            WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), lastMaterial, below, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get() * (lastMaterial.has(AntimatterMaterialTypes.ORE_STONE) ? 100 : 1));
                         }
                     }
 
