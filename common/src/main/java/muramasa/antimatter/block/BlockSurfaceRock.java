@@ -76,7 +76,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (AntimatterMaterialTypes.ROCK.isVisible()) items.add(new ItemStack(this));
+        if (AntimatterMaterialTypes.BEARING_ROCK.isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
@@ -120,8 +120,8 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult traceResult) {
         if (player.isCrouching()) return InteractionResult.FAIL;
-        if (!player.addItem(AntimatterMaterialTypes.ROCK.get(material, 1))) {
-            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, AntimatterMaterialTypes.ROCK.get(material, 1)));
+        if (!player.addItem(AntimatterMaterialTypes.BEARING_ROCK.get(material, 1))) {
+            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, AntimatterMaterialTypes.BEARING_ROCK.get(material, 1)));
         }
         world.removeBlock(pos, true);
         return InteractionResult.SUCCESS;

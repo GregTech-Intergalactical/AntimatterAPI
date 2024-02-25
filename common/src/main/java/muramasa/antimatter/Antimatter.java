@@ -2,7 +2,6 @@ package muramasa.antimatter;
 
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ClientData;
-import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
@@ -22,11 +21,9 @@ import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.*;
-import muramasa.antimatter.mixin.LivingEntityAccessor;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.pipe.BlockFluidPipe;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
@@ -47,9 +44,6 @@ import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -187,10 +181,10 @@ public class Antimatter extends AntimatterMod {
 
                 }
                 if (!AntimatterConfig.SHOW_ROCKS.get()){
-                    AntimatterMaterialTypes.ROCK.all().forEach(m -> {
+                    AntimatterMaterialTypes.BEARING_ROCK.all().forEach(m -> {
                         AntimatterAPI.all(StoneType.class, s -> {
                             if (s.doesGenerateOre() && s != BEDROCK) {
-                                l.add(AntimatterMaterialTypes.ROCK.get().get(m, s).asBlock());
+                                l.add(AntimatterMaterialTypes.BEARING_ROCK.get().get(m, s).asBlock());
                             }
                         });
                     });

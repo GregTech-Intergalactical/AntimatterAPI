@@ -23,7 +23,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import java.util.List;
 import java.util.Random;
 
-import static muramasa.antimatter.data.AntimatterMaterialTypes.ROCK;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.BEARING_ROCK;
 
 public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguration> {
 
@@ -109,7 +109,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                         }
                     }
 
-                    if (lastMaterial != null && (lastMaterial.has(AntimatterMaterialTypes.ORE) || lastMaterial.has(AntimatterMaterialTypes.ORE_STONE)) && lastMaterial.has(ROCK)) {
+                    if (lastMaterial != null && (lastMaterial.has(AntimatterMaterialTypes.ORE) || lastMaterial.has(AntimatterMaterialTypes.ORE_STONE)) && lastMaterial.has(BEARING_ROCK)) {
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {

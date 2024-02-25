@@ -6,7 +6,6 @@ import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.List;
@@ -24,18 +23,18 @@ public class MaterialDataInit {
         //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
         event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.GEAR).addHandleStat(-10, -0.5F);
         AntimatterMaterials.Stone.remove(PLATE);
-        event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Andesite).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Deepslate).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Tuff).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.BEARING_ROCK);
+        event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.BEARING_ROCK);
+        event.setMaterial(AntimatterMaterials.Andesite).asDust(AntimatterMaterialTypes.BEARING_ROCK);
+        event.setMaterial(AntimatterMaterials.Deepslate).asDust(AntimatterMaterialTypes.BEARING_ROCK);
+        event.setMaterial(AntimatterMaterials.Tuff).asDust(AntimatterMaterialTypes.BEARING_ROCK);
 
-        event.setMaterial(AntimatterMaterials.Dirt).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Sand).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.RedSand).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Dirt).asDust(AntimatterMaterialTypes.BEARING_ROCK);
+        event.setMaterial(AntimatterMaterials.Sand).asDust(AntimatterMaterialTypes.BEARING_ROCK);
+        event.setMaterial(AntimatterMaterials.RedSand).asDust(AntimatterMaterialTypes.BEARING_ROCK);
         event.setMaterial(AntimatterMaterials.Blackstone).asDust();
 
-        event.setMaterial(AntimatterMaterials.Basalt).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Basalt).asDust(AntimatterMaterialTypes.BEARING_ROCK);
         event.setMaterial(AntimatterMaterials.Endstone).asDust();
         event.setMaterial(AntimatterMaterials.Netherrack).asDust();
         event.setMaterial(AntimatterMaterials.Prismarine).asDust();

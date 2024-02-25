@@ -1,7 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
@@ -50,7 +48,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
-import static muramasa.antimatter.util.CodeUtils.bind8;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IMaterialObject {
 
@@ -84,7 +81,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         //Here only add specific types, events are handled below.
-        if (type == AntimatterMaterialTypes.ROCK) {
+        if (type == AntimatterMaterialTypes.BEARING_ROCK) {
             tooltip.add(Utils.translatable("antimatter.tooltip.occurrence").append(Utils.literal(material.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW)));
         }
     }
@@ -104,7 +101,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (type == AntimatterMaterialTypes.ROCK){
+        if (type == AntimatterMaterialTypes.BEARING_ROCK){
             return tryPlace(new BlockPlaceContext(context));
         }
         return super.useOn(context);
@@ -116,7 +113,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         } else {
             BlockState existing = WorldGenHelper.getStoneStateForRock(context.getClickedPos().getY() - 1, context.getClickedPos(), context.getLevel());
             StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
-            BlockState blockstate = AntimatterMaterialTypes.ROCK.get().get(material, type).asState();
+            BlockState blockstate = AntimatterMaterialTypes.BEARING_ROCK.get().get(material, type).asState();
             if (blockstate == null) {
                 return InteractionResult.FAIL;
             } else if (!context.getLevel().setBlock(context.getClickedPos(), blockstate, 11)) {

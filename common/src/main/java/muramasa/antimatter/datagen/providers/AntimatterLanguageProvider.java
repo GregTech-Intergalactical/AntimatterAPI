@@ -233,7 +233,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     AntimatterAPI.all(StoneType.class, s -> {
                         add(Ref.ID + ".rei.group." + t.getId() + "." + s.getId(), getLocalizedType(s) + " " + getLocalizedType(t) + "s");
                     });
-                    if (t != AntimatterMaterialTypes.ROCK){
+                    if (t != AntimatterMaterialTypes.BEARING_ROCK){
                         return;
                     }
                 }
@@ -264,7 +264,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 MaterialType<?> type = item.getType();
                 String dust = item.getMaterial().has(MaterialTags.RUBBERTOOLS) ? " Pulp" : " Dust";
                 String nativeSuffix = item.getMaterial().getElement() != null ? "Native " : "";
-                if (type == AntimatterMaterialTypes.ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
+                if (type == AntimatterMaterialTypes.BEARING_ROCK) add(item, String.join("", nativeSuffix, getLocalizedType(item.getMaterial()), " Bearing Rock"));
                 else if (type == AntimatterMaterialTypes.CRUSHED)
                     add(item, String.join("", "Crushed ", nativeSuffix, getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.CRUSHED_PURIFIED)

@@ -6,7 +6,6 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.settings.EntrySettingsAdapterRegistry;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
@@ -22,17 +21,14 @@ import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
 import muramasa.antimatter.integration.rei.extension.REIMaterialRecipeExtension;
-import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.material.MaterialTypeItem;
-import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
@@ -40,7 +36,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +56,12 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeItem<?> || t instanceof MaterialTypeBlock<?>).forEach(t -> {
             if (t.get() instanceof MaterialTypeBlock.IOreGetter getter){
                 AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.SHOW_ALL_ORES.get() && t != AntimatterMaterialTypes.ROCK) return;
-                    if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.SHOW_ROCKS.get()) return;
+                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.SHOW_ALL_ORES.get() && t != AntimatterMaterialTypes.BEARING_ROCK) return;
+                    if (t == AntimatterMaterialTypes.BEARING_ROCK && !AntimatterConfig.SHOW_ROCKS.get()) return;
                     List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, getter.get((Material) m, s).asStack())).toList();
                     registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), Utils.translatable(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
                 });
-                if (t != AntimatterMaterialTypes.ROCK){
+                if (t != AntimatterMaterialTypes.BEARING_ROCK){
                     return;
                 }
             }

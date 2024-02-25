@@ -172,6 +172,13 @@ public class ForgeCommonEvents {
                 map.remap(DUST.get(Stone));
                 return;
             }
+            if (id.startsWith("rock_")){
+                Item replacement = AntimatterAPI.get(Item.class, id.replace("rock_", "bearing_rock_"), Ref.SHARED_ID);
+                if (replacement != null) {
+                    map.remap(replacement);
+                    return;
+                }
+            }
             if (id.contains("crushed_centrifuged")){
                 Item replacement = AntimatterAPI.get(Item.class, id.replace("centrifuged", "refined"), Ref.SHARED_ID);
                 if (replacement != null) {

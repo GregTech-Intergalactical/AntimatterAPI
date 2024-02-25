@@ -32,7 +32,7 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> DUST_TINY = new MaterialTypeItem<>("dust_tiny", 2, true, Ref.U9);
     public static MaterialTypeItem<?> DUST_IMPURE = new MaterialTypeItem<>("dust_impure", 2, true, -1);
     public static MaterialTypeItem<?> DUST_PURE = new MaterialTypeItem<>("dust_pure", 2, true, -1);
-    public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U4, (domain, type, mat) -> {
+    public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> BEARING_ROCK = new MaterialTypeItem<>("bearing_rock", 2, false, Ref.U4, (domain, type, mat) -> {
         AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).filter(s -> s != AntimatterStoneTypes.BEDROCK).forEach(s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, mat, s)));
         new MaterialItem(domain, type, mat);
     });
@@ -90,8 +90,8 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> GAS = new MaterialTypeFluid<>("gas", 1, true, -1);
 
     static {
-        AntimatterMaterialTypes.ROCK.set((m, s) -> {
-            if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ROCK, m, s);
+        AntimatterMaterialTypes.BEARING_ROCK.set((m, s) -> {
+            if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.BEARING_ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.BEARING_ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
             return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
         });
@@ -260,6 +260,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.SCYTHE_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
         AntimatterMaterialTypes.RAW_ORE_BLOCK.unSplitName();
+        AntimatterMaterialTypes.BEARING_ROCK.unSplitName();
     }
 
     public static void postInit() {

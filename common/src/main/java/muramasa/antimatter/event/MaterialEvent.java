@@ -9,7 +9,6 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
-import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.material.data.ArmorData;
 import muramasa.antimatter.material.data.HandleData;
@@ -86,7 +85,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
     }
 
     public T asOre(boolean small, IMaterialTag... tags) {
-        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
+        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.BEARING_ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
         if (small) flags(AntimatterMaterialTypes.ORE_SMALL);
         if (!has(EXP_RANGE)) EXP_RANGE.add(material, UniformInt.of(1, 5));
         flags(tags);
@@ -101,7 +100,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public T asOreStone(IMaterialTag... tags) {
         asOre(tags);
-        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
+        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.BEARING_ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
         flags(tags);
         return (T) this;
     }
