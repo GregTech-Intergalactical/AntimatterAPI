@@ -260,7 +260,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.SCYTHE_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
         AntimatterMaterialTypes.RAW_ORE_BLOCK.unSplitName();
-        AntimatterMaterialTypes.BEARING_ROCK.unSplitName();
+        AntimatterMaterialTypes.BEARING_ROCK.unSplitName().setIgnoreTextureSets();
     }
 
     public static void postInit() {
