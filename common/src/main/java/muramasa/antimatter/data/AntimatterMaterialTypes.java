@@ -36,6 +36,13 @@ public class AntimatterMaterialTypes {
         AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).filter(s -> s != AntimatterStoneTypes.BEDROCK).forEach(s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, mat, s)));
         new MaterialItem(domain, type, mat);
     });
+    public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U4, (domain, type, mat) -> {
+        StoneType type1 = AntimatterAPI.get(StoneType.class, mat.getId());
+        if (type1 != null){
+            AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, Material.NULL, type1));
+        }
+        new MaterialItem(domain, type, mat);
+    });
     public static MaterialTypeItem<?> CRUSHED = new MaterialTypeItem<>("crushed", 2, true, -1);
     public static MaterialTypeItem<?> CRUSHED_REFINED = new MaterialTypeItem<>("crushed_refined", 2, true, -1);
     public static MaterialTypeItem<?> CRUSHED_PURIFIED = new MaterialTypeItem<>("crushed_purified", 2, true, -1);
@@ -261,6 +268,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
         AntimatterMaterialTypes.RAW_ORE_BLOCK.unSplitName();
         AntimatterMaterialTypes.BEARING_ROCK.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.ROCK.unSplitName().setIgnoreTextureSets();
     }
 
     public static void postInit() {
