@@ -56,7 +56,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     protected final ImmutableMap<String, Texture> textureMap;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
-        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Properties.of(net.minecraft.world.level.material.Material.DECORATION).explosionResistance(1.0f).instabreak().sound(SoundType.STONE).noCollission().noOcclusion());
+        super(domain, "surface_rock_" + (material == Material.NULL ? "" :material.getId() + "_" ) + stoneType.getId(), Properties.of(net.minecraft.world.level.material.Material.DECORATION).explosionResistance(1.0f).instabreak().sound(SoundType.STONE).noCollission().noOcclusion());
         this.material = material;
         this.stoneType = stoneType;
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
@@ -70,7 +70,8 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         shapes.put(4, Block.box(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
         shapes.put(5, Block.box(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
         shapes.put(6, Block.box(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
-        textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, "material/rock_overlay"));
+        String overlay = material == Material.NULL ? "block/empty" : "material/rock_overlay";
+        textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, overlay));
     }
 
     @Override

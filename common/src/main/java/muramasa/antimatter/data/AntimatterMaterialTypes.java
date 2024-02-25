@@ -9,18 +9,17 @@ import muramasa.antimatter.cover.CoverPlate;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.item.CoverMaterialItem;
-import muramasa.antimatter.material.MaterialItem;
-import muramasa.antimatter.material.MaterialTypeBlock;
-import muramasa.antimatter.material.MaterialTypeFluid;
-import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Fluids;
 import tesseract.FluidPlatformUtils;
 
@@ -266,6 +265,6 @@ public class AntimatterMaterialTypes {
     public static void postInit() {
         AntimatterMaterialTypes.LIQUID.all().stream().filter(l -> !l.getId().equals("water") && !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.LIQUID)));
         AntimatterMaterialTypes.GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.GAS)));
-        //if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) AntimatterMaterialTypes.ORE.all().forEach(m -> m.flags(AntimatterMaterialTypes.ORE_SMALL));
+        AntimatterMaterialTypes.ORE_STONE.all().forEach(m -> AntimatterAPI.register(StoneType.class, new StoneType(ID, m.getId(), m, new Texture(ID, "block/stone/" + m.getId()), SoundType.STONE, false).setGenerateOre(false).setStateSupplier(() -> ORE_STONE.get().get(m).asState())));
     }
 }
