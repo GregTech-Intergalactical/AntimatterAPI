@@ -1,6 +1,7 @@
 package muramasa.antimatter.block;
 
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -51,7 +52,9 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> CONFIG_ARRAY[i] = i);
     }
 
+    @Getter
     protected Material material;
+    @Getter
     protected StoneType stoneType;
     protected final ImmutableMap<String, Texture> textureMap;
 
@@ -70,7 +73,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         shapes.put(4, Block.box(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
         shapes.put(5, Block.box(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
         shapes.put(6, Block.box(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
-        String overlay = material == Material.NULL ? "block/empty" : "material/rock_overlay";
+        String overlay = material == Material.NULL ? "block/empty" : "material/surface_rock_overlay";
         textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, overlay));
     }
 
@@ -156,11 +159,4 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         return info;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public StoneType getStoneType() {
-        return stoneType;
-    }
 }
