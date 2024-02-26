@@ -280,6 +280,6 @@ public class AntimatterMaterialTypes {
     public static void postInit() {
         AntimatterMaterialTypes.LIQUID.all().stream().filter(l -> !l.getId().equals("water") && !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.LIQUID)));
         AntimatterMaterialTypes.GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.GAS)));
-        AntimatterMaterialTypes.ORE_STONE.all().forEach(m -> AntimatterAPI.register(StoneType.class, new StoneType(ID, m.getId(), m, new Texture(ID, "block/stone/" + m.getId()), SoundType.STONE, false).setGenerateOre(false).setStateSupplier(() -> ORE_STONE.get().get(m).asState())));
+        AntimatterMaterialTypes.ORE_STONE.all().forEach(m -> AntimatterAPI.register(StoneType.class, new StoneType(ID, m.getId(), m, new Texture(m.materialDomain(), "block/stone/" + m.getId()), SoundType.STONE, false).setGenerateOre(false).setStateSupplier(() -> ORE_STONE.get().get(m).asState())));
     }
 }
