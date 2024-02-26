@@ -136,8 +136,13 @@ public class WorldGenHelper {
   public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill, int chance) {
       if (world.getRandom().nextInt(chance) != 0) return false;
       StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
-    BlockState rockState = AntimatterMaterialTypes.BEARING_ROCK.get().get(material, stone != null && stone != AntimatterStoneTypes.BEDROCK && stone.doesGenerateOre() ? stone : AntimatterStoneTypes.STONE).asState();
-
+      if (material == Material.NULL && stone == null) return false;
+      BlockState rockState;
+      if (material == Material.NULL){
+          rockState = AntimatterMaterialTypes.ROCK.get().get(stone.getMaterial()).asState();
+      } else {
+          rockState = AntimatterMaterialTypes.BEARING_ROCK.get().get(material, stone != null && stone != AntimatterStoneTypes.BEDROCK && stone.doesGenerateOre() ? stone : AntimatterStoneTypes.STONE).asState();
+      }
     final BlockState existingBelow = world.getBlockState(pos.below());
     if (existingBelow.isAir() || !existingBelow.getMaterial().isSolid())
       return false;
