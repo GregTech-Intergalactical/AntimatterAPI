@@ -41,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static muramasa.antimatter.data.AntimatterMaterialTypes.BEARING_ROCK;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.ROCK;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedBlock, ISharedAntimatterObject, IColorHandler, IMaterialObject {
@@ -79,7 +81,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (AntimatterMaterialTypes.BEARING_ROCK.isVisible()) items.add(new ItemStack(this));
+        if (BEARING_ROCK.isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
@@ -123,8 +125,9 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult traceResult) {
         if (player.isCrouching()) return InteractionResult.FAIL;
-        if (!player.addItem(AntimatterMaterialTypes.BEARING_ROCK.get(material, 1))) {
-            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, AntimatterMaterialTypes.BEARING_ROCK.get(material, 1)));
+        ItemStack drop = material != Material.NULL && material.has(BEARING_ROCK) ? BEARING_ROCK.get(material, 1) : stoneType.getMaterial().has(ROCK) ? ROCK.get(stoneType.getMaterial(), 1) : ItemStack.EMPTY;
+        if (!player.addItem(drop)) {
+            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, drop));
         }
         world.removeBlock(pos, true);
         return InteractionResult.SUCCESS;

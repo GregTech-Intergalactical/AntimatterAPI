@@ -26,6 +26,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
@@ -102,7 +103,12 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             AntimatterAPI.all(BlockStoneWall.class, this::add);
             AntimatterAPI.all(BlockOre.class, this::addToFortune);
             AntimatterAPI.all(BlockOreStone.class, this::addToStone);
-            AntimatterAPI.all(BlockSurfaceRock.class, b -> tables.put(b,  b2 -> BlockLoot.createSingleItemTable(BEARING_ROCK.get(b.getMaterial()))));
+            AntimatterAPI.all(BlockSurfaceRock.class, b -> {
+                ItemStack drop = b.getMaterial() != Material.NULL && b.getMaterial().has(BEARING_ROCK) ? BEARING_ROCK.get(b.getMaterial(), 1) : b.getStoneType().getMaterial().has(ROCK) ? ROCK.get(b.getStoneType().getMaterial(), 1) : ItemStack.EMPTY;
+                if (!drop.isEmpty()) {
+                    tables.put(b, b2 -> BlockLoot.createSingleItemTable(drop.getItem()));
+                }
+            });
         }
     }
 

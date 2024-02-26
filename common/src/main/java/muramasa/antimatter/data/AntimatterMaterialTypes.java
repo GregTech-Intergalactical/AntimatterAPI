@@ -36,7 +36,7 @@ public class AntimatterMaterialTypes {
         AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).filter(s -> s != AntimatterStoneTypes.BEDROCK).forEach(s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, mat, s)));
         new MaterialItem(domain, type, mat);
     });
-    public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U4, (domain, type, mat) -> {
+    public static MaterialTypeItem<MaterialTypeBlock.IBlockGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U4, (domain, type, mat) -> {
         StoneType type1 = AntimatterAPI.get(StoneType.class, mat.getId());
         if (type1 != null){
             AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, Material.NULL, type1));
@@ -100,6 +100,12 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.BEARING_ROCK.set((m, s) -> {
             if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.BEARING_ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.BEARING_ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
+            return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
+        });
+        AntimatterMaterialTypes.ROCK.set((m) -> {
+            StoneType s = AntimatterAPI.get(StoneType.class, m.getId());
+            if (s == null || !AntimatterMaterialTypes.ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ROCK, m, s);
+            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + s.getId());
             return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
         });
         AntimatterMaterialTypes.ORE.set((m, s) -> {

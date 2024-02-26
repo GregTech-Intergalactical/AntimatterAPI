@@ -101,7 +101,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (type == AntimatterMaterialTypes.BEARING_ROCK){
+        if (type == AntimatterMaterialTypes.BEARING_ROCK || type == ROCK){
             return tryPlace(new BlockPlaceContext(context));
         }
         return super.useOn(context);
@@ -111,9 +111,14 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         if (!context.canPlace()) {
             return InteractionResult.FAIL;
         } else {
-            BlockState existing = WorldGenHelper.getStoneStateForRock(context.getClickedPos().getY() - 1, context.getClickedPos(), context.getLevel());
-            StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
-            BlockState blockstate = AntimatterMaterialTypes.BEARING_ROCK.get().get(material, type).asState();
+            BlockState blockstate;
+            if (this.type == BEARING_ROCK){
+                BlockState existing = WorldGenHelper.getStoneStateForRock(context.getClickedPos().getY() - 1, context.getClickedPos(), context.getLevel());
+                StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
+                blockstate = AntimatterMaterialTypes.BEARING_ROCK.get().get(material, type).asState();
+            } else {
+                blockstate = ROCK.get().get(material).asState();
+            }
             if (blockstate == null) {
                 return InteractionResult.FAIL;
             } else if (!context.getLevel().setBlock(context.getClickedPos(), blockstate, 11)) {
