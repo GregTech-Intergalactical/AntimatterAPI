@@ -56,6 +56,7 @@ public class AntimatterConfig {
     public static ConfigEntry.IntValue ORE_VEIN_ROCK_CHANCE;
     public static ConfigEntry.IntValue STONE_LAYER_ROCK_CHANCE;
     public static ConfigEntry.IntValue STONE_LAYER_ORE_ROCK_CHANCE;
+    public static ConfigEntry.IntValue STONE_LAYER_DENSE_ORE_ROCK_CHANCE;
     public static ConfigEntry.IntValue ORE_VEIN_MAX_SIZE;
     public static ConfigEntry.IntValue ORE_VEIN_CHANCE;
     public static ConfigEntry.IntValue ORE_VEIN_FIND_ATTEMPTS;
@@ -96,8 +97,9 @@ public class AntimatterConfig {
         ConfigSection stoneLayers = world.addSubSection("stone_layers");
         STONE_LAYERS = stoneLayers.addBool("stone_layers", true, "Enable stone layers - Default: true");
         STONE_LAYER_ORES = stoneLayers.addBool("stone_layer_ores", true, "Enable stone layers having ores - Default: true");
-        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 2000, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 2000");
-        STONE_LAYER_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_ore_rock_chance", 40, "Chance of stone layers ore veins having surface rocks. chance is 1/(the number) - Default: 40");
+        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 40, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 20");
+        STONE_LAYER_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_ore_rock_chance", 60, "Chance of stone layers ore veins having surface rocks. chance is 1/(the number) - Default: 40");
+        STONE_LAYER_DENSE_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_dense_ore_rock_chance", 2000, "Chance of dense ore stone layers having surface rocks. chance is 1/(the number) - Default: 2000");
 
         ConfigSection gameplay = config.add("gameplay");
         INPUT_RESET_MULTIBLOCK = gameplay.addBool("input_reset_mulitblock", false, "Whether or not to reconsume recipe inputs on multiblock failure - Default : false");
