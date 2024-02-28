@@ -3,6 +3,7 @@ package muramasa.antimatter.worldgen.feature;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
@@ -79,6 +80,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                 layers[5] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 3, tZ) + 1) / 2) * stonesSize)));
                 layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 4, tZ) + 1) / 2) * stonesSize)));
 
+                StoneType topStoneType = null;
                 maxHeight = world.getHeightmapPos(Heightmap.Types.OCEAN_FLOOR_WG, pos.offset(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
                 for (int tY = -63; tY < maxHeight; tY++) {
                     int offsetY = tY + 64;
@@ -89,16 +91,27 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     StoneType rockType = null;
 
                     //If we haven't placed an ore, and not trying to set the same state as existing, also doesn't work if the veins is either stone or deepslate, lets it fall back to vanilla for those
-                    if (!isAir && existing != layers[3].getStoneState() && layers[3].getStoneState().getBlock() != Blocks.STONE && layers[3].getStoneState().getBlock() != Blocks.DEEPSLATE) {
-                        if (WorldGenHelper.setStone(world, offset, existing, layers[3].getStoneState())) {
-                            if (layers[3].getStoneState().getBlock() instanceof BlockOreStone stone){
-                                if (ROCK.get().get(stone.getMaterial()).asBlock() instanceof BlockSurfaceRock surfaceRock){
-                                    rockType = surfaceRock.getStoneType();
-                                }
-                            } else {
-                                lastMaterial = layers[3].getStoneType() != null ? layers[3].getStoneType().getMaterial() : null;
+                    if (!isAir) {
+                        if (layers[3].getStoneState().getBlock() == Blocks.STONE || layers[3].getStoneState().getBlock() == Blocks.DEEPSLATE){
+                            if (existing.getBlock() == Blocks.STONE){
+                                topStoneType = AntimatterStoneTypes.STONE;
+                            } else if (existing.getBlock() == Blocks.DEEPSLATE){
+                                topStoneType = AntimatterStoneTypes.DEEPSLATE;
                             }
+                        } else if (existing != layers[3].getStoneState()) {
+                            if (WorldGenHelper.setStone(world, offset, existing, layers[3].getStoneState())) {
+                                if (layers[3].getStoneState().getBlock() instanceof BlockOreStone stone) {
+                                    if (ROCK.get().get(stone.getMaterial()).asBlock() instanceof BlockSurfaceRock surfaceRock) {
+                                        rockType = surfaceRock.getStoneType();
+                                    }
+                                } else {
+                                    lastMaterial = layers[3].getStoneType() != null ? layers[3].getStoneType().getMaterial() : null;
+                                    if (layers[3].getStoneType() != null){
+                                        topStoneType = layers[3].getStoneType();
+                                    }
+                                }
 
+                            }
                         }
                     }
 
@@ -138,6 +151,13 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     // And scan for next Block on the Stone Layer Type.
                     System.arraycopy(layers, 1, layers, 0, layers.length - 1);
                     layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, offsetY + 4, tZ) + 1) / 2) * stonesSize)));
+                }
+                if (topStoneType != null){
+                    int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
+                    BlockState below = world.getBlockState(pos.mutable().setY(y - 1));
+                    if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
+                        WorldGenHelper.setRock(world, pos.mutable().setY(y).immutable(), Material.NULL, topStoneType.getState(), 10);
+                    }
                 }
             }
         }
