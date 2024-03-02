@@ -689,6 +689,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         }
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
+        tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         return tag;
     }
 
