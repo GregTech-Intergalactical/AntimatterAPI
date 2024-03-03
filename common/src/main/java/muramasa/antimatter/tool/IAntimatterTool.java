@@ -54,12 +54,16 @@ import java.util.*;
 
 import static muramasa.antimatter.material.Material.NULL;
 
-public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods, IEnergyItem {
-
-    AntimatterToolType getAntimatterToolType();
+public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatterTool, IEnergyItem {
 
     AntimatterItemTier getAntimatterItemTier();
 
+    @Override
+    default Tier getItemTier(){
+        return getAntimatterItemTier();
+    }
+
+    @Override
     default String getTextureDomain(){
         return Ref.ID;
     }
@@ -104,14 +108,6 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return new Material[]{getPrimaryMaterial(stack), getSecondaryMaterial(stack)};
     }
 
-    default Item getItem() {
-        return (Item) this;
-    }
-
-    default Set<TagKey<Block>> getActualTags() {
-        return getAntimatterToolType().getToolTypes();
-    }
-
     default int getSubColour(ItemStack stack) {
         return getDyeColor(stack) == null ? 0 : getDyeColor(stack).getMaterialColor().col;
     }
@@ -138,47 +134,18 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return dataTag != null ? dataTag : validateEnergyTag(stack, 0, 10000);
     }
 
-    default CompoundTag getDataTag(ItemStack stack) {
-        return stack.getTagElement(Ref.TAG_TOOL_DATA);
-    }
-
+    @Override
     default CompoundTag getOrCreateDataTag(ItemStack stack) {
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, getAntimatterItemTier().getPrimary(), getAntimatterItemTier().getSecondary(), 0, 10000);
     }
 
+    @Override
     default Tier getTier(ItemStack stack) {
         if (getAntimatterToolType().isSimple()) return getAntimatterItemTier();
         CompoundTag dataTag = getOrCreateDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
         return tier.orElseGet(() -> resolveTierTag(dataTag));
-    }
-
-    default boolean genericIsCorrectToolForDrops(ItemStack stack, BlockState state) {
-        AntimatterToolType type = this.getAntimatterToolType();
-        if (type.getEffectiveMaterials().contains(state.getMaterial())) {
-            return true;
-        }
-        if (type.getEffectiveBlocks().contains(state.getBlock())) {
-            return true;
-        }
-        for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
-            if (state.is(effectiveBlockTag)){
-                return true;
-            }
-        }
-        boolean isType = false;
-        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
-            if (state.is(toolType)){
-                isType = true;
-                break;
-            }
-        }
-        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
-    }
-
-    default float getDefaultMiningSpeed(ItemStack stack){
-        return getTier(stack).getSpeed() * getAntimatterToolType().getMiningSpeedMultiplier();
     }
 
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
@@ -243,7 +210,6 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
-        //TODO change this to object %s system for other lang compat
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
         if (!getAntimatterToolType().isSimple())
@@ -256,43 +222,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         }
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(Utils.translatable("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
-        if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
-        tooltip.add(Utils.translatable("antimatter.tooltip.mining_level", getTier(stack).getLevel()).withStyle(ChatFormatting.YELLOW));
-        tooltip.add(Utils.translatable("antimatter.tooltip.tool_speed", Utils.literal("" + getDefaultMiningSpeed(stack)).withStyle(ChatFormatting.LIGHT_PURPLE)));
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
-            IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IAddInformation addInformation)) continue;
-            addInformation.onAddInformation(this, stack, tooltip, flag);
-        }
-    }
-
-    default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
-        if (getAntimatterToolType().getUseSound() != null)
-            target.getCommandSenderWorld().playSound(null, target.getX(), target.getY(), target.getZ(), getAntimatterToolType().getUseSound(), SoundSource.HOSTILE, volume, pitch);
-        Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
-        if (attacker instanceof Player player) refillTool(stack, player);
-        return true;
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    default boolean onGenericBlockDestroyed(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (entity instanceof Player player) {
-            if (getAntimatterToolType().getUseSound() != null)
-                player.playNotifySound(getAntimatterToolType().getUseSound(), SoundSource.BLOCKS, 0.84F, 0.75F);
-            boolean isToolEffective = genericIsCorrectToolForDrops(stack, state);
-            if (state.getDestroySpeed(world, pos) != 0.0F) {
-                int damage = isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1;
-                Utils.damageStack(damage, stack, entity);
-            }
-        }
-        boolean returnValue = true;
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
-            IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IBlockDestroyed)) continue;
-            returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos, entity);
-        }
-        if (entity instanceof Player player) refillTool(stack, player);
-        return returnValue;
+        IBasicAntimatterTool.super.onGenericAddInformation(stack, tooltip, flag);
     }
 
     default void refillTool(ItemStack stack, Player player){
@@ -315,56 +245,6 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
                 }
             });
         }
-    }
-
-    default InteractionResult genericInteractLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand){
-        InteractionResult result = InteractionResult.PASS;
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
-            IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IInteractEntity interactEntity)) continue;
-            InteractionResult r = interactEntity.interactLivingEntity(this, stack, player, interactionTarget, usedHand);
-            if (result != InteractionResult.SUCCESS) result = r;
-        }
-        return result;
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    default InteractionResult onGenericItemUse(UseOnContext ctx) {
-        InteractionResult result = InteractionResult.PASS;
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
-            IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IItemUse itemUse)) continue;
-            InteractionResult r = itemUse.onItemUse(this, ctx);
-            if (result != InteractionResult.SUCCESS) result = r;
-        }
-        return result;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    default InteractionResultHolder<ItemStack> onGenericRightclick(Level level, Player player, InteractionHand usedHand){
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
-            IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IItemRightClick rightClick)) continue;
-            InteractionResultHolder<ItemStack> r = rightClick.onRightClick(this, level, player, usedHand);
-            if (r.getResult().shouldAwardStats()) return r;
-        }
-        return InteractionResultHolder.pass(player.getItemInHand(usedHand));
-    }
-
-    @SuppressWarnings("rawtypes")
-    default InteractionResult onGenericHighlight(Player player, LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource) {
-        InteractionResult result = InteractionResult.PASS;
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
-            IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IItemHighlight)) continue;
-            InteractionResult type = ((IItemHighlight) b).onDrawHighlight(player, levelRenderer, camera, target, partialTicks, poseStack, multiBufferSource);
-            if (type != InteractionResult.SUCCESS) {
-                result = type;
-            } else {
-                return InteractionResult.FAIL;
-            }
-        }
-        return result;
     }
 
     default ItemStack getGenericContainerItem(final ItemStack oldStack) {

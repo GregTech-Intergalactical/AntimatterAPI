@@ -30,6 +30,7 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
@@ -1114,7 +1115,7 @@ public class Utils {
      * @param world  World instance
      * @return if tree logging was successful
      */
-    public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
+    public static boolean treeLogging(@NotNull IBasicAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
         boolean[] harvested = new boolean[1];
         if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
             BlockState tpCompare = world.getBlockState(start);
@@ -1168,7 +1169,7 @@ public class Utils {
      * @param depth  depth amount of blocks
      * @return set of harvestable BlockPos in the specified range with specified player
      */
-    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
+    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IBasicAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
         return totalBlocks.stream().filter(b -> tool.genericIsCorrectToolForDrops(stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
     }

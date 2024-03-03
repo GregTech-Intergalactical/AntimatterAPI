@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.ICoverHandlerProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterTool> {
+public class BehaviourExtendedHighlight implements IItemHighlight<IBasicAntimatterTool> {
 
     final float INDENTATION_SIDE = 0.25F;
     final double INTERACT_DISTANCE = 5;

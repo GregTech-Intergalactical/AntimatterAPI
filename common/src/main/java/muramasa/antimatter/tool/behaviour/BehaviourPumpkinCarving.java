@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CarvedPumpkinBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BehaviourPumpkinCarving implements IItemUse<IAntimatterTool> {
+public class BehaviourPumpkinCarving implements IItemUse<IBasicAntimatterTool> {
     public static final BehaviourPumpkinCarving INSTANCE = new BehaviourPumpkinCarving();
 
     @Override
@@ -25,7 +26,7 @@ public class BehaviourPumpkinCarving implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         Level worldIn = c.getLevel();
         BlockPos pos = c.getClickedPos();
         BlockState state = worldIn.getBlockState(pos);

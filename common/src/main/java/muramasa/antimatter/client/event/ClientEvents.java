@@ -18,6 +18,7 @@ import muramasa.antimatter.mixin.client.MultiPlayerGameModeAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
 import muramasa.antimatter.util.Utils;
@@ -63,14 +64,14 @@ public class ClientEvents {
         Player player = MC.player;
         Level world = player.getCommandSenderWorld();
         ItemStack stack = player.getMainHandItem();
-        if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
+        if (stack.isEmpty() || (!(stack.getItem() instanceof IBasicAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
             return false;
         if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return false;
             RenderHelper.onDrawHighlight(player, levelRenderer, camera, target, partialTick, poseStack, bufferSource, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
             return true;
         }
-        IAntimatterTool item = (IAntimatterTool) stack.getItem();
+        IBasicAntimatterTool item = (IBasicAntimatterTool) stack.getItem();
         AntimatterToolType type = Utils.getToolType(player);
         if (type == null) return false;
         if (player.isCrouching() && type != AntimatterDefaultTools.WRENCH && type != AntimatterDefaultTools.CROWBAR && type != AntimatterDefaultTools.WIRE_CUTTER)
@@ -83,7 +84,7 @@ public class ClientEvents {
         if (res.shouldSwing()) {
             return false;
         }
-        IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
+        IBehaviour<IBasicAntimatterTool> behaviour = type.getBehaviour("aoe_break");
         if (!(behaviour instanceof BehaviourAOEBreak aoeBreak)) return false;
 
         BlockPos currentPos = target.getBlockPos();

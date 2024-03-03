@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
-public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
+public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
     public static final BehaviourTorchPlacing INSTANCE = new BehaviourTorchPlacing();
 
     @Override
@@ -35,7 +36,7 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         ItemStack stack = ItemStack.EMPTY;
         if (c.getPlayer() == null) return InteractionResult.PASS;
         for (ItemStack stack1 : c.getPlayer().getInventory().items) {

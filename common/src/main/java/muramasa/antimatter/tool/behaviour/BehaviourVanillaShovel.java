@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
+public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
 
     public static final BehaviourVanillaShovel INSTANCE = new BehaviourVanillaShovel();
 
@@ -27,7 +28,7 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         if (c.getClickedFace() == Direction.DOWN) return InteractionResult.PASS;
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         BlockState changedState = null;

@@ -2,13 +2,14 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import tesseract.TesseractCapUtils;
 
-public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
+public class BehaviourPoweredDebug implements IItemUse<IBasicAntimatterTool> {
 
     public static final BehaviourPoweredDebug INSTANCE = new BehaviourPoweredDebug();
 
@@ -18,7 +19,7 @@ public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         if (instance.getAntimatterToolType().isPowered() && c.getLevel().getBlockState(c.getClickedPos()) == Blocks.REDSTONE_BLOCK.defaultBlockState() && c.getPlayer() != null && c.getPlayer().isCreative()) {
             ItemStack stack = c.getPlayer().getItemInHand(c.getHand());
             TesseractCapUtils.getEnergyHandlerItem(stack).ifPresent(i -> {

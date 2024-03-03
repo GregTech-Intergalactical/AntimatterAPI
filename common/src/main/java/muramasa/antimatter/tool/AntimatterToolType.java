@@ -50,7 +50,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     private final Set<net.minecraft.world.level.material.Material> effectiveMaterials = new ObjectOpenHashSet<>();
     @Getter
-    private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<String, IBehaviour<IBasicAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     @Getter
     @Setter
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
@@ -367,11 +367,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public void addBehaviour(IBehaviour<IAntimatterTool>... behaviours) {
+    public void addBehaviour(IBehaviour<IBasicAntimatterTool>... behaviours) {
         Arrays.stream(behaviours).forEach(b -> this.behaviours.put(b.getId(), b));
     }
 
-    public IBehaviour<IAntimatterTool> getBehaviour(String id) {
+    public IBehaviour<IBasicAntimatterTool> getBehaviour(String id) {
         return behaviours.get(id);
     }
 

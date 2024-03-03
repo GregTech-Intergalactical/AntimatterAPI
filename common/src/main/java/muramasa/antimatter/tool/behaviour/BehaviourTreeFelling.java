@@ -3,6 +3,7 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,7 +24,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
+public class BehaviourTreeFelling implements IBlockDestroyed<IBasicAntimatterTool> {
 
     public static final BehaviourTreeFelling INSTANCE = new BehaviourTreeFelling();
     public static final Tree NO_TREE = new Tree(Collections.emptyList());
@@ -34,7 +35,7 @@ public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
     }
 
     @Override
-    public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean onBlockDestroyed(IBasicAntimatterTool instance, ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
         if (!AntimatterConfig.AXE_TIMBER.get()) return true;
         if (entity instanceof Player player && !world.isClientSide) {
             if (instance.genericIsCorrectToolForDrops(stack, state) && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
