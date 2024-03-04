@@ -1,6 +1,7 @@
 package muramasa.antimatter.tool;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.*;
 import muramasa.antimatter.material.Material;
@@ -51,6 +52,10 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
         return (Item) this;
     }
 
+    default Object2ObjectMap<String, IBehaviour<IBasicAntimatterTool>> getBehaviours(){
+        return getAntimatterToolType().getBehaviours();
+    }
+
     default Set<TagKey<Block>> getActualTags() {
         return getAntimatterToolType().getToolTypes();
     }
@@ -98,7 +103,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
         tooltip.add(Utils.translatable("antimatter.tooltip.mining_level", getTier(stack).getLevel()).withStyle(ChatFormatting.YELLOW));
         tooltip.add(Utils.translatable("antimatter.tooltip.tool_speed", Utils.literal("" + getDefaultMiningSpeed(stack)).withStyle(ChatFormatting.LIGHT_PURPLE)));
-        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IAddInformation addInformation)) continue;
             addInformation.onAddInformation(this, stack, tooltip, flag);
@@ -125,7 +130,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
             }
         }
         boolean returnValue = true;
-        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IBlockDestroyed)) continue;
             returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos, entity);
@@ -138,7 +143,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
 
     default InteractionResult genericInteractLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand){
         InteractionResult result = InteractionResult.PASS;
-        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IInteractEntity interactEntity)) continue;
             InteractionResult r = interactEntity.interactLivingEntity(this, stack, player, interactionTarget, usedHand);
@@ -150,7 +155,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
     @SuppressWarnings({"unchecked", "rawtypes"})
     default InteractionResult onGenericItemUse(UseOnContext ctx) {
         InteractionResult result = InteractionResult.PASS;
-        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemUse itemUse)) continue;
             InteractionResult r = itemUse.onItemUse(this, ctx);
@@ -161,7 +166,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     default InteractionResultHolder<ItemStack> onGenericRightclick(Level level, Player player, InteractionHand usedHand){
-        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemRightClick rightClick)) continue;
             InteractionResultHolder<ItemStack> r = rightClick.onRightClick(this, level, player, usedHand);
@@ -173,7 +178,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
     @SuppressWarnings("rawtypes")
     default InteractionResult onGenericHighlight(Player player, LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource) {
         InteractionResult result = InteractionResult.PASS;
-        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemHighlight)) continue;
             InteractionResult type = ((IItemHighlight) b).onDrawHighlight(player, levelRenderer, camera, target, partialTicks, poseStack, multiBufferSource);
