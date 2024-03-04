@@ -54,24 +54,20 @@ public class BehaviourAOEBreak implements IBlockDestroyed<IBasicAntimatterTool>,
     @Override
     public void onAddInformation(IBasicAntimatterTool instance, ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         CompoundTag tag = instance.getDataTag(stack);
-        if (tag != null){
-            boolean enabled = tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK);
-            tooltip.add(Utils.translatable("antimatter.tooltip.behaviour.aoe_right_click", Utils.translatable("antimatter.behaviour." + tooltipKey)));
-            String suffix = enabled ? "enabled" : "disabled";
-            tooltip.add(Utils.translatable("antimatter.tooltip.behaviour.aoe_" + suffix, Utils.translatable("antimatter.behaviour." + tooltipKey)));
-        }
+        boolean enabled = tag != null && tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK);
+        tooltip.add(Utils.translatable("antimatter.tooltip.behaviour.aoe_right_click", Utils.translatable("antimatter.behaviour." + tooltipKey)));
+        String suffix = enabled ? "enabled" : "disabled";
+        tooltip.add(Utils.translatable("antimatter.tooltip.behaviour.aoe_" + suffix, Utils.translatable("antimatter.behaviour." + tooltipKey)));
     }
 
     @Override
     public InteractionResultHolder<ItemStack> onRightClick(IBasicAntimatterTool instance, Level level, Player player, InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
         if (player.isShiftKeyDown() && !level.isClientSide){
-            CompoundTag tag = instance.getDataTag(stack);
-            if (tag != null){
-                boolean enabled = tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK);
-                tag.putBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK, !enabled);
-                player.sendMessage(Utils.literal("Mode set to " + !enabled), player.getUUID());
-            }
+            CompoundTag tag = instance.getOrCreateDataTag(stack);
+            boolean enabled = tag.getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK);
+            tag.putBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK, !enabled);
+            player.sendMessage(Utils.literal("Mode set to " + !enabled), player.getUUID());
         }
         return InteractionResultHolder.pass(stack);
     }
