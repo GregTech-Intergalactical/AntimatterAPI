@@ -38,6 +38,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -47,7 +48,10 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
+import tesseract.api.context.TesseractItemContext;
+import tesseract.api.gt.IEnergyItem;
 import tesseract.api.gt.IGTNode;
+import tesseract.api.wrapper.ItemStackWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -90,11 +94,14 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
-        AntimatterAPI.all(ItemMultiTextureBattery.class).forEach(i -> {
-            registration.registerSubtypeInterpreter(i, (s, c) -> {
-                long energy = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
-                return "e:" + energy + "/" + i.getCapacity();
-            });
+        AntimatterAPI.all(Item.class).forEach(i -> {
+            if (i instanceof IEnergyItem energyItem && energyItem.canCreate(new ItemStackWrapper(i.getDefaultInstance()))) {
+                registration.registerSubtypeInterpreter(i, (s, c) -> {
+                    long energy = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
+                    long capacity = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getCapacity).orElse(0L);
+                    return "e:" + energy + "/" + capacity;
+                });
+            }
         });
     }
 
