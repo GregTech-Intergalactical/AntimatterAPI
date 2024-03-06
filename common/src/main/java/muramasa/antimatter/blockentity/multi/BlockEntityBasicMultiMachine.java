@@ -318,16 +318,16 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         if (!validStructure) {
             return;
         }
+        checkingStructure++;
+        validStructure = false;
         if (isServerSide() && getMachineState() != getDefaultMachineState()) {
             resetMachine();
         }
-        checkingStructure++;
         structurePositions.forEach((l,e) ->{
             BlockPos pos = BlockPos.of(l);
             e.onStructureFail((T) this, this.getLevel(), pos.getX(), pos.getY(), pos.getZ());
         });
         structurePositions.clear();
-        validStructure = false;
         if (isServerSide()) {
             onStructureInvalidated();
             recipeHandler.ifPresent(
