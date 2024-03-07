@@ -313,7 +313,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
             for (int i = 0; i < getInputTanks().getSize(); i++) {
                 FluidHolder stack = getInputTanks().getFluidInTank(i);
                 if (!stack.isEmpty()) {
-                    builder.append(FluidPlatformUtils.getFluidId(stack.getFluid())).append(" - ").append(stack.getFluidAmount());
+                    builder.append(FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid())).append(" - ").append(stack.getFluidAmount());
                     if (i != getInputTanks().getSize() - 1) {
                         builder.append("\n");
                     }
@@ -325,7 +325,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
             for (int i = 0; i < getOutputTanks().getSize(); i++) {
                 FluidHolder stack = getOutputTanks().getFluidInTank(i);
                 if (!stack.isEmpty()) {
-                    builder.append(FluidPlatformUtils.getFluidId(stack.getFluid())).append(" - ").append(stack.getFluidAmount());
+                    builder.append(FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid())).append(" - ").append(stack.getFluidAmount());
                     if (i != getOutputTanks().getSize() - 1) {
                         builder.append("\n");
                     }

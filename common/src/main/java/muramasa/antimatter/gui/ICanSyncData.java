@@ -42,7 +42,7 @@ public interface ICanSyncData {
     }
 
     default void syncFluidStack(Supplier<FluidHolder> source, Consumer<FluidHolder> onChange, SyncDirection direction) {
-        bind(() -> source.get().copyHolder(), onChange, FluidPlatformUtils::readFromPacket, FluidPlatformUtils::writeToPacket, (a, b) -> {
+        bind(() -> source.get().copyHolder(), onChange, FluidPlatformUtils.INSTANCE::readFromPacket, FluidPlatformUtils.INSTANCE::writeToPacket, (a, b) -> {
             FluidHolder f = (FluidHolder) a;
             if (!(b instanceof FluidHolder h)) return false;
             return a.equals(b) && h.getFluidAmount() == f.getFluidAmount();

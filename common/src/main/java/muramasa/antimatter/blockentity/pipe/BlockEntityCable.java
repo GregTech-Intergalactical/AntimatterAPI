@@ -115,7 +115,7 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
         if (!super.validate(dir)) return false;
         BlockEntity tile = BlockEntityCache.getBlockEntity(level, getBlockPos().relative(dir));
         if (tile == null) return false;
-        return TesseractCapUtils.getEnergyHandler(tile, dir.getOpposite()).isPresent();
+        return TesseractCapUtils.INSTANCE.getEnergyHandler(tile, dir.getOpposite()).isPresent();
     }
 
     @Override

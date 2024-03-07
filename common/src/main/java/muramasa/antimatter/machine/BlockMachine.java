@@ -223,9 +223,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             }
                         };
                         boolean success = false;
-                        if (FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), fh, consumer)){
+                        if (FluidPlatformUtils.INSTANCE.fillItemFromContainer(Utils.ca(1, stack), fh, consumer)){
                             success = true;
-                        } else if (FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, stack), fh, consumer)){
+                        } else if (FluidPlatformUtils.INSTANCE.emptyItemIntoContainer(Utils.ca(1, stack), fh, consumer)){
                             success = true;
                         }
                         return success;

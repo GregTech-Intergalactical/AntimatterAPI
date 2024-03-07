@@ -22,7 +22,7 @@ public class BehaviourPoweredDebug implements IItemUse<IBasicAntimatterTool> {
     public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         if (instance.getAntimatterToolType().isPowered() && c.getLevel().getBlockState(c.getClickedPos()) == Blocks.REDSTONE_BLOCK.defaultBlockState() && c.getPlayer() != null && c.getPlayer().isCreative()) {
             ItemStack stack = c.getPlayer().getItemInHand(c.getHand());
-            TesseractCapUtils.getEnergyHandlerItem(stack).ifPresent(i -> {
+            TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).ifPresent(i -> {
                 if (i.getCapacity() - i.getEnergy() <= 50000)
                     i.setEnergy(i.getCapacity());
                 else i.setEnergy(i.getEnergy() + 50000);

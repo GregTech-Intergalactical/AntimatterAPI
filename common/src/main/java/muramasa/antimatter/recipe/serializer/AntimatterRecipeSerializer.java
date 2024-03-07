@@ -176,7 +176,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         FluidHolder[] outf = new FluidHolder[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                outf[i] = FluidPlatformUtils.readFromPacket(buffer);
+                outf[i] = FluidPlatformUtils.INSTANCE.readFromPacket(buffer);
             }
         }
         size = buffer.readInt();
@@ -233,7 +233,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         }
         buffer.writeInt(!recipe.hasOutputFluids() ? 0 : recipe.getOutputFluids().length);
         if (recipe.hasOutputFluids()) {
-            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> FluidPlatformUtils.writeToPacket(buffer, stack));
+            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> FluidPlatformUtils.INSTANCE.writeToPacket(buffer, stack));
         }
         buffer.writeInt(recipe.hasChances() ? recipe.getChances().length : 0);
         if (recipe.hasChances()) {

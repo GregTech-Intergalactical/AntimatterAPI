@@ -97,8 +97,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
         AntimatterAPI.all(Item.class).forEach(i -> {
             if (i instanceof IEnergyItem energyItem && energyItem.canCreate(new ItemStackWrapper(i.getDefaultInstance()))) {
                 registration.registerSubtypeInterpreter(i, (s, c) -> {
-                    long energy = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
-                    long capacity = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getCapacity).orElse(0L);
+                    long energy = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
+                    long capacity = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).map(IGTNode::getCapacity).orElse(0L);
                     return "e:" + energy + "/" + capacity;
                 });
             }

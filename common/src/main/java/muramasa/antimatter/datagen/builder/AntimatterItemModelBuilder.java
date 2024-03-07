@@ -47,7 +47,7 @@ public class AntimatterItemModelBuilder extends AntimatterModelBuilder<Antimatte
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid) {
-        return bucketProperties(fluid, true, FluidPlatformUtils.isFluidGaseous(fluid));
+        return bucketProperties(fluid, true, FluidPlatformUtils.INSTANCE.isFluidGaseous(fluid));
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid, boolean tint, boolean islighter) {

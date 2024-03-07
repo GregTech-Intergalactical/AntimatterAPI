@@ -324,6 +324,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     }
 
     private Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
-        return TesseractCapUtils.getEnergyHandlerItem(stack).map(e -> (ItemEnergyHandler) e);
+        return TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).map(e -> (ItemEnergyHandler) e);
     }
 }

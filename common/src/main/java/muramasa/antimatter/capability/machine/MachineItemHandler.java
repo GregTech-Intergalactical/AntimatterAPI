@@ -199,7 +199,7 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
             for (int i = 0; i < chargeables.getContainerSize(); i++) {
                 ItemStack item = chargeables.getItem(i);
                 if (!item.isEmpty()) {
-                    TesseractCapUtils.getWrappedEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
+                    TesseractCapUtils.INSTANCE.getWrappedEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
                 }
             }
         }

@@ -105,7 +105,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
         BlockEntity tile = getCachedBlockEntity(dir);
         if (tile == null)
             return false;
-        return TesseractCapUtils.getItemHandler(tile, dir.getOpposite()).isPresent();
+        return TesseractCapUtils.INSTANCE.getItemHandler(tile, dir.getOpposite()).isPresent();
     }
 
     @Override
@@ -189,7 +189,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
             BlockEntity tDelegator = getCachedBlockEntity(side);
             if (!(tDelegator instanceof BlockEntityPipe<?>) && tDelegator != null) {
                 if (!(tDelegator instanceof HopperBlockEntity || tDelegator instanceof DispenserBlockEntity)) {
-                    PlatformItemHandler itemHandler = TesseractCapUtils.getItemHandler(tDelegator, side.getOpposite()).orElse(null);
+                    PlatformItemHandler itemHandler = TesseractCapUtils.INSTANCE.getItemHandler(tDelegator, side.getOpposite()).orElse(null);
                     if (itemHandler != null){
                         // special cases for the win...
                         ICover cover = coverHandler.map(c -> c.get(side)).orElse(ICover.empty);

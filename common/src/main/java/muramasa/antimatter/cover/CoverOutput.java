@@ -119,9 +119,9 @@ public class CoverOutput extends CoverInput {
             return;
         if (processing > 0) return;
         processing++;
-        TesseractCapUtils.getItemHandler(adjTile, this.side.getOpposite())
+        TesseractCapUtils.INSTANCE.getItemHandler(adjTile, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    TesseractCapUtils.getItemHandler(handler.getTile(), this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
+                    TesseractCapUtils.INSTANCE.getItemHandler(handler.getTile(), this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
                 });
         processing--;
     }
@@ -139,7 +139,7 @@ public class CoverOutput extends CoverInput {
     public static void tryFluidTransfer(PlatformFluidHandler fluidDestination, PlatformFluidHandler fluidSource, long maxAmount, boolean doTransfer) {
         for (int i = 0; i < fluidSource.getTankAmount(); i++) {
             FluidHolder fluid = fluidSource.getFluidInTank(i);
-            FluidPlatformUtils.tryFluidTransfer(fluidDestination, fluidSource, fluid.copyWithAmount(Math.min(fluid.getFluidAmount(), maxAmount)), doTransfer);
+            FluidPlatformUtils.INSTANCE.tryFluidTransfer(fluidDestination, fluidSource, fluid.copyWithAmount(Math.min(fluid.getFluidAmount(), maxAmount)), doTransfer);
         }
     }
 

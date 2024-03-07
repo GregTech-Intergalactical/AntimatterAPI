@@ -43,7 +43,7 @@ public class BlockEntityTank<T extends BlockEntityMachine<T>> extends BlockEntit
     public int drawInfo(TankMachine.TankRenderWidget instance, PoseStack stack, Font renderer, int left, int top) {
         left = left + 55;
         top = top + 24;
-        renderer.draw(stack, FluidPlatformUtils.getFluidDisplayName(instance.stack).getString(), left, top, 16448255);
+        renderer.draw(stack, FluidPlatformUtils.INSTANCE.getFluidDisplayName(instance.stack).getString(), left, top, 16448255);
         StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
         if (AntimatterPlatformUtils.isFabric()){
             fluidAmount.append(" ").append(intToSuperScript((int) (instance.stack.getFluidAmount() % 81L))).append("/₈₁");

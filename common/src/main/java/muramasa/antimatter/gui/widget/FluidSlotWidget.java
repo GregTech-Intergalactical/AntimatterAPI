@@ -86,15 +86,15 @@ public class FluidSlotWidget extends Widget {
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
         List<Component> str = new ArrayList<>();
-        str.add(FluidPlatformUtils.getFluidDisplayName(this.stack));
+        str.add(FluidPlatformUtils.INSTANCE.getFluidDisplayName(this.stack));
         long mb = (this.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
         if (AntimatterPlatformUtils.isFabric()){
             str.add(Utils.translatable("antimatter.tooltip.fluid.amount", Utils.literal(mb + " " + intToSuperScript(this.stack.getFluidAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
         } else {
             str.add(Utils.translatable("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
         }
-        str.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(this.stack.getFluid())).withStyle(ChatFormatting.RED));
-        String liquid = !FluidPlatformUtils.isFluidGaseous(this.stack.getFluid()) ? "liquid" : "gas";
+        str.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.INSTANCE.getFluidTemperature(this.stack.getFluid())).withStyle(ChatFormatting.RED));
+        String liquid = !FluidPlatformUtils.INSTANCE.isFluidGaseous(this.stack.getFluid()) ? "liquid" : "gas";
         str.add(Utils.translatable("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         AntimatterJEIREIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().font, stack);

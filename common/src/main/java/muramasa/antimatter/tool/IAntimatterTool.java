@@ -178,7 +178,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatt
     }
 
     default CompoundTag validateEnergyTag(ItemStack stack, long startingEnergy, long maxEnergy){
-        IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
+        IEnergyHandlerItem h = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).orElse(null);
         if (h != null){
             h.setEnergy(startingEnergy);
             h.setCapacity(maxEnergy);
@@ -197,7 +197,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatt
         if (group != Ref.TAB_TOOLS) return;
         if (getAntimatterToolType().isPowered()) {
             ItemStack stack = asItemStack(NULL, NULL);
-            IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
+            IEnergyHandlerItem h = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).orElse(null);
             if (h != null){
                 list.add(stack.copy());
                 h.setCapacity(maxEnergy);
@@ -230,8 +230,8 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatt
             Streams.concat(player.getInventory().items.stream(), player.getInventory().offhand.stream()).forEach(s -> {
                 if (this.getCurrentEnergy(stack) < getMaxEnergy(stack)){
                     if (s.getItem() instanceof ItemBattery battery && battery.getTier().getIntegerId() == this.getEnergyTier()){
-                        IEnergyHandlerItem batteryHandler = TesseractCapUtils.getEnergyHandlerItem(s).orElse(null);
-                        IEnergyHandlerItem toolHandler = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
+                        IEnergyHandlerItem batteryHandler = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).orElse(null);
+                        IEnergyHandlerItem toolHandler = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).orElse(null);
                         if (batteryHandler != null && toolHandler != null){
                             long extracted = batteryHandler.extractEu(battery.getCapacity(), true);
                             if (extracted > 0){
@@ -279,7 +279,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatt
 
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
-        IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
+        IEnergyHandlerItem h = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).orElse(null);
         if (!(h instanceof ItemEnergyHandler)) {
             return amount;
         }

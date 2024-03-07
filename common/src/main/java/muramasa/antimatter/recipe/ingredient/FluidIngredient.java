@@ -82,7 +82,7 @@ public class FluidIngredient {
         getStacks();
         buffer.writeVarInt(stacks.length);
         for (FluidHolder stack : this.stacks) {
-            FluidPlatformUtils.writeToPacket(buffer, stack);
+            FluidPlatformUtils.INSTANCE.writeToPacket(buffer, stack);
         }
     }
 
@@ -102,7 +102,7 @@ public class FluidIngredient {
         int count = buf.readVarInt();
         FluidHolder[] stacks = new FluidHolder[count];
         for (int i = 0; i < count; i++) {
-            stacks[i] = FluidPlatformUtils.readFromPacket(buf);
+            stacks[i] = FluidPlatformUtils.INSTANCE.readFromPacket(buf);
         }
         FluidIngredient ing = new FluidIngredient();
         long amount = 0;

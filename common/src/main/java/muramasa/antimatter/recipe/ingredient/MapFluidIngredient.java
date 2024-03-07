@@ -14,7 +14,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        return FluidPlatformUtils.getFluidId(stack.getFluid()).hashCode();
+        return FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).hashCode();
     }
 
     @Override
@@ -32,6 +32,6 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     public String toString() {
-        return FluidPlatformUtils.getFluidId(stack.getFluid()).toString();
+        return FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).toString();
     }
 }
