@@ -64,8 +64,8 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
     }
 
     @NotNull
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
+    //@Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         if (context.getLevel().isClientSide) return InteractionResult.CONSUME;
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
