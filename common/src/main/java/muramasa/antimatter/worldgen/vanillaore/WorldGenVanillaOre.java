@@ -22,13 +22,13 @@ import java.util.function.Predicate;
 public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
     public final Material primary, secondary;
     public final MaterialType<?> materialType, secondaryType;
-    public final int minY, maxY, weight, size, plateau;
+    public final int minY, maxY, weight, size, plateau, probability;
     public final float secondaryChance, discardOnExposureChance;
     public final List<String> biomes;
 
-    public final boolean biomeBlacklist, rare, triangle, spawnOnOceanFloor;
+    public final boolean biomeBlacklist, triangle, spawnOnOceanFloor;
 
-    WorldGenVanillaOre(String id, Material primary, Material secondary, MaterialType<?> type, MaterialType<?> secondaryType, float secondaryChance, float discardOnExposureChance, int minY, int maxY, int weight, int size, boolean rare, boolean triangle, int plateau, boolean spawnOnOceanFlor, List<ResourceLocation> dimensions, List<String> biomes, boolean biomeBlacklist){
+    WorldGenVanillaOre(String id, Material primary, Material secondary, MaterialType<?> type, MaterialType<?> secondaryType, float secondaryChance, float discardOnExposureChance, int minY, int maxY, int weight, int size, int probability, boolean triangle, int plateau, boolean spawnOnOceanFlor, List<ResourceLocation> dimensions, List<String> biomes, boolean biomeBlacklist){
         super(id, WorldGenVanillaOre.class, dimensions.stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
 
         this.primary = primary;
@@ -41,7 +41,7 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
         this.maxY = maxY;
         this.weight = weight;
         this.size = size;
-        this.rare = rare;
+        this.probability = probability;
         this.triangle = triangle;
         this.plateau = plateau;
         this.spawnOnOceanFloor = spawnOnOceanFlor;
@@ -81,7 +81,7 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
         }
         json.addProperty("weight", weight);
         json.addProperty("size", size);
-        if (rare) json.addProperty("rare", true);
+        json.addProperty("probability", probability);
         if (triangle) json.addProperty("triangle", true);
         if (plateau > 0) json.addProperty("plateau", plateau);
         if (spawnOnOceanFloor) json.addProperty("spawnOnOceanFloor", true);
@@ -131,7 +131,7 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
                 json.has("maxY") ? json.get("maxY").getAsInt() : Integer.MAX_VALUE,
                 json.get("weight").getAsInt(),
                 json.get("size").getAsInt(),
-                json.has("rare") && json.get("rare").getAsBoolean(),
+                json.get("probability").getAsInt(),
                 json.has("triangle") && json.get("triangle").getAsBoolean(),
                 json.has("plateau") ? json.get("plateau").getAsInt() : 0,
                 json.has("spawnOnOceanFloor") && json.get("spawnOnOceanFloor").getAsBoolean(),

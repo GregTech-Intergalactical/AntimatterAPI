@@ -23,6 +23,8 @@ public class WorldGenVanillaOreBuilder {
     @Nullable
     private Integer weight;
     @Nullable
+    private Integer probability;
+    @Nullable
     private Integer maxY;
     @Nullable
     private Integer minY;
@@ -37,15 +39,12 @@ public class WorldGenVanillaOreBuilder {
     @Nullable String id;
     List<ResourceLocation> dimensions = new ArrayList<>();
     List<String> biomes = new ArrayList<>();
-    boolean biomeBlacklist = true, rare = false, triangle = false, spawnOnOceanFloor = false;
+    boolean biomeBlacklist = true, triangle = false, spawnOnOceanFloor = false;
 
     public WorldGenVanillaOreBuilder() {
     }
 
     final public WorldGenVanillaOre buildMaterial() {
-        if (this.weight == null) {
-            throw new RuntimeException("weight is required");
-        }
         if (this.size == null) {
             throw new RuntimeException("size is required");
         }
@@ -66,9 +65,9 @@ public class WorldGenVanillaOreBuilder {
                 this.discardOnExposureChance == null ? 0.0f : this.discardOnExposureChance,
                 this.minY != null ? this.minY : Integer.MIN_VALUE,
                 this.maxY != null ? this.maxY : Integer.MAX_VALUE,
-                weight,
+                weight == null ? 1 : weight,
                 size,
-                rare,
+                probability == null ? 1 : probability,
                 triangle,
                 this.plateau == null ? 0 : this.plateau,
                 this.spawnOnOceanFloor,
@@ -122,6 +121,11 @@ public class WorldGenVanillaOreBuilder {
         return this;
     }
 
+    final public WorldGenVanillaOreBuilder withProbability(int probability){
+        this.probability = probability;
+        return this;
+    }
+
     final public WorldGenVanillaOreBuilder withCustomId(String id){
         this.id = id;
         return this;
@@ -139,11 +143,6 @@ public class WorldGenVanillaOreBuilder {
 
     final public WorldGenVanillaOreBuilder setBiomeBlacklist(boolean blacklist) {
         this.biomeBlacklist = blacklist;
-        return this;
-    }
-
-    final public WorldGenVanillaOreBuilder setRare(boolean rare){
-        this.rare = rare;
         return this;
     }
 

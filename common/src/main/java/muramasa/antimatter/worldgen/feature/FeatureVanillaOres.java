@@ -81,11 +81,11 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
         int spawned = 0;
         for (WorldGenVanillaOre vanillaOre : vanillaOres) {
             if (!vanillaOre.primary.has(vanillaOre.materialType) || (vanillaOre.secondary != Material.NULL && !vanillaOre.secondary.has(vanillaOre.secondaryType))) continue;
-            if (vanillaOre.rare && !(random.nextFloat() < 1.0F / (float)vanillaOre.weight)) continue;
+            if (vanillaOre.probability > 1 && random.nextInt(vanillaOre.probability) != 0) continue;
             int minY = Math.max(worldMinY, vanillaOre.minY);
             int maxY = Math.min(worldMaxY, vanillaOre.maxY);
             int i = 0;
-            int amountPerChunk = vanillaOre.rare ? 1 : vanillaOre.weight;
+            int amountPerChunk = vanillaOre.weight;
             for (int j = amountPerChunk; i < j; i++) {
                 int y = vanillaOre.triangle ? sample(random, minY, maxY) : minY + random.nextInt(Math.max(1, maxY - minY));
                 BlockPos spawnPos = new BlockPos(chunkCornerX + random.nextInt(16), y, chunkCornerZ + random.nextInt(16));
