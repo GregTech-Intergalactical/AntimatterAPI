@@ -74,25 +74,26 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
 
     default boolean genericIsCorrectToolForDrops(ItemStack stack, BlockState state) {
         AntimatterToolType type = this.getAntimatterToolType();
+        boolean containsEffectiveBlock = false;
         if (type.getEffectiveMaterials().contains(state.getMaterial())) {
-            return true;
+            containsEffectiveBlock = true;
         }
         if (type.getEffectiveBlocks().contains(state.getBlock())) {
-            return true;
+            containsEffectiveBlock = true;
         }
         for (TagKey<Block> effectiveBlockTag : type.getEffectiveBlockTags()) {
             if (state.is(effectiveBlockTag)){
-                return true;
-            }
-        }
-        boolean isType = false;
-        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
-            if (state.is(toolType)){
-                isType = true;
+                containsEffectiveBlock = true;
                 break;
             }
         }
-        return isType && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+        for (TagKey<Block> toolType : getAntimatterToolType().getToolTypes()) {
+            if (state.is(toolType)){
+                containsEffectiveBlock = true;
+                break;
+            }
+        }
+        return containsEffectiveBlock && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
     }
 
     default float getDefaultMiningSpeed(ItemStack stack){
