@@ -10,6 +10,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.ITypedIngredient;
+import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -97,6 +98,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         AntimatterAPI.all(Item.class).forEach(i -> {
             if (i instanceof IEnergyItem energyItem && energyItem.canCreate(new ItemStackWrapper(i.getDefaultInstance()))) {
                 registration.registerSubtypeInterpreter(i, (s, c) -> {
+                    if (c == UidContext.Recipe) return "";
                     long energy = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
                     long capacity = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).map(IGTNode::getCapacity).orElse(0L);
                     return "e:" + energy + "/" + capacity;
