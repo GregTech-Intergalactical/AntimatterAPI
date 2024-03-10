@@ -95,7 +95,10 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
+        List<ItemLike> list = new ArrayList<>();
+        AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         AntimatterAPI.all(Item.class).forEach(i -> {
+            if (list.contains(i)) return;
             if (i instanceof IEnergyItem energyItem && energyItem.canCreate(new ItemStackWrapper(i.getDefaultInstance()))) {
                 registration.registerSubtypeInterpreter(i, (s, c) -> {
                     if (c == UidContext.Recipe) return "";
