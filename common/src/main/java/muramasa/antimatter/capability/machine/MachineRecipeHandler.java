@@ -4,6 +4,7 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
@@ -110,8 +111,10 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         if (tickTimer > 0) {
             if (tile.getMachineState() == IDLE) {
                 tickTimer = 0;
+                logString("setting tick timer to 0");
             } else {
                 tickTimer--;
+                logString("subtracting tick timer");
                 if (tickTimer > 0) {
                     return;
                 }
@@ -129,6 +132,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         }
         if (activeRecipe != null && tile.getMachineState() == tile.getDefaultMachineState()){
             tile.setMachineState(NO_POWER);
+            logString("set now power");
         }
         if (activeRecipe == null) return;
         tickingRecipe = true;
@@ -150,6 +154,9 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                 break;
         }
         tickingRecipe = false;
+    }
+
+    protected void logString(String message){
     }
 
     public IRecipe findRecipe() {
