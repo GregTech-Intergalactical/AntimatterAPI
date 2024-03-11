@@ -111,10 +111,8 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         if (tickTimer > 0) {
             if (tile.getMachineState() == IDLE) {
                 tickTimer = 0;
-                logString("setting tick timer to 0");
             } else {
                 tickTimer--;
-                logString("subtracting tick timer");
                 if (tickTimer > 0) {
                     return;
                 }
@@ -132,7 +130,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         }
         if (activeRecipe != null && tile.getMachineState() == tile.getDefaultMachineState()){
             tile.setMachineState(NO_POWER);
-            logString("set now power");
         }
         if (activeRecipe == null) return;
         tickingRecipe = true;
@@ -144,7 +141,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                 break;
             case NO_POWER:
                 state = tickRecipe();
-                if (state != ACTIVE) {
+                if (state != ACTIVE && state != OUTPUT_FULL) {
                     tile.setMachineState(tile.getDefaultMachineState());
                 } else {
                     tile.setMachineState(state);
