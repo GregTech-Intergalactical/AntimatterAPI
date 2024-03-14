@@ -48,7 +48,9 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
         if (stack.getTag() != null && stack.getTag().contains("covers")){
             CompoundTag nbt = stack.getTag().getCompound("covers");
             byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
-            covers.clear();
+            for (Direction dir : Direction.values()){
+                covers.put(dir, ICover.empty);
+            }
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 if ((sides & (1 << i)) > 0) {
                     ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
