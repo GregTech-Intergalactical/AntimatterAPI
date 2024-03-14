@@ -390,16 +390,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
                 return Shapes.block();
             }
-            BlockPipe<?> pipe = null;
-            if (player.getMainHandItem().getItem() instanceof PipeItemBlock) {
-                pipe = ((PipeItemBlock) player.getMainHandItem().getItem()).getPipe();
-            }
-            if (player.getOffhandItem().getItem() instanceof PipeItemBlock) {
-                pipe = ((PipeItemBlock) player.getOffhandItem().getItem()).getPipe();
-            }
-            if (getClass().isInstance(pipe)) {
-                return Shapes.block();
-            }
         }
         int config = getShapeConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos);
         VoxelShape shape = null;
