@@ -177,7 +177,7 @@ public class AntimatterJEIREIPlugin{
     }
 
     public static void addFluidsToHide(Consumer<List<Fluid>> listConsumer){
-        ITEMS_TO_HIDE.add(listConsumer);
+        FLUIDS_TO_HIDE.add(listConsumer);
     }
 
     public static List<Consumer<List<ItemLike>>> getItemsToHide() {
