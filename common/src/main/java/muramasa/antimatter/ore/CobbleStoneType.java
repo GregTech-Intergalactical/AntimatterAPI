@@ -1,10 +1,15 @@
 package muramasa.antimatter.ore;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
+import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.CoverStone;
+import muramasa.antimatter.item.ItemStoneCover;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.world.level.block.Block;
@@ -32,13 +37,17 @@ public class CobbleStoneType extends StoneType {
         if (registry == RegistryType.BLOCKS) {
             if (generateBlock) {
                 for (int i = 0; i < SUFFIXES.length; i++) {
-                    Block stone;
+                    ITextureProvider stoneTextureProvider;
+                    BlockStone stone;
                     if (i == 7) {
                         stone = new BlockStone(this);
                         setState(stone);
                     } else {
                         stone = new BlockStone(this, SUFFIXES[i]);
                     }
+                    String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
+                    CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
+                            new ItemStoneCover(Ref.SHARED_ID, id + "_cover", stone)).addTextures(stone.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                     blocks.put(SUFFIXES[i], stone);
                     if (i < 2){
                         continue;

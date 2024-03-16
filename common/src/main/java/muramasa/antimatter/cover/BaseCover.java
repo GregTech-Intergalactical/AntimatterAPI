@@ -180,7 +180,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public void setTextures(BiConsumer<String, Texture> texer) {
-        texer.accept("overlay", factory.getTextures().isEmpty() ? new Texture(factory.getDomain(), "block/cover/" + getRenderId()) : factory.getTextures().get(0));
+        texer.accept("overlay", factory.getTextures().isEmpty() ? new Texture(factory.getDomain(), "block/cover/" + getRenderId()) : factory.getTextures().get(factory.getTextures().size() == 6 ? side.get3DDataValue() : 0));
     }
 
     public Texture[] getTextures() {
