@@ -61,6 +61,10 @@ public class AntimatterJEIPluginImpl {
         return ForgeFluidHolder.toStack(fluidHolder);
     }
 
+    public static IIngredientType<?> getFluidIngredientObjectType(){
+        return ForgeTypes.FLUID;
+    }
+
     public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
         builder.addIngredients(ForgeTypes.FLUID_STACK, stacks.stream().map(ForgeFluidHolder::toStack).toList());
     }

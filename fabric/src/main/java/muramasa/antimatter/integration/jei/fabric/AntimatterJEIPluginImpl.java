@@ -65,6 +65,10 @@ public class AntimatterJEIPluginImpl {
         return new JeiFLuidWrapper(fluidHolder);
     }
 
+    public static IIngredientType<?> getFluidIngredientObjectType(){
+        return FabricTypes.FLUID_STACK;
+    }
+
     public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
         builder.addIngredients(FabricTypes.FLUID_STACK, stacks.stream().map(JeiFLuidWrapper::new).collect(Collectors.toList()));
     }

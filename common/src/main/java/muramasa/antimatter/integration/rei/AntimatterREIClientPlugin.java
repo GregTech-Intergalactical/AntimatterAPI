@@ -1,5 +1,6 @@
 package muramasa.antimatter.integration.rei;
 
+import dev.architectury.fluid.FluidStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import me.shedaniel.rei.api.client.entry.filtering.base.BasicFilteringRule;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
@@ -36,6 +37,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +97,9 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         List<ItemLike> list = new ArrayList<>();
         AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         list.forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
+        List<Fluid> fluidList = new ArrayList<>();
+        AntimatterJEIREIPlugin.getFluidsToHide().forEach(c -> c.accept(fluidList));
+        fluidList.forEach(f -> rule.hide(EntryStack.of(VanillaEntryTypes.FLUID, FluidStack.create(f, 1))));
     }
 
     @Override

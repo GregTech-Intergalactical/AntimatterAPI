@@ -9,6 +9,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeType;
@@ -47,6 +48,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
@@ -84,6 +86,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
         AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         if (!list.isEmpty()) {
             runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, list.stream().map(i -> i.asItem().getDefaultInstance()).toList());
+        }
+        List<Fluid> fluidList = new ArrayList<>();
+        AntimatterJEIREIPlugin.getFluidsToHide().forEach(c -> c.accept(fluidList));
+        // wish there was a better way to do this
+        if (!fluidList.isEmpty()){
+            runtime.getIngredientManager().removeIngredientsAtRuntime(AntimatterJEIPlugin.getFluidIngredientObjectType(), (Collection) fluidList.stream().map(f -> AntimatterJEIPlugin.getFluidObject(FluidHolder.of(f))).toList());
         }
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
@@ -205,6 +213,11 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @ExpectPlatform
     public static Object getFluidObject(FluidHolder fluidHolder){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static IIngredientType<?> getFluidIngredientObjectType(){
         throw new AssertionError();
     }
 
