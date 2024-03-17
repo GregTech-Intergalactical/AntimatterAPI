@@ -186,6 +186,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
                 add(s, localized);
             });
+            AntimatterAPI.all(ItemStoneCover.class).forEach(i -> {
+                String localized = getLocalizedType(i);
+                if (i.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
+                if (i.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
+                if (i.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
+                if (i.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                override(i.getDescriptionId(), localized);
+            });
             AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> {
                 String localized = getLocalizedType(s);
                 if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");

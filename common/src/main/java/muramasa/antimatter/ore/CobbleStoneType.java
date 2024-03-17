@@ -37,7 +37,6 @@ public class CobbleStoneType extends StoneType {
         if (registry == RegistryType.BLOCKS) {
             if (generateBlock) {
                 for (int i = 0; i < SUFFIXES.length; i++) {
-                    ITextureProvider stoneTextureProvider;
                     BlockStone stone;
                     if (i == 7) {
                         stone = new BlockStone(this);
@@ -46,8 +45,9 @@ public class CobbleStoneType extends StoneType {
                         stone = new BlockStone(this, SUFFIXES[i]);
                     }
                     String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
+                    String suffix = i == 7 ? "" : SUFFIXES[i];
                     CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
-                            new ItemStoneCover(Ref.SHARED_ID, id + "_cover", stone)).addTextures(stone.getTextures()).build(Ref.SHARED_ID, id + "_cover");
+                            new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stone)).addTextures(stone.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                     blocks.put(SUFFIXES[i], stone);
                     if (i < 2){
                         continue;

@@ -1,10 +1,15 @@
 package muramasa.antimatter.ore;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
+import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.CoverStone;
+import muramasa.antimatter.item.ItemStoneCover;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -25,13 +30,22 @@ public class VanillaStoneType extends CobbleStoneType{
             if (this.getId().equals("basalt")){
                 for (int i = 0; i < SUFFIXES.length; i++) {
                     Block stone;
+                    ITextureProvider stoneTextureProvider;
                     if (i == 7) {
                         stone = this.getState().getBlock();
+                        stoneTextureProvider = this::getTextures;
                     } else if (i == 6){
                         stone = AntimatterPlatformUtils.getBlockFromId("minecraft", "smooth_" + this.getId());
+                        stoneTextureProvider = () -> new Texture[]{new Texture("polished_" + getId())};
                     }else {
-                        stone = new BlockStone(this, SUFFIXES[i]);
+                        BlockStone stone1 = new BlockStone(this, SUFFIXES[i]);
+                        stone = stone1;
+                        stoneTextureProvider = stone1;
                     }
+                    String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
+                    String suffix = i == 7 ? "" : SUFFIXES[i];
+                    CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
+                            new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                     blocks.put(SUFFIXES[i], stone);
                     if (i < 2){
                         continue;

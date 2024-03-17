@@ -13,6 +13,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -50,8 +51,7 @@ public class StoneRecipes {
                     provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', ((CobbleStoneType)s).getBlock("cobble")), "S", "S");
                 }
             }
-            if (s instanceof CobbleStoneType){
-                CobbleStoneType c = (CobbleStoneType) s;
+            if (s instanceof CobbleStoneType c){
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("cobble")), c.getBlock(""), 0.1F, 200).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_stone");
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("")), c.getBlock("smooth"), 0.1F, 200).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, m.getId() + "_smooth");
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("bricks")), c.getBlock("bricks_cracked"), 0.1F, 200).unlockedBy("has_bricks", provider.hasSafeItem(c.getBlock("bricks"))).save(output, m.getId() + "_bricks_cracked");
@@ -72,6 +72,12 @@ public class StoneRecipes {
                 for (String type : types){
                     int amount = type.contains("slab") ? 2 : 1;
                     SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("")), c.getBlock(type), amount).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, m.getId() + "_stone_" + type);
+                }
+                for (String type : CobbleStoneType.SUFFIXES){
+                    String id = (type.isEmpty() ? c.getId() : c.getId() + "_" + type) + "_cover";
+                    Item cover = AntimatterAPI.get(Item.class, id, Ref.SHARED_ID);
+                    if (cover == null) continue;
+                    SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock(type)), cover, 4).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(type))).save(output, id);
                 }
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("cobble")), c.getBlock("cobble_slab"), 2).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_cobble_slab");
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("cobble")), c.getBlock("cobble_stairs")).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_cobble_stairs");
