@@ -91,13 +91,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
             }
         }
     }
-/*
-    @Nullable
-    @Override
-    public Tag<Block> getHarvestTool(BlockState state) {
-        return Data.WIRE_CUTTER.getTag<Block>();
-    }
-*/
+
     @Override
     public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;
@@ -122,20 +116,4 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
             tooltip.add(Utils.literal("----------"));
         }
     }
-
-    //    @Override
-//    public ITextComponent getDisplayName(ItemStack stack) {
-//        boolean ins = stack.getMetadata() > 7;
-//        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];
-//         return size.getCableThickness() + "x " + material.getDisplayName() + (ins ? " Cable" : " Wire");
-//    }
-//
-//    @Override
-//    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-//        boolean ins = stack.getMetadata() > 7;
-//        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];
-//        tooltip.add("Max Voltage: " + TextFormatting.GREEN + getVoltage() + " (" + getTier().getId().toUpperCase(Locale.ENGLISH) + ")");
-//        tooltip.add("Max Amperage: " + TextFormatting.YELLOW + getAmps(size));
-//        tooltip.add("Loss/Meter/Ampere: " + TextFormatting.RED + getLoss(ins) + TextFormatting.GRAY + " EU-Volt");
-//    }
 }

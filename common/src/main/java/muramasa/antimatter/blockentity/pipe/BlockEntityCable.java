@@ -48,7 +48,7 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
     public CoverFactory[] getValidCovers() {
         return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> {
             try {
-                return t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t) instanceof CoverPlate;
+                return !t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t).isNode();
             } catch (Exception ex) {
                 return false;
             }

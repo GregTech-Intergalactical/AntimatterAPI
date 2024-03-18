@@ -406,7 +406,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Nullable
-    private static BlockEntityPipe<?> getTilePipe(BlockGetter world, BlockPos pos) {
+    protected static BlockEntityPipe<?> getTilePipe(BlockGetter world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         return tile instanceof BlockEntityPipe ? (BlockEntityPipe<?>) tile : null;
     }
