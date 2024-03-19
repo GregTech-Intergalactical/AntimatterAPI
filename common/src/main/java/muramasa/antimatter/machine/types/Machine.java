@@ -14,6 +14,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
@@ -36,6 +37,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -72,6 +74,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Function<BlockMachine, AntimatterItemBlock> itemBlockFunction = AntimatterItemBlock::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
+    @Getter
+    protected TagKey<Block> toolTag = AntimatterDefaultTools.WRENCH.getToolType();
     @Getter
     protected List<ITooltipInfo> tooltipFunctions = new ArrayList<>();
     @Getter
@@ -459,6 +463,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setItemBlock(Function<BlockMachine, AntimatterItemBlock> function){
         itemBlockFunction = function;
+        return (T) this;
+    }
+
+    public T setToolTag(TagKey<Block> toolTag){
+        this.toolTag = toolTag;
         return (T) this;
     }
 

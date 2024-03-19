@@ -112,10 +112,10 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 }
             });
             AntimatterAPI.all(BlockMachine.class, pipe -> {
-                this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
+                this.tag(pipe.getType().getToolTag()).add(pipe);
             });
             AntimatterAPI.all(BlockMultiMachine.class, pipe -> {
-                this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
+                this.tag(pipe.getType().getToolTag()).add(pipe);
             });
             AntimatterAPI.all(AntimatterFluid.class, f -> {
                 this.tag(TagUtils.getBlockTag(new ResourceLocation("replaceable"))).add(f.getFluidBlock());
