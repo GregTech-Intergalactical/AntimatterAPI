@@ -59,7 +59,7 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
                     covers.put(rotated, cover);
                 }
             }
-
+            this.getTile().sidedSync(true);
         }
     }
 
