@@ -250,13 +250,13 @@ public class StructureCache {
 
         public boolean validate(BlockPos pos, int maxAmount, LongList structure) {
             long at = pos.asLong();
-            int i = structure.stream().mapToInt(t -> {
-                LongSet list = this.STRUCTURE_TO_CONTROLLER.get((long)t);
+            long i = structure.longStream().map(t -> {
+                LongSet list = this.STRUCTURE_TO_CONTROLLER.get(t);
                 if (list == null){
-                    return 0;
+                    return 0L;
                 }
                 return list.size();
-            }).max().orElse(0);
+            }).max().orElse(0L);
             return i <= maxAmount;
         }
 
