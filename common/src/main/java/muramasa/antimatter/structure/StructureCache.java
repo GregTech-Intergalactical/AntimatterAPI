@@ -221,8 +221,8 @@ public class StructureCache {
 
     public static class DimensionEntry {
 
-        private final Long2ObjectMap<LongSet> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
-        private final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
+        public final Long2ObjectMap<LongSet> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
+        public final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public DimensionEntry() {
             //STRUCTURE_TO_CONTROLLER.setDefaultReturnValue(Object2BooleanMaps.empty());
