@@ -7,6 +7,7 @@ import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.CoverStone;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.item.ItemStoneCover;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -36,7 +37,8 @@ public class VanillaStoneType extends CobbleStoneType{
                         stoneTextureProvider = this::getTextures;
                     } else if (i == 6){
                         stone = AntimatterPlatformUtils.getBlockFromId("minecraft", "smooth_" + this.getId());
-                        stoneTextureProvider = () -> new Texture[]{new Texture("polished_" + getId())};
+                        String prefix = getMaterial() == AntimatterMaterials.Basalt ? "smooth_" : "polished_";
+                        stoneTextureProvider = () -> new Texture[]{new Texture(prefix + getId())};
                     }else {
                         BlockStone stone1 = new BlockStone(this, SUFFIXES[i]);
                         stone = stone1;
