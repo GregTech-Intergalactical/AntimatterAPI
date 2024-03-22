@@ -37,8 +37,7 @@ public class VanillaStoneType extends CobbleStoneType{
                         stoneTextureProvider = this::getTextures;
                     } else if (i == 6){
                         stone = AntimatterPlatformUtils.getBlockFromId("minecraft", "smooth_" + this.getId());
-                        String prefix = getMaterial() == AntimatterMaterials.Basalt ? "smooth_" : "polished_";
-                        stoneTextureProvider = () -> new Texture[]{new Texture(prefix + getId())};
+                        stoneTextureProvider = () -> new Texture[]{new Texture("block/smooth_" + getId())};
                     }else {
                         BlockStone stone1 = new BlockStone(this, SUFFIXES[i]);
                         stone = stone1;
