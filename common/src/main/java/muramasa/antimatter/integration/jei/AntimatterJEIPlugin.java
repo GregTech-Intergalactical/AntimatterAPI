@@ -92,6 +92,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         // wish there was a better way to do this
         if (!fluidList.isEmpty()){
             runtime.getIngredientManager().removeIngredientsAtRuntime(AntimatterJEIPlugin.getFluidIngredientObjectType(), (Collection) fluidList.stream().map(f -> AntimatterJEIPlugin.getFluidObject(FluidHolder.of(f))).toList());
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, fluidList.stream().map(i -> i.getBucket().getDefaultInstance()).toList());
         }
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));

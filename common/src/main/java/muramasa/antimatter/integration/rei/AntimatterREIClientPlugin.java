@@ -99,7 +99,10 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         list.forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
         List<Fluid> fluidList = new ArrayList<>();
         AntimatterJEIREIPlugin.getFluidsToHide().forEach(c -> c.accept(fluidList));
-        fluidList.forEach(f -> rule.hide(EntryStack.of(VanillaEntryTypes.FLUID, FluidStack.create(f, 1))));
+        fluidList.forEach(f -> {
+            rule.hide(EntryStack.of(VanillaEntryTypes.FLUID, FluidStack.create(f, 1)));
+            rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, f.getBucket().getDefaultInstance()));
+        });
     }
 
     @Override
