@@ -33,6 +33,7 @@
     "LeavesBlockMixin",
     "LivingEntityAccessor",
     "LivingEntityMixin",
+    "PickaxeItemMixin",
     "PlayerMixin",
     "RecipeManagerMixin",
     "RepairItemRecipeMixin",

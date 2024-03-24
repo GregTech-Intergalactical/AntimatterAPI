@@ -55,14 +55,14 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
         return InteractionResult.PASS;
     }
 
-    public InteractionResult tryPlace(BlockPlaceContext context, ItemStack torch) {
+    public static InteractionResult tryPlace(BlockPlaceContext context, ItemStack torch) {
         if (!context.canPlace()) {
             return InteractionResult.FAIL;
         } else {
-            BlockState blockstate = this.getStateForPlacement(context, torch);
+            BlockState blockstate = getStateForPlacement(context, torch);
             if (blockstate == null) {
                 return InteractionResult.FAIL;
-            } else if (!this.placeBlock(context, blockstate)) {
+            } else if (!placeBlock(context, blockstate)) {
                 return InteractionResult.FAIL;
             } else {
                 BlockPos blockpos = context.getClickedPos();
@@ -72,8 +72,8 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
                 BlockState blockstate1 = world.getBlockState(blockpos);
                 Block block = blockstate1.getBlock();
                 if (block == blockstate.getBlock()) {
-                    blockstate1 = this.updateBlockStateFromTag(blockpos, world, itemstack, blockstate1);
-                    this.onBlockPlaced(blockpos, world, playerentity, itemstack, blockstate1);
+                    blockstate1 = updateBlockStateFromTag(blockpos, world, itemstack, blockstate1);
+                    onBlockPlaced(blockpos, world, playerentity, itemstack, blockstate1);
                     block.setPlacedBy(world, blockpos, blockstate1, playerentity, itemstack);
                     if (playerentity instanceof ServerPlayer) {
                         CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerentity, blockpos, itemstack);
@@ -89,11 +89,11 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
         }
     }
 
-    protected boolean onBlockPlaced(BlockPos pos, Level worldIn, @Nullable Player player, ItemStack stack, BlockState state) {
+    protected static boolean onBlockPlaced(BlockPos pos, Level worldIn, @Nullable Player player, ItemStack stack, BlockState state) {
         return BlockItem.updateCustomBlockEntityTag(worldIn, player, pos, stack);
     }
 
-    private BlockState updateBlockStateFromTag(BlockPos p_219985_1_, Level p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
+    private static BlockState updateBlockStateFromTag(BlockPos p_219985_1_, Level p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
         BlockState blockstate = p_219985_4_;
         CompoundTag compoundnbt = p_219985_3_.getTag();
         if (compoundnbt != null) {
@@ -122,12 +122,12 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
         }).orElse(state);
     }
 
-    protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
+    protected static boolean placeBlock(BlockPlaceContext context, BlockState state) {
         return context.getLevel().setBlock(context.getClickedPos(), state, 11);
     }
 
     @Nullable
-    protected BlockState getStateForPlacement(BlockPlaceContext context, ItemStack torch) {
+    protected static BlockState getStateForPlacement(BlockPlaceContext context, ItemStack torch) {
         BlockState blockstate = torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_WALL_TORCH.getStateForPlacement(context) : Blocks.WALL_TORCH.getStateForPlacement(context);
         BlockState blockstate1 = null;
         LevelReader iworldreader = context.getLevel();
