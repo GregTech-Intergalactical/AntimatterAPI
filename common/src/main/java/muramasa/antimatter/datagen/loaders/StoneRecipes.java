@@ -9,9 +9,11 @@ import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,8 +40,15 @@ public class StoneRecipes {
                 ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'I', INGOT.getMaterialTag(Iron), 'W', ItemTags.PLANKS), "WWW", "CIC", "CRC");
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.DISPENSER,
                 ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'B', Items.BOW), "CCC", "CBC", "CRC");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.REPEATER,
+                of('T', Items.REDSTONE_TORCH, 'R', DUST.getMaterialTag(Redstone), 'S', TagUtils.getForgelikeItemTag("stone")), "TRT", "SSS");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.COMPARATOR,
+                of('T', Items.REDSTONE_TORCH, 'Q', GEM.getMaterialTag(Quartz), 'S', TagUtils.getForgelikeItemTag("stone")), " T ", "TQT", "SSS");
         provider.addItemRecipe(output, "stones", Items.SAND, of('S', DUST.getMaterialTag(Sand)), "SS", "SS");
         provider.addItemRecipe(output, "stones", Items.RED_SAND, of('S', DUST.getMaterialTag(RedSand)), "SS", "SS");
+        if (AntimatterAPI.isModLoaded(Ref.MOD_AE)){
+            provider.removeRecipe(new ResourceLocation(Ref.MOD_AE, "misc/vanilla_comparator"));
+        }
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             Material m = s.getMaterial();
             if (m.has(AntimatterMaterialTypes.ROD)){
