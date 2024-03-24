@@ -1115,7 +1115,7 @@ public class Utils {
      * @param world  World instance
      * @return if tree logging was successful
      */
-    public static boolean treeLogging(@NotNull IBasicAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
+    public static boolean treeLogging(@NotNull AntimatterToolType tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
         boolean[] harvested = new boolean[1];
         if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
             BlockState tpCompare = world.getBlockState(start);
@@ -1125,7 +1125,7 @@ public class Utils {
                 BlockPos tempPos = new BlockPos(start.getX(), y, start.getZ());
                 BlockState state = world.getBlockState(tempPos);
                 if (state.is(BlockTags.LOGS)) {
-                    if (breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability())){
+                    if (breakBlock(world, player, stack, tempPos, tool.getUseDurability())){
                         harvested[0] = true;
                     } else {
                         break;
@@ -1143,7 +1143,7 @@ public class Utils {
                 if (state.isAir() || !isCorrectToolForDrops(state, player))
                     return;
                 else if (state.is(BlockTags.LOGS)) {
-                    if (breakBlock(world, player, stack, b, tool.getAntimatterToolType().getUseDurability())){
+                    if (breakBlock(world, player, stack, b, tool.getUseDurability())){
                         harvested[0] = true;
                     } else {
                         stopped[0] = true;
