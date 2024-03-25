@@ -217,7 +217,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
         cachedItems.forEach(t -> t.right().getState().onTick());
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                BlockEntity tile = BlockEntityCache.getBlockEntity(this.tile.getLevel(), this.tile.getBlockPos().relative(dir));
+                BlockEntity tile = this.tile.getCachedBlockEntity(dir);
                 if (tile == null) continue;
                 Optional<IEnergyHandler> handle = TesseractCapUtils.INSTANCE.getEnergyHandler(tile, dir.getOpposite());
                 if (handle.map(h -> !h.canInput(dir.getOpposite())).orElse(true)) continue;
