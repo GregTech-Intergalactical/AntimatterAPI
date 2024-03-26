@@ -123,7 +123,7 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
     }
 
     protected static boolean placeBlock(BlockPlaceContext context, BlockState state) {
-        return context.getLevel().setBlock(context.getClickedPos(), state, 11);
+        return context.getLevel().setBlock(context.getClickedPos(), state, 3);
     }
 
     @Nullable
