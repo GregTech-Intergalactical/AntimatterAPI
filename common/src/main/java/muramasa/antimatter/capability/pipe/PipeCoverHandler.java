@@ -60,6 +60,8 @@ public class PipeCoverHandler<T extends BlockEntityPipe<?>> extends CoverHandler
                     ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
                     buildLookup(covers.get(Ref.DIRS[i]).getFactory(), cover.getFactory(), Ref.DIRS[i]);
                     covers.put(Ref.DIRS[i], cover);
+                    boolean anyEmpty = this.covers.values().stream().anyMatch(ICover::isNode);
+                    this.getTile().onCoverUpdate(false, anyEmpty, Ref.DIRS[i], ICover.empty, cover);
                 }
             }
 
