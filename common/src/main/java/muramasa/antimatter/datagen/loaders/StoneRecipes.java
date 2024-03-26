@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
+import muramasa.antimatter.data.ForgeCTags;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.CobbleStoneType;
@@ -33,7 +34,7 @@ public class StoneRecipes {
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.DROPPER,
                 ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone)), "CCC", "C C", "CRC");
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.OBSERVER,
-                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'Q', GEM.getMaterialTag(Quartz)), "CCC", "RRQ", "CCC");
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'Q', ForgeCTags.GEMS_QUARTZ_ALL), "CCC", "RRQ", "CCC");
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.LEVER,
                 ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', ROD.getMaterialTag(Wood)), "R", "C");
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.PISTON,
@@ -43,7 +44,7 @@ public class StoneRecipes {
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.REPEATER,
                 of('T', Items.REDSTONE_TORCH, 'R', DUST.getMaterialTag(Redstone), 'S', TagUtils.getForgelikeItemTag("stone")), "TRT", "SSS");
         provider.addItemRecipe(output, "minecraft", "", "redstone", Items.COMPARATOR,
-                of('T', Items.REDSTONE_TORCH, 'Q', GEM.getMaterialTag(Quartz), 'S', TagUtils.getForgelikeItemTag("stone")), " T ", "TQT", "SSS");
+                of('T', Items.REDSTONE_TORCH, 'Q', ForgeCTags.GEMS_QUARTZ_ALL, 'S', TagUtils.getForgelikeItemTag("stone")), " T ", "TQT", "SSS");
         provider.addItemRecipe(output, "stones", Items.SAND, of('S', DUST.getMaterialTag(Sand)), "SS", "SS");
         provider.addItemRecipe(output, "stones", Items.RED_SAND, of('S', DUST.getMaterialTag(RedSand)), "SS", "SS");
         if (AntimatterAPI.isModLoaded(Ref.MOD_AE)){

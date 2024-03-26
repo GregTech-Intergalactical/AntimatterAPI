@@ -24,6 +24,7 @@ public class ForgeCTags {
     public static final TagKey<Item> BOOKSHELVES = tag("bookshelves");
 
     public static final TagKey<Item> DUSTS_REDSTONE = tag("dusts/redstone");
+    public static final TagKey<Item> GEMS_QUARTZ_ALL = tag("gems/quartz_all");
 
     public static final TagKey<Item> DYES = tag("dyes");
     public static final TagKey<Item> DYES_BLACK = DyeColor.BLACK.getTag();

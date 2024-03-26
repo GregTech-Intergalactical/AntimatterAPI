@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.data.ForgeCTags;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
 import muramasa.antimatter.item.ItemFluidCell;
@@ -37,8 +38,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static muramasa.antimatter.data.AntimatterMaterialTypes.BLOCK;
-import static muramasa.antimatter.data.AntimatterMaterialTypes.FRAME;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
+import static muramasa.antimatter.data.AntimatterMaterials.Quartz;
 import static muramasa.antimatter.material.MaterialTags.CABLE;
 import static muramasa.antimatter.material.MaterialTags.WIRE;
 import static muramasa.antimatter.util.TagUtils.*;
@@ -58,6 +59,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
 
     private void antimatterTags() {
         this.tag(TagUtils.getForgelikeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
+        this.tag(ForgeCTags.GEMS_QUARTZ_ALL).addTag(GEM.getMaterialTag(Quartz));
     }
 
     protected void processTags(String domain) {
