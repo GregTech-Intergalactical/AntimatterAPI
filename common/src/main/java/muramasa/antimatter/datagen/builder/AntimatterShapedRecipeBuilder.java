@@ -141,12 +141,7 @@ public class AntimatterShapedRecipeBuilder {
      * the result.
      */
     public void build(Consumer<FinishedRecipe> consumer, String save) {
-        ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem());
-        if (new ResourceLocation(save).equals(resourcelocation)) {
-            throw new IllegalStateException("Shaped Recipe " + save + " should remove its 'save' argument");
-        } else {
-            this.build(consumer, new ResourceLocation(save));
-        }
+        this.build(consumer, new ResourceLocation(save));
     }
 
     /**
