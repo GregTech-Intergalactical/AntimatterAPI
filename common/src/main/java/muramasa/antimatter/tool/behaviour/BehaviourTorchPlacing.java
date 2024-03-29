@@ -93,12 +93,12 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
         return BlockItem.updateCustomBlockEntityTag(worldIn, player, pos, stack);
     }
 
-    private static BlockState updateBlockStateFromTag(BlockPos p_219985_1_, Level p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
-        BlockState blockstate = p_219985_4_;
-        CompoundTag compoundnbt = p_219985_3_.getTag();
+    private static BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack stack, BlockState state) {
+        BlockState blockstate = state;
+        CompoundTag compoundnbt = stack.getTag();
         if (compoundnbt != null) {
             CompoundTag compoundnbt1 = compoundnbt.getCompound("BlockStateTag");
-            StateDefinition<Block, BlockState> statecontainer = p_219985_4_.getBlock().getStateDefinition();
+            StateDefinition<Block, BlockState> statecontainer = state.getBlock().getStateDefinition();
 
             for (String s : compoundnbt1.getAllKeys()) {
                 Property<?> property = statecontainer.getProperty(s);
@@ -109,8 +109,8 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
             }
         }
 
-        if (blockstate != p_219985_4_) {
-            p_219985_2_.setBlock(p_219985_1_, blockstate, 2);
+        if (blockstate != state) {
+            level.setBlock(pos, blockstate, 3);
         }
 
         return blockstate;
