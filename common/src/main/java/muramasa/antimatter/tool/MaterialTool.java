@@ -51,6 +51,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static muramasa.antimatter.data.AntimatterDefaultTools.KNIFE;
+
 //@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class MaterialTool extends DiggerItem implements IAntimatterTool, IContainerItem {
@@ -298,7 +300,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         if (type.getBlacklistedEnchantments().contains(enchantment)) return false;
-        if (type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
+        if ((type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE) || type == KNIFE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
         }
         return (!type.isPowered() || (enchantment != Enchantments.UNBREAKING && enchantment != Enchantments.MENDING)) && enchantment.category.canEnchant(stack.getItem());
