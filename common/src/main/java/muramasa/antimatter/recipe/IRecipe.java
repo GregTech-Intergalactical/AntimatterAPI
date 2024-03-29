@@ -129,7 +129,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
         json.addProperty("amps", this.getAmps());
         json.addProperty("special", this.getSpecialValue());
         if (this.hasChances()) {
-            for (double d : this.getChances()){
+            for (int d : this.getChances()){
                 array.add(d);
             }
         }
