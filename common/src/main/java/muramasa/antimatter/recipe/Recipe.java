@@ -119,7 +119,6 @@ public class Recipe implements IRecipe {
     }
 
     public boolean hasOutputChances() {
-        //TODO change this if we add input chances?
         return outputChances != null && outputChances.length == itemsOutput.length;
     }
 
