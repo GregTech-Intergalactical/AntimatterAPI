@@ -61,7 +61,7 @@ public class RecipeMapDisplay implements Display {
     public static List<EntryIngredient> createOutputEntries(List<ItemStack> input, IRecipe recipe) {
         AtomicInteger atomicInteger = new AtomicInteger(0);
         return input.stream().map(i -> {
-            int chance = recipe.hasChances() ? Objects.requireNonNull(recipe.getChances())[atomicInteger.getAndIncrement()] : 10000;
+            int chance = recipe.hasOutputChances() ? Objects.requireNonNull(recipe.getOutputChances())[atomicInteger.getAndIncrement()] : 10000;
             return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> {
                 List<Component> components = new ArrayList<>();
                 Component c = getProbabilityTooltip(chance);

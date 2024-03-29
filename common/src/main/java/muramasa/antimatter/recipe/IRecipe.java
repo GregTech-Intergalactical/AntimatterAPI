@@ -21,7 +21,9 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     int getAmps();
 
-    void addChances(int[] chances);
+    void addOutputChances(int[] chances);
+
+    void addInputChances(int[] chances);
 
     void setHidden(boolean hidden);
 
@@ -35,7 +37,9 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     boolean hasOutputFluids();
 
-    boolean hasChances();
+    boolean hasOutputChances();
+
+    boolean hasInputChances();
 
     void setIds(ResourceLocation id, String map);
 
@@ -71,8 +75,9 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     long getPower();
 
-    @Nullable
-    int[] getChances();
+    int @Nullable [] getOutputChances();
+
+    int @Nullable [] getInputChances();
 
     default long getTotalPower(){
         return getDuration() * getPower();
@@ -128,13 +133,22 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
         json.addProperty("duration", this.getDuration());
         json.addProperty("amps", this.getAmps());
         json.addProperty("special", this.getSpecialValue());
-        if (this.hasChances()) {
-            for (int d : this.getChances()){
+        if (this.hasOutputChances()) {
+            for (int d : this.getOutputChances()){
                 array.add(d);
             }
         }
         if (!array.isEmpty()){
-            json.add("chances", array);
+            json.add("outputChances", array);
+        }
+
+        if (this.hasInputChances()) {
+            for (int d : this.getInputChances()){
+                array.add(d);
+            }
+        }
+        if (!array.isEmpty()){
+            json.add("inputChances", array);
         }
         json.addProperty("recipeID", this.getId().toString());
         json.addProperty("map", this.getMapId());
