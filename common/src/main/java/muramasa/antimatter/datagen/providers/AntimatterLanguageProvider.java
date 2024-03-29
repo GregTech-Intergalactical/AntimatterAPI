@@ -470,6 +470,16 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         data.put(key, value);
     }
 
+    public void override(Machine<?> i, Tier t, String value){
+        if (i.hasTierSpecificLang()) {
+            override("machine." + i.getId() + "." + t.getId(), value);
+        }
+        override(i.getBlockState(t).getDescriptionId(), value);
+        if (i instanceof BasicMultiMachine<?>) {
+            add(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", value.concat(" Multiblock"));
+        }
+    }
+
     public void override(String domain, String key, String value) {
         Map<String, Object2ObjectMap<String, String>> mapMap = GLOBAL_DATA.get(domain);
         if (mapMap != null){
