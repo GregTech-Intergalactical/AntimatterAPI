@@ -172,10 +172,8 @@ public class Ref {
     /**
      * Dimension IDs
      **/
-    public static final int OVERWORLD = 0;
-    public static final int NETHER = -1;
-    public static final int END = 1;
-    public static final int MOON = -99; //TODO, Find ID
-    public static final int MARS = -99; //TODO, Find ID
-    public static final int ASTEROIDS = -30; //TODO, Validate ID
+    public static final String OVERWORLD = "minecraft:overworld";
+    public static final String NETHER = "minecraft:the_nether";
+    public static final String END = "minecraft:the_end";
+    public static final String TWILIGHT_FOREST = "twilightforest:twilight_forest";
 }
