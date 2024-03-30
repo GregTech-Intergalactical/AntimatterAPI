@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,7 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
                 }
 
                 //TODO figure out why this used world, blockstate, and player in getSountType
+                world.gameEvent(playerentity, GameEvent.BLOCK_PLACE, blockpos);
                 SoundType soundtype = blockstate1.getSoundType();
                 world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
@@ -110,7 +112,7 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
         }
 
         if (blockstate != state) {
-            level.setBlock(pos, blockstate, 3);
+            level.setBlock(pos, blockstate, 11);
         }
 
         return blockstate;
@@ -123,7 +125,7 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
     }
 
     protected static boolean placeBlock(BlockPlaceContext context, BlockState state) {
-        return context.getLevel().setBlock(context.getClickedPos(), state, 3);
+        return context.getLevel().setBlock(context.getClickedPos(), state, 11);
     }
 
     @Nullable
