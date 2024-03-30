@@ -64,7 +64,7 @@ public class RecipeMapDisplay implements Display {
             int chance = recipe.hasOutputChances() ? Objects.requireNonNull(recipe.getOutputChances())[atomicInteger.getAndIncrement()] : 10000;
             return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> {
                 List<Component> components = new ArrayList<>();
-                Component c = getProbabilityTooltip(chance);
+                Component c = getProbabilityTooltip(chance, false);
                 if (c != null){
                     components.add(c);
                 }
@@ -130,13 +130,19 @@ public class RecipeMapDisplay implements Display {
     }
 
     public static List<EntryIngredient> createInputEntries(List<Ingredient> input, IRecipe recipe) {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
         return input.stream().map(i -> {
+            int chance = recipe.hasOutputChances() ? Objects.requireNonNull(recipe.getOutputChances())[atomicInteger.getAndIncrement()] : 10000;
             List<EntryStack<ItemStack>> entry = Arrays.stream(i.getItems()).map(EntryStacks::of).toList();
             if (i instanceof RecipeIngredient ri){
                 entry.forEach(e -> {
                     //e.setting(EntryStack.Settings.TOOLTIP_PROCESSOR)
                     e.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, f -> {
                         List<Component> components = new ArrayList<>();
+                        Component c = getProbabilityTooltip(chance, true);
+                        if (c != null){
+                            components.add(c);
+                        }
                         if (ri.ignoreConsume()) {
                            components.add(Utils.literal("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
                         }
@@ -154,20 +160,14 @@ public class RecipeMapDisplay implements Display {
         }).map(EntryIngredient::of).toList();
     }
 
-    public static Component getProbabilityTooltip(int probability) {
+    public static Component getProbabilityTooltip(int probability, boolean input) {
         if (probability == 10000) {
             return null;
         } else {
-            MutableComponent text = Utils.literal("Chance: " + ((float)probability / 100) + "%");
+            MutableComponent text = Utils.literal((input ? "Consumption" : "Output") +  " Chance: " + ((float)probability / 100) + "%");
             text.withStyle(ChatFormatting.WHITE);
             return text;
         }
-    }
-
-    public static Function<EntryStack<?>, List<Component>> getProbabilitySetting(int probability) {
-        @Nullable
-        Component tooltip = getProbabilityTooltip(probability);
-        return es -> tooltip == null ? List.of() : List.of(tooltip);
     }
 
     private static Function<EntryStack<?>, List<Component>> getFluidSetting(FluidStack fluidStack) {

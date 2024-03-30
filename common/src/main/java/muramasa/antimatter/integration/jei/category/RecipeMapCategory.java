@@ -163,6 +163,11 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                                         list.add(Utils.literal("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(Utils.literal(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
                                     }
                                 }
+                                if (recipe.hasInputChances()) {
+                                    if (recipe.getInputChances()[ss] < 10000) {
+                                        list.add(Utils.literal("Consumption Chance: " + ((float)recipe.getInputChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
+                                    }
+                                }
                             });
                             inputItems++;
                         }
@@ -182,7 +187,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     slot.addTooltipCallback((ing, list) -> {
                         if (recipe.hasOutputChances()) {
                             if (recipe.getOutputChances()[ss] < 10000) {
-                                list.add(Utils.literal("Chance: " + ((float)recipe.getOutputChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
+                                list.add(Utils.literal("Output Chance: " + ((float)recipe.getOutputChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
                             }
                         }
                     });
@@ -309,6 +314,25 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     stack.pushPose();
                     stack.scale(0.5f, 0.5f, 1);
                     String ch = (recipe.getOutputChances()[i] / 100) + "%";
+                    Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
+
+                    stack.popPose();
+                    RenderSystem.enableBlend();
+                    RenderSystem.enableDepthTest();
+                }
+            }
+        }
+        if (recipe.hasInputChances()) {
+            List<IRecipeSlotView> views = recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT);
+            List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_IN, guiTier);
+            for (int i = 0; i < recipe.getInputChances().length; i++) {
+                if (recipe.getInputChances()[i] < 10000) {
+                    if (i >= slots.size()) break;
+                    RenderSystem.disableBlend();
+                    RenderSystem.disableDepthTest();
+                    stack.pushPose();
+                    stack.scale(0.5f, 0.5f, 1);
+                    String ch = (recipe.getInputChances()[i] / 100) + "%";
                     Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
 
                     stack.popPose();
