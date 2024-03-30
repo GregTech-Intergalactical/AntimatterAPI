@@ -53,7 +53,6 @@ import static muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin.intT
 public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     protected static int JEI_OFFSET_X = 1, JEI_OFFSET_Y = 1;
-    //protected static FluidStackRenderer fluidRenderer = new FluidStackRenderer();
     protected static IGuiHelper guiHelper;
 
     protected String title;

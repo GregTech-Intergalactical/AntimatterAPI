@@ -739,7 +739,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tileType;
     }
 
-    //TODO needed?
     public Tier getFirstTier() {
         return tiers.get(0);
     }

@@ -142,7 +142,6 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                 if (!context.getPlayer().isCreative()){
                     context.getItemInHand().shrink(1);
                 }
-                //TODO figure out why this used world, blockstate, and player in getSountType
                 SoundType soundtype = blockstate1.getSoundType();
                 world.playSound(playerentity, blockpos, blockstate.getBlock().getSoundType(blockstate1).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 

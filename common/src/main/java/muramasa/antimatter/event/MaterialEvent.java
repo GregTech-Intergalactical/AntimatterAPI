@@ -62,7 +62,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public T asSolid(int meltingPoint, IMaterialTag... tags){
         asDust(meltingPoint, tags);
-        flags(AntimatterMaterialTypes.INGOT, AntimatterMaterialTypes.NUGGET, AntimatterMaterialTypes.BLOCK).asFluid(); //TODO: Shall we generate blocks for every solid?
+        flags(AntimatterMaterialTypes.INGOT, AntimatterMaterialTypes.NUGGET, AntimatterMaterialTypes.BLOCK).asFluid();
         return (T) this;
     }
 

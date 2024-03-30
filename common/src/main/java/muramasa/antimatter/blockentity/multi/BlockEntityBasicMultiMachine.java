@@ -275,7 +275,6 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         if (this.remove)
             return;
         super.setMachineState(newState);
-        //result.updateState(this, result); //TODO changing state element
     }
 
     @Override

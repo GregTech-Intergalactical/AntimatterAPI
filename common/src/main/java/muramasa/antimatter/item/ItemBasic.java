@@ -27,7 +27,6 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
     @Getter
     protected String domain, id, tooltip = "", subDir = "";
     protected boolean enabled = true;
-    protected Set<ItemTag> tags = new ObjectOpenHashSet<>();
 
     public ItemBasic(String domain, String id, String subDir, Properties properties) {
         super(properties);
@@ -61,11 +60,6 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
 
     public T tip(String tooltip) {
         this.tooltip = tooltip;
-        return (T) this;
-    }
-
-    public T tags(ItemTag... tags) {
-        this.tags.addAll(Arrays.asList(tags));
         return (T) this;
     }
 

@@ -464,7 +464,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (this.muffled && level != null && level.isClientSide) SoundHelper.clear(level, this.getBlockPos());
     }
 
-    // TODO: Fix
     public Direction getOutputFacing() {
         if (type.getOutputCover() != null && !(type.getOutputCover() == ICover.emptyFactory) && coverHandler.isPresent()) {
             Direction dir = coverHandler.get().getOutputFacing();

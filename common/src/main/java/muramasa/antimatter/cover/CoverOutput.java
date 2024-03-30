@@ -72,8 +72,6 @@ public class CoverOutput extends CoverInput {
         return this.ejectFluids;
     }
 
-    // TODO: Not even sure if needed.
-    // @Environment(EnvType.CLIENT)
     public void setEjects(boolean fluid, boolean item) {
         ejectItems = item;
         ejectFluids = fluid;
@@ -159,7 +157,6 @@ public class CoverOutput extends CoverInput {
 
     @Override
     public void onMachineEvent(IGuiHandler tile, IMachineEvent event, int... data) {
-        // TODO: Tesseract stuff?
         if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
             processItemOutput();
         } else if (event == MachineEvent.FLUIDS_OUTPUTTED && ejectFluids) {
