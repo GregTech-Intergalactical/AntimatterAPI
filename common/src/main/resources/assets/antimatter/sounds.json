@@ -9,5 +9,8 @@
   },
   "interrupt": {
     "sounds": [ "antimatter:interrupt" ]
+  },
+  "john-cena": {
+    "sounds": [ "antimatter:john-cena" ]
   }
 }

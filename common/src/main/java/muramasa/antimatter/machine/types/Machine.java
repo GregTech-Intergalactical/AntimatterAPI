@@ -227,7 +227,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setSound(SoundEvent loc, float volume) {
         this.soundVolume = volume;
-        this.machineNoise = loc;
+        this.machineNoise = getDatedMachineSound(loc);
         return (T) this;
     }
 
@@ -802,6 +802,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
     };
+
+    private static SoundEvent getDatedMachineSound(SoundEvent original){
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        if (calendar.get(Calendar.MONTH) == Calendar.APRIL && calendar.get(Calendar.DATE) == 1){
+            return Ref.JOHN_CENA;
+        }
+        if (calendar.get(Calendar.MONTH) == Calendar.MARCH && calendar.get(Calendar.DATE) == 31){
+            return Ref.JOHN_CENA;
+        }
+        return original;
+    }
 
     private IOverlayTexturer getDatedOverlayHandler(){
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
