@@ -1,7 +1,11 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.blockentity.multi.BlockEntityHatch;
 import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
+import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.StructureCache;
@@ -10,8 +14,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Random;
 
 public class CoverMuffler extends BaseCover {
@@ -25,6 +31,24 @@ public class CoverMuffler extends BaseCover {
         if (type.equals("pipe"))
             return PIPE_COVER_MODEL;
         return getBasicModel();
+    }
+
+    @Override
+    public void onBlockUpdate() {
+        super.onBlockUpdate();
+        BlockState neighbor = this.handler.getTile().getLevel().getBlockState(this.handler.getTile().getBlockPos().relative(this.side));
+        boolean isAir = neighbor.isAir();
+        if (this.handler.getTile() instanceof BlockEntityHatch<?> machine){
+            machine.getComponentHandler().map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
+                controller.recipeHandler.ifPresent(r -> {
+                    if (isAir && r.isProcessingBlocked()){
+                        r.setProcessingBlocked(false);
+                    } else if (!isAir && !r.isProcessingBlocked()){
+                        r.setProcessingBlocked(true);
+                    }
+                });
+            });
+        }
     }
 
     @Override
