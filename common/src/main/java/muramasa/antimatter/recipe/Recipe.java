@@ -124,7 +124,7 @@ public class Recipe implements IRecipe {
 
     @Override
     public boolean hasInputChances() {
-        return inputChances != null && outputChances.length == itemsInput.size();
+        return inputChances != null && inputChances.length == itemsInput.size();
     }
 
     public void setIds(ResourceLocation id, String map) {
