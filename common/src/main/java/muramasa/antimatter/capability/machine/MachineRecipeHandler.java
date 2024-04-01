@@ -625,6 +625,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         nbt.put("F", fluid);
         nbt.putInt("P", currentProgress);
         nbt.putBoolean("C", consumedResources);
+        nbt.putBoolean("PB", processingBlocked);
         if (activeRecipe != null){
             nbt.putString("AR", activeRecipe.getId().toString());
         }
@@ -639,6 +640,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         fluidInputs = new ObjectArrayList<>();
         nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));
         nbt.getList("F", 10).forEach(t -> fluidInputs.add(AntimatterPlatformUtils.fromTag((CompoundTag) t)));
+        this.processingBlocked = nbt.getBoolean("PB");
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
