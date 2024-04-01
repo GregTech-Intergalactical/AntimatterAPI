@@ -4,6 +4,7 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
@@ -54,6 +55,10 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     @Getter
     protected int currentProgress,
             maxProgress;
+
+    @Getter
+    @Setter
+    protected boolean processingBlocked = false;
     protected int overclock;
 
     //20 seconds per check.
@@ -327,6 +332,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     }
 
     public boolean consumeResourceForRecipe(boolean simulate) {
+        if (processingBlocked) return false;
         if (activeRecipe.getPower() > 0) {
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
