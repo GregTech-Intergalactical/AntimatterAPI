@@ -51,7 +51,7 @@ dependencies{
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
     modImplementation(include("com.github.Trinsdar:ARRP:0.6.7-hotfix"))
     modCompileOnly("com.blamejared.crafttweaker:CraftTweaker-fabric-1.18.2:${rootProject.crafttweaker_version}")
-    modCompileOnly(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"))
+    modCompileOnly(include("io.github.trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"))
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}"){
         exclude(group: "mezz.jei", module: "jei-1.18.2-fabric-api")
