@@ -69,15 +69,14 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
                 BlockPos blockpos = context.getClickedPos();
                 Level world = context.getLevel();
                 Player playerentity = context.getPlayer();
-                ItemStack itemstack = context.getItemInHand();
                 BlockState blockstate1 = world.getBlockState(blockpos);
                 Block block = blockstate1.getBlock();
                 if (block == blockstate.getBlock()) {
-                    blockstate1 = updateBlockStateFromTag(blockpos, world, itemstack, blockstate1);
-                    onBlockPlaced(blockpos, world, playerentity, itemstack, blockstate1);
-                    block.setPlacedBy(world, blockpos, blockstate1, playerentity, itemstack);
+                    blockstate1 = updateBlockStateFromTag(blockpos, world, torch, blockstate1);
+                    onBlockPlaced(blockpos, world, playerentity, torch, blockstate1);
+                    block.setPlacedBy(world, blockpos, blockstate1, playerentity, torch);
                     if (playerentity instanceof ServerPlayer) {
-                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerentity, blockpos, itemstack);
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerentity, blockpos, torch);
                     }
                 }
 
@@ -112,7 +111,7 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
         }
 
         if (blockstate != state) {
-            level.setBlock(pos, blockstate, 11);
+            level.setBlock(pos, blockstate, 2);
         }
 
         return blockstate;
