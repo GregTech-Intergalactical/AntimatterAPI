@@ -51,6 +51,12 @@ import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -214,7 +220,21 @@ public class Antimatter extends AntimatterMod {
         } else if (event == RegistrationEvent.CLIENT_DATA_INIT){
             AntimatterModelManager.init();
             ClientData.init();
+            if (AntimatterConfig.OVERRIDE_BASALT_TEXTURE.get()){
+                try {
+                    AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTexture(new ResourceLocation("block/basalt_top"), readImage("block/stone/basalt/stone"));
+                    AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTexture(new ResourceLocation("block/basalt_side"), readImage("block/stone/basalt/stone"));
+                    AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTexture(new ResourceLocation("block/smooth_basalt"), readImage("block/stone/basalt/smooth"));
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
         }
+    }
+
+    private static BufferedImage readImage(String imagePath) throws IOException {
+        InputStream in = Antimatter.class.getResourceAsStream("/assets/" + Ref.ID + "/textures/" + imagePath + ".png");
+        return ImageIO.read(in);
     }
 
     @Override
