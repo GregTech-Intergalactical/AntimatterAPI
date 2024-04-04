@@ -348,6 +348,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("item.charge", "Energy");
         add("item.reusable", "Reusable");
         add("item.amps", "Warning: outputs %s amps");
+        add("antimatter.tooltip.battery.tier", "%s Battery");
         add("antimatter.tooltip.material_primary", "Primary Material: %s");
         add("antimatter.tooltip.material_secondary", "Secondary Material: %s");
         add("antimatter.tooltip.dye_color", "Handle Color: %s");
