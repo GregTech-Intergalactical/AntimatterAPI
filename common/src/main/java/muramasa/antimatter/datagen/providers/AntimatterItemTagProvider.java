@@ -31,6 +31,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Objects;
 import java.util.Set;
@@ -60,6 +61,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
     private void antimatterTags() {
         this.tag(TagUtils.getForgelikeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
         this.tag(ForgeCTags.GEMS_QUARTZ_ALL).addTag(GEM.getMaterialTag(Quartz));
+        this.tag(TagUtils.getForgelikeItemTag("stone")).add(Items.BASALT);
     }
 
     protected void processTags(String domain) {
