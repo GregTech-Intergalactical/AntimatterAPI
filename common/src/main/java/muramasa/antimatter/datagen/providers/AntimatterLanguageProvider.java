@@ -476,7 +476,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         }
         override(i.getBlockState(t).getDescriptionId(), value);
         if (i instanceof BasicMultiMachine<?>) {
-            add(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", value.concat(" Multiblock"));
+            override(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", value.concat(" Multiblock"));
         }
     }
 
