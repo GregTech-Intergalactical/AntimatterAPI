@@ -192,7 +192,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
-        registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
+        //registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
     }
 
     @Override
