@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.blockentity.BlockEntityBase;
@@ -55,6 +56,7 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
             tooltip.add(Utils.literal("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(Utils.literal("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
             tooltip.add(Utils.literal("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
+            tooltip.add(Utils.literal("Frame: " + AntimatterAPI.all(BlockFrame.class).size()));
             tooltip.add(Utils.literal("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
             tooltip.add(Utils.literal("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
             tooltip.add(Utils.literal("Data:"));

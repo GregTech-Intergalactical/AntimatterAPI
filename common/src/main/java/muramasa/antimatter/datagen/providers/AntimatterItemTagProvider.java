@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.data.ForgeCTags;
@@ -118,6 +119,11 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
              this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
             });
             AntimatterAPI.all(BlockStorage.class, storage -> {
+                MaterialType<?> type = storage.getType();
+                String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
+                this.copy(getForgelikeBlockTag(name), getForgelikeItemTag(name));
+            });
+            AntimatterAPI.all(BlockFrame.class, storage -> {
                 MaterialType<?> type = storage.getType();
                 String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
                 this.copy(getForgelikeBlockTag(name), getForgelikeItemTag(name));

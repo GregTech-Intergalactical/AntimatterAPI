@@ -233,6 +233,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
                 }
             });
+            AntimatterAPI.all(BlockFrame.class).forEach(block -> {
+                add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
+            });
             AntimatterAPI.all(BlockSurfaceRock.class).forEach(b -> {
                 add(b, String.join("", getLocalizeStoneType(b.getStoneType()) + " ", (b.getMaterial() == Material.NULL ? "" : getLocalizedType(b.getMaterial()) + " "), "Surface Rock"));
             });

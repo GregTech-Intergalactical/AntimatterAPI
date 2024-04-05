@@ -102,6 +102,17 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 this.tag(getForgelikeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16
             });
+            AntimatterAPI.all(BlockFrame.class, block -> {
+                this.tag(block.getType().getTag()).add(block).replace(replace);
+                String name = String.join("", block.getType().getTag().location().getPath(), "/", (block.getType().getId().equals("raw_ore_block") ? "raw_" : ""), block.getMaterial().getId());
+                if (block.getMaterial() == AntimatterMaterials.Wood){
+                    this.tag(AntimatterDefaultTools.AXE.getToolType()).add(block);
+                } else {
+                    this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(block).replace(replace);
+                }
+                this.tag(getForgelikeBlockTag(name)).add(block);
+                // if (block.getType() == FRAME) add climbable tag in 1.16
+            });
             AntimatterAPI.all(BlockItemPipe.class, pipe -> {
                 this.tag(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe"))).add(pipe);
             });

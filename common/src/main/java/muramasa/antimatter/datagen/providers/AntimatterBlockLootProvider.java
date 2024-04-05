@@ -91,6 +91,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
                     add(block);
                 }
             });
+            AntimatterAPI.all(BlockFrame.class, this::add);
             AntimatterAPI.all(BlockStone.class, b -> {
                 if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
                     tables.put(b, b2 -> createSingleItemTableWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
