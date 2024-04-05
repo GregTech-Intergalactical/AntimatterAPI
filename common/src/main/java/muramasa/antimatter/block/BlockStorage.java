@@ -56,25 +56,27 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 if (ctx.getPlayer().isCrouching()) return ctx;
                 BlockPos actualPos = ctx.getClickedPos().relative(ctx.getClickedFace().getOpposite());
                 BlockState state = ctx.getLevel().getBlockState(actualPos);
-                // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
                 if (!state.is(AntimatterMaterialTypes.FRAME.getTag())) return ctx;
-                BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(actualPos.getX(), actualPos.getY(), actualPos.getZ());
+                Direction direction = ctx.getClickedFace() == Direction.UP ? ctx.getHorizontalDirection() : Direction.UP;
+                int i = 0;
+                BlockPos.MutableBlockPos mutableBlockPos = actualPos.mutable().move(direction);
                 while (true) {
-                    mutablePos.move(Direction.UP);
-                    if (!ctx.getLevel().isClientSide && !ctx.getLevel().isInWorldBounds(mutablePos)) {
+                    if (!ctx.getLevel().isClientSide && !ctx.getLevel().isInWorldBounds(mutableBlockPos)) {
                         Player player = ctx.getPlayer();
                         int j = ctx.getLevel().getMaxBuildHeight();
-                        if (player instanceof ServerPlayer serverPlayer && mutablePos.getY() >= j) {
+                        if (player instanceof ServerPlayer serverPlayer && mutableBlockPos.getY() >= j) {
                             serverPlayer.sendMessage((Utils.translatable("build.tooHigh", j - 1)).withStyle(ChatFormatting.RED), ChatType.GAME_INFO, Util.NIL_UUID);
                         }
                         break;
                     }
-                    BlockState upState = ctx.getLevel().getBlockState(mutablePos);
-                    if (upState.canBeReplaced(ctx)) {
-                        return BlockPlaceContext.at(ctx, mutablePos, Direction.UP);
-                    } else if (upState.getBlock() != state.getBlock() && !upState.is(AntimatterMaterialTypes.FRAME.getTag())){
+                    BlockState blockState = ctx.getLevel().getBlockState(mutableBlockPos);
+                    if (!blockState.is(this.getBlock())) {
+                        if (blockState.canBeReplaced(ctx)) {
+                            return BlockPlaceContext.at(ctx, mutableBlockPos, direction);
+                        }
                         break;
                     }
+                    mutableBlockPos.move(direction);
                 }
                 return ctx;
             }
