@@ -129,7 +129,7 @@ public class AntimatterConfig {
             GROUP_ORES_ONLY = general.addBool("group_ores_only", true, "Only adds collapsable groups for ores and rocks, requires ADD_REI_GROUPS to be true - Default: true");
             SHOW_ALL_ORES = general.addBool("show_all_ores", false, "Show all ore variants in jei/rei, not just stone variants - Default: false");
             SHOW_ROCKS = general.addBool("show_rocks", false, "Show all block versions of rocks in jei/rei - Default: false");
-            OVERRIDE_BASALT_TEXTURE = general.addBool("override_basalt_texture", false, "Override vanilla basalt texture why my own version - Default: false");
+            OVERRIDE_BASALT_TEXTURE = general.addBool("override_basalt_texture", false, "Override vanilla basalt texture why my own version - Default: false").setRequiredReload(ReloadMode.GAME);
             CONFIG_CLIENT = AntimatterPlatformUtils.createConfig(Ref.ID, client, ConfigSettings.withConfigType(ConfigType.CLIENT).withAutomations(AutomationType.AUTO_LOAD));
             CONFIG_CLIENT.register();
         }
