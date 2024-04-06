@@ -65,12 +65,12 @@ public class BlockFrame extends BlockStorage implements IItemBlockProvider, Simp
         StateDefinition.Builder<Block, BlockState> builder = new StateDefinition.Builder<>(this);
         this.createBlockStateDefinition(builder);
         this.stateContainer = builder.create(Block::defaultBlockState, BlockState::new);
-        this.registerDefaultState(this.stateContainer.any().setValue(PROPERTIES.get(maxRange), maxRange).setValue(WATERLOGGED, false).setValue(BOTTOM, false));
+        this.registerDefaultState(this.stateContainer.any().setValue(PROPERTIES.get(maxRange), maxRange).setValue(WATERLOGGED, false));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (!initialized) return;
-        builder.add(PROPERTIES.get(maxRange), WATERLOGGED, BOTTOM);
+        builder.add(PROPERTIES.get(maxRange), WATERLOGGED);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class BlockFrame extends BlockStorage implements IItemBlockProvider, Simp
         BlockPos blockPos = blockPlaceContext.getClickedPos();
         Level level = blockPlaceContext.getLevel();
         int i = getDistance(level, blockPos);
-        return this.defaultBlockState().setValue(WATERLOGGED, level.getFluidState(blockPos).getType() == Fluids.WATER).setValue(PROPERTIES.get(maxRange), i).setValue(BOTTOM, this.isBottom(level, blockPos, i));
+        return this.defaultBlockState().setValue(WATERLOGGED, level.getFluidState(blockPos).getType() == Fluids.WATER).setValue(PROPERTIES.get(maxRange), i);
     }
 
     public void onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
@@ -106,7 +106,7 @@ public class BlockFrame extends BlockStorage implements IItemBlockProvider, Simp
 
     public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, Random randomSource) {
         int i = getDistance(serverLevel, blockPos);
-        BlockState blockState2 = blockState.setValue(PROPERTIES.get(maxRange), i).setValue(BOTTOM, this.isBottom(serverLevel, blockPos, i));
+        BlockState blockState2 = blockState.setValue(PROPERTIES.get(maxRange), i);
         if (blockState2.getValue(PROPERTIES.get(maxRange)) == maxRange) {
             if (blockState.getValue(PROPERTIES.get(maxRange)) == maxRange) {
                 FallingBlockEntity.fall(serverLevel, blockPos, blockState2);
@@ -125,10 +125,6 @@ public class BlockFrame extends BlockStorage implements IItemBlockProvider, Simp
 
     public FluidState getFluidState(BlockState blockState) {
         return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
-    }
-
-    private boolean isBottom(BlockGetter blockGetter, BlockPos blockPos, int i) {
-        return i > 0 && !blockGetter.getBlockState(blockPos.below()).is(this);
     }
 
     public int getDistance(BlockGetter blockGetter, BlockPos blockPos) {
