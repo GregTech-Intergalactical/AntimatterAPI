@@ -222,6 +222,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatt
         }
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(Utils.translatable("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
+        tooltip.add(Utils.translatable("antimatter.tooltip.durability", Utils.literal((stack.getMaxDamage() - stack.getDamageValue()) + "/" + stack.getMaxDamage()).withStyle(ChatFormatting.GREEN)));
         IBasicAntimatterTool.super.onGenericAddInformation(stack, tooltip, flag);
     }
 
