@@ -12,15 +12,12 @@ import tesseract.graph.Connectivity;
 public class PipeItemHandler extends SidedCombinedInvWrapper {
     BlockEntityItemPipe<?> pipe;
     public PipeItemHandler(Direction side, BlockEntityItemPipe<?> pipe, CoverHandler<?> coverHandler, ExtendedItemContainer... itemHandler) {
-        super(side, coverHandler, itemHandler);
+        super(side, coverHandler, d -> !Connectivity.has(pipe.mDisabledInputs, d.get3DDataValue()), d -> !Connectivity.has(pipe.mDisabledOutputs, d.get3DDataValue()), itemHandler);
         this.pipe = pipe;
     }
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (Connectivity.has(pipe.mDisabledInputs, side.get3DDataValue())){
-            return stack;
-        }
         ItemStack superInsert = super.insertItem(slot, stack, simulate);
         if (superInsert.getCount() < stack.getCount() && !simulate){
             pipe.mLastReceivedFrom = (byte) side.get3DDataValue();

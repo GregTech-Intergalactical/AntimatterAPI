@@ -66,6 +66,14 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
         return (Map<SlotType<?>, ExtendedItemContainer>) (Object) inventories;
     }
 
+
+    public boolean allowsInput(Direction side){
+        return true;
+    }
+
+    public boolean allowsOutput(Direction side){
+        return true;
+    }
     @Override
     public void init() {
         ///registerNet();
@@ -407,7 +415,7 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
 
     @Override
     public Optional<ExtendedItemContainer> forSide(Direction side) {
-        return Optional.of(new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(ExtendedItemContainer[]::new)));
+        return Optional.of(new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this::allowsInput, this::allowsOutput, this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(ExtendedItemContainer[]::new)));
     }
 
     @Override

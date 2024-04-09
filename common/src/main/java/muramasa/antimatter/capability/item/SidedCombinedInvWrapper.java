@@ -7,19 +7,26 @@ import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemNode;
 
+import java.util.function.Predicate;
+
 public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItemNode {
     protected Direction side;
     protected CoverHandler<?> coverHandler;
+    private final Predicate<Direction> inputFunction;
+    private final Predicate<Direction> outputFunction;
 
-    public SidedCombinedInvWrapper(Direction side, CoverHandler<?> coverHandler, ExtendedItemContainer... itemHandler) {
+    public SidedCombinedInvWrapper(Direction side, CoverHandler<?> coverHandler, Predicate<Direction> inputFunction, Predicate<Direction> outputFunction, ExtendedItemContainer... itemHandler) {
         super(itemHandler);
         this.side = side;
         this.coverHandler = coverHandler;
+        this.inputFunction = inputFunction;
+        this.outputFunction = outputFunction;
     }
 
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (!inputFunction.test(side)) return stack;
         if (coverHandler != null) {
             if (coverHandler.get(side).blocksInput(ExtendedItemContainer.class, side)) {
                 return stack;
@@ -35,6 +42,7 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
     @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (!outputFunction.test(side)) return ItemStack.EMPTY;
         if (coverHandler != null && (coverHandler.get(side).blocksOutput(ExtendedItemContainer.class, side) || coverHandler.onTransfer(getItem(slot), side, false, simulate)))
             return ItemStack.EMPTY;
         return super.extractItem(slot, amount, simulate);
