@@ -4,6 +4,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.item.ItemBasic;
+import muramasa.antimatter.material.data.ToolData;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
@@ -48,6 +49,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
+import static muramasa.antimatter.material.MaterialTags.TOOLS;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IMaterialObject {
 
@@ -88,6 +90,10 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
 
     @SuppressWarnings("NoTranslation")
     public static void addTooltipsForMaterialItems(ItemStack stack, Material mat, MaterialType<?> type, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        if (mat.has(TOOLS)){
+            ToolData toolData = TOOLS.get(mat);
+            tooltip.add(Utils.literal("Q: " + toolData.toolQuality() + " - S: " + toolData.toolSpeed() + " - D: " + toolData.toolDurability()).withStyle(ChatFormatting.BLUE));
+        }
         if (!mat.getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
                 tooltip.add(Utils.translatable("antimatter.tooltip.chemical_formula").append(": ").append(Utils.literal(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));
