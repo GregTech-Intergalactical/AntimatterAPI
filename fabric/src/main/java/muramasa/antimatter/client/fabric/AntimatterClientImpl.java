@@ -59,7 +59,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
         ItemTooltipCallback.EVENT.register(((stack, context, lines) -> {
             MaterialType.addTooltip(stack, lines, Minecraft.getInstance().player, context);
             //TODO is this needed?
-            ClientEvents.onItemTooltip(context, lines);
+            ClientEvents.onItemTooltip(stack, lines, Minecraft.getInstance().player, context);
         }));
         RecipesUpdatedCallback.EVENT.register((CommonEvents::recipeEvent));
         //TODO fix this
