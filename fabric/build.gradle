@@ -49,7 +49,7 @@ dependencies{
     modImplementation(include("com.gtnewhorizon.structurelib:structurelib-fabric:${project.structurelib_version}-${project.minecraft_version}"))
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
-    modImplementation(include("com.github.Trinsdar:ARRP:0.6.7-hotfix"))
+    modImplementation(include("io.github.trinsdar:arrp:0.6.7"))
     modCompileOnly("com.blamejared.crafttweaker:CraftTweaker-fabric-1.18.2:${rootProject.crafttweaker_version}")
     modCompileOnly(include("io.github.trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"))
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
