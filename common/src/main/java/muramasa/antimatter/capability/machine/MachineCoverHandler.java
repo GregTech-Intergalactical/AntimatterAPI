@@ -27,13 +27,15 @@ import java.util.Optional;
 public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler<?>> {
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
-        Arrays.stream(Ref.DIRS).forEach(d -> {
-            Direction facing = getTileFacing();
-            Direction newDir = Utils.rotate(facing, d);
-            CoverFactory factory = tile.getMachineType().defaultCover(d);
-            covers.put(newDir, factory.get().get(this, null, newDir, factory));
-            buildLookup(ICover.emptyFactory, tile.getMachineType().defaultCover(d), newDir);
-        });
+        if (tile.isServerSide()) {
+            Arrays.stream(Ref.DIRS).forEach(d -> {
+                Direction facing = getTileFacing();
+                Direction newDir = Utils.rotate(facing, d);
+                CoverFactory factory = tile.getMachineType().defaultCover(d);
+                covers.put(newDir, factory.get().get(this, null, newDir, factory));
+                buildLookup(ICover.emptyFactory, tile.getMachineType().defaultCover(d), newDir);
+            });
+        }
     }
 
     public Direction getOutputFacing() {

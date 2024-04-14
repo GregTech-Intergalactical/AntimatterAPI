@@ -320,7 +320,9 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
-        coverHandler.ifPresent(c -> c.readFromStack(stack));
+        if (!level.isClientSide()) {
+            coverHandler.ifPresent(c -> c.readFromStack(stack));
+        }
     }
 
     protected void markDirty() {
