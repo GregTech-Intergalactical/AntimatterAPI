@@ -28,6 +28,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
+
 public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
     public static final BehaviourTorchPlacing INSTANCE = new BehaviourTorchPlacing();
 
@@ -67,54 +69,50 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
                 return InteractionResult.FAIL;
             } else {
                 BlockPos blockpos = context.getClickedPos();
-                Level world = context.getLevel();
-                Player playerentity = context.getPlayer();
-                BlockState blockstate1 = world.getBlockState(blockpos);
-                Block block = blockstate1.getBlock();
+                Level level = context.getLevel();
+                Player player = context.getPlayer();
+                BlockState blockstate2 = level.getBlockState(blockpos);
+                Block block = blockstate2.getBlock();
                 if (block == blockstate.getBlock()) {
-                    blockstate1 = updateBlockStateFromTag(blockpos, world, torch, blockstate1);
-                    onBlockPlaced(blockpos, world, playerentity, torch, blockstate1);
-                    block.setPlacedBy(world, blockpos, blockstate1, playerentity, torch);
-                    if (playerentity instanceof ServerPlayer) {
-                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerentity, blockpos, torch);
+                    blockstate2 = updateBlockStateFromTag(blockpos, level, torch, blockstate2);
+                    BlockItem.updateCustomBlockEntityTag(level, player, blockpos, torch);
+                    block.setPlacedBy(level, blockpos, blockstate2, player, torch);
+                    if (player instanceof ServerPlayer) {
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockpos, torch);
                     }
                 }
 
                 //TODO figure out why this used world, blockstate, and player in getSountType
-                world.gameEvent(playerentity, GameEvent.BLOCK_PLACE, blockpos);
-                SoundType soundtype = blockstate1.getSoundType();
-                world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                level.gameEvent(player, GameEvent.BLOCK_PLACE, blockpos);
+                SoundType soundtype = blockstate2.getSoundType();
+                level.playSound(player, blockpos, Blocks.TORCH.getSoundType(blockstate2).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
     }
 
-    protected static boolean onBlockPlaced(BlockPos pos, Level worldIn, @Nullable Player player, ItemStack stack, BlockState state) {
-        return BlockItem.updateCustomBlockEntityTag(worldIn, player, pos, stack);
-    }
-
     private static BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack stack, BlockState state) {
-        BlockState blockstate = state;
-        CompoundTag compoundnbt = stack.getTag();
-        if (compoundnbt != null) {
-            CompoundTag compoundnbt1 = compoundnbt.getCompound("BlockStateTag");
-            StateDefinition<Block, BlockState> statecontainer = state.getBlock().getStateDefinition();
+        BlockState blockState = state;
+        CompoundTag compoundTag = stack.getTag();
+        if (compoundTag != null) {
+            CompoundTag compoundTag2 = compoundTag.getCompound("BlockStateTag");
+            StateDefinition<Block, BlockState> stateDefinition = blockState.getBlock().getStateDefinition();
 
-            for (String s : compoundnbt1.getAllKeys()) {
-                Property<?> property = statecontainer.getProperty(s);
+            for (String string : compoundTag2.getAllKeys()) {
+                Property<?> property = stateDefinition.getProperty(string);
                 if (property != null) {
-                    String s1 = compoundnbt1.get(s).getAsString();
-                    blockstate = updateState(blockstate, property, s1);
+                    String string2 = compoundTag2.get(string).getAsString();
+                    blockState = updateState(blockState, property, string2);
                 }
             }
         }
 
-        if (blockstate != state) {
-            level.setBlock(pos, blockstate, 2);
+        if (blockState != state) {
+            level.setBlock(pos, blockState, 2);
         }
 
-        return blockstate;
+        return blockState;
     }
 
     private static <T extends Comparable<T>> BlockState updateState(BlockState state, Property<T> property, String value) {
