@@ -55,8 +55,8 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
             }
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 if ((sides & (1 << i)) > 0) {
-                    ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
                     Direction rotated = Utils.rotate(getTileFacing(), Ref.DIRS[i]);
+                    ICover cover = CoverFactory.readCoverRotated(this, Direction.from3DDataValue(i), rotated, nbt);
                     buildLookup(covers.get(rotated).getFactory(), cover.getFactory(), rotated);
                     covers.put(rotated, cover);
                 }
