@@ -44,7 +44,7 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
     modImplementation(include("io.github.trinsdar:arrp-forge:0.6.7"))
-    modImplementation(include("io.github.reforgedmods:terraform-utils-v1:3.1.5"))
+    modImplementation(include("io.github.reforgedmods.terraform-api:terraform-utils-v1:3.1.5"))
     modImplementation(include("earth.terrarium:botarium-forge-1.18.2:${project.botarium_version}"))
     modImplementation(include("com.gtnewhorizon.structurelib:structurelib-forge:${project.structurelib_version}-${project.minecraft_version}"))
     modImplementation(include("com.teamresourceful.resourcefullib:resourcefullib-forge-1.18.2:${project.resourcefullib_version}"))
