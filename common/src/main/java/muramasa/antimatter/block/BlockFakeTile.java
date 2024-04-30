@@ -48,13 +48,15 @@ public class BlockFakeTile extends BlockBasic implements IRegistryEntryProvider,
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (!level.isClientSide && be instanceof BlockEntityFakeBlock fakeBlock){
+        if (be instanceof BlockEntityFakeBlock fakeBlock){
             if (fakeBlock.getController() != null){
                 if (fakeBlock.getController().getMachineType().has(MachineFlag.GUI) && fakeBlock.getController().canPlayerOpenGui(player)) {
-                    AntimatterPlatformUtils.openGui((ServerPlayer) player, fakeBlock.getController(), extra -> {
-                        extra.writeBlockPos(fakeBlock.getController().getBlockPos());
-                    });
-                    return InteractionResult.SUCCESS;
+                    if (!level.isClientSide){
+                        AntimatterPlatformUtils.openGui((ServerPlayer) player, fakeBlock.getController(), extra -> {
+                            extra.writeBlockPos(fakeBlock.getController().getBlockPos());
+                        });
+                    }
+                    return InteractionResult.sidedSuccess(!level.isClientSide());
                 }
             }
         }

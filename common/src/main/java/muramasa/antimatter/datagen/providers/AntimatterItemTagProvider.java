@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.data.AntimatterTags;
 import muramasa.antimatter.data.ForgeCTags;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
@@ -42,8 +43,7 @@ import java.util.stream.Stream;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
 import static muramasa.antimatter.data.AntimatterMaterials.Quartz;
-import static muramasa.antimatter.material.MaterialTags.CABLE;
-import static muramasa.antimatter.material.MaterialTags.WIRE;
+import static muramasa.antimatter.material.MaterialTags.*;
 import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
@@ -134,6 +134,9 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
                 provider.add(item).replace(replace);
                 this.tag(item.getTag()).add(item).replace(replace);
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
+                if (item.getType() == PLATE && item.getMaterial().has(RUBBERTOOLS) && item.getMaterial().has(TOOLS)){
+                    this.tag(AntimatterTags.PLATE_PLUNGER).add(item);
+                }
             });
             AntimatterAPI.all(MaterialType.class, t -> {
                 t.getReplacements().forEach((m, i) -> {

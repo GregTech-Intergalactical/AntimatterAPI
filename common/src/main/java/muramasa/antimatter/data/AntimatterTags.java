@@ -11,6 +11,7 @@ public class AntimatterTags {
     public static final TagKey<Fluid> ACID = TagUtils.getFluidTag(new ResourceLocation(Ref.ID, "acid"));
     public static final TagKey<Item> RADIOACTIVE = TagUtils.getItemTag(new ResourceLocation(Ref.ID, "radioactive"));
     public static final TagKey<Item> RADIATION_PROOF = TagUtils.getItemTag(new ResourceLocation(Ref.ID, "radiation_proof"));
+    public static final TagKey<Item> PLATE_PLUNGER = TagUtils.getForgelikeItemTag("plates/plunger");
     static void init(){
 
     }
