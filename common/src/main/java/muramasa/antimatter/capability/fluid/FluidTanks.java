@@ -87,9 +87,6 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
             if (tank.getStoredFluid().matches(stack)) {
                 firstAvailable = i;
                 break;
-            } else if ((drain && !tank.extractFluid(stack, true).isEmpty())
-                    || (!drain && tank.insertFluid(stack, true) != 0)) {
-                return i;
             }
         }
         if (firstAvailable == -1) return firstEmpty;
