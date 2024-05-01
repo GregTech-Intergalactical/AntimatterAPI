@@ -43,11 +43,13 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
         if (c.getClickedFace() == Direction.DOWN) return InteractionResult.PASS;
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         BlockState changedState = null;
-        if (state.getBlock() instanceof CampfireBlock && state.getValue(CampfireBlock.LIT)) {
-            state.setValue(CampfireBlock.LIT, false);
-            changedState = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "shovel_dig");
-            if (changedState != null) {
-                c.getLevel().levelEvent(c.getPlayer(), 1009, c.getClickedPos(), 0);
+        // Campfire putout
+        if (state.getBlock() instanceof CampfireBlock) {
+            if (state.getValue(CampfireBlock.LIT)){
+                changedState = getFireModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "shovel_dig");
+                if (changedState != null) {
+                    c.getLevel().levelEvent(c.getPlayer(), 1009, c.getClickedPos(), 0);
+                }
             }
         } else if (state != null) {
             changedState = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "shovel_flatten");
@@ -75,6 +77,11 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
             }
         }
         return state;
+    }
+
+    private BlockState getFireModifiedState(BlockState originalState, BlockState changedState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
+        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
+        return eventState != originalState ? eventState : changedState;
     }
 
     public static void addStrippedBlock(Block from, Block to) { FLATTENING_MAP.put(from, to); }
