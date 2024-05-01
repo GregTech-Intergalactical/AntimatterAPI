@@ -354,7 +354,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         prov.state(block, builder);
     }
 
-    void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
+    protected void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         List<JLoaderModel> arr = new ArrayList<>();
 
         for (Direction dir : Ref.DIRS) {
