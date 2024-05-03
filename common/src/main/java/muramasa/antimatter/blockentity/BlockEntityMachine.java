@@ -253,6 +253,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (facing != null) {
             coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
         }
+        coverHandler.ifPresent(h -> h.getCovers().forEach((d, c) -> c.onBlockUpdateAllSides()));
     }
 
 

@@ -107,6 +107,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
     }
 
+    default void onBlockUpdateAllSides(){
+
+    }
+
     @Override
     default String handlerDomain() {
         return getDomain();

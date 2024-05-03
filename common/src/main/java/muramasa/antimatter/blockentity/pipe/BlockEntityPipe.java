@@ -139,6 +139,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
             blockUpdating = false;
         }
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
+        coverHandler.ifPresent(h -> h.getCovers().forEach((d, c) -> c.onBlockUpdateAllSides()));
     }
 
     @Override
