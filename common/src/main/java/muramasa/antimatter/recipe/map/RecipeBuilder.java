@@ -127,6 +127,10 @@ public class RecipeBuilder {
         recipe.setHidden(hidden);
         recipe.setFake(fake);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
+        if (recipeMapOnly){
+            recipe.setId(this.id);
+            recipe.setMapId(this.recipeMap.getId());
+        }
         return recipe;
     }
 
