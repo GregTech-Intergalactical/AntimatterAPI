@@ -78,6 +78,20 @@ public class VeinSavedData extends SavedData {
         return ores.get(chunkPos);
     }
 
+    public Map<Material, LongList> getOresInChunkAtY(int chunkX, int chunkZ, int y){
+        Map<Material, LongList> map = geOresInChunk(chunkX, chunkZ);
+        Map<Material, LongList> map2 = new Object2ObjectOpenHashMap<>();
+        map.forEach((k, v) -> {
+            v.forEach(l -> {
+                BlockPos pos = BlockPos.of(l);
+                if (pos.getY() == y){
+                    map2.computeIfAbsent(k, k1 -> new LongArrayList()).add(l);
+                }
+            });
+        });
+        return map2;
+    }
+
     public boolean addOreToChunk(int chunkX, int chunkZ, Material material, BlockPos pos){
         var map = geOresInChunk(chunkX, chunkZ);
         if (!map.containsKey(material) || !map.get(material).contains(pos.asLong())){
