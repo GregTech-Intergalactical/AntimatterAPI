@@ -117,7 +117,7 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
             if (canOutput(dir)) {
                 BlockEntity tile = BlockEntityCache.getBlockEntity(this.tile.getLevel(),this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
-                Optional<IHeatHandler> handle = TesseractCapUtils.getHeatHandler(tile, dir.getOpposite());
+                Optional<IHeatHandler> handle = TesseractCapUtils.INSTANCE.getHeatHandler(tile, dir.getOpposite());
                 if (handle.map(h -> !h.canInput(dir.getOpposite())).orElse(true)) continue;
                 handle.ifPresent(eh -> Utils.transferHeat(this, eh));
             }

@@ -111,9 +111,9 @@ public class ItemFluidIcon extends ItemBasic<ItemFluidIcon> implements IContaine
             FluidHolder fluid = x.getFluidInTank(0);
             if (fluid.isEmpty()) return;
             List<Component> str = new ArrayList<>();
-            str.add(FluidPlatformUtils.getFluidDisplayName(fluid));
-            str.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(fluid.getFluid())).withStyle(ChatFormatting.RED));
-            String liquid = !FluidPlatformUtils.isFluidGaseous(fluid.getFluid()) ? "liquid" : "gas";
+            str.add(FluidPlatformUtils.INSTANCE.getFluidDisplayName(fluid));
+            str.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.INSTANCE.getFluidTemperature(fluid.getFluid())).withStyle(ChatFormatting.RED));
+            String liquid = !FluidPlatformUtils.INSTANCE.isFluidGaseous(fluid.getFluid()) ? "liquid" : "gas";
             str.add(Utils.translatable("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
             AntimatterJEIREIPlugin.addModDescriptor(str, fluid);
             tooltip.addAll(str);

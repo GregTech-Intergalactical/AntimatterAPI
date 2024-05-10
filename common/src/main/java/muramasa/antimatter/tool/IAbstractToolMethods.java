@@ -12,8 +12,6 @@ public interface IAbstractToolMethods {
 
     int getMaxDamage(ItemStack stack);
 
-    boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment);
-
     static <T extends LivingEntity> int damageItemStatic(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (stack.getItem() instanceof IAbstractToolMethods me){
             return me.damageItem(stack, amount, entity, onBroken);

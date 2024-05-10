@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 public class Wire<T extends Wire<T>> extends Cable<T> {
 
     public Wire(String domain, Material material, int loss, Tier tier) {
+        this(domain, material, (double) loss, tier);
+    }
+
+    public Wire(String domain, Material material, double loss, Tier tier) {
         super(domain, material, loss, tier);
         material.flags(MaterialTags.WIRE);
     }

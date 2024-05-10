@@ -1,11 +1,10 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.item.ItemBasic;
+import muramasa.antimatter.material.data.ToolData;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
@@ -50,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
-import static muramasa.antimatter.util.CodeUtils.bind8;
+import static muramasa.antimatter.material.MaterialTags.TOOLS;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IMaterialObject {
 
@@ -84,13 +83,17 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         //Here only add specific types, events are handled below.
-        if (type == AntimatterMaterialTypes.ROCK) {
+        if (type == AntimatterMaterialTypes.BEARING_ROCK) {
             tooltip.add(Utils.translatable("antimatter.tooltip.occurrence").append(Utils.literal(material.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW)));
         }
     }
 
     @SuppressWarnings("NoTranslation")
     public static void addTooltipsForMaterialItems(ItemStack stack, Material mat, MaterialType<?> type, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        if (mat.has(TOOLS)){
+            ToolData toolData = TOOLS.get(mat);
+            tooltip.add(Utils.literal("Q: " + toolData.toolQuality() + " - S: " + toolData.toolSpeed() + " - D: " + toolData.toolDurability()).withStyle(ChatFormatting.BLUE));
+        }
         if (!mat.getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
                 tooltip.add(Utils.translatable("antimatter.tooltip.chemical_formula").append(": ").append(Utils.literal(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));
@@ -104,7 +107,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (type == AntimatterMaterialTypes.ROCK){
+        if (type == AntimatterMaterialTypes.BEARING_ROCK || type == ROCK){
             return tryPlace(new BlockPlaceContext(context));
         }
         return super.useOn(context);
@@ -114,9 +117,14 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         if (!context.canPlace()) {
             return InteractionResult.FAIL;
         } else {
-            BlockState existing = WorldGenHelper.getStoneStateForRock(context.getClickedPos().getY() - 1, context.getClickedPos(), context.getLevel());
-            StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
-            BlockState blockstate = AntimatterMaterialTypes.ROCK.get().get(material, type).asState();
+            BlockState blockstate;
+            if (this.type == BEARING_ROCK){
+                BlockState existing = WorldGenHelper.getStoneStateForRock(context.getClickedPos().getY() - 1, context.getClickedPos(), context.getLevel());
+                StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
+                blockstate = AntimatterMaterialTypes.BEARING_ROCK.get().get(material, type).asState();
+            } else {
+                blockstate = ROCK.get().get(material).asState();
+            }
             if (blockstate == null) {
                 return InteractionResult.FAIL;
             } else if (!context.getLevel().setBlock(context.getClickedPos(), blockstate, 11)) {
@@ -140,7 +148,6 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                 if (!context.getPlayer().isCreative()){
                     context.getItemInHand().shrink(1);
                 }
-                //TODO figure out why this used world, blockstate, and player in getSountType
                 SoundType soundtype = blockstate1.getSoundType();
                 world.playSound(playerentity, blockpos, blockstate.getBlock().getSoundType(blockstate1).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 

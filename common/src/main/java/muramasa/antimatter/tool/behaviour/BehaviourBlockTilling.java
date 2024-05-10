@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
+public class BehaviourBlockTilling implements IItemUse<IBasicAntimatterTool> {
 
     public static final BehaviourBlockTilling INSTANCE = new BehaviourBlockTilling();
 
@@ -37,7 +38,7 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         if (c.getClickedFace() != Direction.DOWN && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
             BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "hoe_dig");
             if (blockstate == null) return InteractionResult.PASS;

@@ -44,6 +44,6 @@ public class BlockEntityCache {
         if (blockEntity != null){
             return FluidHooks.safeGetBlockFluidManager(blockEntity, side);
         }*/
-        return TesseractCapUtils.getFluidHandler(level, pos, side);
+        return TesseractCapUtils.INSTANCE.getFluidHandler(level, pos, side);
     }
 }

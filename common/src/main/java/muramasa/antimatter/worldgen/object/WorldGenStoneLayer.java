@@ -64,7 +64,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
         return list;
     }
 
-    static List<WorldGenStoneLayer> getFlat(String id, int weight, int minY, int maxY, @Nullable StoneType stoneType, @Nullable BlockState stoneState, List<ResourceKey<Level>> dimensions) {
+    static List<WorldGenStoneLayer> getFlat(String id, int weight, int minY, int maxY, @Nullable StoneType stoneType, @Nullable BlockState stoneState, StoneLayerOre[] ores, List<ResourceKey<Level>> dimensions) {
         return IntStream.range(0, weight).mapToObj(i -> {
             return new WorldGenStoneLayer(
                     id,
@@ -74,12 +74,12 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
                     minY,
                     maxY,
                     dimensions
-            );
+            ).addOres(ores);
         }).collect(Collectors.toList());
     }
 
     static List<WorldGenStoneLayer> getFlat(WorldGenStoneLayer vein){
-        return getFlat(vein.getId(), vein.weight, vein.minY, vein.maxY, vein.stoneType, vein.stoneState, vein.getDimensions().stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
+        return getFlat(vein.getId(), vein.weight, vein.minY, vein.maxY, vein.stoneType, vein.stoneState, vein.ores, vein.getDimensions().stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
     }
 
     public JsonObject toJson(){

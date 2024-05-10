@@ -21,6 +21,7 @@ public class AntimatterConfig {
     public static ConfigEntry.BoolValue GROUP_ORES_ONLY;
     public static ConfigEntry.BoolValue SHOW_ALL_ORES;
     public static ConfigEntry.BoolValue SHOW_ROCKS;
+    public static ConfigEntry.BoolValue OVERRIDE_BASALT_TEXTURE;
 
 
     /**
@@ -55,6 +56,8 @@ public class AntimatterConfig {
 
     public static ConfigEntry.IntValue ORE_VEIN_ROCK_CHANCE;
     public static ConfigEntry.IntValue STONE_LAYER_ROCK_CHANCE;
+    public static ConfigEntry.IntValue STONE_LAYER_ORE_ROCK_CHANCE;
+    public static ConfigEntry.IntValue STONE_LAYER_DENSE_ORE_ROCK_CHANCE;
     public static ConfigEntry.IntValue ORE_VEIN_MAX_SIZE;
     public static ConfigEntry.IntValue ORE_VEIN_CHANCE;
     public static ConfigEntry.IntValue ORE_VEIN_FIND_ATTEMPTS;
@@ -95,7 +98,9 @@ public class AntimatterConfig {
         ConfigSection stoneLayers = world.addSubSection("stone_layers");
         STONE_LAYERS = stoneLayers.addBool("stone_layers", true, "Enable stone layers - Default: true");
         STONE_LAYER_ORES = stoneLayers.addBool("stone_layer_ores", true, "Enable stone layers having ores - Default: true");
-        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 20, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 8");
+        STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 40, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 20");
+        STONE_LAYER_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_ore_rock_chance", 60, "Chance of stone layers ore veins having surface rocks. chance is 1/(the number) - Default: 40");
+        STONE_LAYER_DENSE_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_dense_ore_rock_chance", 2000, "Chance of dense ore stone layers having surface rocks. chance is 1/(the number) - Default: 2000");
 
         ConfigSection gameplay = config.add("gameplay");
         INPUT_RESET_MULTIBLOCK = gameplay.addBool("input_reset_mulitblock", false, "Whether or not to reconsume recipe inputs on multiblock failure - Default : false");
@@ -124,6 +129,7 @@ public class AntimatterConfig {
             GROUP_ORES_ONLY = general.addBool("group_ores_only", true, "Only adds collapsable groups for ores and rocks, requires ADD_REI_GROUPS to be true - Default: true");
             SHOW_ALL_ORES = general.addBool("show_all_ores", false, "Show all ore variants in jei/rei, not just stone variants - Default: false");
             SHOW_ROCKS = general.addBool("show_rocks", false, "Show all block versions of rocks in jei/rei - Default: false");
+            OVERRIDE_BASALT_TEXTURE = general.addBool("override_basalt_texture", false, "Override vanilla basalt texture why my own version - Default: false").setRequiredReload(ReloadMode.GAME);
             CONFIG_CLIENT = AntimatterPlatformUtils.createConfig(Ref.ID, client, ConfigSettings.withConfigType(ConfigType.CLIENT).withAutomations(AutomationType.AUTO_LOAD));
             CONFIG_CLIENT.register();
         }

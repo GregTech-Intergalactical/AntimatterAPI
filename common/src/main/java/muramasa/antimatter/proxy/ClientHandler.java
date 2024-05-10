@@ -4,6 +4,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockFakeTile;
+import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
@@ -95,7 +96,9 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(BlockMultiMachine.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockOre.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockPipe.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == AntimatterMaterialTypes.FRAME || b.getType() == AntimatterMaterialTypes.RAW_ORE_BLOCK)
+            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == AntimatterMaterialTypes.RAW_ORE_BLOCK)
+                    .forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockFrame.class).stream().filter(b -> b.getType() == AntimatterMaterialTypes.FRAME)
                     .forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockSurfaceRock.class).stream().forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {

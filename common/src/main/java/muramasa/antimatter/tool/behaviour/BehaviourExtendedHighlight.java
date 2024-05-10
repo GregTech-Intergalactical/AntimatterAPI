@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.ICoverHandlerProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterTool> {
+public class BehaviourExtendedHighlight implements IItemHighlight<IBasicAntimatterTool> {
 
     final float INDENTATION_SIDE = 0.25F;
     final double INTERACT_DISTANCE = 5;
@@ -48,8 +49,8 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
         for (var extraPipeFunction : EXTRA_PIPE_FUNCTIONS) {
             if (extraPipeFunction.apply(dir, tile)) return true;
         }
-        if (tile instanceof BlockEntityPipe) {
-            return ((BlockEntityPipe) tile).canConnect(dir.get3DDataValue());
+        if (tile instanceof BlockEntityPipe<?> pipe) {
+            return (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) ? pipe.canConnectVirtual(dir.get3DDataValue()) : pipe.canConnect(dir.get3DDataValue());
         }
         if (tile instanceof BlockEntityMachine<?> machine) {
             Direction direction = machine.getOutputFacing();

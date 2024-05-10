@@ -24,10 +24,8 @@ public class RecipeProxies {
             Ingredient input = ingredients.get(0);
             ItemStack[] stacks = input.getItems();
             RecipeIngredient ing = stacks.length == 1 ? RecipeIngredient.of(stacks[0]) : RecipeIngredient.of(1, input.getItems());
-            IRecipe recipe = b.recipeMapOnly().ii(ing)
+            return b.recipeMapOnly().ii(ing)
                     .io(t.getResultItem()).add(t.getId().getPath(), duration, power, 0, 1);
-            recipe.setMapId(b.getMap().getId());
-            return recipe;
         };
     }
 

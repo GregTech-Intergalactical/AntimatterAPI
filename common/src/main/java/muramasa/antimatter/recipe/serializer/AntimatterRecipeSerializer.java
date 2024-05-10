@@ -77,12 +77,19 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
             int special = json.has("special") ? json.get("special").getAsInt() : 0;
             Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
-            if (json.has("chances")) {
+            if (json.has("outputChances")) {
                 List<Integer> chances = new ObjectArrayList<>();
-                for (JsonElement el : json.getAsJsonArray("chances")) {
+                for (JsonElement el : json.getAsJsonArray("outputChances")) {
                     chances.add(el.getAsInt());
                 }
-                r.addChances(chances.stream().mapToInt(i -> i).toArray());
+                r.addOutputChances(chances.stream().mapToInt(i -> i).toArray());
+            }
+            if (json.has("inputChances")) {
+                List<Integer> chances = new ObjectArrayList<>();
+                for (JsonElement el : json.getAsJsonArray("inputChances")) {
+                    chances.add(el.getAsInt());
+                }
+                r.addInputChances(chances.stream().mapToInt(i -> i).toArray());
             }
             r.setHidden(json.get("hidden").getAsBoolean());
             r.setFake(json.get("fake").getAsBoolean());
@@ -176,14 +183,21 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         FluidHolder[] outf = new FluidHolder[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                outf[i] = FluidPlatformUtils.readFromPacket(buffer);
+                outf[i] = FluidPlatformUtils.INSTANCE.readFromPacket(buffer);
             }
         }
         size = buffer.readInt();
-        int[] chances = new int[size];
+        int[] outputChances = new int[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                chances[i] = buffer.readInt();
+                outputChances[i] = buffer.readInt();
+            }
+        }
+        size = buffer.readInt();
+        int[] inputChances = new int[size];
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                inputChances[i] = buffer.readInt();
             }
         }
         long power = buffer.readLong();
@@ -203,8 +217,11 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
                 special,
                 amps
         );
-        if (chances.length > 0)
-            r.addChances(chances);
+        if (outputChances.length > 0)
+            r.addOutputChances(outputChances);
+        if (inputChances.length > 0){
+            r.addInputChances(inputChances);
+        }
         r.setIds(recipeId, mapId);
         r.setHidden(hidden);
         r.setFake(fake);
@@ -233,11 +250,15 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         }
         buffer.writeInt(!recipe.hasOutputFluids() ? 0 : recipe.getOutputFluids().length);
         if (recipe.hasOutputFluids()) {
-            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> FluidPlatformUtils.writeToPacket(buffer, stack));
+            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> FluidPlatformUtils.INSTANCE.writeToPacket(buffer, stack));
         }
-        buffer.writeInt(recipe.hasChances() ? recipe.getChances().length : 0);
-        if (recipe.hasChances()) {
-            Arrays.stream(recipe.getChances()).forEach(buffer::writeInt);
+        buffer.writeInt(recipe.hasOutputChances() ? recipe.getOutputChances().length : 0);
+        if (recipe.hasOutputChances()) {
+            Arrays.stream(recipe.getOutputChances()).forEach(buffer::writeInt);
+        }
+        buffer.writeInt(recipe.hasInputChances() ? recipe.getInputChances().length : 0);
+        if (recipe.hasInputChances()) {
+            Arrays.stream(recipe.getInputChances()).forEach(buffer::writeInt);
         }
         buffer.writeLong(recipe.getPower());
         buffer.writeInt(recipe.getDuration());

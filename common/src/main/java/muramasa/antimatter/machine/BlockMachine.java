@@ -22,6 +22,7 @@ import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -77,7 +78,7 @@ import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
+public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock, IColorHandler {
     @Getter
     protected Machine<?> type;
     @Getter
@@ -222,9 +223,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             }
                         };
                         boolean success = false;
-                        if (FluidPlatformUtils.fillItemFromContainer(Utils.ca(1, stack), fh, consumer)){
+                        if (FluidPlatformUtils.INSTANCE.fillItemFromContainer(Utils.ca(1, stack), fh, consumer)){
                             success = true;
-                        } else if (FluidPlatformUtils.emptyItemIntoContainer(Utils.ca(1, stack), fh, consumer)){
+                        } else if (FluidPlatformUtils.INSTANCE.emptyItemIntoContainer(Utils.ca(1, stack), fh, consumer)){
                             success = true;
                         }
                         return success;
@@ -353,7 +354,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         prov.state(block, builder);
     }
 
-    void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
+    protected void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         List<JLoaderModel> arr = new ArrayList<>();
 
         for (Direction dir : Ref.DIRS) {
@@ -417,5 +418,27 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public BlockItem getItemBlock() {
         return type.getItemBlockFunction().apply(this);
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        int color = type.getItemColorHandler().getItemColor(stack, block, i);
+        if (color != -1){
+            return color;
+        }
+        return -1;
+    }
+
+    @Override
+    public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
+        BlockEntityMachine<?> machine = null;
+        if (world != null && pos != null && world.getBlockEntity(pos) instanceof BlockEntityMachine<?> machine1){
+            machine = machine1;
+        }
+        int color = type.getBlockColorHandler().getBlockColor(state, world, pos, machine, i);
+        if (color != -1){
+            return color;
+        }
+        return -1;
     }
 }

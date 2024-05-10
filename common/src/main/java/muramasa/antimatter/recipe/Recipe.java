@@ -38,7 +38,7 @@ public class Recipe implements IRecipe {
     private final int special;
     private final long power;
     private final int amps;
-    private int[] chances;
+    private int[] outputChances, inputChances;
     private boolean hidden, fake;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     private Map<ItemStack, Integer> itemsWithChances = null;
@@ -81,8 +81,13 @@ public class Recipe implements IRecipe {
         return amps;
     }
 
-    public void addChances(int[] chances) {
-        this.chances = chances;
+    public void addOutputChances(int[] chances) {
+        this.outputChances = chances;
+    }
+
+    @Override
+    public void addInputChances(int[] chances) {
+        this.inputChances = chances;
     }
 
     public void setHidden(boolean hidden) {
@@ -113,9 +118,13 @@ public class Recipe implements IRecipe {
         return fluidsOutput != null && fluidsOutput.length > 0;
     }
 
-    public boolean hasChances() {
-        //TODO change this if we add input chances?
-        return chances != null && chances.length == itemsOutput.length;
+    public boolean hasOutputChances() {
+        return outputChances != null && outputChances.length == itemsOutput.length;
+    }
+
+    @Override
+    public boolean hasInputChances() {
+        return inputChances != null && inputChances.length == itemsInput.size();
     }
 
     public void setIds(ResourceLocation id, String map) {
@@ -162,10 +171,10 @@ public class Recipe implements IRecipe {
     public ItemStack[] getOutputItems(boolean chance) {
         if (hasOutputItems()) {
             ItemStack[] outputs = itemsOutput.clone();
-            if (chances != null) {
+            if (outputChances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (!chance || Ref.RNG.nextInt(10000) < chances[i]) {
+                    if (!chance || Ref.RNG.nextInt(10000) < outputChances[i]) {
                         evaluated.add(outputs[i].copy());
                     }
                 }
@@ -184,10 +193,10 @@ public class Recipe implements IRecipe {
     public ItemStack[] getFlatOutputItems() {
         if (hasOutputItems()) {
             ItemStack[] outputs = itemsOutput.clone();
-            if (chances != null) {
+            if (outputChances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (chances[i] < 10000) continue;
+                    if (outputChances[i] < 10000) continue;
                     evaluated.add(outputs[i]);
                 }
                 outputs = evaluated.toArray(new ItemStack[0]);
@@ -226,8 +235,14 @@ public class Recipe implements IRecipe {
     }
 
     @Nullable
-    public int[] getChances() {
-        return chances;
+    public int[] getOutputChances() {
+        return outputChances;
+    }
+
+    @Nullable
+    @Override
+    public int[] getInputChances() {
+        return inputChances;
     }
 
     public int getSpecialValue() {
@@ -252,9 +267,9 @@ public class Recipe implements IRecipe {
         if (itemsWithChances == null) {
             if (itemsOutput != null){
                 ImmutableMap.Builder<ItemStack, Integer> map = ImmutableMap.builder();
-                if (hasChances()){
+                if (hasOutputChances()){
                     for (int i = 0; i < itemsOutput.length; i++) {
-                        map.put(itemsOutput[i], chances[i]);
+                        map.put(itemsOutput[i], outputChances[i]);
                     }
                 } else {
                     for (ItemStack itemStack : itemsOutput) {
@@ -306,11 +321,20 @@ public class Recipe implements IRecipe {
             }
             builder.append(" }\n");
         }
-        if (chances != null) {
-            builder.append("Chances: { ");
-            for (int i = 0; i < chances.length; i++) {
-                builder.append((float) chances[i] / 100).append("%");
-                if (i != chances.length - 1) builder.append(", ");
+        if (outputChances != null) {
+            builder.append("Output Chances: { ");
+            for (int i = 0; i < outputChances.length; i++) {
+                builder.append((float) outputChances[i] / 100).append("%");
+                if (i != outputChances.length - 1) builder.append(", ");
+            }
+            builder.append(" }\n");
+        }
+
+        if (inputChances != null) {
+            builder.append("Input Chances: { ");
+            for (int i = 0; i < inputChances.length; i++) {
+                builder.append((float) inputChances[i] / 100).append("%");
+                if (i != inputChances.length - 1) builder.append(", ");
             }
             builder.append(" }\n");
         }

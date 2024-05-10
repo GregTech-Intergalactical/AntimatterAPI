@@ -30,6 +30,7 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
@@ -1078,10 +1079,12 @@ public class Utils {
         FluidState fluidState = world.getFluidState(pos);
         boolean destroyed = world.setBlockAndUpdate(pos, fluidState.createLegacyBlock());// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed) {
-            if (player != null && canHarvestBlock(state, world, pos, player)) {
-                state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
+            if (player != null) {
+                if (canHarvestBlock(state, world, pos, player)) {
+                    state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
+                }
+                stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             }
-            stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         }
         if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
@@ -1112,7 +1115,7 @@ public class Utils {
      * @param world  World instance
      * @return if tree logging was successful
      */
-    public static boolean treeLogging(@NotNull IAntimatterTool tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
+    public static boolean treeLogging(@NotNull AntimatterToolType tool, @NotNull ItemStack stack, @NotNull BlockPos start, @NotNull Player player, @NotNull Level world) {
         boolean[] harvested = new boolean[1];
         if (!AntimatterConfig.SMARTER_TREE_DETECTION.get()) {
             BlockState tpCompare = world.getBlockState(start);
@@ -1122,7 +1125,7 @@ public class Utils {
                 BlockPos tempPos = new BlockPos(start.getX(), y, start.getZ());
                 BlockState state = world.getBlockState(tempPos);
                 if (state.is(BlockTags.LOGS)) {
-                    if (breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability())){
+                    if (breakBlock(world, player, stack, tempPos, tool.getUseDurability())){
                         harvested[0] = true;
                     } else {
                         break;
@@ -1140,7 +1143,7 @@ public class Utils {
                 if (state.isAir() || !isCorrectToolForDrops(state, player))
                     return;
                 else if (state.is(BlockTags.LOGS)) {
-                    if (breakBlock(world, player, stack, b, tool.getAntimatterToolType().getUseDurability())){
+                    if (breakBlock(world, player, stack, b, tool.getUseDurability())){
                         harvested[0] = true;
                     } else {
                         stopped[0] = true;
@@ -1166,7 +1169,7 @@ public class Utils {
      * @param depth  depth amount of blocks
      * @return set of harvestable BlockPos in the specified range with specified player
      */
-    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
+    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@NotNull Level world, @NotNull Player player, @NotNull IBasicAntimatterTool tool, ItemStack stack, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
         return totalBlocks.stream().filter(b -> tool.genericIsCorrectToolForDrops(stack, world.getBlockState(b)) && world.getBlockState(b).getDestroySpeed(world, b) >= 0).collect(ImmutableSet.toImmutableSet());
     }

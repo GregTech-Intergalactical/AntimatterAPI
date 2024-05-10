@@ -177,6 +177,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (!list.isEmpty()) {
                 pipe.coverHandler.ifPresent(c -> c.writeToStack(list.get(0)));
             }
+            pipe.addInventoryDrops(list);
         }
         return list;
     }
@@ -259,13 +260,18 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Override // Used to set connection for sides where neighbor has pre-set connection
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         BlockEntityPipe<?> tile = getTilePipe(worldIn, pos);
-        if (tile != null) {
+        if (tile != null && !worldIn.isClientSide()) {
+            tile.coverHandler.ifPresent(c -> c.readFromStack(stack));
             for (Direction side : Ref.DIRS) {
                 BlockEntityPipe<?> neighbour = tile.getPipe(side);
+
                 if (neighbour != null && neighbour.connects(side.getOpposite())) {
-                    tile.setConnection(side);
+                    /*if (neighbour.blocksSide(side.getOpposite()) || tile.blocksSide(side)){
+                        neighbour.clearConnection(side.getOpposite());
+                    } else */if (!neighbour.blocksSide(side.getOpposite()) && !tile.blocksSide(side)) {
+                        tile.setConnection(side);
+                    }
                 }
-                tile.coverHandler.ifPresent(c -> c.readFromStack(stack));
             }
         }
     }
@@ -273,8 +279,10 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     // Used to set connection between pipes on which block was placed
     public boolean onBlockPlacedTo(Level world, BlockPos pos, Direction face) {
         BlockEntityPipe<?> tile = getTilePipe(world, pos);
-        if (tile != null) {
+        if (tile != null && !world.isClientSide()) {
             if (!world.getBlockState(pos.relative(face.getOpposite())).hasBlockEntity()) return false;
+            BlockEntityPipe<?> side = tile.getPipe(face.getOpposite());
+            if (side != null && side.blocksSide(face)) return false;
             tile.setConnection(face.getOpposite());
             return true;
         }
@@ -369,7 +377,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -380,16 +388,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 return Shapes.block();
             }
             if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
-                return Shapes.block();
-            }
-            BlockPipe<?> pipe = null;
-            if (player.getMainHandItem().getItem() instanceof PipeItemBlock) {
-                pipe = ((PipeItemBlock) player.getMainHandItem().getItem()).getPipe();
-            }
-            if (player.getOffhandItem().getItem() instanceof PipeItemBlock) {
-                pipe = ((PipeItemBlock) player.getOffhandItem().getItem()).getPipe();
-            }
-            if (getClass().isInstance(pipe)) {
                 return Shapes.block();
             }
         }
@@ -408,7 +406,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Nullable
-    private static BlockEntityPipe<?> getTilePipe(BlockGetter world, BlockPos pos) {
+    protected static BlockEntityPipe<?> getTilePipe(BlockGetter world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         return tile instanceof BlockEntityPipe ? (BlockEntityPipe<?>) tile : null;
     }

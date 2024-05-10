@@ -23,6 +23,7 @@ import muramasa.antimatter.pipe.TileTicker;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.CodeUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -169,7 +170,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
                 if (fluid.isEmpty()){
                     continue;
                 }
-                currentTemp = Math.max(FluidPlatformUtils.getFluidTemperature(fluid.getFluid()), currentTemp);
+                currentTemp = Math.max(FluidPlatformUtils.INSTANCE.getFluidTemperature(fluid.getFluid()), currentTemp);
             }
             return currentTemp == -1 ? 293L : currentTemp;
         }).orElse(293L);
@@ -223,11 +224,11 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
             FluidTank tTank = pipeFluidHandler.getInputTanks().getTank(i);
             FluidHolder tFluid = tTank.getStoredFluid();
             if (!tFluid.isEmpty()){
-                mTemperature = (tCheckTemperature ? FluidPlatformUtils.getFluidTemperature(tFluid.getFluid()) : Math.max(mTemperature, FluidPlatformUtils.getFluidTemperature(tFluid.getFluid())));
+                mTemperature = (tCheckTemperature ? FluidPlatformUtils.INSTANCE.getFluidTemperature(tFluid.getFluid()) : Math.max(mTemperature, FluidPlatformUtils.INSTANCE.getFluidTemperature(tFluid.getFluid())));
                 tCheckTemperature = false;
 
 
-                if (!isGasProof() && FluidPlatformUtils.isFluidGaseous(tFluid.getFluid())) {
+                if (!isGasProof() && FluidPlatformUtils.INSTANCE.isFluidGaseous(tFluid.getFluid())) {
                     transferredAmount += tTank.extractFluid(tFluid.copyWithAmount(8 * TesseractGraphWrappers.dropletMultiplier), false).getFluidAmount();
                     level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 1.0f);
                     /*try {
@@ -303,7 +304,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         // No Targets? Nothing to do then.
         if (tTargetCount <= 1) return;
         // Amount to distribute normally.
-        tAmount = divup(tAmount, tTargetCount);
+        tAmount = CodeUtils.divup(tAmount, tTargetCount);
         // Distribute to Pipes first.
         for (PlatformFluidHandler tPipe : tPipes) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tPipe.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
         // Check if we are empty.
@@ -317,11 +318,6 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         // And then if there still is pressure, distribute to Pipes again.
         tAmount = (aTank.getStoredFluid().getFluidAmount() - aTank.getCapacity()/2) / tPipes.size();
         if (tAmount > 0) for (PlatformFluidHandler tPipe : tPipes) transferredAmount += aTank.extractFluid(aTank.getStoredFluid().copyWithAmount(tPipe.insertFluid(aTank.getStoredFluid().copyWithAmount(tAmount), false)), false).getFluidAmount();
-    }
-
-    /** Divides but rounds up. */
-    public static long divup(long aNumber, long aDivider) {
-        return aNumber / aDivider + (aNumber % aDivider == 0 ? 0 : 1);
     }
 
     public static void burn(Level aWorld, int aX, int aY, int aZ) {
@@ -380,7 +376,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Pressure used: " + instance.stack.getFluidAmount(), left, top, 16448255);
         renderer.draw(stack, "Pressure total: " + getPressure()*20, left, top + 8, 16448255);
-        renderer.draw(stack, "Fluid: " + FluidPlatformUtils.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
+        renderer.draw(stack, "Fluid: " + FluidPlatformUtils.INSTANCE.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
         renderer.draw(stack, "(Above only in intersection)", left, top + 24, 16448255);
         //renderer.draw(stack, "Frame average: " + instance.holderPressure / 20, left, top + 32, 16448255);
         return 32;
@@ -392,7 +388,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getSize(); i++) {
                 FluidHolder stack = t.getFluidInTank(i);
-                list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mb.");
+                list.add(FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).toString() + " " + (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mb.");
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));

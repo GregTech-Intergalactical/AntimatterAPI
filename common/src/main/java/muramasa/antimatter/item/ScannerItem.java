@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.blockentity.BlockEntityBase;
@@ -55,6 +56,7 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
             tooltip.add(Utils.literal("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(Utils.literal("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
             tooltip.add(Utils.literal("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
+            tooltip.add(Utils.literal("Frame: " + AntimatterAPI.all(BlockFrame.class).size()));
             tooltip.add(Utils.literal("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
             tooltip.add(Utils.literal("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
             tooltip.add(Utils.literal("Data:"));
@@ -64,22 +66,23 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
     }
 
     @NotNull
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        if (context.getLevel().isClientSide) return super.useOn(context);
+    //@Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        if (context.getLevel().isClientSide) return InteractionResult.CONSUME;
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (tile instanceof BlockEntityBase) {
-            ((BlockEntityBase<?>) tile).getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
+        boolean success = false;
+        if (tile instanceof BlockEntityBase<?> base) {
+            base.getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
+            success = true;
         }
-        if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
-            ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
+        if (state.getBlock() instanceof BlockDynamic dynamic && context.getPlayer() != null) {
+            dynamic.getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
                 context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID());
             });
-            return InteractionResult.SUCCESS;
-        } else {
-
+            success = true;
         }
+        if (success) return InteractionResult.SUCCESS;
         return super.useOn(context);
     }
 

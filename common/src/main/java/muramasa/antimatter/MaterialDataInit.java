@@ -6,7 +6,6 @@ import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class MaterialDataInit {
     public static void onMaterialEvent(MaterialEvent event){
         //why?
         //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
-        event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.GEAR).addHandleStat(-10, -0.5F);
+        event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.GEAR, ROCK).addHandleStat(-10, -0.5F);
         AntimatterMaterials.Stone.remove(PLATE);
         event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.ROCK);
@@ -30,10 +29,9 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Deepslate).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Tuff).asDust(AntimatterMaterialTypes.ROCK);
 
-        event.setMaterial(AntimatterMaterials.Dirt).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Sand).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.RedSand).asDust(AntimatterMaterialTypes.ROCK);
-        event.setMaterial(AntimatterMaterials.Blackstone).asDust();
+        event.setMaterial(AntimatterMaterials.Sand).asDust();
+        event.setMaterial(AntimatterMaterials.RedSand).asDust();
+        event.setMaterial(AntimatterMaterials.Blackstone).asDust(AntimatterMaterialTypes.ROCK);
 
         event.setMaterial(AntimatterMaterials.Basalt).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Endstone).asDust();

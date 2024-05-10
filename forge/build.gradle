@@ -43,8 +43,8 @@ dependencies {
     modImplementation("mezz.jei:jei-1.18.2:9.7.2.1001")
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${rootProject.crafttweaker_version}")
-    modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.6.7-1.18.2"))
-    modImplementation(include("com.github.Reforged-Mods.Terraform-Reforged:terraform-utils-v1:${project.terraform_version}"))
+    modImplementation(include("io.github.trinsdar:arrp-forge:0.6.7.1"))
+    modImplementation(include("io.github.reforgedmods.terraform-api:terraform-utils-v1:4.2.1"))
     modImplementation(include("earth.terrarium:botarium-forge-1.19.2:${project.botarium_version}"))
     modImplementation(include("com.gtnewhorizon.structurelib:structurelib-forge:${project.structurelib_version}-${project.minecraft_version}"))
     modImplementation(include("com.teamresourceful.resourcefullib:resourcefullib-forge-1.19.2:${project.resourcefullib_version}"))

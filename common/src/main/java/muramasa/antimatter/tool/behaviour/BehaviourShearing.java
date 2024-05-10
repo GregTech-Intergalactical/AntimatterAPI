@@ -3,6 +3,7 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.behaviour.IInteractEntity;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.gameevent.GameEvent;
 
-public class BehaviourShearing implements IInteractEntity<IAntimatterTool> {
+public class BehaviourShearing implements IInteractEntity<IBasicAntimatterTool> {
     public static final BehaviourShearing INSTANCE = new BehaviourShearing();
     @Override
     public String getId() {
@@ -21,7 +22,7 @@ public class BehaviourShearing implements IInteractEntity<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult interactLivingEntity(IAntimatterTool instance, ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+    public InteractionResult interactLivingEntity(IBasicAntimatterTool instance, ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         if (!player.getLevel().isClientSide && interactionTarget instanceof Sheep sheep && sheep.readyForShearing()){
             sheep.shear(SoundSource.PLAYERS);
             sheep.gameEvent(GameEvent.SHEAR, player);

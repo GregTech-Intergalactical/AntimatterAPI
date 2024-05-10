@@ -133,6 +133,27 @@ public class CoverFactory implements IAntimatterObject {
         return cover;
     }
 
+    public static ICover readCoverRotated(ICoverHandler<?> source, Direction dir, Direction rotated, CompoundTag nbt) {
+        if (!nbt.contains(dir.get3DDataValue() + "d"))
+            return null;
+        String domain = nbt.getString(dir.get3DDataValue() + "d");
+        String id = nbt.getString(dir.get3DDataValue() + "i");
+        ResourceLocation location = new ResourceLocation(domain, id);
+        if (AntimatterRemapping.getCoverRemappingMap().containsKey(location)) location = AntimatterRemapping.getCoverRemappingMap().get(location);
+        CoverFactory factory = AntimatterAPI.get(CoverFactory.class, location);
+        if (factory == null) {
+            throw new IllegalStateException("Reading a cover with null factory, game in bad state");
+        }
+        Tier tier = nbt.contains(dir.get3DDataValue() + "t")
+                ? AntimatterAPI.get(Tier.class, nbt.getString(dir.get3DDataValue() + "t"))
+                : null;
+        ICover cover = factory.supplier.get(source, tier, rotated, factory);
+        cover.onCreate();
+        if (nbt.contains(dir.get3DDataValue() + "c"))
+            cover.deserialize((CompoundTag) nbt.get(dir.get3DDataValue() + "c"));
+        return cover;
+    }
+
     public static class Builder {
         List<Tier> tiers = Collections.singletonList(null);
 

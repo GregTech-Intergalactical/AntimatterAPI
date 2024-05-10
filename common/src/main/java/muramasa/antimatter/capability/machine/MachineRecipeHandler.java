@@ -4,6 +4,8 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
+import lombok.Setter;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
@@ -53,6 +55,10 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     @Getter
     protected int currentProgress,
             maxProgress;
+
+    @Getter
+    @Setter
+    protected boolean processingBlocked = false;
     protected int overclock;
 
     //20 seconds per check.
@@ -127,6 +133,9 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                 return;
             }
         }
+        if (activeRecipe != null && tile.getMachineState() == tile.getDefaultMachineState()){
+            tile.setMachineState(NO_POWER);
+        }
         if (activeRecipe == null) return;
         tickingRecipe = true;
         MachineState state;
@@ -137,7 +146,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                 break;
             case NO_POWER:
                 state = tickRecipe();
-                if (state != ACTIVE) {
+                if (state != ACTIVE && state != OUTPUT_FULL) {
                     tile.setMachineState(tile.getDefaultMachineState());
                 } else {
                     tile.setMachineState(state);
@@ -147,6 +156,9 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                 break;
         }
         tickingRecipe = false;
+    }
+
+    protected void logString(String message){
     }
 
     public IRecipe findRecipe() {
@@ -320,6 +332,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     }
 
     public boolean consumeResourceForRecipe(boolean simulate) {
+        if (processingBlocked) return false;
         if (activeRecipe.getPower() > 0) {
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
@@ -343,7 +356,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     protected boolean validateRecipe(IRecipe r) {
         long voltage = tile.getMachineType().amps() * tile.getMaxInputVoltage();
-        boolean ok = this.generator || voltage >= r.getPower() / r.getAmps();
+        boolean ok = this.generator || !tile.has(MachineFlag.EU) || voltage >= r.getPower() / r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
         for (IRecipeValidator validator : r.getValidators()) {
             if (!validator.validate(r, tile)) {
@@ -612,6 +625,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         nbt.put("F", fluid);
         nbt.putInt("P", currentProgress);
         nbt.putBoolean("C", consumedResources);
+        nbt.putBoolean("PB", processingBlocked);
         if (activeRecipe != null){
             nbt.putString("AR", activeRecipe.getId().toString());
         }
@@ -626,6 +640,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         fluidInputs = new ObjectArrayList<>();
         nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));
         nbt.getList("F", 10).forEach(t -> fluidInputs.add(AntimatterPlatformUtils.fromTag((CompoundTag) t)));
+        this.processingBlocked = nbt.getBoolean("PB");
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");

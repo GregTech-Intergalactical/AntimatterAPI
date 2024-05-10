@@ -51,6 +51,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static muramasa.antimatter.data.AntimatterDefaultTools.KNIFE;
+
 //@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class MaterialTool extends DiggerItem implements IAntimatterTool, IContainerItem {
@@ -161,6 +163,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         super.appendHoverText(stack, world, tooltip, flag);
     }
 
+    //TODO figure out why I wrote the below todo
     //TODO figure this out
     //@Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
@@ -205,7 +208,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
             destroySpeed = 0.0f;
         }
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IDestroySpeed destroySpeed1)) continue;
             float i = destroySpeed1.getDestroySpeed(this, destroySpeed, stack, state);
@@ -269,39 +272,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return this.getAttributeModifiers(slotType, stack);
     }
 
-//    @Override
-//    public ActionResultType onItemUse(ItemUseContext ctx) {
-//        return onGenericItemUse(ctx);
-
-    //TODO functionality moved to BlockMachine.onBlockActivated
-    //TODO determine if other mods need smart interaction on
-    //TODO blocks that *don't* extend BlockMachine
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile == null) return EnumActionResult.PASS;
-//        EnumActionResult result = EnumActionResult.PASS;
-//        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
-//            Direction targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
-//            IInteractHandler interactHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
-//            if (interactHandler != null) {
-//                if (type != null && interactHandler.onInteract(player, hand, targetSide, type)) {
-//                    damage(stack, type.getDamageCrafting(), player, true);
-//                    result = EnumActionResult.SUCCESS;
-//                }
-//            }
-//        }
-//        if (tile.hasCapability(GTCapabilities.COVERABLE, facing)) {
-//            Direction targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
-//            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
-//            if (coverHandler != null) {
-//                if (type != null && coverHandler.onInteract(player, hand, targetSide, type)) {
-//                    damage(stack, type.getDamageCrafting(), player, true);
-//                    result = EnumActionResult.SUCCESS;
-//                }
-//            }
-//        }
-//        return result;
-//    }
-
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (!type.isPowered()) {
@@ -330,7 +300,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         if (type.getBlacklistedEnchantments().contains(enchantment)) return false;
-        if (type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
+        if ((type.getToolTypes().contains(BlockTags.MINEABLE_WITH_AXE) || type == KNIFE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
         }
         return (!type.isPowered() || (enchantment != Enchantments.UNBREAKING && enchantment != Enchantments.MENDING)) && enchantment.category.canEnchant(stack.getItem());
@@ -356,6 +326,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     }
 
     private Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
-        return TesseractCapUtils.getEnergyHandlerItem(stack).map(e -> (ItemEnergyHandler) e);
+        return TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack).map(e -> (ItemEnergyHandler) e);
     }
 }

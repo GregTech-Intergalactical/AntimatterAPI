@@ -55,7 +55,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     @Override
     public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
-        if (worldIn.isClientSide) return;
+        if (worldIn.isClientSide || type.isHeatProof()) return;
         if (entityIn instanceof LivingEntity entity) {
             if (worldIn.getBlockEntity(pos) instanceof BlockEntityFluidPipe<?> fluidPipe) {
                 long temp = fluidPipe.getCurrentTemperature();

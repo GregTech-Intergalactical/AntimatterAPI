@@ -20,7 +20,7 @@ public class CoverDebug extends BaseCover {
         if (!simulate) {
             String fmt = "";
             if (object instanceof FluidHolder fluidHolder) {
-                fmt = String.format("Fluid: %s, amount: %d", FluidPlatformUtils.getFluidId(fluidHolder.getFluid()), (fluidHolder.getFluidAmount()));
+                fmt = String.format("Fluid: %s, amount: %d", FluidPlatformUtils.INSTANCE.getFluidId(fluidHolder.getFluid()), (fluidHolder.getFluidAmount()));
             } else {
                 fmt = object.toString();
             }

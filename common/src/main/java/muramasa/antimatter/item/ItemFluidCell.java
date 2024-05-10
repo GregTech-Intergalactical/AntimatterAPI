@@ -58,8 +58,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.BiPredicate;
 
-import static tesseract.FluidPlatformUtils.createFluidStack;
-
 public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContainerItem, IFluidItem{
 
     public final Material material;
@@ -115,7 +113,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
         FluidHooks.safeGetItemFluidManager(stack).ifPresent(x -> {
             FluidHolder fluid = x.getFluidInTank(0);
             if (!fluid.isEmpty()) {
-                MutableComponent fluidname = (MutableComponent) FluidPlatformUtils.getFluidDisplayName(fluid);
+                MutableComponent fluidname = (MutableComponent) FluidPlatformUtils.INSTANCE.getFluidDisplayName(fluid);
                 fluidname.append(": ").append(Utils.literal(NumberFormat.getNumberInstance(Locale.US).format(fluid.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mB").withStyle(ChatFormatting.GRAY));
                 tooltip.add(fluidname);
             }
@@ -130,7 +128,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     public ItemStack fill(Fluid fluid, long amount) {
         ItemStack stack = new ItemStack(this);
         ItemStackHolder holder = new ItemStackHolder(stack);
-        insert(holder, createFluidStack(fluid, amount));
+        insert(holder, FluidPlatformUtils.createFluidStack(fluid, amount));
         return holder.getStack();
     }
 
@@ -171,7 +169,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Override
     public BiPredicate<Integer, FluidHolder> getFilter() {
-        return (i, f) -> FluidPlatformUtils.getFluidTemperature(f.getFluid()) <= this.getMaxTemp();
+        return (i, f) -> FluidPlatformUtils.INSTANCE.getFluidTemperature(f.getFluid()) <= this.getMaxTemp();
     }
 
     @Override
@@ -229,7 +227,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
                     player.awardStat(Stats.ITEM_USED.get(this));
 
                     // play sound effect
-                    SoundEvent sound = FluidPlatformUtils.getFluidSound(newFluid, true);
+                    SoundEvent sound = FluidPlatformUtils.INSTANCE.getFluidSound(newFluid, true);
                     if (sound == null) {
                         sound = newFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
                     }
@@ -329,7 +327,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
      * @param pos    Position of sound
      */
     private void playEmptySound(Fluid fluid, @Nullable Player player, LevelAccessor world, BlockPos pos) {
-        SoundEvent sound = FluidPlatformUtils.getFluidSound(fluid, false);
+        SoundEvent sound = FluidPlatformUtils.INSTANCE.getFluidSound(fluid, false);
         if (sound == null) {
             sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
         }

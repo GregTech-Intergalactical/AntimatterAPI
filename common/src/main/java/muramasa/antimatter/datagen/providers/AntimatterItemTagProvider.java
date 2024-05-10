@@ -2,8 +2,11 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.data.AntimatterTags;
+import muramasa.antimatter.data.ForgeCTags;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
 import muramasa.antimatter.item.ItemFluidCell;
@@ -30,6 +33,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Objects;
 import java.util.Set;
@@ -37,10 +41,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static muramasa.antimatter.data.AntimatterMaterialTypes.BLOCK;
-import static muramasa.antimatter.data.AntimatterMaterialTypes.FRAME;
-import static muramasa.antimatter.material.MaterialTags.CABLE;
-import static muramasa.antimatter.material.MaterialTags.WIRE;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
+import static muramasa.antimatter.data.AntimatterMaterials.Quartz;
+import static muramasa.antimatter.material.MaterialTags.*;
 import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
@@ -58,6 +61,8 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
 
     private void antimatterTags() {
         this.tag(TagUtils.getForgelikeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
+        this.tag(ForgeCTags.GEMS_QUARTZ_ALL).addTag(GEM.getMaterialTag(Quartz));
+        this.tag(TagUtils.getForgelikeItemTag("stone")).add(Items.BASALT);
     }
 
     protected void processTags(String domain) {
@@ -106,6 +111,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
             AntimatterAPI.all(StoneType.class, s -> {
                 if (s instanceof CobbleStoneType c){
                     this.tag(ItemTags.STONE_TOOL_MATERIALS).add(c.getBlock("cobble").asItem());
+                    this.tag(ItemTags.STONE_CRAFTING_MATERIALS).add(c.getBlock("cobble").asItem());
                 }
             });
             AntimatterAPI.all(BlockOreStone.class, domain, s -> {
@@ -117,12 +123,20 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
                 String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
                 this.copy(getForgelikeBlockTag(name), getForgelikeItemTag(name));
             });
+            AntimatterAPI.all(BlockFrame.class, storage -> {
+                MaterialType<?> type = storage.getType();
+                String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
+                this.copy(getForgelikeBlockTag(name), getForgelikeItemTag(name));
+            });
             AntimatterAPI.all(MaterialItem.class, item -> {
                 TagKey<Item> type = item.getType().getTag();
                 AntimatterTagBuilder<Item> provider = this.tag(type);
                 provider.add(item).replace(replace);
                 this.tag(item.getTag()).add(item).replace(replace);
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
+                if (item.getType() == PLATE && item.getMaterial().has(RUBBERTOOLS) && item.getMaterial().has(TOOLS)){
+                    this.tag(AntimatterTags.PLATE_PLUNGER).add(item);
+                }
             });
             AntimatterAPI.all(MaterialType.class, t -> {
                 t.getReplacements().forEach((m, i) -> {

@@ -29,7 +29,7 @@ public interface IComponentHandler {
     Optional<MachineEnergyHandler<?>> getEnergyHandler();
 
     default Optional<IHeatHandler> getHeatHandler() {
-        return TesseractCapUtils.getHeatHandler(getTile(), null);
+        return TesseractCapUtils.INSTANCE.getHeatHandler(getTile(), null);
     }
 
     void onStructureFormed(BlockEntityMultiMachine<?> tile);

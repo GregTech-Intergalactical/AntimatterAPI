@@ -1,6 +1,7 @@
 package muramasa.antimatter.block;
 
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -40,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static muramasa.antimatter.data.AntimatterMaterialTypes.BEARING_ROCK;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.ROCK;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedBlock, ISharedAntimatterObject, IColorHandler, IMaterialObject {
@@ -51,12 +54,14 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> CONFIG_ARRAY[i] = i);
     }
 
+    @Getter
     protected Material material;
+    @Getter
     protected StoneType stoneType;
     protected final ImmutableMap<String, Texture> textureMap;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
-        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Properties.of(net.minecraft.world.level.material.Material.DECORATION).explosionResistance(1.0f).instabreak().sound(SoundType.STONE).noCollission().noOcclusion());
+        super(domain, "surface_rock_" + (material == Material.NULL ? "" :material.getId() + "_" ) + stoneType.getId(), Properties.of(net.minecraft.world.level.material.Material.DECORATION).explosionResistance(1.0f).instabreak().sound(SoundType.STONE).noCollission().noOcclusion());
         this.material = material;
         this.stoneType = stoneType;
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
@@ -70,12 +75,13 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         shapes.put(4, Block.box(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
         shapes.put(5, Block.box(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
         shapes.put(6, Block.box(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
-        textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, "material/rock_overlay"));
+        String overlay = material == Material.NULL ? "block/empty" : "material/surface_rock_overlay";
+        textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, overlay));
     }
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (AntimatterMaterialTypes.ROCK.isVisible()) items.add(new ItemStack(this));
+        if (BEARING_ROCK.isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
@@ -119,8 +125,9 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult traceResult) {
         if (player.isCrouching()) return InteractionResult.FAIL;
-        if (!player.addItem(AntimatterMaterialTypes.ROCK.get(material, 1))) {
-            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, AntimatterMaterialTypes.ROCK.get(material, 1)));
+        ItemStack drop = material != Material.NULL && material.has(BEARING_ROCK) ? BEARING_ROCK.get(material, 1) : stoneType.getMaterial().has(ROCK) ? ROCK.get(stoneType.getMaterial(), 1) : ItemStack.EMPTY;
+        if (!player.addItem(drop)) {
+            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, drop));
         }
         world.removeBlock(pos, true);
         return InteractionResult.SUCCESS;
@@ -155,11 +162,4 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         return info;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public StoneType getStoneType() {
-        return stoneType;
-    }
 }

@@ -97,4 +97,22 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         this.textureBlock = textureBlock;
         return (T) this;
     }
+
+    public T addStructureTooltip(Tier tier, int tooltips){
+        return addTooltipInfo((machine, stack, world, tooltip, flag) -> {
+            if (machine.getTier() == tier){
+                for (int i = 0; i < tooltips; i++) {
+                    tooltip.add(Utils.translatable("tooltip." + getId() + "." + tier.getId() + "." + i));
+                }
+            }
+        });
+    }
+
+    public T addStructureTooltip(int tooltips){
+        return addTooltipInfo((machine, stack, world, tooltip, flag) -> {
+            for (int i = 0; i < tooltips; i++) {
+                tooltip.add(Utils.translatable("tooltip." + getId() + "." + i));
+            }
+        });
+    }
 }

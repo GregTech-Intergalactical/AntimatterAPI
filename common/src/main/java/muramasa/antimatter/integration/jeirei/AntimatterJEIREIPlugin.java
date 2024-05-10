@@ -24,6 +24,7 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import static muramasa.antimatter.gui.SlotType.FL_OUT;
 
 public class AntimatterJEIREIPlugin{
     private static final List<Consumer<List<ItemLike>>> ITEMS_TO_HIDE = new ArrayList<>();
+    private static final List<Consumer<List<Fluid>>> FLUIDS_TO_HIDE = new ArrayList<>();
     @Getter
     private static final Map<BlockMachine, List<Pattern>> STRUCTURES = new Object2ObjectOpenHashMap<>();
     
@@ -168,7 +170,23 @@ public class AntimatterJEIREIPlugin{
         ITEMS_TO_HIDE.add(listConsumer);
     }
 
+    public static void addFluidsToHide(Fluid... fluids){
+        addFluidsToHide(l -> {
+            l.addAll(Arrays.asList(fluids));
+        });
+    }
+
+    public static void addFluidsToHide(Consumer<List<Fluid>> listConsumer){
+        FLUIDS_TO_HIDE.add(listConsumer);
+    }
+
     public static List<Consumer<List<ItemLike>>> getItemsToHide() {
         return ITEMS_TO_HIDE;
     }
+
+    public static List<Consumer<List<Fluid>>> getFluidsToHide() {
+        return FLUIDS_TO_HIDE;
+    }
+
+
 }

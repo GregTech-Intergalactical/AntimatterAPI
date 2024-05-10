@@ -10,6 +10,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -64,6 +66,14 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
         return (Map<SlotType<?>, ExtendedItemContainer>) (Object) inventories;
     }
 
+
+    public boolean allowsInput(Direction side){
+        return true;
+    }
+
+    public boolean allowsOutput(Direction side){
+        return true;
+    }
     @Override
     public void init() {
         ///registerNet();
@@ -199,7 +209,7 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
             for (int i = 0; i < chargeables.getContainerSize(); i++) {
                 ItemStack item = chargeables.getItem(i);
                 if (!item.isEmpty()) {
-                    TesseractCapUtils.getWrappedEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
+                    TesseractCapUtils.INSTANCE.getWrappedEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
                 }
             }
         }
@@ -279,6 +289,19 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
      * @return a list of consumed items, or an empty list if it failed during simulation.
      */
     public List<ItemStack> consumeInputs(IRecipe recipe, boolean simulate) {
+        if (!simulate && recipe.hasInputChances()){
+            int[] chances = recipe.getInputChances();
+            List<ItemStack> consumed = new ArrayList<>();
+            for (int i = 0; i < chances.length; i++) {
+                if (Ref.RNG.nextInt(10000) < chances[i]){
+                    consumed.addAll(consumeInputs(Collections.singletonList(recipe.getInputItems().get(i)), false));
+                }
+            }
+            if (!recipe.getInputItems().isEmpty() && consumed.isEmpty()){
+                consumed.add(Data.DEBUG_SCANNER.get(1)); //so the consumeInputs returns true
+            }
+            return consumed;
+        }
         return consumeInputs(recipe.getInputItems(), simulate);
     }
 
@@ -392,7 +415,7 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
 
     @Override
     public Optional<ExtendedItemContainer> forSide(Direction side) {
-        return Optional.of(new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(ExtendedItemContainer[]::new)));
+        return Optional.of(new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this::allowsInput, this::allowsOutput, this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(ExtendedItemContainer[]::new)));
     }
 
     @Override

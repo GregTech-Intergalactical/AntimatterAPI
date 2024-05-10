@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import tesseract.api.item.ExtendedItemContainer;
 
 
-//TODO: Should be used on filters
 public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     final boolean settable;
 

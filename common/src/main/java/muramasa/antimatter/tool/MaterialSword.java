@@ -159,7 +159,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         if (type.isPowered() && getCurrentEnergy(stack)  == 0){
             destroySpeed = 0.0f;
         }
-        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+        for (Map.Entry<String, IBehaviour<IBasicAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IDestroySpeed destroySpeed1)) continue;
             float i = destroySpeed1.getDestroySpeed(this, destroySpeed, stack, state);

@@ -16,7 +16,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiData;
@@ -25,7 +24,6 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -55,7 +53,6 @@ import static muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin.intT
 public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     protected static int JEI_OFFSET_X = 1, JEI_OFFSET_Y = 1;
-    //protected static FluidStackRenderer fluidRenderer = new FluidStackRenderer();
     protected static IGuiHelper guiHelper;
 
     protected String title;
@@ -166,6 +163,11 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                                         list.add(Utils.literal("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(Utils.literal(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
                                     }
                                 }
+                                if (recipe.hasInputChances()) {
+                                    if (recipe.getInputChances()[ss] < 10000) {
+                                        list.add(Utils.literal("Consumption Chance: " + ((float)recipe.getInputChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
+                                    }
+                                }
                             });
                             inputItems++;
                         }
@@ -183,9 +185,9 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     slot.addIngredient(VanillaTypes.ITEM_STACK, outputs.get(s));
                     final int ss = s;
                     slot.addTooltipCallback((ing, list) -> {
-                        if (recipe.hasChances()) {
-                            if (recipe.getChances()[ss] < 10000) {
-                                list.add(Utils.literal("Chance: " + ((float)recipe.getChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
+                        if (recipe.hasOutputChances()) {
+                            if (recipe.getOutputChances()[ss] < 10000) {
+                                list.add(Utils.literal("Output Chance: " + ((float)recipe.getOutputChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
                             }
                         }
                     });
@@ -242,8 +244,8 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         } else {
             list.add(Utils.translatable("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));
         }
-        list.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
-        String liquid = !FluidPlatformUtils.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
+        list.add(Utils.translatable("antimatter.tooltip.fluid.temp", FluidPlatformUtils.INSTANCE.getFluidTemperature(stack.getFluid())).withStyle(ChatFormatting.RED));
+        String liquid = !FluidPlatformUtils.INSTANCE.isFluidGaseous(stack.getFluid()) ? "liquid" : "gas";
         list.add(Utils.translatable("antimatter.tooltip.fluid." + liquid).withStyle(ChatFormatting.GREEN));
         if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
             list.add(Utils.literal("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
@@ -301,17 +303,36 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
         //Draw chance overlay.
-        if (recipe.hasChances()) {
+        if (recipe.hasOutputChances()) {
             List<IRecipeSlotView> views = recipeSlotsView.getSlotViews(RecipeIngredientRole.OUTPUT);
             List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
-            for (int i = 0; i < recipe.getChances().length; i++) {
-                if (recipe.getChances()[i] < 10000) {
+            for (int i = 0; i < recipe.getOutputChances().length; i++) {
+                if (recipe.getOutputChances()[i] < 10000) {
                     if (i >= slots.size()) break;
                     RenderSystem.disableBlend();
                     RenderSystem.disableDepthTest();
                     stack.pushPose();
                     stack.scale(0.5f, 0.5f, 1);
-                    String ch = (recipe.getChances()[i] / 100) + "%";
+                    String ch = (recipe.getOutputChances()[i] / 100) + "%";
+                    Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
+
+                    stack.popPose();
+                    RenderSystem.enableBlend();
+                    RenderSystem.enableDepthTest();
+                }
+            }
+        }
+        if (recipe.hasInputChances()) {
+            List<IRecipeSlotView> views = recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT);
+            List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_IN, guiTier);
+            for (int i = 0; i < recipe.getInputChances().length; i++) {
+                if (recipe.getInputChances()[i] < 10000) {
+                    if (i >= slots.size()) break;
+                    RenderSystem.disableBlend();
+                    RenderSystem.disableDepthTest();
+                    stack.pushPose();
+                    stack.scale(0.5f, 0.5f, 1);
+                    String ch = (recipe.getInputChances()[i] / 100) + "%";
                     Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
 
                     stack.popPose();

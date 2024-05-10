@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
-public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
+public class BehaviourLogStripping implements IItemUse<IBasicAntimatterTool> {
 
     public static final BehaviourLogStripping INSTANCE = new BehaviourLogStripping();
 
@@ -39,7 +40,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "axe_strip");
         if (stripped != null) {

@@ -27,6 +27,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     public boolean generateBlock, generateOre = true;
     private final Material material;
     private Texture[] textures;
+    protected Texture defaultTexture;
     private final SoundType soundType;
     private BlockState state;
     private Supplier<BlockState> stateSupplier;
@@ -40,7 +41,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         this.domain = domain;
         this.id = id;
         this.material = material;
-        this.textures = new Texture[]{texture};
+        this.defaultTexture = texture;
         this.soundType = soundType;
         this.generateBlock = generateBlock;
         this.gravity = false;
@@ -134,11 +135,11 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     }
 
     public Texture getTexture() {
-        return textures[0];
+        return defaultTexture;
     }
 
     public Texture[] getTextures() {
-        return textures;
+        return textures != null ? textures : new Texture[]{getTexture()};
     }
 
     public SoundType getSoundType() {

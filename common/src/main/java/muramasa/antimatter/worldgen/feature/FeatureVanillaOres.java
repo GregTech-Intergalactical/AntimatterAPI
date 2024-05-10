@@ -5,14 +5,18 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -30,6 +34,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import static muramasa.antimatter.Antimatter.LOGGER;
@@ -76,11 +81,11 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
         int spawned = 0;
         for (WorldGenVanillaOre vanillaOre : vanillaOres) {
             if (!vanillaOre.primary.has(vanillaOre.materialType) || (vanillaOre.secondary != Material.NULL && !vanillaOre.secondary.has(vanillaOre.secondaryType))) continue;
-            if (vanillaOre.rare && !(random.nextFloat() < 1.0F / (float)vanillaOre.weight)) continue;
+            if (vanillaOre.probability > 1 && random.nextInt(vanillaOre.probability) != 0) continue;
             int minY = Math.max(worldMinY, vanillaOre.minY);
             int maxY = Math.min(worldMaxY, vanillaOre.maxY);
             int i = 0;
-            int amountPerChunk = vanillaOre.rare ? 1 : vanillaOre.weight;
+            int amountPerChunk = vanillaOre.weight;
             for (int j = amountPerChunk; i < j; i++) {
                 int y = vanillaOre.triangle ? sample(random, minY, maxY) : minY + random.nextInt(Math.max(1, maxY - minY));
                 BlockPos spawnPos = new BlockPos(chunkCornerX + random.nextInt(16), y, chunkCornerZ + random.nextInt(16));
@@ -257,8 +262,25 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
 
     private boolean setOreBlock(WorldGenLevel level, BlockPos pos, WorldGenVanillaOre vanillaOre){
         Holder<Biome> biome = level.getBiome(pos);
-        ResourceLocation biomeKey = biome.unwrapKey().get().location();
-        if (vanillaOre.biomes.contains(biomeKey) == vanillaOre.biomeBlacklist) return false;
+        boolean failed = !vanillaOre.biomeBlacklist;
+        if (!vanillaOre.biomes.isEmpty()){
+            for (String filteredBiome : vanillaOre.biomes) {
+                BiPredicate<String, Holder<Biome>> predicate = (s, biomeHolder) -> {
+                    if (s.startsWith("#")){
+                        TagKey<Biome> compare = TagUtils.getBiomeTag(new ResourceLocation(filteredBiome.replace("#", "")));
+                        return biomeHolder.is(compare);
+                    } else {
+                        ResourceKey<Biome> compare = ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(filteredBiome));
+                        return biomeHolder.is(compare);
+                    }
+                };
+                if (predicate.test(filteredBiome, biome)){
+                    failed = vanillaOre.biomeBlacklist;
+                    break;
+                }
+            }
+            if (failed) return false;
+        }
         Material material = vanillaOre.primary;
         MaterialType<?> type = vanillaOre.materialType;
         if (vanillaOre.secondaryChance > 0.0f && vanillaOre.secondary != Material.NULL && level.getRandom().nextFloat() < vanillaOre.secondaryChance){

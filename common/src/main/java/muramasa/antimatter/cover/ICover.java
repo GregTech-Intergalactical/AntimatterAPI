@@ -107,6 +107,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
     }
 
+    default void onBlockUpdateAllSides(){
+
+    }
+
     @Override
     default String handlerDomain() {
         return getDomain();
@@ -176,6 +180,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
     }
 
     default <T> boolean blocksOutput(Class<T> cap, @Nullable Direction side) {
+        return false;
+    }
+
+    default boolean blockConnection(Direction side){
         return false;
     }
 

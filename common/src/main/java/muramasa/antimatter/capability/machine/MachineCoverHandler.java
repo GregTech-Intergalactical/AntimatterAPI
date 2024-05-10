@@ -29,9 +29,10 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
         super(tile, tile.getValidCovers());
         Arrays.stream(Ref.DIRS).forEach(d -> {
             Direction facing = getTileFacing();
-            Direction newDir = Utils.coverRotateFacing(d, facing);
-            covers.put(d, tile.getMachineType().defaultCover(newDir).get().get(this, null, d, tile.getMachineType().defaultCover(newDir)));
-            buildLookup(ICover.emptyFactory, tile.getMachineType().defaultCover(newDir), d);
+            Direction newDir = Utils.rotate(facing, d);
+            CoverFactory factory = tile.getMachineType().defaultCover(d);
+            covers.put(newDir, factory.get().get(this, null, newDir, factory));
+            buildLookup(ICover.emptyFactory, tile.getMachineType().defaultCover(d), newDir);
         });
     }
 
@@ -47,15 +48,18 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
         if (stack.getTag() != null && stack.getTag().contains("covers")){
             CompoundTag nbt = stack.getTag().getCompound("covers");
             byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
+            for (Direction dir : Direction.values()){
+                covers.put(dir, ICover.empty);
+            }
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 if ((sides & (1 << i)) > 0) {
-                    ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
                     Direction rotated = Utils.rotate(getTileFacing(), Ref.DIRS[i]);
+                    ICover cover = CoverFactory.readCoverRotated(this, Direction.from3DDataValue(i), rotated, nbt);
                     buildLookup(covers.get(rotated).getFactory(), cover.getFactory(), rotated);
                     covers.put(rotated, cover);
                 }
             }
-
+            this.getTile().sidedSync(true);
         }
     }
 
@@ -78,15 +82,16 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
     }
 
     protected boolean isCoverDefault(ICover cover){
-        return cover == getOutputCover();
+        return cover.getFactory() == getTile().getMachineType().getOutputCover();
     }
 
     public boolean setOutputFacing(Player entity, Direction side) {
         Direction dir = getOutputFacing();
-        if (dir == null) return false;
+        boolean empty = getTile().getMachineType().getOutputCover() == ICover.emptyFactory;
+        if (dir == null && empty) return false;
         if (side == dir) return false;
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
-        boolean ok = moveCover(entity, dir, side);
+        boolean ok = dir != null ? moveCover(entity, dir, side) : set(side, getTile().getMachineType().getOutputCover().get().get(this, null, side, getTile().getMachineType().getOutputCover()), true);
         if (ok) {
             getTile().invalidateCaps();
         }
@@ -95,7 +100,7 @@ public class MachineCoverHandler<T extends BlockEntityMachine<T>> extends CoverH
 
     @Override
     public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
-        if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
+        if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers() && !stack.isEmpty()) return false;
         boolean ok = super.set(side, old, stack, sync);
         if (ok && getTile().getLevel() != null) {
             if (!getTile().getLevel().isClientSide) {

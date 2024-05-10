@@ -143,16 +143,29 @@ public class ItemStackHandler implements ExtendedItemContainer, ContainerItemHan
         ListTag nbtTagList = new ListTag();
 
         for(int i = 0; i < this.stacks.size(); ++i) {
-            if (!((ItemStack)this.stacks.get(i)).isEmpty()) {
+            if (!this.stacks.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                ((ItemStack)this.stacks.get(i)).save(itemTag);
+                this.stacks.get(i).save(itemTag);
                 nbtTagList.add(itemTag);
             }
         }
 
         nbt.put("Items", nbtTagList);
         nbt.putInt("Size", this.stacks.size());
+        return nbt;
+    }
+
+    public CompoundTag serializeWithEmpty(CompoundTag nbt) {
+        ListTag nbtTagList = new ListTag();
+        for(int i = 0; i < this.stacks.size(); ++i) {
+            CompoundTag itemTag = new CompoundTag();
+            itemTag.putInt("Slot", i);
+            this.stacks.get(i).save(itemTag);
+            nbtTagList.add(itemTag);
+        }
+
+        nbt.put("Items", nbtTagList);
         return nbt;
     }
 

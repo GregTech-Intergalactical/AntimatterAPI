@@ -46,6 +46,9 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 else
                     this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
                 int oreMiningLevel = o.getMaterial().has(MaterialTags.MINING_LEVEL) ? MaterialTags.MINING_LEVEL.getInt(o.getMaterial()) : 0;
+                if (o.getOreType() == AntimatterMaterialTypes.ORE_SMALL && oreMiningLevel > 0){
+                    oreMiningLevel--;
+                }
                 int stoneMiningLevel = o.getStoneType().getHarvestLevel();
                 int maxLevel = Math.max(oreMiningLevel, stoneMiningLevel);
                 if (maxLevel > 0){
@@ -99,6 +102,17 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 this.tag(getForgelikeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16
             });
+            AntimatterAPI.all(BlockFrame.class, block -> {
+                this.tag(block.getType().getTag()).add(block).replace(replace);
+                String name = String.join("", block.getType().getTag().location().getPath(), "/", (block.getType().getId().equals("raw_ore_block") ? "raw_" : ""), block.getMaterial().getId());
+                if (block.getMaterial() == AntimatterMaterials.Wood){
+                    this.tag(AntimatterDefaultTools.AXE.getToolType()).add(block);
+                } else {
+                    this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(block).replace(replace);
+                }
+                this.tag(getForgelikeBlockTag(name)).add(block);
+                // if (block.getType() == FRAME) add climbable tag in 1.16
+            });
             AntimatterAPI.all(BlockItemPipe.class, pipe -> {
                 this.tag(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe"))).add(pipe);
             });
@@ -109,10 +123,10 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 }
             });
             AntimatterAPI.all(BlockMachine.class, pipe -> {
-                this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
+                this.tag(pipe.getType().getToolTag()).add(pipe);
             });
             AntimatterAPI.all(BlockMultiMachine.class, pipe -> {
-                this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
+                this.tag(pipe.getType().getToolTag()).add(pipe);
             });
             AntimatterAPI.all(AntimatterFluid.class, f -> {
                 this.tag(TagUtils.getBlockTag(new ResourceLocation("replaceable"))).add(f.getFluidBlock());

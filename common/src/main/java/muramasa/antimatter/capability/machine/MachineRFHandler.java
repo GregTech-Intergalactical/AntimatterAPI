@@ -42,7 +42,7 @@ public class MachineRFHandler<T extends BlockEntityMachine<T>> extends RFHandler
     public void onUpdate(){
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                BlockEntity tile = this.tile.getCachedBlockEntity(dir);
                 if (tile == null) continue;
                 Optional<PlatformEnergyManager> handle = EnergyHooks.safeGetBlockEnergyManager(tile, dir.getOpposite());
                 handle.ifPresent(eh -> Utils.transferEnergy(this, eh));

@@ -39,27 +39,6 @@ public class BlockEntityInfiniteStorage<T extends BlockEntityInfiniteStorage<T>>
                 return tile.getFacing() == direction;
             }
         });
-        // TODO
-        /*
-        interactHandler.setup((tile, tag) -> new MachineInteractHandler<BlockEntityMachine>(tile, tag) {
-            @Override
-            public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-                if ((type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && hand == Hand.MAIN_HAND) {
-                    energyHandler.ifPresent(h -> {
-                        int amps = h.getOutputAmperage();
-                        amps = (amps + 1) % amperage;
-                        h.setOutputAmperage(amps);
-                        // TODO: Replace by new TranslationTextComponent()
-                        player.sendMessage(new StringTextComponent(h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
-                    });
-                    return true;
-                }
-                return super.onInteract(player, hand, side, type);
-            }
-        });
-         */
-
-
     }
 
     @Override

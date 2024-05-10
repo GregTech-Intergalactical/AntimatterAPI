@@ -36,7 +36,7 @@ public class KubeJSRecipe extends RecipeJS {
     private long power;
     private int amps;
     private boolean hidden, fake;
-    private final List<Integer> chances = new ObjectArrayList<>();
+    private final List<Integer> outputChances = new ObjectArrayList<>(), inputChances = new ObjectArrayList<>();
     private String map;
 
     @Override
@@ -84,7 +84,12 @@ public class KubeJSRecipe extends RecipeJS {
             special = ((Number) listJS.get(8)).intValue();
             if (listJS.size() > 9) {
                 for (Object chance : ListJS.orSelf(listJS.get(9))) {
-                    this.chances.add(((Number) chance).intValue());
+                    this.outputChances.add(((Number) chance).intValue());
+                }
+            }
+            if (listJS.size() > 10){
+                for (Object chance : ListJS.orSelf(listJS.get(9))) {
+                    this.inputChances.add(((Number) chance).intValue());
                 }
             }
         } else {
@@ -122,14 +127,17 @@ public class KubeJSRecipe extends RecipeJS {
         this.hidden = GsonHelper.getAsBoolean(json, "hidden");
         this.fake = GsonHelper.getAsBoolean(json, "fake");
 
-        for (JsonElement e : GsonHelper.getAsJsonArray(json, "chances", new JsonArray())) {
-            this.chances.add(e.getAsInt());
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "outputChances", new JsonArray())) {
+            this.outputChances.add(e.getAsInt());
+        }
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "inputChances", new JsonArray())) {
+            this.inputChances.add(e.getAsInt());
         }
     }
 
     public static JsonElement serializeStack(FluidHolder stack) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
+        obj.addProperty("fluid", FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).toString());
         obj.addProperty("amount", stack.getFluidAmount());
         if (stack.getCompound() != null) {
             obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getCompound()));
@@ -181,10 +189,15 @@ public class KubeJSRecipe extends RecipeJS {
             fluidOutput.forEach(t -> arr.add(serializeStack(t)));
             this.json.add("outputFluids", arr);
         }
-        if (chances.size() > 0) {
+        if (outputChances.size() > 0) {
             JsonArray arr = new JsonArray();
-            chances.forEach(arr::add);
-            this.json.add("chances", arr);
+            outputChances.forEach(arr::add);
+            this.json.add("outputChances", arr);
+        }
+        if (inputChances.size() > 0) {
+            JsonArray arr = new JsonArray();
+            inputChances.forEach(arr::add);
+            this.json.add("inputChances", arr);
         }
         this.json.addProperty("eu", this.power);
         this.json.addProperty("duration", this.duration);

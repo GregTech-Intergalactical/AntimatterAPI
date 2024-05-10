@@ -216,7 +216,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             return;
         }
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, false, output, inputs, inputPattern);
-        if (recipeName.isEmpty()) recipeBuilder.build(consumer);
+        if (recipeName.isEmpty()) recipeBuilder.buildTool(consumer, builder);
         else {
             if (recipeDomain.isEmpty()) recipeBuilder.buildTool(consumer, builder, recipeName);
             else recipeBuilder.buildTool(consumer, builder, fixLoc(recipeDomain, recipeName));

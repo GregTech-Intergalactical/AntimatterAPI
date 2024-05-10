@@ -31,11 +31,11 @@ dependencies{
     }
     modImplementation("net.feltmc:felt-enchanting-api:1.1.0") { transitive false }
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-beta.11"))
-    modImplementation("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")
+    modImplementation("io.github.trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-    modCompileOnly("com.github.Trinsdar:ARRP:0.6.7.1")
+    modCompileOnly("io.github.trinsdar:arrp:0.6.7.1")
     modImplementation("com.gtnewhorizon.structurelib:structurelib-common:${project.structurelib_version}-${project.minecraft_version}")
     modImplementation "maven.modrinth:carbon-config:${project.carbon_config_fabric_version}"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")

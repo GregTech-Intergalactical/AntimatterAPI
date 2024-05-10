@@ -26,6 +26,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
@@ -83,7 +84,14 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
         AntimatterAPI.all(BlockMultiMachine.class, providerDomain, this::add);
         if (providerDomain.equals(Ref.ID)) {
             AntimatterAPI.all(BlockPipe.class, this::add);
-            AntimatterAPI.all(BlockStorage.class, this::add);
+            AntimatterAPI.all(BlockStorage.class, block -> {
+                if (block.getType() == RAW_ORE_BLOCK && block.getMaterial().has(CRUSHED)){
+                    tables.put(block, b -> createOreDropWithHammer(block, block.asItem(), CRUSHED.get(block.getMaterial()), 9 * MaterialTags.ORE_MULTI.get(block.getMaterial())));
+                } else {
+                    add(block);
+                }
+            });
+            AntimatterAPI.all(BlockFrame.class, this::add);
             AntimatterAPI.all(BlockStone.class, b -> {
                 if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
                     tables.put(b, b2 -> createSingleItemTableWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
@@ -96,7 +104,12 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             AntimatterAPI.all(BlockStoneWall.class, this::add);
             AntimatterAPI.all(BlockOre.class, this::addToFortune);
             AntimatterAPI.all(BlockOreStone.class, this::addToStone);
-            AntimatterAPI.all(BlockSurfaceRock.class, b -> tables.put(b,  b2 -> BlockLoot.createSingleItemTable(AntimatterAPI.get(MaterialItem.class, "rock_" + b.getMaterial().getId()))));
+            AntimatterAPI.all(BlockSurfaceRock.class, b -> {
+                ItemStack drop = b.getMaterial() != Material.NULL && b.getMaterial().has(BEARING_ROCK) ? BEARING_ROCK.get(b.getMaterial(), 1) : b.getStoneType().getMaterial().has(ROCK) ? ROCK.get(b.getStoneType().getMaterial(), 1) : ItemStack.EMPTY;
+                if (!drop.isEmpty()) {
+                    tables.put(b, b2 -> BlockLoot.createSingleItemTable(drop.getItem()));
+                }
+            });
         }
     }
 
@@ -192,12 +205,12 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
                 drop = null;
             }
             Item item = block.getStoneType().isSandLike() ? block.asItem() : AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
-            return b -> createOreDropWithHammer(b, item, drop);
+            return b -> createOreDropWithHammer(b, item, drop, 1);
         }
         return BlockLoot::createSingleItemTable;
     }
 
-    public static LootTable.Builder createOreDropWithHammer(Block block, Item primaryDrop, Item hammerDrop){
+    public static LootTable.Builder createOreDropWithHammer(Block block, Item primaryDrop, Item hammerDrop, int hammerAmount){
         LootTable.Builder builder = LootTable.lootTable();
         if (block.asItem() == primaryDrop){
             LootPool.Builder loot = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(primaryDrop));
@@ -209,7 +222,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             builder = createSilkTouchDispatchTable(block, applyExplosionDecay(block, pool));
         }
         if (hammerDrop != null){
-            builder.withPool(applyExplosionCondition(hammerDrop, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(HAMMER).add(LootItem.lootTableItem(hammerDrop))));
+            builder.withPool(applyExplosionCondition(hammerDrop, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(HAMMER).add(LootItem.lootTableItem(hammerDrop).apply(SetItemCountFunction.setCount(ConstantValue.exactly(hammerAmount))))));
         }
         return builder;
     }

@@ -32,7 +32,7 @@ public class ClientEventsForge {
     @SubscribeEvent
     protected static void onTooltipAdd(final ItemTooltipEvent ev) {
         MaterialType.addTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
-        ClientEvents.onItemTooltip(ev.getFlags(), ev.getToolTip());
+        ClientEvents.onItemTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
     }
 
     //TODO why is this client only?

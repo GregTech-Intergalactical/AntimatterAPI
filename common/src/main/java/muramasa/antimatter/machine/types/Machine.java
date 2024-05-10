@@ -14,6 +14,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
@@ -36,6 +37,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -73,6 +75,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
     @Getter
+    protected TagKey<Block> toolTag = AntimatterDefaultTools.WRENCH.getToolType();
+    @Getter
     protected List<ITooltipInfo> tooltipFunctions = new ArrayList<>();
     @Getter
     protected IShapeGetter shapeGetter;
@@ -80,7 +84,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Getter
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
+    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory};
 
     /**
      * Recipe Members
@@ -102,6 +106,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IOverlayModeler overlayModels;
     @Getter
     protected ResourceLocation itemModelParent;
+    @Getter
+    protected IMachineColorHandlerBlock blockColorHandler = (state, world, pos, machine, i) -> -1;
+    @Getter
+    protected IMachineColorHandlerItem itemColorHandler = (stack, block, i) -> -1;
 
     protected boolean tierSpecificLang = false;
 
@@ -219,7 +227,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setSound(SoundEvent loc, float volume) {
         this.soundVolume = volume;
-        this.machineNoise = loc;
+        this.machineNoise = getDatedMachineSound(loc);
         return (T) this;
     }
 
@@ -265,6 +273,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @param covers if null, disable covers. (Icover[] null, not 1 null cover)
      *               1 cover sets 1 cover + output
      *               6 covers configures all covers.
+     *               sides are bottom, top, front, back, right, left
      * @return this
      */
     public T covers(CoverFactory... covers) {
@@ -275,7 +284,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
         if (covers.length == 1) {
             setOutputCover(covers[0]);
-            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory,covers[0], ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, covers[0], ICover.emptyFactory, ICover.emptyFactory};
         } else {
             this.DEFAULT_COVERS = covers;
         }
@@ -422,6 +431,16 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    public T blockColorHandler(IMachineColorHandlerBlock handlerBlock){
+        this.blockColorHandler = handlerBlock;
+        return (T) this;
+    }
+
+    public T itemColorHandler(IMachineColorHandlerItem handlerItem){
+        this.itemColorHandler = handlerItem;
+        return (T) this;
+    }
+
     public T itemGroup(CreativeModeTab group) {
         this.group = group;
         return (T) this;
@@ -444,6 +463,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setItemBlock(Function<BlockMachine, AntimatterItemBlock> function){
         itemBlockFunction = function;
+        return (T) this;
+    }
+
+    public T setToolTag(TagKey<Block> toolTag){
+        this.toolTag = toolTag;
         return (T) this;
     }
 
@@ -715,7 +739,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tileType;
     }
 
-    //TODO needed?
     public Tier getFirstTier() {
         return tiers.get(0);
     }
@@ -779,6 +802,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             new Texture(Ref.ID, "block/machine/troll"),
             new Texture(Ref.ID, "block/machine/troll"),
     };
+
+    private static SoundEvent getDatedMachineSound(SoundEvent original){
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        if (calendar.get(Calendar.MONTH) == Calendar.APRIL && calendar.get(Calendar.DATE) == 1){
+            return Ref.JOHN_CENA;
+        }
+        if (calendar.get(Calendar.MONTH) == Calendar.MARCH && calendar.get(Calendar.DATE) == 31){
+            return Ref.JOHN_CENA;
+        }
+        return original;
+    }
 
     private IOverlayTexturer getDatedOverlayHandler(){
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());

@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import lombok.Getter;
 import muramasa.antimatter.material.IMaterialObject;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -14,7 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockMaterialType extends BlockBasic implements IColorHandler, IMaterialObject {
 
+    @Getter
     protected Material material;
+    @Getter
     protected MaterialType<?> type;
     protected String textureFolder = "";
 
@@ -27,14 +30,6 @@ public class BlockMaterialType extends BlockBasic implements IColorHandler, IMat
     public BlockMaterialType instancedTextures(String folder) {
         this.textureFolder = folder;
         return this;
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public MaterialType<?> getType() {
-        return type;
     }
 
     @Override

@@ -108,6 +108,7 @@ public class MultiMachineEnergyHandler<T extends BlockEntityMultiMachine<T>> ext
 
     @Override
     public long extractEu(long voltage, boolean simulate) {
+        if (inputs == null) return 0;
         long extracted = 0;
         long toExtract = Math.min(voltage, getEnergy());
         for (MachineEnergyHandler<?> handler : inputs) {
@@ -124,6 +125,7 @@ public class MultiMachineEnergyHandler<T extends BlockEntityMultiMachine<T>> ext
 
     @Override
     public long insertInternal(long voltage, boolean simulate) {
+        if (outputs == null) return 0;
         long inserted = 0;
         long toInsert = Math.min(voltage, getCapacity() - getEnergy());
         for (MachineEnergyHandler<?> handler : outputs) {

@@ -186,6 +186,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
                 add(s, localized);
             });
+            AntimatterAPI.all(ItemStoneCover.class).forEach(i -> {
+                String localized = getLocalizedType(i);
+                if (i.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
+                if (i.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
+                if (i.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
+                if (i.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                override(i.getDescriptionId(), localized);
+            });
             AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> {
                 String localized = getLocalizedType(s);
                 if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
@@ -225,15 +233,18 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
                 }
             });
+            AntimatterAPI.all(BlockFrame.class).forEach(block -> {
+                add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
+            });
             AntimatterAPI.all(BlockSurfaceRock.class).forEach(b -> {
-                add(b, String.join("", getLocalizeStoneType(b.getStoneType()) + " ", getLocalizedType(b.getMaterial()), " Surface Rock"));
+                add(b, String.join("", getLocalizeStoneType(b.getStoneType()) + " ", (b.getMaterial() == Material.NULL ? "" : getLocalizedType(b.getMaterial()) + " "), "Surface Rock"));
             });
             AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeBlock<?> || t instanceof MaterialTypeItem<?>).forEach(t -> {
                 if (t.get() instanceof MaterialTypeBlock.IOreGetter){
                     AntimatterAPI.all(StoneType.class, s -> {
                         add(Ref.ID + ".rei.group." + t.getId() + "." + s.getId(), getLocalizedType(s) + " " + getLocalizedType(t) + "s");
                     });
-                    if (t != AntimatterMaterialTypes.ROCK){
+                    if (t != AntimatterMaterialTypes.BEARING_ROCK){
                         return;
                     }
                 }
@@ -264,7 +275,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 MaterialType<?> type = item.getType();
                 String dust = item.getMaterial().has(MaterialTags.RUBBERTOOLS) ? " Pulp" : " Dust";
                 String nativeSuffix = item.getMaterial().getElement() != null ? "Native " : "";
-                if (type == AntimatterMaterialTypes.ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
+                if (type == AntimatterMaterialTypes.BEARING_ROCK) add(item, String.join("", nativeSuffix, getLocalizedType(item.getMaterial()), " Bearing Rock"));
                 else if (type == AntimatterMaterialTypes.CRUSHED)
                     add(item, String.join("", "Crushed ", nativeSuffix, getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.CRUSHED_PURIFIED)
@@ -340,12 +351,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("item.charge", "Energy");
         add("item.reusable", "Reusable");
         add("item.amps", "Warning: outputs %s amps");
+        add("antimatter.tooltip.battery.tier", "%s Battery");
         add("antimatter.tooltip.material_primary", "Primary Material: %s");
         add("antimatter.tooltip.material_secondary", "Secondary Material: %s");
         add("antimatter.tooltip.dye_color", "Handle Color: %s");
         add("antimatter.tooltip.tool_speed", "Mining Speed: %s");
         add("antimatter.tooltip.crafting_uses", "Crafting Uses: %s");
         add("antimatter.tooltip.mining_level", "Mining Level %s");
+        add("antimatter.tooltip.durability", "Durability: %s");
         add("antimatter.gui.show_recipes", "Show Recipes");
         add("antimatter.tooltip.bandwidth", "Bandwidth: %s");
         add("antimatter.tooltip.capacity", "Capacity: %s");
@@ -372,6 +385,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.pipe.item.info", "Transfers up to capacity item stacks per tick. \nThis capacity is per stack and not per item transferred.");
         add("antimatter.pipe.fluid.info", "Transfers up to capacity per tick, with a buffer of 20 times the capacity. \nEvery tick the capacity of the pipe is replenished, up to 20 times. \nThis allows large transfers at once, but \n" +
                 "continuous transfers is limited by capacity");
+        add("antimatter.pipe.item.input_side.enabled", "Accepting from selected Side enabled");
+        add("antimatter.pipe.item.output_side.enabled", "Emitting to selected Side enabled");
+        add("antimatter.pipe.item.input_side.disabled", "Accepting from selected Side disabled");
+        add("antimatter.pipe.item.output_side.disabled", "Emitting to selected Side disabled");
     }
 
     private void processAntimatterTranslations() {
@@ -456,6 +473,16 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     public void override(String key, String value) {
         data.put(key, value);
+    }
+
+    public void override(Machine<?> i, Tier t, String value){
+        if (i.hasTierSpecificLang()) {
+            override("machine." + i.getId() + "." + t.getId(), value);
+        }
+        override(i.getBlockState(t).getDescriptionId(), value);
+        if (i instanceof BasicMultiMachine<?>) {
+            override(i.getDomain() + ".ponder." + i.getIdFromTier(t) + ".header", value.concat(" Multiblock"));
+        }
     }
 
     public void override(String domain, String key, String value) {

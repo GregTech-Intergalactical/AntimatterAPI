@@ -9,7 +9,9 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
+import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -38,6 +40,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -45,9 +48,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
+import tesseract.api.context.TesseractItemContext;
+import tesseract.api.gt.IEnergyItem;
 import tesseract.api.gt.IGTNode;
+import tesseract.api.wrapper.ItemStackWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +87,13 @@ public class AntimatterJEIPlugin implements IModPlugin {
         if (!list.isEmpty()) {
             runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, list.stream().map(i -> i.asItem().getDefaultInstance()).toList());
         }
+        List<Fluid> fluidList = new ArrayList<>();
+        AntimatterJEIREIPlugin.getFluidsToHide().forEach(c -> c.accept(fluidList));
+        // wish there was a better way to do this
+        if (!fluidList.isEmpty()){
+            runtime.getIngredientManager().removeIngredientsAtRuntime(AntimatterJEIPlugin.getFluidIngredientObjectType(), (Collection) fluidList.stream().map(f -> AntimatterJEIPlugin.getFluidObject(FluidHolder.of(f))).toList());
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, fluidList.stream().map(i -> i.getBucket().getDefaultInstance()).toList());
+        }
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
@@ -90,11 +104,18 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
-        AntimatterAPI.all(ItemMultiTextureBattery.class).forEach(i -> {
-            registration.registerSubtypeInterpreter(i, (s, c) -> {
-                long energy = TesseractCapUtils.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
-                return "e:" + energy + "/" + i.getCapacity();
-            });
+        List<ItemLike> list = new ArrayList<>();
+        AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
+        AntimatterAPI.all(Item.class).forEach(i -> {
+            if (list.contains(i)) return;
+            if (i instanceof IEnergyItem energyItem && energyItem.canCreate(new ItemStackWrapper(i.getDefaultInstance()))) {
+                registration.registerSubtypeInterpreter(i, (s, c) -> {
+                    if (c == UidContext.Recipe) return "";
+                    long energy = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).map(IGTNode::getEnergy).orElse(0L);
+                    long capacity = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(s).map(IGTNode::getCapacity).orElse(0L);
+                    return "e:" + energy + "/" + capacity;
+                });
+            }
         });
     }
 
@@ -171,7 +192,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
-        registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
+        //registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
     }
 
     @Override
@@ -193,6 +214,11 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @ExpectPlatform
     public static Object getFluidObject(FluidHolder fluidHolder){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static IIngredientType<?> getFluidIngredientObjectType(){
         throw new AssertionError();
     }
 

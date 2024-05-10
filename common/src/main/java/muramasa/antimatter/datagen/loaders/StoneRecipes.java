@@ -5,14 +5,18 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
+import muramasa.antimatter.data.ForgeCTags;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -20,15 +24,32 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
-import static muramasa.antimatter.data.AntimatterMaterials.RedSand;
-import static muramasa.antimatter.data.AntimatterMaterials.Sand;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
+import static muramasa.antimatter.data.AntimatterMaterials.*;
 
 public class StoneRecipes {
     public static void loadRecipes(Consumer<FinishedRecipe> output, AntimatterRecipeProvider provider){
-        provider.addItemRecipe(output, "minecraft", "", "furnaces", Items.FURNACE, ImmutableMap.of('C', ItemTags.STONE_TOOL_MATERIALS), "CCC", "C C", "CCC");
+        provider.addItemRecipe(output, "minecraft", "", "furnaces", Items.FURNACE,
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS), "CCC", "C C", "CCC");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.DROPPER,
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone)), "CCC", "C C", "CRC");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.OBSERVER,
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'Q', ForgeCTags.GEMS_QUARTZ_ALL), "CCC", "RRQ", "CCC");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.LEVER,
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', ROD.getMaterialTag(Wood)), "R", "C");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.PISTON,
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'I', INGOT.getMaterialTag(Iron), 'W', ItemTags.PLANKS), "WWW", "CIC", "CRC");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.DISPENSER,
+                ImmutableMap.of('C', ItemTags.STONE_CRAFTING_MATERIALS, 'R', DUST.getMaterialTag(Redstone), 'B', Items.BOW), "CCC", "CBC", "CRC");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.REPEATER,
+                of('T', Items.REDSTONE_TORCH, 'R', DUST.getMaterialTag(Redstone), 'S', TagUtils.getForgelikeItemTag("stone")), "TRT", "SSS");
+        provider.addItemRecipe(output, "minecraft", "", "redstone", Items.COMPARATOR,
+                of('T', Items.REDSTONE_TORCH, 'Q', ForgeCTags.GEMS_QUARTZ_ALL, 'S', TagUtils.getForgelikeItemTag("stone")), " T ", "TQT", "SSS");
         provider.addItemRecipe(output, "stones", Items.SAND, of('S', DUST.getMaterialTag(Sand)), "SS", "SS");
         provider.addItemRecipe(output, "stones", Items.RED_SAND, of('S', DUST.getMaterialTag(RedSand)), "SS", "SS");
+        if (AntimatterAPI.isModLoaded(Ref.MOD_AE)){
+            provider.removeRecipe(new ResourceLocation(Ref.MOD_AE, "misc/vanilla_comparator"));
+        }
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             Material m = s.getMaterial();
             if (m.has(AntimatterMaterialTypes.ROD)){
@@ -40,8 +61,7 @@ public class StoneRecipes {
                     provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', ((CobbleStoneType)s).getBlock("cobble")), "S", "S");
                 }
             }
-            if (s instanceof CobbleStoneType){
-                CobbleStoneType c = (CobbleStoneType) s;
+            if (s instanceof CobbleStoneType c){
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("cobble")), c.getBlock(""), 0.1F, 200).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_stone");
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("")), c.getBlock("smooth"), 0.1F, 200).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, m.getId() + "_smooth");
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("bricks")), c.getBlock("bricks_cracked"), 0.1F, 200).unlockedBy("has_bricks", provider.hasSafeItem(c.getBlock("bricks"))).save(output, m.getId() + "_bricks_cracked");
@@ -62,6 +82,12 @@ public class StoneRecipes {
                 for (String type : types){
                     int amount = type.contains("slab") ? 2 : 1;
                     SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("")), c.getBlock(type), amount).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, m.getId() + "_stone_" + type);
+                }
+                for (String type : CobbleStoneType.SUFFIXES){
+                    String id = (type.isEmpty() ? c.getId() : c.getId() + "_" + type) + "_cover";
+                    Item cover = AntimatterAPI.get(Item.class, id, Ref.SHARED_ID);
+                    if (cover == null) continue;
+                    SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock(type)), cover, 4).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(type))).save(output, id);
                 }
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("cobble")), c.getBlock("cobble_slab"), 2).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_cobble_slab");
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("cobble")), c.getBlock("cobble_stairs")).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_cobble_stairs");

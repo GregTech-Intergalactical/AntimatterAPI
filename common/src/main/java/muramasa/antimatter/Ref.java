@@ -39,13 +39,13 @@ public class Ref {
      **/
     public static final SoundEvent DRILL = AntimatterAPI.register(SoundEvent.class, "drill", ID,  new SoundEvent(new ResourceLocation(ID, "drill")));
     public static final SoundEvent WRENCH = AntimatterAPI.register(SoundEvent.class, "wrench", ID,  new SoundEvent(new ResourceLocation(ID, "wrench")));
+    public static final SoundEvent JOHN_CENA = AntimatterAPI.register(SoundEvent.class, "john-cena", ID,  new SoundEvent(new ResourceLocation(ID, "john-cena")));
     public static final SoundEvent INTERRUPT = AntimatterAPI.register(SoundEvent.class, "interrupt", ID,  new SoundEvent(new ResourceLocation(ID, "interrupt")));
 
     /**
      * Global Data
      **/
     public static final long U = 18144000, U2 = U / 2, U3 = U / 3, U4 = U / 4, U5 = U / 5, U6 = U / 6, U7 = U / 7, U8 = U / 8, U9 = U / 9, U10 = U / 10, U11 = U / 11, U12 = U / 12, U13 = U / 13, U14 = U / 14, U15 = U / 15, U16 = U / 16, U17 = U / 17, U18 = U / 18, U20 = U / 20, U24 = U / 24, U25 = U / 25, U32 = U / 32, U36 = U / 36, U40 = U / 40, U48 = U / 48, U50 = U / 50, U64 = U / 64, U72 = U / 72, U80 = U / 80, U96 = U / 96, U100 = U / 100, U128 = U / 128, U144 = U / 144, U192 = U / 192, U200 = U / 200, U240 = U / 240, U256 = U / 256, U288 = U / 288, U480 = U / 480, U500 = U / 500, U512 = U / 512, U1000 = U / 1000, U9000 = U/9000, U1440 = U / 1440, U81000 = U/81000;
-    public static final int O = (int) (U/5), O8 = O/8, O12 = O/12, O16 = O/16, O32 = O/32, O64 = O/64;
     //TODO change this to long and add values up to tier 15(not for gti itself, but for modpacks and compat)
     public static final long[] V = new long[]{8, 32, 128, 512, 2048, 8192, 32768, 131_072, 524_288, 2_097_152, 8_388_608, 35_544_432, 134_217_728, 536_870_912, 2_147_483_648L, 8_589_934_592L};
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX", "∞"}; //TODO: Schedule to change? ZPM rename? Tier decisions?
@@ -173,10 +173,8 @@ public class Ref {
     /**
      * Dimension IDs
      **/
-    public static final int OVERWORLD = 0;
-    public static final int NETHER = -1;
-    public static final int END = 1;
-    public static final int MOON = -99; //TODO, Find ID
-    public static final int MARS = -99; //TODO, Find ID
-    public static final int ASTEROIDS = -30; //TODO, Validate ID
+    public static final String OVERWORLD = "minecraft:overworld";
+    public static final String NETHER = "minecraft:the_nether";
+    public static final String END = "minecraft:the_end";
+    public static final String TWILIGHT_FOREST = "twilightforest:twilight_forest";
 }

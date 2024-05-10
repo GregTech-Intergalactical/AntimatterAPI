@@ -248,10 +248,12 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
+        super.onBlockUpdate(neighbor);
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         if (facing != null) {
             coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
         }
+        coverHandler.ifPresent(h -> h.getCovers().forEach((d, c) -> c.onBlockUpdateAllSides()));
     }
 
 
@@ -319,7 +321,9 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
-        coverHandler.ifPresent(c -> c.readFromStack(stack));
+        if (!level.isClientSide()) {
+            coverHandler.ifPresent(c -> c.readFromStack(stack));
+        }
     }
 
     protected void markDirty() {
@@ -463,7 +467,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (this.muffled && level != null && level.isClientSide) SoundHelper.clear(level, this.getBlockPos());
     }
 
-    // TODO: Fix
     public Direction getOutputFacing() {
         if (type.getOutputCover() != null && !(type.getOutputCover() == ICover.emptyFactory) && coverHandler.isPresent()) {
             Direction dir = coverHandler.get().getOutputFacing();
@@ -688,6 +691,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         }
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
+        tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         return tag;
     }
 

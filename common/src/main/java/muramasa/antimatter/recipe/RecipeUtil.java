@@ -45,7 +45,7 @@ public class RecipeUtil {
 
     public static JsonObject fluidstackToJson(FluidHolder stack){
         JsonObject object = new JsonObject();
-        object.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
+        object.addProperty("fluid", FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).toString());
         object.addProperty("amount", stack.getFluidAmount());
         if (stack.getCompound() != null){
             object.addProperty("tag", stack.getCompound().toString());

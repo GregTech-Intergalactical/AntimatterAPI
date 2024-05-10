@@ -20,7 +20,7 @@ public abstract class AntimatterMod implements IAntimatterRegistrar {
 
     public AntimatterMod() {
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, this::onGatherData);
-        if (TesseractPlatformUtils.isForge()){
+        if (TesseractPlatformUtils.INSTANCE.isForge()){
             onRegistrarInit();
         }
     }

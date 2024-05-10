@@ -2,7 +2,6 @@ package muramasa.antimatter;
 
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ClientData;
-import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
@@ -22,11 +21,9 @@ import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.*;
-import muramasa.antimatter.mixin.LivingEntityAccessor;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.pipe.BlockFluidPipe;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
@@ -47,9 +44,6 @@ import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -57,6 +51,12 @@ import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -187,10 +187,10 @@ public class Antimatter extends AntimatterMod {
 
                 }
                 if (!AntimatterConfig.SHOW_ROCKS.get()){
-                    AntimatterMaterialTypes.ROCK.all().forEach(m -> {
+                    AntimatterMaterialTypes.BEARING_ROCK.all().forEach(m -> {
                         AntimatterAPI.all(StoneType.class, s -> {
                             if (s.doesGenerateOre() && s != BEDROCK) {
-                                l.add(AntimatterMaterialTypes.ROCK.get().get(m, s).asBlock());
+                                l.add(AntimatterMaterialTypes.BEARING_ROCK.get().get(m, s).asBlock());
                             }
                         });
                     });
@@ -220,7 +220,21 @@ public class Antimatter extends AntimatterMod {
         } else if (event == RegistrationEvent.CLIENT_DATA_INIT){
             AntimatterModelManager.init();
             ClientData.init();
+            if (AntimatterConfig.OVERRIDE_BASALT_TEXTURE.get()){
+                try {
+                    AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTexture(new ResourceLocation("block/basalt_top"), readImage("block/stone/basalt/stone"));
+                    AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTexture(new ResourceLocation("block/basalt_side"), readImage("block/stone/basalt/stone"));
+                    AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTexture(new ResourceLocation("block/smooth_basalt"), readImage("block/stone/basalt/smooth"));
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
         }
+    }
+
+    private static BufferedImage readImage(String imagePath) throws IOException {
+        InputStream in = Antimatter.class.getResourceAsStream("/assets/" + Ref.ID + "/textures/" + imagePath + ".png");
+        return ImageIO.read(in);
     }
 
     @Override

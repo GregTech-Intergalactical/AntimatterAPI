@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +15,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
-public class BehaviourCropHarvesting implements IItemUse<IAntimatterTool> {
+public class BehaviourCropHarvesting implements IItemUse<IBasicAntimatterTool> {
     public static final BehaviourCropHarvesting INSTANCE = new BehaviourCropHarvesting();
 
 
@@ -24,7 +25,7 @@ public class BehaviourCropHarvesting implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+    public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         BlockPos original = c.getClickedPos();
         BlockState clickedState = c.getLevel().getBlockState(original);
         if (clickedState.getBlock() instanceof CropBlock && c.getLevel() instanceof ServerLevel serverLevel){

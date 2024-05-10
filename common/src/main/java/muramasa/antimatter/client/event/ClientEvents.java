@@ -18,6 +18,7 @@ import muramasa.antimatter.mixin.client.MultiPlayerGameModeAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
 import muramasa.antimatter.util.Utils;
@@ -32,6 +33,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -63,14 +65,14 @@ public class ClientEvents {
         Player player = MC.player;
         Level world = player.getCommandSenderWorld();
         ItemStack stack = player.getMainHandItem();
-        if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
+        if (stack.isEmpty() || (!(stack.getItem() instanceof IBasicAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
             return false;
         if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return false;
             RenderHelper.onDrawHighlight(player, levelRenderer, camera, target, partialTick, poseStack, bufferSource, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
             return true;
         }
-        IAntimatterTool item = (IAntimatterTool) stack.getItem();
+        IBasicAntimatterTool item = (IBasicAntimatterTool) stack.getItem();
         AntimatterToolType type = Utils.getToolType(player);
         if (type == null) return false;
         if (player.isCrouching() && type != AntimatterDefaultTools.WRENCH && type != AntimatterDefaultTools.CROWBAR && type != AntimatterDefaultTools.WIRE_CUTTER)
@@ -83,7 +85,7 @@ public class ClientEvents {
         if (res.shouldSwing()) {
             return false;
         }
-        IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
+        IBehaviour<IBasicAntimatterTool> behaviour = type.getBehaviour("aoe_break");
         if (!(behaviour instanceof BehaviourAOEBreak aoeBreak)) return false;
 
         BlockPos currentPos = target.getBlockPos();
@@ -156,13 +158,28 @@ public class ClientEvents {
     }
 
     //TODO still needed?
-    public static void onItemTooltip(TooltipFlag flags, List<Component> tooltip) {
-        if (flags.isAdvanced() && Ref.SHOW_ITEM_TAGS) {
+    public static void onItemTooltip(ItemStack stack, List<Component> tooltips, Player player, TooltipFlag flag) {
+        if (stack.getItem() instanceof IAntimatterTool tool){
+            int j = -1;
+            for (int i = 0; i < tooltips.size(); i++) {
+                Component component = tooltips.get(i);
+                if (component instanceof TranslatableComponent translatable){
+                    if (translatable.getKey().equals("item.durability")){
+                        j = i;
+                        break;
+                    }
+                }
+            }
+            if (j != -1){
+                tooltips.remove(j);
+            }
+        }
+        if (flag.isAdvanced() && Ref.SHOW_ITEM_TAGS) {
             Collection<ResourceLocation> tags = Collections.emptyList(); //ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
-                tooltip.add(Utils.literal("Tags:").withStyle(ChatFormatting.DARK_GRAY));
+                tooltips.add(Utils.literal("Tags:").withStyle(ChatFormatting.DARK_GRAY));
                 for (ResourceLocation loc : tags) {
-                    tooltip.add(Utils.literal(loc.toString()).withStyle(ChatFormatting.DARK_GRAY));
+                    tooltips.add(Utils.literal(loc.toString()).withStyle(ChatFormatting.DARK_GRAY));
                 }
             }
         }

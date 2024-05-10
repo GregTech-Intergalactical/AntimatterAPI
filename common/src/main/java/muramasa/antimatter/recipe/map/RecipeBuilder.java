@@ -43,7 +43,7 @@ public class RecipeBuilder {
     protected List<Ingredient> ingredientInput = new ObjectArrayList<>();
     protected List<FluidIngredient> fluidsInput = new ObjectArrayList<>();
     protected List<FluidHolder> fluidsOutput = new ObjectArrayList<>();
-    protected int[] chances;
+    protected int[] inputChances, outputChances;
     protected int duration, special;
     protected long power;
     protected int amps;
@@ -122,10 +122,15 @@ public class RecipeBuilder {
                 fluidsOutput != null ? fluidsOutput.toArray(new FluidHolder[0]) : null,
                 duration, power, special, amps
         );
-        if (chances != null) recipe.addChances(chances);
+        if (outputChances != null) recipe.addOutputChances(outputChances);
+        if (inputChances != null) recipe.addInputChances(inputChances);
         recipe.setHidden(hidden);
         recipe.setFake(fake);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
+        if (recipeMapOnly){
+            recipe.setId(this.id);
+            recipe.setMapId(this.recipeMap.getId());
+        }
         return recipe;
     }
 
@@ -265,22 +270,42 @@ public class RecipeBuilder {
         return id(recipeMap.getDomain(), name);
     }
 
-    /**
-     * 10 = 10%, 75 = 75% etc
-     **/
-    public RecipeBuilder chances(double... values) {
+
+    public RecipeBuilder outputChances(double... values) {
         int[] newChances = new int[values.length];
         for (int i = 0; i < values.length; i++){
             double chance = values[i];
             newChances[i] = (int) (chance * 10000);
         }
-        return chances(newChances);
+        return outputChances(newChances);
     }
 
-    public RecipeBuilder chances(int... values){
-        chances = values;
+    /**
+     * 1000 = 10%, 7500 = 75%, 10 = 0.1%, 75 = .75% etc
+     **/
+    public RecipeBuilder outputChances(int... values){
+        outputChances = values;
         return this;
     }
+
+    public RecipeBuilder inputChances(double... values) {
+        int[] newChances = new int[values.length];
+        for (int i = 0; i < values.length; i++){
+            double chance = values[i];
+            newChances[i] = (int) (chance * 10000);
+        }
+        return inputChances(newChances);
+    }
+
+    /**
+     * 1000 = 10%, 7500 = 75%, 10 = 0.1%, 75 = .75% etc
+     **/
+    public RecipeBuilder inputChances(int... values){
+        inputChances = values;
+        return this;
+    }
+
+
 
     public RecipeBuilder hide() {
         hidden = true;
@@ -310,12 +335,13 @@ public class RecipeBuilder {
 
     public RecipeBuilder clearItemInputs(){
         ingredientInput = new ObjectArrayList<>();
+        inputChances = null;
         return this;
     }
 
     public RecipeBuilder clearItemOutputs(){
         itemsOutput = new ObjectArrayList<>();
-        chances = null;
+        outputChances = null;
         return this;
     }
 
@@ -334,7 +360,8 @@ public class RecipeBuilder {
         ingredientInput = new ObjectArrayList<>();
         fluidsInput = new ObjectArrayList<>();
         fluidsOutput = new ObjectArrayList<>();
-        chances = null;
+        outputChances = null;
+        inputChances = null;
         duration = special = 0;
         power = 0;
         hidden = false;
@@ -397,18 +424,27 @@ public class RecipeBuilder {
             if (!array.isEmpty()){
                 json.add("outputFluids", array);
             }
-            array = new JsonArray();
             json.addProperty("eu", power);
             json.addProperty("duration", duration);
             json.addProperty("amps", amps);
             json.addProperty("special", special);
-            if (chances != null) {
-                for (int d : chances){
+            array = new JsonArray();
+            if (outputChances != null) {
+                for (int d : outputChances){
                     array.add(d);
                 }
             }
             if (!array.isEmpty()){
-                json.add("chances", array);
+                json.add("outputChances", array);
+            }
+            array = new JsonArray();
+            if (inputChances != null) {
+                for (int d : inputChances){
+                    array.add(d);
+                }
+            }
+            if (!array.isEmpty()){
+                json.add("inputChances", array);
             }
             json.addProperty("hidden", hidden);
             json.addProperty("fake", fake);

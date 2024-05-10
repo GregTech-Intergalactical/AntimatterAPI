@@ -221,8 +221,8 @@ public class StructureCache {
 
     public static class DimensionEntry {
 
-        private final Long2ObjectMap<LongSet> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
-        private final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
+        public final Long2ObjectMap<LongSet> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
+        public final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public DimensionEntry() {
             //STRUCTURE_TO_CONTROLLER.setDefaultReturnValue(Object2BooleanMaps.empty());
@@ -250,13 +250,13 @@ public class StructureCache {
 
         public boolean validate(BlockPos pos, int maxAmount, LongList structure) {
             long at = pos.asLong();
-            int i = structure.stream().mapToInt(t -> {
-                LongSet list = this.STRUCTURE_TO_CONTROLLER.get((long)t);
+            long i = structure.longStream().map(t -> {
+                LongSet list = this.STRUCTURE_TO_CONTROLLER.get(t);
                 if (list == null){
-                    return 0;
+                    return 0L;
                 }
                 return list.size();
-            }).max().orElse(0);
+            }).max().orElse(0L);
             return i <= maxAmount;
         }
 

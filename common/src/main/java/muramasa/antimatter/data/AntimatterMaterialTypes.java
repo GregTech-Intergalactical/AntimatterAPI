@@ -2,6 +2,7 @@ package muramasa.antimatter.data;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.cover.CoverFactory;
@@ -9,18 +10,17 @@ import muramasa.antimatter.cover.CoverPlate;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.item.CoverMaterialItem;
-import muramasa.antimatter.material.MaterialItem;
-import muramasa.antimatter.material.MaterialTypeBlock;
-import muramasa.antimatter.material.MaterialTypeFluid;
-import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Fluids;
 import tesseract.FluidPlatformUtils;
 
@@ -33,8 +33,15 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> DUST_TINY = new MaterialTypeItem<>("dust_tiny", 2, true, Ref.U9);
     public static MaterialTypeItem<?> DUST_IMPURE = new MaterialTypeItem<>("dust_impure", 2, true, -1);
     public static MaterialTypeItem<?> DUST_PURE = new MaterialTypeItem<>("dust_pure", 2, true, -1);
-    public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U4, (domain, type, mat) -> {
+    public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> BEARING_ROCK = new MaterialTypeItem<>("bearing_rock", 2, false, Ref.U4, (domain, type, mat) -> {
         AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).filter(s -> s != AntimatterStoneTypes.BEDROCK).forEach(s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, mat, s)));
+        new MaterialItem(domain, type, mat);
+    });
+    public static MaterialTypeItem<MaterialTypeBlock.IBlockGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U4, (domain, type, mat) -> {
+        StoneType type1 = AntimatterAPI.get(StoneType.class, mat.getId());
+        if (type1 != null){
+            AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, Material.NULL, type1));
+        }
         new MaterialItem(domain, type, mat);
     });
     public static MaterialTypeItem<?> CRUSHED = new MaterialTypeItem<>("crushed", 2, true, -1);
@@ -85,16 +92,21 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> ORE_STONE = new MaterialTypeBlock<>("ore_stone", 1, true, -1,(domain, type, mat) -> new BlockOreStone(domain, mat));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> BLOCK = new MaterialTypeBlock<>("block", 1, false, U * 9, BlockStorage::new);
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> RAW_ORE_BLOCK = new MaterialTypeBlock<>("raw_ore_block", 2, false, -1, BlockStorage::new);
-    public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> FRAME = new MaterialTypeBlock<>("frame", 1, true, U * 2, BlockStorage::new);
+    public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> FRAME = new MaterialTypeBlock<>("frame", 1, true, U * 2, BlockFrame::new);
     //Fluid Types
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> LIQUID = new MaterialTypeFluid<>("liquid", 1, true, -1);
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> GAS = new MaterialTypeFluid<>("gas", 1, true, -1);
-    public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> PLASMA = new MaterialTypeFluid<>("plasma", 1, true, -1);
 
     static {
-        AntimatterMaterialTypes.ROCK.set((m, s) -> {
-            if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ROCK, m, s);
+        AntimatterMaterialTypes.BEARING_ROCK.set((m, s) -> {
+            if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.BEARING_ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.BEARING_ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
+            return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
+        });
+        AntimatterMaterialTypes.ROCK.set((m) -> {
+            StoneType s = AntimatterAPI.get(StoneType.class, m.getId());
+            if (s == null || !AntimatterMaterialTypes.ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ROCK, m, s);
+            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + s.getId());
             return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
         });
         AntimatterMaterialTypes.ORE.set((m, s) -> {
@@ -149,7 +161,7 @@ public class AntimatterMaterialTypes {
         }).blockType();
         AntimatterMaterialTypes.FRAME.set(m -> {
             if (m == null || !AntimatterMaterialTypes.FRAME.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.FRAME, m);
-            BlockStorage block = AntimatterAPI.get(BlockStorage.class, AntimatterMaterialTypes.FRAME.getId() + "_" + m.getId());
+            BlockFrame block = AntimatterAPI.get(BlockFrame.class, AntimatterMaterialTypes.FRAME.getId() + "_" + m.getId());
             return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
 
@@ -164,12 +176,6 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.GAS.set((m, i) -> {
             if (m == null || !AntimatterMaterialTypes.GAS.allowGen(m)) return MaterialTypeFluid.getEmptyFluidAndLog(AntimatterMaterialTypes.GAS, m);
             AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, AntimatterMaterialTypes.GAS.getId() + "_" + m.getId());
-            if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
-            return FluidPlatformUtils.createFluidStack(fluid.getFluid(), i);
-        });
-        AntimatterMaterialTypes.PLASMA.set((m, i) -> {
-            if (m == null || !AntimatterMaterialTypes.PLASMA.allowGen(m)) return MaterialTypeFluid.getEmptyFluidAndLog(AntimatterMaterialTypes.PLASMA, m);
-            AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, AntimatterMaterialTypes.PLASMA.getId() + "_" + m.getId());
             if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
             return FluidPlatformUtils.createFluidStack(fluid.getFluid(), i);
         });
@@ -268,12 +274,13 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.SCYTHE_BLADE.unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
         AntimatterMaterialTypes.RAW_ORE_BLOCK.unSplitName();
+        AntimatterMaterialTypes.BEARING_ROCK.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.ROCK.unSplitName().setIgnoreTextureSets();
     }
 
     public static void postInit() {
         AntimatterMaterialTypes.LIQUID.all().stream().filter(l -> !l.getId().equals("water") && !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.LIQUID)));
         AntimatterMaterialTypes.GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.GAS)));
-        AntimatterMaterialTypes.PLASMA.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.PLASMA)));
-        //if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) AntimatterMaterialTypes.ORE.all().forEach(m -> m.flags(AntimatterMaterialTypes.ORE_SMALL));
+        AntimatterMaterialTypes.ORE_STONE.all().forEach(m -> AntimatterAPI.register(StoneType.class, new StoneType(ID, m.getId(), m, new Texture(m.materialDomain(), "block/stone/" + m.getId()), SoundType.STONE, false).setGenerateOre(false).setStateSupplier(() -> ORE_STONE.get().get(m).asState())));
     }
 }

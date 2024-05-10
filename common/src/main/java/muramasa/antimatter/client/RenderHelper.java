@@ -86,7 +86,7 @@ public class RenderHelper {
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
         registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
-            Optional<IEnergyHandlerItem> handler = TesseractCapUtils.getEnergyHandlerItem(stack);
+            Optional<IEnergyHandlerItem> handler = TesseractCapUtils.INSTANCE.getEnergyHandlerItem(stack);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
         });
     }
@@ -110,8 +110,8 @@ public class RenderHelper {
         RenderSystem.enableBlend();
         //TODO 1.18
         //RenderSystem.enableAlphaTest();
-        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(FluidPlatformUtils.getStillTexture(fluid));
-        int fluidColor = FluidPlatformUtils.getFluidColor(fluid);
+        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(FluidPlatformUtils.INSTANCE.getStillTexture(fluid));
+        int fluidColor = FluidPlatformUtils.INSTANCE.getFluidColor(fluid);
 
         //Draw the fluid texture
         drawTiledSprite(mstack, mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);

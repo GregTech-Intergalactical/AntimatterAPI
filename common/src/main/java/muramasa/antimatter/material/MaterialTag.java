@@ -11,8 +11,6 @@ import java.util.Set;
 
 public class MaterialTag implements IMaterialTag {
 
-    //TODO get alloy flag for adding mixer and dust crafting recipes automatically
-
     private final String id;
     private final Set<Material> materials = new ObjectLinkedOpenHashSet<>();
     private final Map<SubTag, Set<Material>> TAG_MAP = new Object2ObjectOpenHashMap<>();

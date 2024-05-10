@@ -8,12 +8,11 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
+import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> extends MachineFluidHandler<T> {
@@ -35,7 +34,33 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
 
     @Override
     public boolean canOutputsFit(FluidHolder[] outputs) {
-        return outputs != null && this.outputs != null && this.outputs.length >= outputs.length;
+        if (outputs != null && this.outputs != null){
+            FluidHolder[] outputCopies = new FluidHolder[outputs.length];
+            for (int i = 0; i < outputs.length; i++) {
+                outputCopies[i] = outputs[i].copyHolder();
+            }
+            int filled = 0;
+            List<MachineFluidHandler<?>> outputsList = new ArrayList<>(Arrays.asList(this.outputs));
+            for (FluidHolder outputCopy : outputCopies) {
+                MachineFluidHandler<?> outputToRemove = null;
+                for (MachineFluidHandler<?> output : outputsList) {
+                    long fill = output.fillOutput(outputCopy, true);
+                    if (fill > 0) {
+                        outputCopy.setAmount(outputCopy.getFluidAmount() - fill);
+                        if (outputCopy.getFluidAmount() <= 0) {
+                            filled++;
+                            outputToRemove = output;
+                            break;
+                        }
+                    }
+                }
+                if (outputToRemove != null){
+                    outputsList.remove(outputToRemove);
+                }
+            }
+            return filled == outputs.length;
+        }
+        return false;
     }
 
     protected void cacheInputs() {

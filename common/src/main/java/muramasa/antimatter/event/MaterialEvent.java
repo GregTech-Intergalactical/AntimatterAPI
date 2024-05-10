@@ -7,9 +7,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
-import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.material.data.ArmorData;
 import muramasa.antimatter.material.data.HandleData;
@@ -63,7 +63,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public T asSolid(int meltingPoint, IMaterialTag... tags){
         asDust(meltingPoint, tags);
-        flags(AntimatterMaterialTypes.INGOT, AntimatterMaterialTypes.NUGGET, AntimatterMaterialTypes.BLOCK).asFluid(); //TODO: Shall we generate blocks for every solid?
+        flags(AntimatterMaterialTypes.INGOT, AntimatterMaterialTypes.NUGGET, AntimatterMaterialTypes.BLOCK).asFluid();
         return (T) this;
     }
 
@@ -86,7 +86,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
     }
 
     public T asOre(boolean small, IMaterialTag... tags) {
-        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
+        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.BEARING_ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
         if (small) flags(AntimatterMaterialTypes.ORE_SMALL);
         if (!has(EXP_RANGE)) EXP_RANGE.add(material, UniformInt.of(1, 5));
         flags(tags);
@@ -101,7 +101,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public T asOreStone(IMaterialTag... tags) {
         asOre(tags);
-        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
+        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.BEARING_ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
         flags(tags);
         return (T) this;
     }
@@ -156,20 +156,9 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         return (T) this;
     }
 
-
-
-    public T asPlasma() {
-        return asPlasma(0);
-    }
-
-    public T asPlasma(int fuelPower) {
-        int meltingPoint = this.has(MaterialTags.MELTING_POINT) ? MaterialTags.MELTING_POINT.getInt(this.material) : 295;
-        return asPlasma(fuelPower, meltingPoint);
-    }
-
-    public T asPlasma(int fuelPower,int temp) {
-        flags(AntimatterMaterialTypes.PLASMA);
-        return asGas(fuelPower,temp);
+    public T fluidDensity(int density){
+        FLUID_DENSITY.add(this.material, density);
+        return (T) this;
     }
 
     public T harvestLevel(int harvestLevel) {
@@ -408,6 +397,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
             }
             if (toolTypes.contains(AntimatterDefaultTools.WRENCH) && !toolTypes.contains(AntimatterDefaultTools.WRENCH_ALT)) toolTypes.add(AntimatterDefaultTools.WRENCH_ALT);
             allowedToolTypes = ImmutableList.copyOf(toolTypes);
+            int toolDurability = AntimatterAPI.isModLoaded(Ref.MOD_TFC) ? this.toolDurability * 4 : this.toolDurability;
             return MaterialEvent.this.buildTool(new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, handleMaterial, toolEnchantments, allowedToolTypes));
         }
     }

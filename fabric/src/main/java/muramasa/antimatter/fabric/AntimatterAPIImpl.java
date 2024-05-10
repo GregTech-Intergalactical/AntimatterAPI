@@ -39,7 +39,7 @@ public class AntimatterAPIImpl {
             return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).map(f -> new FabricBlockFluidContainer((FluidContainer) f, b -> {}, be)).orElse(null);
         }, type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> {
-            if (direction == null || !(be instanceof BlockEntityItemPipe<?> itemPipe)) return null;
+            if (!(be instanceof BlockEntityItemPipe<?> itemPipe)) return null;
             return (Storage<ItemVariant>) itemPipe.getPipeCapHolder().side(direction).map(i -> new ExtendedContainerWrapper((ExtendedItemContainer) i)).orElse(null);
         }, type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {

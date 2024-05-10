@@ -30,7 +30,6 @@ public class CoverPlate extends CoverMaterial {
         super(source, tier, side, factory);
         this.type = type;
         this.material = material;
-        // TODO Auto-generated constructor stub
     }
 
     private final MaterialType<?> type;

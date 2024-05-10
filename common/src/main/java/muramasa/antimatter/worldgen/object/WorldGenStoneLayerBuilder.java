@@ -101,6 +101,7 @@ public class WorldGenStoneLayerBuilder {
                 this.minY == null ? Integer.MIN_VALUE : this.minY,
                 this.maxY == null ? Integer.MAX_VALUE : this.maxY,
                 this.dimensions);
+        vein.addOres(this.ores);
         AntimatterWorldGenerator.writeJson(vein.toJson(), this.id, "stone_layers");
         return AntimatterWorldGenerator.readJson(WorldGenStoneLayer.class, vein, WorldGenStoneLayer::fromJson, "stone_layers");
     }

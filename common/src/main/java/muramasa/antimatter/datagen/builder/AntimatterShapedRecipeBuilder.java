@@ -141,12 +141,7 @@ public class AntimatterShapedRecipeBuilder {
      * the result.
      */
     public void build(Consumer<FinishedRecipe> consumer, String save) {
-        ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem());
-        if (new ResourceLocation(save).equals(resourcelocation)) {
-            throw new IllegalStateException("Shaped Recipe " + save + " should remove its 'save' argument");
-        } else {
-            this.build(consumer, new ResourceLocation(save));
-        }
+        this.build(consumer, new ResourceLocation(save));
     }
 
     /**
@@ -158,6 +153,10 @@ public class AntimatterShapedRecipeBuilder {
         consumer.accept(new Result(id, this.result.get(0), this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.get(0).getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
+    public void buildTool(Consumer<FinishedRecipe> consumer, String builder){
+        buildTool(consumer, builder, AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem()));
+    }
+
     public void buildTool(Consumer<FinishedRecipe> consumer, String builder, String id) {
         buildTool(consumer, builder, new ResourceLocation(id));
     }
@@ -166,10 +165,6 @@ public class AntimatterShapedRecipeBuilder {
      * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void buildTool(Consumer<FinishedRecipe> consumer, String builder, ResourceLocation id) {
-        ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem());
-        if (id.equals(resourcelocation)) {
-            throw new IllegalStateException("Shaped Recipe " + id + " should remove its 'save' argument");
-        }
         this.validate(id);
         this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.TriggerInstance(EntityPredicate.Composite.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         CreativeModeTab group = this.result.get(0).getItem().getItemCategory();
