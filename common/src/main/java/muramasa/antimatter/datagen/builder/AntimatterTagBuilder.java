@@ -4,7 +4,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagBuilder;
+import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 
 import java.util.ArrayList;
@@ -13,54 +14,54 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class AntimatterTagBuilder<T> {
-    public final Tag.Builder builder;
+    public final TagBuilder builder;
     public final Registry<T> registry;
     public final List<T> removeElements = new ArrayList<>();
     private final String source;
     boolean replace = false;
 
-    public AntimatterTagBuilder(Tag.Builder builder, Registry<T> registry, String string) {
+    public AntimatterTagBuilder(TagBuilder builder, Registry<T> registry, String string) {
         this.builder = builder;
         this.registry = registry;
         this.source = string;
     }
 
     public AntimatterTagBuilder<T> add(T item) {
-        this.builder.addElement(this.registry.getKey(item), this.source);
+        this.builder.addElement(this.registry.getKey(item));
         return this;
     }
 
-    public AntimatterTagBuilder<T> add(Tag.BuilderEntry builderEntry){
+    public AntimatterTagBuilder<T> add(TagEntry builderEntry){
         this.builder.add(builderEntry);
         return this;
     }
 
     public AntimatterTagBuilder<T> add(ResourceKey<T>... resourceKeys) {
         for(ResourceKey<T> resourceKey : resourceKeys) {
-            this.builder.addElement(resourceKey.location(), this.source);
+            this.builder.addElement(resourceKey.location());
         }
 
         return this;
     }
 
     public AntimatterTagBuilder<T> addOptional(ResourceLocation location) {
-        this.builder.addOptionalElement(location, this.source);
+        this.builder.addOptionalElement(location);
         return this;
     }
 
     public AntimatterTagBuilder<T> addTag(TagKey<T> tag) {
-        this.builder.addTag(tag.location(), this.source);
+        this.builder.addTag(tag.location());
         return this;
     }
 
     public AntimatterTagBuilder<T> addOptionalTag(ResourceLocation location) {
-        this.builder.addOptionalTag(location, this.source);
+        this.builder.addOptionalTag(location);
         return this;
     }
 
     @SafeVarargs
     public final AntimatterTagBuilder<T> add(T... toAdd) {
-        Stream.of(toAdd).map(this.registry::getKey).forEach(resourceLocation -> this.builder.addElement(resourceLocation, this.source));
+        Stream.of(toAdd).map(this.registry::getKey).forEach(resourceLocation -> this.builder.addElement(resourceLocation));
         return this;
     }
 

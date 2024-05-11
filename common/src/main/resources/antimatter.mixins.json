@@ -8,7 +8,6 @@
     "client.ChunkReaderAccessor",
     "client.ClientBlockUpdateMixin",
     "client.ClientPackSourceAccessor",
-    "client.DimensionTypeAccessor",
     "client.GuiLightAccessor",
     "client.ItemRendererMixin",
     "client.ItemTransformDeserializerAccessor",

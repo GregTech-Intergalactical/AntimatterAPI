@@ -6,6 +6,7 @@ import com.mojang.math.Matrix4f;
 import lombok.Getter;
 import lombok.Setter;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
+import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -15,7 +16,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public abstract class Widget implements IGuiElement {
     protected IGuiElement parent;
     @Getter
     @Setter
-    private Component message = TextComponent.EMPTY;
+    private Component message = Utils.literal("");
     public final int id;
 
     @Getter

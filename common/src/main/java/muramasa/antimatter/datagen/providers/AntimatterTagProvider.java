@@ -10,9 +10,9 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterTagBuilder;
 import net.devtech.arrp.json.tags.JTag;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     protected abstract void processTags(String domain);
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
 
     }
 

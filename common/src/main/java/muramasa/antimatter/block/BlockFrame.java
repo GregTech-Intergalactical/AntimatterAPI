@@ -20,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ScaffoldingBlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -33,7 +34,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.levelgen.RandomSource;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
@@ -177,7 +177,7 @@ public class BlockFrame extends BlockStorage implements IItemBlockProvider, Simp
                         Player player = ctx.getPlayer();
                         int j = ctx.getLevel().getMaxBuildHeight();
                         if (player instanceof ServerPlayer serverPlayer && mutableBlockPos.getY() >= j) {
-                            serverPlayer.sendMessage((Utils.translatable("build.tooHigh", j - 1)).withStyle(ChatFormatting.RED), ChatType.GAME_INFO, Util.NIL_UUID);
+                            serverPlayer.sendSystemMessage((Utils.translatable("build.tooHigh", j - 1)).withStyle(ChatFormatting.RED), true);
                         }
                         break;
                     }

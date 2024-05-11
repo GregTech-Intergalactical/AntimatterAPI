@@ -6,10 +6,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.event.ClientEvents;
@@ -111,7 +107,7 @@ public class MultiMachineInfoPage {
         }
     }
 
-    public void setRecipeLayout(IRecipeLayout layout, IGuiHelper guiHelper) {
+    /*public void setRecipeLayout(IRecipeLayout layout, IGuiHelper guiHelper) {
         if (ClientEvents.lastDelta == 0 || LAST_PAGE != this) {
             LAST_PAGE = this;
             this.zoom = 8;
@@ -127,7 +123,7 @@ public class MultiMachineInfoPage {
             TrackedDummyWorld world = (TrackedDummyWorld) getCurrentRenderer().world;
             resetCenter(world);
         }
-    }
+    }*/
 
     public int getLayerIndex() {
         return layerIndex;
@@ -254,9 +250,9 @@ public class MultiMachineInfoPage {
                 buttonNextLayer.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public void setIngredients(IIngredients ingredients) {
+    /*public void setIngredients(IIngredients ingredients) {
         ingredients.setOutput(VanillaTypes.ITEM, machine.getItem(machine.getFirstTier()).getDefaultInstance());
-    }
+    }*/
 
     public List<Component> getTooltipStrings(double mouseX, double mouseY) {
         if (getCurrentRenderer() != null && !ClientEvents.leftDown && !ClientEvents.rightDown && !ClientEvents.middleDown) {

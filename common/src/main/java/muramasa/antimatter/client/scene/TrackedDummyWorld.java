@@ -1,12 +1,9 @@
 package muramasa.antimatter.client.scene;
 
 import com.mojang.math.Vector3f;
-import muramasa.antimatter.mixin.client.DimensionTypeAccessor;
 import muramasa.antimatter.structure.BlockInfo;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import net.minecraft.core.*;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -22,13 +19,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
 import org.jetbrains.annotations.NotNull;
@@ -47,10 +44,6 @@ import java.util.function.Predicate;
  * @Description: TrackedDummyWorld. Used to build a Fake World.
  */
 public class TrackedDummyWorld extends Level {
-    private static final DimensionType DIMENSION_TYPE;
-    static {
-        DIMENSION_TYPE = DimensionTypeAccessor.getDEFAULT_OVERWORLD();
-    }
 
     private Predicate<BlockPos> renderFilter;
     private final Level proxyWorld;
@@ -68,7 +61,7 @@ public class TrackedDummyWorld extends Level {
     }
 
     public TrackedDummyWorld(Level world){
-        super(null, null, Holder.direct(DIMENSION_TYPE), null,true, false, 0);
+        super(null, null, AntimatterPlatformUtils.getCurrentServer().overworld().dimensionTypeRegistration(), null,true, false, 0, 1);
         proxyWorld = world;
     }
 
@@ -117,6 +110,16 @@ public class TrackedDummyWorld extends Level {
     @Override
     public FluidState getFluidState(BlockPos pos) {
         return null;
+    }
+
+    @Override
+    public void playSeededSound(@Nullable Player player, double x, double y, double z, SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch, long seed) {
+
+    }
+
+    @Override
+    public void playSeededSound(@Nullable Player player, Entity entity, SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch, long seed) {
+
     }
 
     public Vector3f getSize() {
@@ -259,6 +262,11 @@ public class TrackedDummyWorld extends Level {
 
     @Override
     public void levelEvent(Player playerEntity, int i, BlockPos blockPos, int i1) {
+
+    }
+
+    @Override
+    public void gameEvent(GameEvent event, Vec3 position, GameEvent.Context context) {
 
     }
 
