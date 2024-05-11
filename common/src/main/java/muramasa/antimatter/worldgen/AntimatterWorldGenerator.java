@@ -50,15 +50,6 @@ public class AntimatterWorldGenerator {
     static final AntimatterFeature<NoneFeatureConfiguration> ORE = new FeatureOre();
     static final AntimatterFeature<NoneFeatureConfiguration> STONE_LAYER = new FeatureStoneLayer();
 
-
-    protected record GenHandler(BiomeLoadEvent consumer,
-                                Predicate<Biome.BiomeCategory> validator) {
-    }
-    @FunctionalInterface
-    public interface BiomeLoadEvent{
-        void accept(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns);
-    }
-
     public static void clear() {
         AntimatterAPI.all(AntimatterFeature.class, t -> t.getRegistry().clear());
     }
@@ -101,10 +92,6 @@ public class AntimatterWorldGenerator {
         AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
         if (feature != null)
             base.getDimensions().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
-    }
-
-    public static void register(BiomeLoadEvent consumer, String id, String domain, Predicate<Biome.BiomeCategory> validator) {
-        AntimatterAPI.register(GenHandler.class, id, domain, new GenHandler(consumer, validator));
     }
 
     public static <T> List<T> all(Class<T> c, ResourceKey<Level> dim) {
@@ -193,12 +180,6 @@ public class AntimatterWorldGenerator {
     public static void reloadEvent(ResourceLocation name, Biome.ClimateSettings climate, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
         AntimatterAPI.all(IAntimatterFeature.class, t -> {
             t.build(name, climate, effects, gen, spawns);
-        });
-        AntimatterAPI.all(GenHandler.class, t -> {
-            if (name == null) return;
-            if (t.validator.test(category)) {
-                t.consumer.accept(name, climate, category, effects, gen, spawns);
-            }
         });
         if (AntimatterPlatformUtils.isForge()) {
             handleFeatureRemoval(gen);
