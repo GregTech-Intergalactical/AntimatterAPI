@@ -13,6 +13,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.BiPredicate;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE_SMALL;
@@ -50,12 +50,12 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
 
 
     @Override
-    public void build(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
+    public void build(ResourceLocation name, Biome.ClimateSettings climate, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
         gen.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.SMALL_ORES);
     }
 
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> placer) {
-        Random random = placer.random();
+        RandomSource random = placer.random();
         BlockPos blockpos = placer.origin();
         WorldGenLevel world = placer.level();
 

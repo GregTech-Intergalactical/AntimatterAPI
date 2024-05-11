@@ -16,6 +16,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,7 +75,7 @@ public class StoneLayerOre {
         return addFilteredBiome("#" + biomeTagKey.location());
     }
 
-    public boolean canPlace(BlockPos pos, Random rand, LevelAccessor world) {
+    public boolean canPlace(BlockPos pos, RandomSource rand, LevelAccessor world) {
         Holder<Biome> biome = world.getBiome(pos);
         boolean failed = !filteredBiomesBlacklist;
         if (!filteredBiomes.isEmpty()){

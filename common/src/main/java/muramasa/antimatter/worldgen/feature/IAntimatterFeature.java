@@ -11,5 +11,5 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 public interface IAntimatterFeature extends ISharedAntimatterObject {
     Feature<?> asFeature();
 
-   void build(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns);
+   void build(ResourceLocation name, Biome.ClimateSettings climate, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns);
 }

@@ -11,6 +11,7 @@ import muramasa.antimatter.worldgen.*;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -50,7 +51,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
     }
 
     @Override
-    public void build(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
+    public void build(ResourceLocation name, Biome.ClimateSettings climate, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
         gen.addFeature(GenerationStep.Decoration.UNDERGROUND_STRUCTURES, AntimatterConfiguredFeatures.STONE_LAYER);
     }
 
@@ -58,7 +59,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctxt) {
         WorldGenLevel world = ctxt.level();
         BlockPos pos = ctxt.origin();
-        Random rand = ctxt.random();
+        RandomSource rand = ctxt.random();
         List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getLevel().dimension());
         if (stones.size() == 0) return false;
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];

@@ -30,7 +30,7 @@ import static muramasa.antimatter.worldgen.AntimatterWorldGenerator.isDecoratedF
 
 public class AntimatterFabricWorldgen {
     public static void init(){
-        BiomeModifications.create(new ResourceLocation(ID, "worldgen_event")).add(ModificationPhase.ADDITIONS, b -> true, (s, m) -> AntimatterWorldGenerator.reloadEvent(s.getBiomeKey().location(), ((BiomeAccessor)(Object)s.getBiome()).getClimateSettings(), ((BiomeAccessor)(Object)s.getBiome()).getBiomeCategory(), s.getBiome().getSpecialEffects(), new CustomGenerationBuilder(m.getGenerationSettings()), new CustomSpawnSettings(m.getSpawnSettings())))
+        BiomeModifications.create(new ResourceLocation(ID, "worldgen_event")).add(ModificationPhase.ADDITIONS, b -> true, (s, m) -> AntimatterWorldGenerator.reloadEvent(s.getBiomeKey().location(), ((BiomeAccessor)(Object)s.getBiome()).getClimateSettings(), s.getBiome().getSpecialEffects(), new CustomGenerationBuilder(m.getGenerationSettings()), new CustomSpawnSettings(m.getSpawnSettings())))
                 .add(ModificationPhase.REMOVALS, b -> true, (s, m) -> handleFeatureRemoval(s.getBiome(), m.getGenerationSettings()));
     }
 
