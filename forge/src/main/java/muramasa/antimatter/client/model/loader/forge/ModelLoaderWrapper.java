@@ -3,15 +3,13 @@ package muramasa.antimatter.client.model.loader.forge;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.client.IAntimatterModel;
+import muramasa.antimatter.client.model.IModelConfiguration;
 import muramasa.antimatter.client.model.loader.IAntimatterModelLoader;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
