@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.fluid.FluidStackJS;
+import dev.latvian.mods.kubejs.fluid.InputFluid;
+import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
@@ -15,6 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
@@ -25,6 +28,19 @@ import tesseract.FluidPlatformUtils;
 import java.util.List;
 
 public class KubeJSRecipe extends RecipeJS {
+    @Override
+    public InputItem readInputItem(Object from) {
+        if (from instanceof JsonElement element){
+            from = RecipeIngredient.fromJson(element);
+        }
+        return super.readInputItem(from);
+    }
+
+    @Override
+    public InputFluid readInputFluid(Object from) {
+
+        return super.readInputFluid(from);
+    }
 
     /*public final List<FluidIngredient> fluidInput = new ObjectArrayList<>();
     public final List<FluidHolder> fluidOutput = new ObjectArrayList<>();
