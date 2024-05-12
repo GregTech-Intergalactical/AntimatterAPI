@@ -7,10 +7,16 @@ import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.recipe.RecipeKey;
 import dev.latvian.mods.kubejs.recipe.component.*;
 import dev.latvian.mods.kubejs.recipe.schema.RecipeSchema;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public interface MachineRecipeSchema {
-    RecipeKey<String> MAP = StringComponent.NON_EMPTY.key("map");
+    StringComponent MAP_COMPONENT = new StringComponent("Unknown recipe map", s -> {
+        RecipeMap<?> rMap = AntimatterAPI.get(RecipeMap.class, s);
+        return rMap != null;
+    });
+    RecipeKey<String> MAP = MAP_COMPONENT.key("map");
     RecipeKey<InputItem[]> INPUT_ITEMS = ItemComponents.INPUT_ARRAY.key("inputItems");
     RecipeKey<OutputItem[]> OUTPUT_ITEMS = ItemComponents.OUTPUT_ARRAY.key("outputItems");
     RecipeKey<InputFluid[]> INPUT_FLUIDS = FluidComponents.INPUT_ARRAY.key("inputFluids");
