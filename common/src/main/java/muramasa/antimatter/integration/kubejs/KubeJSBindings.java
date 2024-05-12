@@ -37,15 +37,15 @@ public class KubeJSBindings {
     return AntimatterAPI.get(MaterialType.class, type);
   }
 
-  public ItemStackJS material_stack(String type, Material material, int count) {
+  public ItemStack material_stack(String type, Material material, int count) {
     Item i = material_item(type, material.getId());
     // Return null to break.
     if (i == Items.AIR)
       return null;
-    return ItemStackJS.of(new ItemStack(i, count));
+    return new ItemStack(i, count);
   }
 
-  public ItemStackJS material_stack(String type, Object m, int count) {
+  public ItemStack material_stack(String type, Object m, int count) {
       String material = null;
       if (m instanceof Material mat) {
           material = mat.getId();
@@ -57,7 +57,7 @@ public class KubeJSBindings {
     // Return null to break.
     if (i == Items.AIR)
       return null;
-    return ItemStackJS.of(new ItemStack(i, count));
+    return new ItemStack(i, count);
   }
 
   public boolean allow(MaterialType<?> type, Material mat) {
@@ -89,7 +89,7 @@ public class KubeJSBindings {
             return it.getMaterial();
         }
     }
-    if (stack instanceof ItemStackJS istack) {
+    if (stack instanceof ItemStack istack) {
         if (istack.getItem() instanceof MaterialItem m) {
             return m.getMaterial();
         }
@@ -97,14 +97,14 @@ public class KubeJSBindings {
     return null;
   }
 
-  public List<ItemStackJS> all_stack(String type, int count) {
+  public List<ItemStack> all_stack(String type, int count) {
     MaterialType t = AntimatterAPI.get(MaterialType.class, type);
     if (t == null)
       Collections.emptyList();
     if (t instanceof MaterialTypeItem) {
       Set<Material> mat = t.all();
       MaterialTypeItem item = (MaterialTypeItem) t;
-      return mat.stream().map(tt -> ItemStackJS.of(new ItemStack(item.get(tt), count))).collect(Collectors.toList());
+      return mat.stream().map(tt -> new ItemStack(item.get(tt), count)).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }

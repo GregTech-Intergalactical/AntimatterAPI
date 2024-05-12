@@ -7,8 +7,6 @@ import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.fluid.FluidStackJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
-import dev.latvian.mods.kubejs.item.ingredient.MatchAnyIngredientJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
