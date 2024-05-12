@@ -20,6 +20,7 @@ import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.integration.kubejs.AMWorldEvent;
+import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.recipe.IRecipe;
@@ -254,7 +255,7 @@ public class AntimatterDynamics {
         WorldGenVeinLayer.resetTotalWeight();
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && serverEvent) {
             AMWorldEvent ev = new AMWorldEvent();
-            ev.post(ScriptType.SERVER, "antimatter.worldgen");
+            AntimatterKubeJS.WORLDGEN.post(ScriptType.SERVER, ev);
             veins.addAll(ev.VEINS);
             stoneLayers.addAll(ev.STONE_LAYERS);
             collisionMap.putAll(ev.COLLISION_MAP);

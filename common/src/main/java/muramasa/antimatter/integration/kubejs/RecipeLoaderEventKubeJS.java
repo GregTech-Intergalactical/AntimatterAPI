@@ -26,7 +26,7 @@ public class RecipeLoaderEventKubeJS extends EventJS {
 
     public static RecipeLoaderEventKubeJS createAndPost(boolean server) {
         RecipeLoaderEventKubeJS ev = new RecipeLoaderEventKubeJS();
-        ev.post(server ? ScriptType.SERVER : ScriptType.CLIENT, "antimatter.recipes");
+        AntimatterKubeJS.RECIPE_LOADER.post(server ? ScriptType.SERVER : ScriptType.CLIENT, ev);
         return ev;
     }
 }

@@ -2,6 +2,8 @@ package muramasa.antimatter.integration.kubejs;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.event.EventGroup;
+import dev.latvian.mods.kubejs.event.EventHandler;
 import dev.latvian.mods.kubejs.recipe.schema.RegisterRecipeSchemasEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
@@ -10,6 +12,12 @@ import muramasa.antimatter.event.MaterialEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public class AntimatterKubeJS extends KubeJSPlugin {
+    private static final EventGroup ANTIMATTER = EventGroup.of("antimatter");
+
+    private static final EventHandler CREATION = ANTIMATTER.startup("creation", () -> AMCreationEvent.class);
+    private static final EventHandler MATERIAL_EVENT = ANTIMATTER.startup("material_event", () -> AMMaterialEvent.class);
+    public static final EventHandler WORLDGEN = ANTIMATTER.server("worldgen", () -> AMWorldEvent.class);
+    public static final EventHandler RECIPE_LOADER = ANTIMATTER.server("recipes", () -> RecipeLoaderEventKubeJS.class);
 
     @Override
     public void initStartup() {
@@ -34,10 +42,10 @@ public class AntimatterKubeJS extends KubeJSPlugin {
 
     public static void loadStartup(){
         AMCreationEvent.init();
-        new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");
+        CREATION.post(ScriptType.STARTUP, new AMCreationEvent());
     }
 
     public static void loadMaterialEvent(MaterialEvent event){
-        new AMMaterialEvent(event).post(ScriptType.STARTUP, "antimatter.material_event");
+        MATERIAL_EVENT.post(ScriptType.STARTUP, new AMMaterialEvent(event));
     }
 }
