@@ -24,6 +24,9 @@ package muramasa.antimatter.util;
  * http://www.gnu.org/licenses/lgpl-3.0.txt
  */
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.levelgen.PositionalRandomFactory;
+
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -33,7 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 03.06.2016
  * version 0.0.4
  */
-public class XSTR extends Random {
+public class XSTR extends Random implements RandomSource {
 
     private static final long serialVersionUID = 6208727693524452904L;
     private long seed;
@@ -88,12 +91,27 @@ public class XSTR extends Random {
         this.seed = seed;
     }
 
+    @Override
+    public boolean isDeprecated() {
+        return super.isDeprecated();
+    }
+
     public boolean nextBoolean() {
         return next(1) != 0;
     }
 
     public double nextDouble() {
         return (((long) (next(26)) << 27) + next(27)) * DOUBLE_UNIT;
+    }
+
+    @Override
+    public double nextDouble(double bound) {
+        return super.nextDouble(bound);
+    }
+
+    @Override
+    public double nextDouble(double origin, double bound) {
+        return super.nextDouble(origin, bound);
     }
 
     /**
@@ -103,6 +121,16 @@ public class XSTR extends Random {
      */
     public synchronized long getSeed() {
         return seed;
+    }
+
+    @Override
+    public RandomSource fork() {
+        return null;
+    }
+
+    @Override
+    public PositionalRandomFactory forkPositional() {
+        return null;
     }
 
     /**
@@ -162,6 +190,16 @@ public class XSTR extends Random {
             haveNextNextGaussian = true;
             return v1 * multiplier;
         }
+    }
+
+    @Override
+    public double nextGaussian(double mean, double stddev) {
+        return super.nextGaussian(mean, stddev);
+    }
+
+    @Override
+    public double nextExponential() {
+        return super.nextExponential();
     }
 
     /**
@@ -245,6 +283,11 @@ public class XSTR extends Random {
         return (out < 0) ? -out : out;
     }
 
+    @Override
+    public int nextInt(int origin, int bound) {
+        return super.nextInt(origin, bound);
+    }
+
     public int nextInt() {
         return next(32);
     }
@@ -253,9 +296,29 @@ public class XSTR extends Random {
         return next(24) * FLOAT_UNIT;
     }
 
+    @Override
+    public float nextFloat(float bound) {
+        return super.nextFloat(bound);
+    }
+
+    @Override
+    public float nextFloat(float origin, float bound) {
+        return super.nextFloat(origin, bound);
+    }
+
     public long nextLong() {
         // it's okay that the bottom word remains signed.
         return ((long) (next(32)) << 32) + next(32);
+    }
+
+    @Override
+    public long nextLong(long bound) {
+        return super.nextLong(bound);
+    }
+
+    @Override
+    public long nextLong(long origin, long bound) {
+        return super.nextLong(origin, bound);
     }
 
     public void nextBytes(byte[] bytes_arr) {

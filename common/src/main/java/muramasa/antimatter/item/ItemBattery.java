@@ -59,7 +59,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(group)) {
+        if (this.allowedIn(group)) {
             ItemStack stack = new ItemStack(this);
             items.add(stack.copy());
             items.add(getFilledBattery(this));
@@ -97,7 +97,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         ItemStack stack = player.getItemInHand(hand);
         if (!world.isClientSide() && player.isCrouching()) {
             boolean newMode = chargeModeSwitch(stack);
-            player.sendMessage(Utils.translatable(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUUID());
+            player.displayClientMessage(Utils.translatable(newMode ? "message.discharge.on" : "message.discharge.off"), false);
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.pass(stack);

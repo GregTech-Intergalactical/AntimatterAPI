@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -63,7 +64,7 @@ public class CoverMuffler extends BaseCover {
         if (world.isClientSide) {
             BlockEntityMultiMachine<?> tile = StructureCache.getAnyMulti(world, pos, BlockEntityMultiMachine.class);
             if (tile == null || tile.getMachineState() != MachineState.ACTIVE) return;
-            Random rand = world.random;
+            RandomSource rand = world.random;
             Direction dir = this.side;
             double d0 = (double) pos.getX() + 0.5D + (dir.getAxis() == Direction.Axis.X ? 0f : (rand.nextDouble() - 0.5f) / 2);
             double d1 = (double) pos.getY() + 0.5D + (dir.getAxis() == Direction.Axis.Y ? 0f : (rand.nextDouble() - 0.5f) / 2);

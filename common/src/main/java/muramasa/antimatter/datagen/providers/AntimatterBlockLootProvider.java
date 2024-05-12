@@ -22,6 +22,7 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
@@ -130,7 +131,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     }
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
         /*loot();
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
             Path path = getPath(generator.getOutputFolder(), e.getKey().getRegistryName());

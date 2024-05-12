@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         try {
             if (onlyGeneralQuads && side != null) return Collections.emptyList();
             if (state == null) {
@@ -52,7 +53,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
+    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         //if (side != null) return super.getBlockQuads(state, side, rand, data);
         // if (side == null) return super.getBlockQuads(state, null,rand,data);
         //if (side == null) return super.getBlockQuads(state,null,rand,data);
@@ -62,7 +63,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
         return sideQuads;
     }
 
-    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         return Collections.emptyList();
     }
 }

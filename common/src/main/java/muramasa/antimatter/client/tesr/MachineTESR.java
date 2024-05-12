@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -71,7 +72,7 @@ public class MachineTESR implements BlockEntityRenderer<BlockEntityMachine<?>> {
 
     }
 
-    private static BakedModel renderInner(BlockState state, Random rand, int light, BakedModel inner, Fluid fluid, BlockAndTintGetter level, BlockPos pos) {
+    private static BakedModel renderInner(BlockState state, RandomSource rand, int light, BakedModel inner, Fluid fluid, BlockAndTintGetter level, BlockPos pos) {
         List<BakedQuad> quads = ModelUtils.getQuadsFromBaked(inner, state, null, rand, level, pos);
         List<BakedQuad> out = VertexTransformer.processMany(quads, FluidPlatformUtils.INSTANCE.getFluidColor(fluid), Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(FluidPlatformUtils.INSTANCE.getStillTexture(fluid)));
         boolean hot = FluidPlatformUtils.INSTANCE.getFluidTemperature(fluid) >= FluidPlatformUtils.INSTANCE.getFluidTemperature(Fluids.LAVA);

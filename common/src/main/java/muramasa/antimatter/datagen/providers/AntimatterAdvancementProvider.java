@@ -7,6 +7,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +55,7 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
     }
 
     @Override
-    public void run(@NotNull HashCache cache) {
+    public void run(@NotNull CachedOutput cache) {
         /*Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {

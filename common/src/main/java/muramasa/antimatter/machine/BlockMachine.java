@@ -37,6 +37,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -178,9 +179,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         boolean wasDisabled = tile.toggleMachine();
                         if (wasDisabled) {
                             if (tile.getMachineState() == MachineState.DISABLED) {
-                                player.sendMessage(Utils.literal("Disabled machine."), player.getUUID());
+                                player.displayClientMessage(Utils.literal("Disabled machine."), false);
                             } else {
-                                player.sendMessage(Utils.literal("Enabled machine."), player.getUUID());
+                                player.displayClientMessage(Utils.literal("Enabled machine."), false);
                             }
                             Utils.damageStack(stack, player);
                             return InteractionResult.SUCCESS;
@@ -407,7 +408,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     }
 
     @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!type.isAmbientTicking()) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof BlockEntityMachine<?> machine){

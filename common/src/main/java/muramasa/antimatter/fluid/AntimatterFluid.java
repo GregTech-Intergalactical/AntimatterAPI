@@ -140,7 +140,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     }
 
     protected static Block.Properties getDefaultBlockProperties() {
-        return Block.Properties.of(Material.WATER).strength(100.0F).noDrops();
+        return Block.Properties.of(Material.WATER).strength(100.0F).noLootTable();
     }
 
     protected static FluidProperties.Builder getDefaultAttributesBuilder() {

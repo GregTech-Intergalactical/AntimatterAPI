@@ -29,6 +29,7 @@ import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.devtech.arrp.json.lang.JLang;
 import net.minecraft.Util;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
@@ -89,7 +90,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
     }
 
     protected void addTranslations() {

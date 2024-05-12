@@ -113,8 +113,8 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
                         tile.mDisabledOutputs = Connectivity.set(tile.mDisabledInputs, side.get3DDataValue());
                     }
                 }
-                player.sendMessage(Utils.translatable("antimatter.pipe.item.input_side." + (Connectivity.has(tile.mDisabledInputs, side.get3DDataValue()) ? "disabled" : "enabled")), player.getUUID());
-                player.sendMessage(Utils.translatable("antimatter.pipe.item.output_side." + (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue()) ? "disabled" : "enabled")), player.getUUID());
+                player.displayClientMessage(Utils.translatable("antimatter.pipe.item.input_side." + (Connectivity.has(tile.mDisabledInputs, side.get3DDataValue()) ? "disabled" : "enabled")), false);
+                player.displayClientMessage(Utils.translatable("antimatter.pipe.item.output_side." + (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue()) ? "disabled" : "enabled")), false);
                 Utils.damageStack(player.getItemInHand(hand), hand, player);
                 return InteractionResult.SUCCESS;
             }

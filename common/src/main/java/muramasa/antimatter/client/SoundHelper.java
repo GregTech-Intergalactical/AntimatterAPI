@@ -23,7 +23,7 @@ public class SoundHelper {
     public static void startLoop(Machine<?> machine, Level level, BlockPos pos) {
         Minecraft mc = Minecraft.getInstance();
         //double d0 = mc.gameRenderer.getMainCamera().getPosition().distanceToSqr(msg.pos.getX(), msg.pos.getY(), msg.pos.getZ());
-        SimpleSoundInstance simplesoundinstance = new SimpleSoundInstance(machine.machineNoise.getLocation(), SoundSource.BLOCKS, machine.soundVolume,1.0f, true, 0, SoundInstance.Attenuation.LINEAR, pos.getX(), pos.getY(), pos.getZ(), false);
+        SimpleSoundInstance simplesoundinstance = new SimpleSoundInstance(machine.machineNoise.getLocation(), SoundSource.BLOCKS, machine.soundVolume,1.0f, level.getRandom(), true, 0, SoundInstance.Attenuation.LINEAR, pos.getX(), pos.getY(), pos.getZ(), false);
         mc.getSoundManager().play(simplesoundinstance);
         MACHINE_SOUNDS.computeIfAbsent(level, l -> new Object2ObjectOpenHashMap<>()).put(pos, simplesoundinstance);
     }

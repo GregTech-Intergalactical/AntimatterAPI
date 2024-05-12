@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiPredicate;
+import java.util.random.RandomGenerator;
 
 @Accessors(chain = true)
 public class StoneLayerOre {
@@ -96,7 +97,32 @@ public class StoneLayerOre {
             }
             if (failed) return false;
         }
-        return pos.getY() >= minY && pos.getY() <= maxY && rand.nextLong(Ref.U) < chance;
+        return pos.getY() >= minY && pos.getY() <= maxY && boundedNextLong(rand, Ref.U) < chance;
+    }
+
+    public static long boundedNextLong(RandomSource rng, long bound) {
+        if (bound <= 0) {
+            throw new IllegalArgumentException("bound must be positive");
+        }
+        // Specialize boundedNextLong for origin == 0, bound > 0
+        final long m = bound - 1;
+        long r = rng.nextLong();
+        if ((bound & m) == 0L) {
+            // The bound is a power of 2.
+            r &= m;
+        } else {
+            // Must reject over-represented candidates
+            /* This loop takes an unlovable form (but it works):
+               because the first candidate is already available,
+               we need a break-in-the-middle construction,
+               which is concisely but cryptically performed
+               within the while-condition of a body-less for loop. */
+            for (long u = r >>> 1;
+                 u + m - (r = u % bound) < 0L;
+                 u = rng.nextLong() >>> 1)
+                ;
+        }
+        return r;
     }
 
     public static long bind(long min, long max, long boundValue) {

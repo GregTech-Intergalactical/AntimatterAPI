@@ -73,12 +73,12 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
         boolean success = false;
         if (tile instanceof BlockEntityBase<?> base) {
-            base.getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
+            base.getInfo(simple).forEach(s -> context.getPlayer().displayClientMessage(Utils.literal(s), false));
             success = true;
         }
         if (state.getBlock() instanceof BlockDynamic dynamic && context.getPlayer() != null) {
             dynamic.getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
-                context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID());
+                context.getPlayer().displayClientMessage(Utils.literal(s), false);
             });
             success = true;
         }

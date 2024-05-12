@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ public class CoveredBakedModel extends AttachableBakedModel {
     }
 
     @Override
-    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @NotNull Random rand,
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @NotNull RandomSource rand,
                                                  @NotNull BlockAndTintGetter level, BlockPos pos) {
         return Collections.emptyList();//attachCoverQuads(new ArrayList<>(), state, side, data);
     }

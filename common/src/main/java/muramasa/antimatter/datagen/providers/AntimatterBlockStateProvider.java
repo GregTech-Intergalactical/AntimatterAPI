@@ -14,6 +14,7 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
@@ -44,7 +45,7 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
     }
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
 
     }
 

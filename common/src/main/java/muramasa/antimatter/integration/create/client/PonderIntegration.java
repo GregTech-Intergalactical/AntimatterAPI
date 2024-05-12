@@ -105,7 +105,7 @@ public class PonderIntegration {
                         Selection selection = util.select.fromTo(0, y, 0, pattern.getBlockInfos()[0].length - 1, y, pattern.getBlockInfos()[0][0].length - 1);
                         if (y == blocks.length){
                             controllerPositions.forEach(pos -> {
-                                scene.world.modifyTileEntity(pos, BlockEntityBasicMultiMachine.class, b -> {
+                                scene.world.modifyBlockEntity(pos, BlockEntityBasicMultiMachine.class, b -> {
                                     b.setMachineState(MachineState.IDLE);
                                 });
                             });

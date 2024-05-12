@@ -25,6 +25,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,7 +45,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }    
 
 
-    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, Random rand, MachineProperties data, BlockEntityMachine<?> machine, BlockAndTintGetter level, BlockPos pos) {
+    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, RandomSource rand, MachineProperties data, BlockEntityMachine<?> machine, BlockAndTintGetter level, BlockPos pos) {
    
         ICover cover = data.covers[side.get3DDataValue()];
         if (cover.isEmpty()) return Collections.emptyList();
@@ -61,7 +62,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return list;
     }
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, BlockAndTintGetter level, @NotNull BlockPos pos) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, BlockAndTintGetter level, @NotNull BlockPos pos) {
         if (side == null) {
             return Collections.emptyList();
         }

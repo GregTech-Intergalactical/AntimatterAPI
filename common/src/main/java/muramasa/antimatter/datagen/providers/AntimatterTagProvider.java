@@ -13,6 +13,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 
 import java.io.IOException;
@@ -77,7 +78,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     }
 
     protected AntimatterTagBuilder<T> getOrCreateRawBuilder(TagKey<T> tag) {
-        return this.builders.computeIfAbsent(tag.location(), (location) -> new AntimatterTagBuilder<>(new Tag.Builder(), registry, providerDomain));
+        return this.builders.computeIfAbsent(tag.location(), (location) -> new AntimatterTagBuilder<>(new TagBuilder(), registry, providerDomain));
     }
 
     // Must append 's' in the identifier

@@ -4,6 +4,7 @@ import muramasa.antimatter.Ref;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +20,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
 
     //Data required to assemble the model.
     public class BuilderData {
-        public Random rand;
+        public RandomSource rand;
         @Nullable
         public BlockState state;
         public BlockAndTintGetter level;
@@ -30,7 +31,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         public Direction currentDir;
         public String type;
 
-        public BuilderData(String type, Random r, BlockState s, BlockAndTintGetter l, BlockPos p, T t, U u, Direction dir) {
+        public BuilderData(String type, RandomSource r, BlockState s, BlockAndTintGetter l, BlockPos p, T t, U u, Direction dir) {
             rand = r;
             state = s;
             level = l;

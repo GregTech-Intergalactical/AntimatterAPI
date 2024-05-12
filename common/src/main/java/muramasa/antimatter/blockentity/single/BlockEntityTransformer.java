@@ -83,7 +83,7 @@ public class BlockEntityTransformer<T extends BlockEntityTransformer<T>> extends
                 h.setOutputVoltage(h.getInputVoltage());
                 h.setInputVoltage(temp);
                 this.invalidateCap(IEnergyHandler.class);
-                player.sendMessage(Utils.literal((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), player.getUUID());
+                player.displayClientMessage(Utils.literal((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), false);
             });
             return InteractionResult.SUCCESS;
         }

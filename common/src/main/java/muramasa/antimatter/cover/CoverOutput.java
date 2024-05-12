@@ -99,7 +99,7 @@ public class CoverOutput extends CoverInput {
         if (type != null && type.getTag() == AntimatterDefaultTools.SCREWDRIVER.getTag()){
             allowInput = !allowInput;
             String suffix = allowInput ? "allow" : "no";
-            player.sendMessage(Utils.translatable("antimatter.tooltip.cover.output." + suffix + "_input"), player.getUUID());
+            player.displayClientMessage(Utils.translatable("antimatter.tooltip.cover.output." + suffix + "_input"), false);
             return InteractionResult.SUCCESS;
         }
         return super.onInteract(player, hand, side, type);

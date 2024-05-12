@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,11 +38,11 @@ public interface IAntimatterBakedModelMixin extends FabricBakedModel, BakedModel
     }
 
     @Override
-    default void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context){
+    default void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context){
         IAntimatterBakedModel ref = (IAntimatterBakedModel) this;
         context.bakedModelConsumer().accept(new BakedModel() {
             @Override
-            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
+            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
                 return ref.getQuads(state, side, rand, blockView, pos);
             }
 
@@ -83,7 +84,7 @@ public interface IAntimatterBakedModelMixin extends FabricBakedModel, BakedModel
     }
 
     @Override
-    default void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context){
+    default void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context){
         context.bakedModelConsumer().accept(this);
     }
 }

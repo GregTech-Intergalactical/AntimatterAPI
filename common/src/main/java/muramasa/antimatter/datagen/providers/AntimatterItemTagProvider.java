@@ -27,6 +27,7 @@ import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -179,7 +180,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
     protected void copy(TagKey<Block> blockTag, TagKey<Item> itemTag) {
         AntimatterTagBuilder<Item> builder = this.getOrCreateRawBuilder(itemTag);
         AntimatterTagBuilder<Block> builder2 = this.blockTags.apply(blockTag);
-        Stream<Tag.BuilderEntry> stream = builder2.builder.getEntries();
+        Stream<TagEntry> stream = builder2.builder.build().stream();
         Objects.requireNonNull(builder);
         stream.forEach(builder::add);
     }
