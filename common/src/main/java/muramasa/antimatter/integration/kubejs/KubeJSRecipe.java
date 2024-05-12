@@ -26,7 +26,7 @@ import java.util.List;
 
 public class KubeJSRecipe extends RecipeJS {
 
-    public final List<FluidIngredient> fluidInput = new ObjectArrayList<>();
+    /*public final List<FluidIngredient> fluidInput = new ObjectArrayList<>();
     public final List<FluidHolder> fluidOutput = new ObjectArrayList<>();
 
     private int duration;
@@ -204,5 +204,5 @@ public class KubeJSRecipe extends RecipeJS {
         this.json.addProperty("hidden", this.hidden);
         this.json.addProperty("map", this.map);
         this.json.addProperty("fake", this.fake);
-    }
+    }*/
 }
