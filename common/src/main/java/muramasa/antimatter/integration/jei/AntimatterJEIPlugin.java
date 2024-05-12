@@ -85,14 +85,14 @@ public class AntimatterJEIPlugin implements IModPlugin {
         List<ItemLike> list = new ArrayList<>();
         AntimatterJEIREIPlugin.getItemsToHide().forEach(c -> c.accept(list));
         if (!list.isEmpty()) {
-            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, list.stream().map(i -> i.asItem().getDefaultInstance()).toList());
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, list.stream().map(i -> i.asItem().getDefaultInstance()).toList());
         }
         List<Fluid> fluidList = new ArrayList<>();
         AntimatterJEIREIPlugin.getFluidsToHide().forEach(c -> c.accept(fluidList));
         // wish there was a better way to do this
         if (!fluidList.isEmpty()){
             runtime.getIngredientManager().removeIngredientsAtRuntime(AntimatterJEIPlugin.getFluidIngredientObjectType(), (Collection) fluidList.stream().map(f -> AntimatterJEIPlugin.getFluidObject(FluidHolder.of(f))).toList());
-            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, fluidList.stream().map(i -> i.getBucket().getDefaultInstance()).toList());
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, fluidList.stream().map(i -> i.getBucket().getDefaultInstance()).toList());
         }
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
@@ -185,7 +185,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
             if (!type.has(RECIPE)) return;
             IRecipeMap map = type.getRecipeMap(tier);
             if (map == null) return; //incase someone adds tier specific recipe maps without a fallback
-            runtime.getRecipesGui().showCategories(List.of(map.getLoc()));
+            runtime.getRecipesGui().showTypes(List.of(RECIPE_TYPES.get(map.getLoc().toString())));
         }
     }
 
@@ -247,7 +247,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
             tuple.workstations.forEach(s -> {
                 ItemLike item = AntimatterPlatformUtils.getItemFromID(s);
                 if (item == Items.AIR) return;
-                registration.addRecipeCatalyst(new ItemStack(item), tuple.map.getLoc());
+                registration.addRecipeCatalyst(new ItemStack(item), RECIPE_TYPES.get(tuple.map.getLoc().toString()));
             });
         });
     }

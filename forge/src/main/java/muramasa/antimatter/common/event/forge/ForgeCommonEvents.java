@@ -22,13 +22,14 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.MissingMappingsEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
@@ -40,12 +41,12 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent
     public static void onContainerOpen(PlayerContainerEvent.Open ev) {
-        CommonEvents.onContainerOpen(ev.getPlayer(), ev.getContainer());
+        CommonEvents.onContainerOpen(ev.getEntity(), ev.getContainer());
     }
 
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
-        CommonEvents.onItemCrafted(e.getInventory(), e.getPlayer());
+        CommonEvents.onItemCrafted(e.getInventory(), e.getEntity());
     }
 
     @SubscribeEvent
@@ -55,7 +56,7 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event){
-        CommonEvents.placeBlock(event.getPlacedAgainst(), event.getEntity(), event.getWorld(), event.getPos(), event.getPlacedBlock());
+        CommonEvents.placeBlock(event.getPlacedAgainst(), event.getEntity(), event.getLevel(), event.getPos(), event.getPlacedBlock());
     }
 
     @SubscribeEvent
@@ -80,21 +81,21 @@ public class ForgeCommonEvents {
     }
 
     @SubscribeEvent
-    public static void remapMissingBlocks(final RegistryEvent.MissingMappings<Block> event) {
+    public static void remapMissingBlocks(final MissingMappingsEvent event) {
         for (String modid : AntimatterRemapping.getRemappingMap().keySet()) {
-            for (RegistryEvent.MissingMappings.Mapping<Block> mapping : event.getMappings(modid)) {
+            for (MissingMappingsEvent.Mapping<Block> mapping : event.getMappings(ForgeRegistries.Keys.BLOCKS, modid)) {
                 var map = AntimatterRemapping.getRemappingMap().get(modid);
-                if (map.containsKey(mapping.key.getPath())){
-                    Block replacement = AntimatterAPI.get(Block.class, map.get(mapping.key.getPath()));
+                if (map.containsKey(mapping.getKey().getPath())){
+                    Block replacement = AntimatterAPI.get(Block.class, map.get(mapping.getKey().getPath()));
                     if (replacement != null){
                         mapping.remap(replacement);
                     }
                 }
             }
         }
-        event.getMappings(Ref.MOD_KJS).forEach(map -> {
-            String domain = map.key.getNamespace();
-            String id = map.key.getPath();
+        event.getMappings(ForgeRegistries.Keys.BLOCKS, Ref.MOD_KJS).forEach(map -> {
+            String domain = map.getKey().getNamespace();
+            String id = map.getKey().getPath();
             if (id.startsWith("block_")) {
                 Material mat = Material.get(id.replace("block_", ""));
                 if (mat != NULL) {
@@ -114,8 +115,8 @@ public class ForgeCommonEvents {
                 map.remap(replacement);
             }
         });
-        event.getMappings(Ref.SHARED_ID).forEach(map -> {
-            String id = map.key.getPath();
+        event.getMappings(ForgeRegistries.Keys.BLOCKS, Ref.SHARED_ID).forEach(map -> {
+            String id = map.getKey().getPath();
             if (id.equals("basalt")){
                 map.remap(Blocks.BASALT);
                 return;
@@ -143,27 +144,27 @@ public class ForgeCommonEvents {
     }
 
     @SubscribeEvent
-    public static void remapMissingItems(final RegistryEvent.MissingMappings<Item> event) {
+    public static void remapMissingItems(final MissingMappingsEvent event) {
         for (String modid : AntimatterRemapping.getRemappingMap().keySet()) {
-            for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getMappings(modid)) {
+            for (MissingMappingsEvent.Mapping<Item> mapping : event.getMappings(ForgeRegistries.Keys.ITEMS, modid)) {
                 var map = AntimatterRemapping.getRemappingMap().get(modid);
-                if (map.containsKey(mapping.key.getPath())){
-                    Item replacement = AntimatterAPI.get(Item.class, map.get(mapping.key.getPath()));
+                if (map.containsKey(mapping.getKey().getPath())){
+                    Item replacement = AntimatterAPI.get(Item.class, map.get(mapping.getKey().getPath()));
                     if (replacement != null){
                         mapping.remap(replacement);
                     }
                 }
             }
         }
-        event.getMappings(Ref.ID).forEach(map -> {
-            Item replacement = AntimatterAPI.get(Item.class, map.key.getPath(), Ref.SHARED_ID);
+        event.getMappings(ForgeRegistries.Keys.ITEMS, Ref.ID).forEach(map -> {
+            Item replacement = AntimatterAPI.get(Item.class, map.getKey().getPath(), Ref.SHARED_ID);
             if (replacement != null) {
                 map.remap(replacement);
             }
         });
 
-        event.getMappings(Ref.SHARED_ID).forEach(map -> {
-            String id = map.key.getPath();
+        event.getMappings(ForgeRegistries.Keys.ITEMS, Ref.SHARED_ID).forEach(map -> {
+            String id = map.getKey().getPath();
             if (id.equals("basalt")){
                 map.remap(Items.BASALT);
                 return;
@@ -235,13 +236,8 @@ public class ForgeCommonEvents {
     }
 
     @SubscribeEvent
-    public static void biomeLoadEvent(BiomeLoadingEvent event){
-        AntimatterWorldGenerator.reloadEvent(event.getName(),  event.getClimate(), event.getCategory(), event.getEffects(), event.getGeneration(), event.getSpawns());
-    }
-
-    @SubscribeEvent
-    public static void onWorldUnload(WorldEvent.Unload event){
-        StructureCache.onWorldUnload(event.getWorld());
+    public static void onWorldUnload(LevelEvent.Unload event){
+        StructureCache.onWorldUnload(event.getLevel());
     }
 
 }

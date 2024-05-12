@@ -6,6 +6,7 @@ import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.IItemStack;
+import com.blamejared.crafttweaker.api.recipe.component.IDecomposedRecipe;
 import com.blamejared.crafttweaker.api.recipe.handler.IRecipeHandler;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
@@ -24,6 +25,7 @@ import org.openzen.zencode.java.ZenCodeType;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ZenRegister
 @ZenCodeType.Name("mods.antimatter.RecipeManager")
@@ -64,5 +66,20 @@ public class RecipeManager implements IRecipeManager<IRecipe>, IRecipeHandler<IR
     @ZenCodeType.Method
     public void addRecipeSimple(String name, String map, IIngredient[] in, IItemStack[] out, long eu, int duration) {
         addRecipe(name, map, in, out , null, null, eu, duration, 1, 0);
+    }
+
+    @Override
+    public <U extends net.minecraft.world.item.crafting.Recipe<?>> boolean doesConflict(IRecipeManager<? super IRecipe> manager, IRecipe firstRecipe, U secondRecipe) {
+        return false;
+    }
+
+    @Override
+    public Optional<IDecomposedRecipe> decompose(IRecipeManager<? super IRecipe> manager, IRecipe recipe) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<IRecipe> recompose(IRecipeManager<? super IRecipe> manager, ResourceLocation name, IDecomposedRecipe recipe) {
+        return Optional.empty();
     }
 }

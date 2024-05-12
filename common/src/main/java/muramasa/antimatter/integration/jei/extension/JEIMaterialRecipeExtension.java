@@ -30,11 +30,11 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder recipeLayout, @NotNull ICraftingGridHelper helper, IFocusGroup focuses) {
         if (focuses.isEmpty()) {
-            helper.setInputs(recipeLayout, VanillaTypes.ITEM, recipe.getIngredients().stream().map(t -> Arrays.asList(t.getItems())).toList(), recipe.getWidth(), recipe.getHeight());
-            helper.setOutputs(recipeLayout, VanillaTypes.ITEM, recipe.outputs);
+            helper.setInputs(recipeLayout, VanillaTypes.ITEM_STACK, recipe.getIngredients().stream().map(t -> Arrays.asList(t.getItems())).toList(), recipe.getWidth(), recipe.getHeight());
+            helper.setOutputs(recipeLayout, VanillaTypes.ITEM_STACK, recipe.outputs);
             return;
         }
-        focuses.getFocuses(VanillaTypes.ITEM).forEach(focus -> {
+        focuses.getFocuses(VanillaTypes.ITEM_STACK).forEach(focus -> {
             if (focus.getRole() == RecipeIngredientRole.CATALYST || focus.getRole() == RecipeIngredientRole.RENDER_ONLY)
                 return;
             List<List<ItemStack>> inputs = recipe.getIngredients().stream().map(t -> Arrays.asList(t.getItems())).toList();
@@ -67,13 +67,13 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                 IRecipeSlotBuilder outputSlot = recipeLayout.addSlot(RecipeIngredientRole.OUTPUT, 95, 19);
                 outputSlot.addTooltipCallback((a, b) -> {
                     if (a.isEmpty()) return;
-                    a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
+                    a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM_STACK)).ifPresent(ing -> {
                         Map<String, Object> o = recipe.builder.getFromResult(ing);
                         b.add(Utils.literal("Properties:").withStyle(GOLD));
                         o.forEach((k, v) -> b.add(Utils.literal(k.substring(0, 1).toUpperCase() + k.substring(1)).append(Utils.literal(" - " + v.toString()))));
                     });
                 });
-                outputSlot.addIngredients(VanillaTypes.ITEM, Collections.singletonList(stack));
+                outputSlot.addIngredients(VanillaTypes.ITEM_STACK, Collections.singletonList(stack));
             } else if (focus.getRole() == RecipeIngredientRole.INPUT) {
                 Map<String, Object> out = new Object2ObjectOpenHashMap<>();
 
@@ -121,16 +121,16 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                 IRecipeSlotBuilder outputSlot = recipeLayout.addSlot(RecipeIngredientRole.OUTPUT, 95, 19);
                 outputSlot.addTooltipCallback((a, b) -> {
                     if (a.isEmpty()) return;
-                    a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
+                    a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM_STACK)).ifPresent(ing -> {
                         Map<String, Object> o = recipe.builder.getFromResult(ing);
                         b.add(Utils.literal("Properties: ").withStyle(GOLD));
                         o.forEach((k, v) -> b.add(Utils.literal(k.substring(0, 1).toUpperCase() + k.substring(1)).append(Utils.literal(" - " + v.toString()))));
                     });
                 });
                 if (result.size() > 0) {
-                    outputSlot.addIngredients(VanillaTypes.ITEM, result);
+                    outputSlot.addIngredients(VanillaTypes.ITEM_STACK, result);
                 } else {
-                    outputSlot.addIngredients(VanillaTypes.ITEM, outputs);
+                    outputSlot.addIngredients(VanillaTypes.ITEM_STACK, outputs);
                 }
             }
 
@@ -138,7 +138,7 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
             for (int y = 0; y < recipe.getHeight(); ++y) {
                 for (int x = 0; x < recipe.getWidth(); ++x) {
                     IRecipeSlotBuilder slot = recipeLayout.addSlot(RecipeIngredientRole.INPUT, x * 18 + 1, y * 18 + 1);
-                    slot.addIngredients(VanillaTypes.ITEM, newInputs.get(i++));
+                    slot.addIngredients(VanillaTypes.ITEM_STACK, newInputs.get(i++));
                     IntSet set = new IntOpenHashSet();
                     recipe.materialSlots.values().forEach(set::addAll);
                     if (set.contains(i - 1)) {

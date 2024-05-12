@@ -10,6 +10,7 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,12 +24,12 @@ public class ClientEventsMod {
     }
 
     @SubscribeEvent
-    public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
+    public static void onBlockColorHandler(RegisterColorHandlersEvent.Block e) {
         ClientHandler.onBlockColorHandler(e.getBlockColors());
     }
 
     @SubscribeEvent
-    public static void onItemColorHandler(ColorHandlerEvent.Item e) {
+    public static void onItemColorHandler(RegisterColorHandlersEvent.Item e) {
         ClientHandler.onItemColorHandler(e.getItemColors());
     }
 

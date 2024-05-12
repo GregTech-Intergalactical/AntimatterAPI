@@ -15,7 +15,9 @@ import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
@@ -27,7 +29,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -35,6 +36,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.List;
 
@@ -42,11 +44,11 @@ import java.util.List;
 public final class AntimatterRegistration {
 
     @SubscribeEvent
-    public static void onRegister(final RegistryEvent.Register<?> e) {
+    public static void onRegister(final RegisterEvent e) {
         final String domain = ModLoadingContext.get().getActiveNamespace();
         List<IAntimatterRegistrar> list2 = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
         if (list2.size() < 4) {
-            Antimatter.LOGGER.info("Mod ID: " + domain + " & event: " + e.getRegistry().getRegistryName());
+            Antimatter.LOGGER.info("Mod ID: " + domain + " & event: " + e.getRegistryKey().location());
         }
         onRegister(domain, e);
         onRegister(Ref.SHARED_ID, e);
@@ -57,7 +59,7 @@ public final class AntimatterRegistration {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void onRegister(final String domain, final RegistryEvent.Register<?> e) {
+    public static void onRegister(final String domain, RegisterEvent e) {
         ModContainer previous = ModLoadingContext.get().getActiveContainer();
         ModContainer newContainer = ModList.get().getModContainerById(domain).orElse(null);
         if (newContainer == null) return;
@@ -66,11 +68,8 @@ public final class AntimatterRegistration {
         }
         if (domain.equals(Ref.ID)) {
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).filter(IAntimatterRegistrar::isEnabled).toList();
-            if (e.getRegistry() == ForgeRegistries.BLOCKS) {
+            if (e.getRegistryKey() == ForgeRegistries.Keys.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-                AntimatterAPI.all(SoundEvent.class, t -> {
-                    if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
-                });
                 MaterialEvent event = new MaterialEvent();
                 MaterialDataInit.onMaterialEvent(event);
                 list.forEach(r -> r.onMaterialEvent(event));
@@ -79,49 +78,41 @@ public final class AntimatterRegistration {
                 }
                 Data.postInit();
             }
-            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
-            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
-            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
+            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistryKey())));
+            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistryKey())));
+            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistryKey()))));
         }
-        if (e.getRegistry() == ForgeRegistries.BLOCKS) {
+        if (e.getRegistryKey() == ForgeRegistries.Keys.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, (b, d, i) -> {
-                if (b.getRegistryName() == null)
-                    b.setRegistryName(d, i);
                 if (!(b instanceof IItemBlockProvider pb) || pb.generateItemBlock()) {
                     AntimatterAPI.register(Item.class, i, d, b instanceof IItemBlockProvider pb ? pb.getItemBlock() : new AntimatterItemBlock(b));
                 }
-                ((IForgeRegistry) e.getRegistry()).register(b);
+                ForgeRegistries.BLOCKS.register(new ResourceLocation(d, i), b);
             });
 
-        } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.ITEMS) {
             AntimatterAPI.all(Item.class, domain, (i, d, id) -> {
-                if (i.getRegistryName() == null)
-                    i.setRegistryName(d, id);
-                ((IForgeRegistry) e.getRegistry()).register(i);
+                ForgeRegistries.ITEMS.register(new ResourceLocation(d, id), i);
             });
-            if (domain.equals(Ref.SHARED_ID)) registerTools(domain, e.getRegistry());
-        } else if (e.getRegistry() == ForgeRegistries.BLOCK_ENTITIES) {
+            if (domain.equals(Ref.SHARED_ID)) registerTools(domain, ForgeRegistries.ITEMS);
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.BLOCK_ENTITY_TYPES) {
             AntimatterAPI.all(BlockEntityType.class, domain, (t, d, i) -> {
-                if (t.getRegistryName() == null) t.setRegistryName(d, i);
-                ((IForgeRegistry) e.getRegistry()).register(t);
+                ForgeRegistries.BLOCK_ENTITY_TYPES.register(new ResourceLocation(d, i), t);
             });
-        } else if (e.getRegistry() == ForgeRegistries.FLUIDS) {
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.FLUIDS) {
             AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
-                if (f.getFluid().getRegistryName() == null) f.getFluid().setRegistryName(domain, f.getId());
-                if (f.getFlowingFluid().getRegistryName() == null) f.getFlowingFluid().setRegistryName(domain, "flowing_".concat(f.getId()));
-                ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
+                ForgeRegistries.FLUIDS.register(new ResourceLocation(domain, f.getId()), f.getFluid());
+                ForgeRegistries.FLUIDS.register(new ResourceLocation(domain, "flowing_" + f.getId()), f.getFlowingFluid());
             });
-        } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.MENU_TYPES) {
             AntimatterAPI.all(MenuType.class, domain, (h, d, i) -> {
-                if (h.getRegistryName() == null) h.setRegistryName(d, i);
-                ((IForgeRegistry) e.getRegistry()).register(h);
+                ForgeRegistries.MENU_TYPES.register(new ResourceLocation(d, i), h);
             });
-        } else if (e.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.SOUND_EVENTS) {
             AntimatterAPI.all(SoundEvent.class, domain, (t, d, i) -> {
-                if (t.getRegistryName() == null) t.setRegistryName(d, i);
-                ((IForgeRegistry) e.getRegistry()).register(t);
+                ForgeRegistries.SOUND_EVENTS.register(new ResourceLocation(d, i), t);
             });
-        } else if (e.getRegistry() == ForgeRegistries.RECIPE_SERIALIZERS) {
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.RECIPE_SERIALIZERS) {
             //TODO better solution for this
             AntimatterAPI.all(IAntimatterIngredientSerializer.class, domain, (s, d, i) -> {
                 IIngredientSerializer<?> serializer = new IIngredientSerializer() {
@@ -148,21 +139,20 @@ public final class AntimatterRegistration {
                 CraftingHelper.register(TomlConfigCondition.Serializer.INSTANCE);
             }
             AntimatterAPI.all(RecipeSerializer.class, domain, (r, d, i) -> {
-                if (r.getRegistryName() == null){
-                    r.setRegistryName(new ResourceLocation(d, i));
-                }
-                ((IForgeRegistry) e.getRegistry()).register(r);
+                ForgeRegistries.RECIPE_SERIALIZERS.register(new ResourceLocation(d, i), r);
             });
-        } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.FEATURES) {
             AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
-                if (t.asFeature().getRegistryName() == null) t.asFeature().setRegistryName(d, i);
-                ((IForgeRegistry) e.getRegistry()).register(t.asFeature());
+                ForgeRegistries.FEATURES.register(new ResourceLocation(d, i), t.asFeature());
             });
-        } else if (e.getRegistry() == ForgeRegistries.ENCHANTMENTS){
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.ENCHANTMENTS){
             AntimatterAPI.all(Enchantment.class, domain, (en, d, i) -> {
-                if (en.getRegistryName() == null) en.setRegistryName(d, i);
-                ((IForgeRegistry) e.getRegistry()).register(en);
+                ForgeRegistries.ENCHANTMENTS.register(new ResourceLocation(d, i), en);
             });
+        }else if (e.getRegistryKey() == ForgeRegistries.Keys.BIOME_MODIFIERS){
+            e.getForgeRegistry().register(new ResourceLocation(Ref.ID, "modifier"), new AntimatterBiomeModifier());
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS){
+            e.getForgeRegistry().register(new ResourceLocation(Ref.ID, "modifier"), AntimatterBiomeModifier.CODEC);
         }
         if (!domain.equals(Ref.ID)){
             ModLoadingContext.get().setActiveContainer(previous);
@@ -174,25 +164,23 @@ public final class AntimatterRegistration {
         AntimatterAPI.all(AntimatterToolType.class, t -> {
             List<IAntimatterTool> tools = t.isPowered() ? t.instantiatePoweredTools(domain) : t.instantiateTools(domain);
             for (IAntimatterTool i : tools) {
-                if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
-                registry.register(i.getItem());
+                registry.register(i.getLoc(), i.getItem());
             }
         });
         AntimatterAPI.all(AntimatterArmorType.class, t -> {
             List<IAntimatterArmor> i = t.instantiateTools();
             i.forEach(a -> {
-                if (a.getItem().getRegistryName() == null) a.getItem().setRegistryName(Ref.SHARED_ID, a.getId());
-                registry.register(a.getItem());
+                registry.register(a.getLoc(), a.getItem());
             });
 
         });
     }
 
-    public static RegistryType getRegistryType(IForgeRegistry<?> registry){
-        if (registry == ForgeRegistries.BLOCKS) return RegistryType.BLOCKS;
-        if (registry == ForgeRegistries.ITEMS) return RegistryType.ITEMS;
-        if (registry == ForgeRegistries.FLUIDS) return RegistryType.FLUIDS;
-        if (registry == ForgeRegistries.BLOCK_ENTITIES) return RegistryType.BLOCK_ENTITIES;
+    public static RegistryType getRegistryType(ResourceKey<?> registry){
+        if (registry == ForgeRegistries.Keys.BLOCKS) return RegistryType.BLOCKS;
+        if (registry == ForgeRegistries.Keys.ITEMS) return RegistryType.ITEMS;
+        if (registry == ForgeRegistries.Keys.FLUIDS) return RegistryType.FLUIDS;
+        if (registry == ForgeRegistries.Keys.BLOCK_ENTITY_TYPES) return RegistryType.BLOCK_ENTITIES;
         return RegistryType.WORLD;
     }
 }

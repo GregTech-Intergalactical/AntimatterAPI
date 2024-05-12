@@ -10,17 +10,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.CompoundIngredient;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.NBTIngredient;
+import net.minecraftforge.common.crafting.*;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Consumer;
 
 public class RecipeUtilImpl {
     public static boolean isNBTIngredient(Class<? extends Ingredient> clazz){
-        return clazz == NBTIngredient.class;
+        return clazz == PartialNBTIngredient.class || clazz == StrictNBTIngredient.class;
     }
 
     public static boolean isCompoundIngredient(Class<? extends Ingredient> clazz){

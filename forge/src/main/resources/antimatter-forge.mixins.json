@@ -3,12 +3,8 @@
   "package" : "muramasa.antimatter.mixin.forge",
   "compatibilityLevel" : "JAVA_17",
   "mixins" : [
-    "AntimatterRecipeSerializerMixin",
     "CapabilityManagerMixin",
-    "ContainerShapedSerializerMixin",
-    "ContainerShapelessSerializerMixin",
     "GameDataMixin",
-    "MaterialSerializerMixin",
     "PropertyIngredientMixin",
     "RecipeIngredientMixin",
     "BlockEntityFakeBlockMixin",

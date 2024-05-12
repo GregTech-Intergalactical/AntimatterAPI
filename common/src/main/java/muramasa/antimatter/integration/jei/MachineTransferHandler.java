@@ -9,9 +9,11 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("removal")
 public class MachineTransferHandler implements IRecipeTransferInfo<ContainerBasicMachine, IRecipe> {
@@ -23,6 +25,11 @@ public class MachineTransferHandler implements IRecipeTransferInfo<ContainerBasi
     @Override
     public Class<ContainerBasicMachine> getContainerClass() {
         return ContainerBasicMachine.class;
+    }
+
+    @Override
+    public Optional<MenuType<ContainerBasicMachine>> getMenuType() {
+        return Optional.empty();
     }
 
     @Override
@@ -57,16 +64,6 @@ public class MachineTransferHandler implements IRecipeTransferInfo<ContainerBasi
 
     @Override
     public RecipeType<IRecipe> getRecipeType() {
-        return new RecipeType<>(getRecipeCategoryUid(), getRecipeClass());
-    }
-
-    @Override
-    public Class<IRecipe> getRecipeClass() {
-        return IRecipe.class;
-    }
-
-    @Override
-    public ResourceLocation getRecipeCategoryUid() {
-        return id;
+        return new RecipeType<>(id, IRecipe.class);
     }
 }

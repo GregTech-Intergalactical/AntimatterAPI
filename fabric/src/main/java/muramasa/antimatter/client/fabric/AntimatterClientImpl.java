@@ -5,7 +5,6 @@ import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCal
 import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
-import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;

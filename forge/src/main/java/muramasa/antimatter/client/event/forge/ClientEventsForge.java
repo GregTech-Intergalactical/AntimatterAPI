@@ -15,7 +15,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -31,8 +31,8 @@ public class ClientEventsForge {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     protected static void onTooltipAdd(final ItemTooltipEvent ev) {
-        MaterialType.addTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
-        ClientEvents.onItemTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
+        MaterialType.addTooltip(ev.getItemStack(), ev.getToolTip(), ev.getEntity(), ev.getFlags());
+        ClientEvents.onItemTooltip(ev.getItemStack(), ev.getToolTip(), ev.getEntity(), ev.getFlags());
     }
 
     //TODO why is this client only?
@@ -58,21 +58,21 @@ public class ClientEventsForge {
     }
 
     @SubscribeEvent
-    public static void onGuiMouseScrollPre(ScreenEvent.MouseScrollEvent.Pre e) {
+    public static void onGuiMouseScrollPre(ScreenEvent.MouseScrolled e) {
         ClientEvents.onGuiMouseScrollPre(e.getScrollDelta());
     }
     @SubscribeEvent
-    public static void onGuiMouseClickPre(ScreenEvent.MouseClickedEvent.Pre e) {
+    public static void onGuiMouseClickPre(ScreenEvent.MouseButtonPressed e) {
         ClientEvents.onGuiMouseClickPre(e.getButton());
     }
 
     @SubscribeEvent
-    public static void onGuiMouseReleasedPre(ScreenEvent.MouseReleasedEvent.Pre e) {
+    public static void onGuiMouseReleasedPre(ScreenEvent.MouseButtonReleased e) {
         ClientEvents.onGuiMouseReleasedPre(e.getButton());
     }
 
     @SubscribeEvent
-    public static void worldUnload(WorldEvent.Unload ev) {
-        SoundHelper.worldUnload(ev.getWorld());
+    public static void worldUnload(LevelEvent.Unload ev) {
+        SoundHelper.worldUnload(ev.getLevel());
     }
 }

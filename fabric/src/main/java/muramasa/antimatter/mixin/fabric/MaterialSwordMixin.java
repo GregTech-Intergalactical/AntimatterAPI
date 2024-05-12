@@ -1,6 +1,7 @@
 package muramasa.antimatter.mixin.fabric;
 
-import io.github.fabricators_of_create.porting_lib.util.DamageableItem;
+
+import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
 import muramasa.antimatter.tool.MaterialSword;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -2,10 +2,8 @@ package muramasa.antimatter.client.model.loader.fabric;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import io.github.fabricators_of_create.porting_lib.model.IModelConfiguration;
-import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
-import io.github.fabricators_of_create.porting_lib.model.IModelLoader;
 import muramasa.antimatter.client.IAntimatterModel;
+import muramasa.antimatter.client.model.IModelConfiguration;
 import muramasa.antimatter.client.model.loader.IAntimatterModelLoader;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;

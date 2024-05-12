@@ -5,7 +5,6 @@ import carbonconfiglib.config.Config;
 import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
-import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
 import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
@@ -63,7 +62,7 @@ import java.util.function.Supplier;
 public class AntimatterPlatformUtilsImpl {
 
     public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
-        LevelUtil.markAndNotifyBlock(level, arg, levelchunk, blockstate, arg2, j, k);
+        level.markAndNotifyBlock(arg, levelchunk, blockstate, arg2, j, k);
     }
 
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
