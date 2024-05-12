@@ -29,12 +29,7 @@ public class AntimatterKubeJS extends KubeJSPlugin {
 
     @Override
     public void registerRecipeSchemas(RegisterRecipeSchemasEvent event) {
-        event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
-    }
-
-    @Override
-    public void registerRecipeT(RegisterRecipeHandlersEvent event) {
-        event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
+        event.register(new ResourceLocation(Ref.ID, "machine"), MachineRecipeSchema.SCHEMA);
     }
 
     public static void loadStartup(){
