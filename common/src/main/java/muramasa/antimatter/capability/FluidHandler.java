@@ -5,6 +5,7 @@ import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.FluidSnapshot;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
 import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
@@ -23,6 +24,7 @@ import tesseract.api.fluid.IFluidNode;
 import java.util.*;
 
 public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> implements IMachineHandler, IFluidNode {
+    @Getter
     protected final T tile;
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
     protected int capacity, pressure;
