@@ -18,9 +18,9 @@ public interface ISimpleModel extends IAntimatterModel {
     }
 
     @Override
-    default BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
+    default BakedModel bakeModel(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        TextureAtlasSprite particle = spriteGetter.apply(owner.resolveTexture("particle"));
+        TextureAtlasSprite particle = spriteGetter.apply(owner.getMaterial("particle"));
 
         IModelBuilder<?> builder = IModelBuilder.of(owner, overrides, particle);
 
@@ -29,5 +29,5 @@ public interface ISimpleModel extends IAntimatterModel {
         return builder.build();
     }
 
-    void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation);
+    void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation);
 }

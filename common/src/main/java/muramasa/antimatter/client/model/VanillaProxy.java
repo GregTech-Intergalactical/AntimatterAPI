@@ -36,12 +36,12 @@ public class VanillaProxy implements ISimpleModel
     }
 
     @Override
-    public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+    public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
     {
         for(BlockElement blockpart : elements) {
             for(Direction direction : blockpart.faces.keySet()) {
                 BlockElementFace blockpartface = blockpart.faces.get(direction);
-                TextureAtlasSprite textureatlassprite1 = spriteGetter.apply(owner.resolveTexture(blockpartface.texture));
+                TextureAtlasSprite textureatlassprite1 = spriteGetter.apply(owner.getMaterial(blockpartface.texture));
                 if (blockpartface.cullForDirection == null) {
                     modelBuilder.addGeneralQuad(BlockModelAccessor.invokeBakeFace(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                 } else {
@@ -54,13 +54,13 @@ public class VanillaProxy implements ISimpleModel
     }
 
     @Override
-    public Collection<Material> getMaterials(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<Material> getMaterials(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> textures = Sets.newHashSet();
 
         for(BlockElement part : elements) {
             for(BlockElementFace face : part.faces.values()) {
-                Material texture = owner.resolveTexture(face.texture);
+                Material texture = owner.getMaterial(face.texture);
                 if (Objects.equals(texture, MissingTextureAtlasSprite.getLocation().toString())) {
                     missingTextureErrors.add(Pair.of(face.texture, owner.getModelName()));
                 }

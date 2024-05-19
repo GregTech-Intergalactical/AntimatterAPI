@@ -34,7 +34,7 @@ public class AntimatterModel implements IAntimatterModel {
     }
 
     @Override
-    public Collection<Material> getMaterials(IModelConfiguration configuration, Function<ResourceLocation, UnbakedModel> getter, Set<Pair<String, String>> errors) {
+    public Collection<Material> getMaterials(IGeometryBakingContext configuration, Function<ResourceLocation, UnbakedModel> getter, Set<Pair<String, String>> errors) {
         return model != null ? model.getMaterials(getter, errors) : Collections.emptyList();
     }
 

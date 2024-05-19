@@ -3,7 +3,7 @@ package muramasa.antimatter.client.model.loader;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.client.baked.PipeBakedModel;
-import muramasa.antimatter.client.model.IModelConfiguration;
+import muramasa.antimatter.client.model.IGeometryBakingContext;
 import muramasa.antimatter.dynamic.DynamicModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,7 +26,7 @@ public class PipeModelLoader extends DynamicModelLoader{
         public DynamicModel readModel(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel(super.readModel(context, json)) {
                 @Override
-                public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+                public BakedModel bakeModel(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
                     return new PipeBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
