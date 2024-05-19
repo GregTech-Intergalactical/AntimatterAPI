@@ -18,16 +18,13 @@ import net.minecraft.client.resources.model.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.QuadTransformer;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.pipeline.LightUtil;
-import net.minecraftforge.common.model.TransformationHelper;
+import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.util.TransformationHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,11 +56,11 @@ public class ModelUtilsImpl {
         return SimpleBakedModel$BuilderAccessor.antimatter$create(smoothLighting, sideLit, isShadedInGui, transforms, overrides);
     }
 
-    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
+    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
         if (model instanceof IAntimatterBakedModel antimatterBaked){
             return antimatterBaked.getQuads(state, side, rand, level, pos);
         } else {
-            IModelData data = model.getModelData(level, pos, state, EmptyModelData.INSTANCE);
+            ModelData data = model.getModelData(level, pos, state, ModelData.EMPTY);
             return model.getQuads(state, side, rand, data);
         }
     }

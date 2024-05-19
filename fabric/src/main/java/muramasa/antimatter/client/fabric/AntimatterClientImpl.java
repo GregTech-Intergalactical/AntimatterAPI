@@ -1,10 +1,8 @@
 package muramasa.antimatter.client.fabric;
 
-import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
-import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCallback;
-import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
-import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.*;
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
+import io.github.fabricators_of_create.porting_lib.model.geometry.GeometryLoaderManager;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;
@@ -51,9 +49,9 @@ public class AntimatterClientImpl implements ClientModInitializer {
         ClientWorldEvents.UNLOAD.register(((client, world) -> SoundHelper.worldUnload(world)));
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
         AntimatterDynamics.runAssetProvidersDynamically();
-        ModelLoadCallback.EVENT.register(((manager, colors, profiler, mipLevel) -> {
-            AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), new ModelLoaderWrapper(l)));
-        }));
+        RegisterGeometryLoadersCallback.EVENT.register(loaders -> {
+            AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> loaders.put(l.getLoc(), new ModelLoaderWrapper(l)));
+        });
 
         ItemTooltipCallback.EVENT.register(((stack, context, lines) -> {
             MaterialType.addTooltip(stack, lines, Minecraft.getInstance().player, context);

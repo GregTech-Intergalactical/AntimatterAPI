@@ -53,11 +53,6 @@ public class AntimatterJEIPluginImpl {
                 return Optional.empty();
             }
 
-            @Override
-            public Mode getMode() {
-                return null;
-            }
-
         });
     }
 

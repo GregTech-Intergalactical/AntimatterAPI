@@ -8,11 +8,9 @@ import muramasa.antimatter.client.model.loader.forge.ModelLoaderWrapper;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -34,8 +32,8 @@ public class ClientEventsMod {
     }
 
     @SubscribeEvent
-    public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
+    public static void preResourceRegistration(ModelEvent.RegisterGeometryLoaders ev) {
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
-        AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), new ModelLoaderWrapper(l)));
+        AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> ev.register(l.getLoc().toString(), new ModelLoaderWrapper(l)));
     }
 }

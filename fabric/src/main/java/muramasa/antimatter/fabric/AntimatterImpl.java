@@ -2,7 +2,7 @@ package muramasa.antimatter.fabric;
 
 import earth.terrarium.botarium.fabric.energy.FabricBlockEnergyContainer;
 import earth.terrarium.botarium.fabric.fluid.storage.FabricBlockFluidContainer;
-import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 import muramasa.antimatter.Antimatter;
@@ -75,7 +75,7 @@ public class AntimatterImpl implements ModInitializer {
             ServerTickEvents.END_SERVER_TICK.register(server1 -> TileTicker.onServerWorldTick(server1, false));
             CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonEvents.tagsEvent());
             //TODO figure out variables to insert
-            BlockPlaceCallback.EVENT.register(context -> {
+            BlockEvents.BEFORE_PLACE.register(context -> {
                 BlockPos placedOffPos = context.getClickedPos().relative(context.getClickedFace().getOpposite());
                 BlockState placedOff = context.getLevel().getBlockState(placedOffPos);
                 CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
@@ -138,18 +138,6 @@ public class AntimatterImpl implements ModInitializer {
                 return rf instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(rf, rf, be);
             }).orElse(null);
         }, BlockFakeTile.TYPE);
-        if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-            TesseractImpl.registerMITile((be, direction) -> {
-                BlockEntityBasicMultiMachine<?> controller = be.getController();
-                if (controller == null){
-                    return null;
-                }
-                if (!controller.allowsFakeTiles()) return null;
-                ICover coverPresent = be.getCover(direction);
-                if (!(coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return null;
-                return controller.energyHandler.side(direction).orElse(null);
-            }, BlockFakeTile.TYPE);
-        }
     }
 
     private void providers(ProvidersEvent ev) {

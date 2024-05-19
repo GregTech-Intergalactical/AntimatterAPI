@@ -4,13 +4,13 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
 import muramasa.antimatter.client.IAntimatterModel;
-import muramasa.antimatter.client.model.IGeometryBakingContext;
 import muramasa.antimatter.client.model.loader.IAntimatterModelLoader;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.geometry.BlockGeometryBakingContext;
+import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +38,7 @@ public record ModelLoaderWrapper(IAntimatterModelLoader<?> loader) implements IG
         }
     }
 
-    private record GeometryBakingContextWrapper(IGeometryBakingContext configuration) implements IGeometryBakingContext {
+    private record GeometryBakingContextWrapper(IGeometryBakingContext configuration) implements muramasa.antimatter.client.model.IGeometryBakingContext {
 
         @Nullable
         @Override

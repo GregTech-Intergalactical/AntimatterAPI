@@ -28,9 +28,6 @@ public class AntimatterAPIImpl {
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(ExtendedContainerWrapper::new).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
         TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).orElse(null), (be, direction) -> be.rfHandler.side(direction).orElse(null), type);
-        if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-            TesseractImpl.registerMITile((be, direction) -> be.energyHandler.side(direction).orElse(null), type);
-        }
     }
 
     public static void registerTransferApiPipe(BlockEntityType<? extends BlockEntityPipe<?>> type){
@@ -50,12 +47,6 @@ public class AntimatterAPIImpl {
             if (!(be instanceof BlockEntityCable<?> cable)) return null;
             return (IEnergyHandler) cable.getPipeCapHolder().side(direction).orElse(null);
         }, (be, direction) -> null, type);
-        if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-            TesseractImpl.registerMITile((be, direction) -> {
-                if (!(be instanceof BlockEntityCable<?> cable)) return null;
-                return (IEnergyHandler) cable.getPipeCapHolder().side(direction).orElse(null);
-            }, type);
-        }
         TesseractLookups.HEAT_HANDLER_SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof BlockEntityHeatPipe<?> heatPipe)) return null;
             return (IHeatHandler) heatPipe.getPipeCapHolder().side(direction).orElse(null);

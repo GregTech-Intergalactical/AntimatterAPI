@@ -21,6 +21,7 @@ import net.minecraft.client.resources.model.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -68,7 +69,7 @@ public class ModelUtilsImpl {
     public static SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides){
         return SimpleBakedModel$BuilderAccessor.port_lib$create(smoothLighting, sideLit, isShadedInGui, transforms, overrides);
     }
-    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
+    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
         if (model instanceof IAntimatterBakedModel antimatterBaked){
             return antimatterBaked.getQuads(state, side, rand, level, pos);
         } else {

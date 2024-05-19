@@ -6,6 +6,7 @@ import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
 import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
+import io.github.fabricators_of_create.porting_lib.util.NetworkHooks;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import muramasa.antimatter.Ref;
@@ -99,7 +100,7 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
-        NetworkUtil.openGui(player, containerSupplier, extraDataWriter);
+        NetworkHooks.openScreen(player, containerSupplier, extraDataWriter);
     }
 
     public static MinecraftServer getCurrentServer(){
