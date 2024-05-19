@@ -72,16 +72,16 @@ public class VanillaStoneType extends CobbleStoneType{
                     stone = AntimatterPlatformUtils.getBlockFromId("minecraft", "polished_" + this.getId());
                     slab = AntimatterPlatformUtils.getBlockFromId("minecraft", "polished_" + this.getId() + "_slab");
                     stair = AntimatterPlatformUtils.getBlockFromId("minecraft", "polished_" + this.getId() + "_stairs");
-                    wall = new BlockStoneWall(this, SUFFIXES[i2]);
+                    wall = new BlockStoneWall(this, SUFFIXES[i]);
                     stoneTextureProvider = () -> new Texture[]{new Texture("block/polished_" + getId())};
                 } else {
                     BlockStone stone1 = new BlockStone(this, SUFFIXES[i]);
                     stone = stone1;
                     stoneTextureProvider = stone1;
                     if (i >= 2) {
-                        slab = new BlockStoneSlab(this, SUFFIXES[i2]);
-                        stair = new BlockStoneStair(this, SUFFIXES[i2], stone);
-                        wall = new BlockStoneWall(this, SUFFIXES[i2]);
+                        slab = new BlockStoneSlab(this, SUFFIXES[i]);
+                        stair = new BlockStoneStair(this, SUFFIXES[i], stone);
+                        wall = new BlockStoneWall(this, SUFFIXES[i]);
                     }
                 }
                 String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
