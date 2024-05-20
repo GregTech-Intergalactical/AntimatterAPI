@@ -12,6 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -23,8 +24,8 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientEventsForge {
 
     @SubscribeEvent
-    public static void onBlockHighlight(HighlightBlock event) {
-        if (ClientEvents.onBlockHighlight(event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTicks(), event.getPoseStack(), event.getMultiBufferSource()))
+    public static void onBlockHighlight(RenderHighlightEvent.Block event) {
+        if (ClientEvents.onBlockHighlight(event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource()))
             event.setCanceled(true);
     }
 
