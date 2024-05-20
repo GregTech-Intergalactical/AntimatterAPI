@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -103,6 +104,10 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
                 ForgeRegistries.FLUIDS.register(new ResourceLocation(domain, f.getId()), f.getFluid());
                 ForgeRegistries.FLUIDS.register(new ResourceLocation(domain, "flowing_" + f.getId()), f.getFlowingFluid());
+            });
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.FLUID_TYPES){
+            AntimatterAPI.all(FluidType.class, domain, (f, d, i) -> {
+                e.getForgeRegistry().register(new ResourceLocation(d, i), f);
             });
         } else if (e.getRegistryKey() == ForgeRegistries.Keys.MENU_TYPES) {
             AntimatterAPI.all(MenuType.class, domain, (h, d, i) -> {
