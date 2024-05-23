@@ -91,21 +91,12 @@ public class RecipeBuilder {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
             return Utils.getEmptyRecipe();
         }
-        /*if (fluidsInput != null && fluidsInput.size() > 0) {
-            Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
-            return Utils.getEmptyRecipe();
-        }*/
         if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidHolder[0]))) {
             String id = this.id == null ? "": " Recipe ID: " + this.id;
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
             return Utils.getEmptyRecipe();
         }
         if (ingredientInput == null) ingredientInput = Collections.emptyList();
-        /*if (itemsOutput != null) {
-            for (int i = 0; i < itemsOutput.size(); i++) {
-                itemsOutput.add(i, Unifier.get(itemsOutput.get(i)));
-            }
-        }*/
         if (this.amps < 1) this.amps = 1;
         if (!recipeMapOnly){
             ResourceLocation advancementID = advancementBuilder != null ? new ResourceLocation(id.getNamespace(), "recipes/" + id.getPath()) : null;
