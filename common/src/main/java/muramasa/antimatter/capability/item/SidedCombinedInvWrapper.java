@@ -23,6 +23,10 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
         this.outputFunction = outputFunction;
     }
 
+    public SidedCombinedInvWrapper(Direction side, CoverHandler<?> coverHandler, ExtendedItemContainer... itemHandler) {
+        this(side, coverHandler, d -> true, d -> true, itemHandler);
+    }
+
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {

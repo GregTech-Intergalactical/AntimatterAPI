@@ -87,41 +87,6 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
 //        tooltip.add("Routing Value: " + TextFormatting.YELLOW + getStepSize(size, res));
 //    }
 
-
-    @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        BlockEntityItemPipe<T> tile = (BlockEntityItemPipe) world.getBlockEntity(pos);
-        if (tile == null) {
-            return InteractionResult.PASS;
-        }
-        if (!world.isClientSide() && hand == InteractionHand.MAIN_HAND){
-            AntimatterToolType type = Utils.getToolType(player);
-            if (type == AntimatterDefaultTools.WRENCH_ALT){
-                Direction side = Utils.getInteractSide(hit);
-                if (Connectivity.has(tile.mDisabledInputs, side.get3DDataValue())){ // input disabled
-                    if (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue())){
-                        tile.mDisabledInputs = Connectivity.clear(tile.mDisabledInputs, side.get3DDataValue());
-                        tile.mDisabledOutputs = Connectivity.clear(tile.mDisabledOutputs, side.get3DDataValue());
-                    } else { // output enabled
-                        tile.mDisabledOutputs = Connectivity.set(tile.mDisabledOutputs, side.get3DDataValue());
-                    }
-                } else { // input enabled
-                    if (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue())){
-                        tile.mDisabledInputs = Connectivity.set(tile.mDisabledInputs, side.get3DDataValue());
-                        tile.mDisabledOutputs = Connectivity.clear(tile.mDisabledOutputs, side.get3DDataValue());
-                    } else { // output enabled
-                        tile.mDisabledOutputs = Connectivity.set(tile.mDisabledInputs, side.get3DDataValue());
-                    }
-                }
-                player.sendMessage(Utils.translatable("antimatter.pipe.item.input_side." + (Connectivity.has(tile.mDisabledInputs, side.get3DDataValue()) ? "disabled" : "enabled")), player.getUUID());
-                player.sendMessage(Utils.translatable("antimatter.pipe.item.output_side." + (Connectivity.has(tile.mDisabledOutputs, side.get3DDataValue()) ? "disabled" : "enabled")), player.getUUID());
-                Utils.damageStack(player.getItemInHand(hand), hand, player);
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return super.use(state, world, pos, player, hand, hit);
-    }
-
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext cont && cont.getEntity() instanceof Player player){

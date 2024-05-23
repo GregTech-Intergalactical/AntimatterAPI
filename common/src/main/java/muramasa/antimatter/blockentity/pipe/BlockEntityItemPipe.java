@@ -51,7 +51,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     private boolean restricted;
     private TrackedItemHandler<BlockEntityItemPipe<?>> inventory;
 
-    public byte mLastReceivedFrom = 6, oLastReceivedFrom = 6, mDisabledOutputs = 0, mDisabledInputs = 0;
+    public byte mLastReceivedFrom = 6, oLastReceivedFrom = 6;
 
     public BlockEntityItemPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -185,7 +185,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     public boolean insertItemStackIntoTileEntity(BlockEntityItemPipe<?> aSender, byte aSide) {
         if (aSide > 5) return false;
         Direction side = Direction.values()[aSide];
-        if (!Connectivity.has(mDisabledOutputs, aSide) && canEmitItemsTo(side, aSender)) {
+        if (canEmitItemsTo(side, aSender)) {
             BlockEntity tDelegator = getCachedBlockEntity(side);
             if (!(tDelegator instanceof BlockEntityPipe<?>) && tDelegator != null) {
                 if (!(tDelegator instanceof HopperBlockEntity || tDelegator instanceof DispenserBlockEntity)) {
@@ -258,11 +258,11 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     }
 
     boolean canAcceptItemsFrom(Direction side, BlockEntityItemPipe<?> sender){
-        return Connectivity.has(virtualConnection, side.get3DDataValue())  && !Connectivity.has(mDisabledInputs, side.get3DDataValue());
+        return Connectivity.has(virtualConnection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksInput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
     boolean canEmitItemsTo(Direction side, BlockEntityItemPipe<?> sender){
-        return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && Connectivity.has(virtualConnection, side.get3DDataValue()) && !Connectivity.has(mDisabledOutputs, side.get3DDataValue());
+        return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && Connectivity.has(virtualConnection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksOutput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
     private void addTicker(){
@@ -287,8 +287,6 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putByte("disabledInputs", mDisabledInputs);
-        tag.putByte("disabledOutputs", mDisabledOutputs);
         tag.putByte("lastReceivedFrom", mLastReceivedFrom);
         tag.putByte("oldLastReceivedFrom", oLastReceivedFrom);
         if (!inventory.isEmpty()){
@@ -300,8 +298,6 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        mDisabledInputs = tag.getByte("disabledInputs");
-        mDisabledOutputs = tag.getByte("disabledOutputs");
         mLastReceivedFrom = tag.getByte("lastReceivedFrom");
         oLastReceivedFrom = tag.getByte("oldLastReceivedFrom");
         if (tag.contains("inventory")){
