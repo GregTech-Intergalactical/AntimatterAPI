@@ -168,13 +168,13 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     }
 
     @Override
-    public InteractionResult onInteractServer(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
+    public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
         if (!validStructure && checkingStructure == 0){
             if (checkStructure()){
                 return InteractionResult.SUCCESS;
             }
         }
-        return super.onInteractServer(state, world, pos, player, hand, hit, type);
+        return super.onInteractBoth(state, world, pos, player, hand, hit, type);
     }
 
     @Override
@@ -248,10 +248,6 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
 
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         super.serverTick(level, pos, state);
-        if (reCheckStructure){
-            checkStructure();
-            reCheckStructure = false;
-        }
         if (level.getGameTime() % 100 == 0 && !validStructure && checkingStructure == 0 && !AntimatterPlatformUtils.isProduction()){
             //checkStructure();
         }
@@ -451,6 +447,10 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
             shouldCheckFirstTick = false;
         }
         reCheckStructure = tag.getBoolean("reCheckStructure");
+        if (reCheckStructure && level != null && level.isClientSide()){
+            checkStructure();
+            reCheckStructure = false;
+        }
         this.extendedFacing = ExtendedFacing.of(extendedFacing.getDirection(), Rotation.byIndex(tag.getByte("rotation")), Flip.byIndex(tag.getByte("flip")));
     }
 
