@@ -49,7 +49,7 @@ public class CobbleStoneType extends StoneType {
                     String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
                     String suffix = i == 7 ? "" : SUFFIXES[i];
                     CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
-                            new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stone)).addTextures(stone.getTextures()).build(Ref.SHARED_ID, id + "_cover");
+                            new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stone)).setIsValid(be -> true).addTextures(stone.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                     blocks.put(SUFFIXES[i], stone);
                     if (i < 2){
                         continue;

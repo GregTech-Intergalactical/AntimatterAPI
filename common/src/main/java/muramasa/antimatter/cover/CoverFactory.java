@@ -3,9 +3,11 @@ package muramasa.antimatter.cover;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterRemapping;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.blockentity.pipe.BlockEntityCable;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.Tier;
@@ -17,10 +19,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 public class CoverFactory implements IAntimatterObject {
 
@@ -33,6 +37,8 @@ public class CoverFactory implements IAntimatterObject {
     private List<Texture> textures;
     @Getter
     private MenuHandler<?> menuHandler = Data.COVER_MENU_HANDLER;
+    @Getter
+    private Predicate<BlockEntity> isValid = b -> !(b instanceof BlockEntityCable<?>);
 
     protected boolean gui = false;
 
@@ -80,6 +86,10 @@ public class CoverFactory implements IAntimatterObject {
 
     void setMenuHandler(MenuHandler<?> handler) {
         this.menuHandler = handler;
+    }
+
+    void setIsValid(Predicate<BlockEntity> isValid) {
+        this.isValid = isValid;
     }
 
     public boolean hasGui() {
@@ -162,6 +172,7 @@ public class CoverFactory implements IAntimatterObject {
         boolean gui = false;
         List<Texture> textures;
         MenuHandler<?> menuHandler;
+        Predicate<BlockEntity> isValid;
 
         public Builder(final CoverSupplier supplier) {
             this.supplier = supplier;
@@ -197,6 +208,11 @@ public class CoverFactory implements IAntimatterObject {
             return this;
         }
 
+        public Builder setIsValid(Predicate<BlockEntity> isValid) {
+            this.isValid = isValid;
+            return this;
+        }
+
         public CoverFactory build(String domain, String id) {
             CoverFactory factory = new CoverFactory(domain, id, this.supplier);
             if (this.itemBuilder != null) {
@@ -215,6 +231,9 @@ public class CoverFactory implements IAntimatterObject {
             }
             if (textures != null)
                 factory.addTextures(textures);
+            if (isValid != null){
+                factory.setIsValid(isValid);
+            }
             return factory;
         }
 

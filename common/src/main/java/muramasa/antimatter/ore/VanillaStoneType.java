@@ -45,7 +45,7 @@ public class VanillaStoneType extends CobbleStoneType{
                     }
                     String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
                     String suffix = i == 7 ? "" : SUFFIXES[i];
-                    CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
+                    CoverFactory.builder(CoverStone::new).setIsValid(be -> true).item((coverFactory, tier) ->
                             new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                     blocks.put(SUFFIXES[i], stone);
                     if (i < 2){
@@ -87,7 +87,7 @@ public class VanillaStoneType extends CobbleStoneType{
                 String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
                 String suffix = i == 7 ? "" : SUFFIXES[i];
                 CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
-                        new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
+                        new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).setIsValid(be -> true).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                 blocks.put(SUFFIXES[i], stone);
                 if (i < 2){
                     continue;
