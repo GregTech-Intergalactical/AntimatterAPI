@@ -1,6 +1,7 @@
 package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.widget.TankIconWidget;
@@ -27,6 +28,18 @@ public class HatchMachine extends Machine<HatchMachine> {
         setOutputCover(cover);
         frontCovers();
         allowFrontIO();
+        blockColorHandler((state, world, pos, machine, i) -> {
+            if (machine instanceof BlockEntityHatch<?> hatch){
+                return hatch.componentHandler.map(c -> {
+                    BlockEntityMultiMachine<?> multiMachine = c.getControllers().stream().findFirst().orElse(null);
+                    if (multiMachine != null){
+                        return multiMachine.getMachineType().blockColorHandler.getBlockColor(multiMachine.getBlockState(), multiMachine.getLevel(), multiMachine.getBlockPos(), multiMachine, i);
+                    }
+                    return -1;
+                }).orElse(-1);
+            }
+            return -1;
+        });
     }
 
     public HatchMachine setIdForHandlers(String idForHandlers) {

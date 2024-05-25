@@ -214,8 +214,8 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
                 checkingStructure--;
                 return true;
             } else if (onStructureFormed() && StructureCache.validate(this.getLevel(), this.getBlockPos(), positions, maxShares())){
+                afterStructureFormed();
                 if (isServerSide()){
-                    afterStructureFormed();
                     if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
                         setMachineState(MachineState.IDLE);
                     }
@@ -226,6 +226,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
                         Utils.markTileForRenderUpdate(c.getTile());
                     }));
                 }
+
                 sidedSync(true);
                 StructureCache.add(level, getBlockPos(), positions);
             } else {
@@ -243,6 +244,9 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
             });
         }
         checkingStructure--;
+        if (validStructure != oldValidStructure){
+            reCheckStructure = true;
+        }
         return validStructure;
     }
 
@@ -329,8 +333,8 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
             e.onStructureFail((T) this, this.getLevel(), pos.getX(), pos.getY(), pos.getZ());
         });
         structurePositions.clear();
+        onStructureInvalidated();
         if (isServerSide()) {
-            onStructureInvalidated();
             recipeHandler.ifPresent(
                     t -> t.onMultiBlockStateChange(false, AntimatterConfig.INPUT_RESET_MULTIBLOCK.get()));
             components.clear();
