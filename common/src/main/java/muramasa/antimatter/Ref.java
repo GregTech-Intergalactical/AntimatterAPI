@@ -81,7 +81,6 @@ public class Ref {
     public static final String KEY_STACK_NO_CONSUME = "nc";
     public static final String KEY_STACK_IGNORE_NBT = "inb";
 
-    public static final String KEY_MACHINE_TIER = "t";
     public static final String KEY_MACHINE_ITEMS = "it";
     public static final String KEY_MACHINE_STATE = "s";
     public static final String KEY_MACHINE_STATE_D = "sd";

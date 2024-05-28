@@ -631,7 +631,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
 
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
         if (tag.contains(Ref.KEY_MACHINE_MUFFLED)) {
@@ -667,7 +666,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         if (disabledState != null)
@@ -689,7 +687,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (this.getMachineType().renderContainerLiquids()) {
             fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serialize(new CompoundTag())));
         }
-        tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         return tag;
