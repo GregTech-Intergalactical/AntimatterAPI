@@ -334,7 +334,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public CoverFactory[] getValidCovers() {
-        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> !t.getIsValid().test(this)).toArray(CoverFactory[]::new);
+        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> t.getIsValid().test(this)).toArray(CoverFactory[]::new);
     }
 
     public ICover[] getAllCovers() {

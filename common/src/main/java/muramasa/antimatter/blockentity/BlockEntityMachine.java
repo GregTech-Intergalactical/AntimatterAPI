@@ -553,7 +553,7 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public CoverFactory[] getValidCovers() {
-        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> !t.getIsValid().test(this)).toArray(CoverFactory[]::new);
+        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> t.getIsValid().test(this)).toArray(CoverFactory[]::new);
     }
 
     public ICover getCover(Direction side) {
