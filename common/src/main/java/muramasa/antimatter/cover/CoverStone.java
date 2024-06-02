@@ -21,7 +21,7 @@ public class CoverStone extends BaseCover {
 
     @Override
     public InteractionResult onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
-        return InteractionResult.FAIL;
+        return source().getTile() instanceof BlockEntityPipe<?> ? InteractionResult.PASS : InteractionResult.FAIL;
     }
 
     @Override
