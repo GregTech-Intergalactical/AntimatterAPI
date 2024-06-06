@@ -41,6 +41,9 @@ public class CoverStone extends BaseCover {
 
     @Override
     public ResourceLocation getModel(String type, Direction dir) {
-        return new ResourceLocation(Ref.ID, "block/cover/cover_pipe_overlay_only");
+        if (type.equals("pipe")){
+            return new ResourceLocation(Ref.ID, "block/cover/cover_pipe_overlay_only");
+        }
+        return getBasicModel();
     }
 }
