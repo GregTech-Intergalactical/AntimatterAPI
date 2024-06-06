@@ -10,7 +10,6 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -196,27 +195,6 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
         int tank = getFirstAvailableTank(fluid, false);
         if (tank == -1) return 0;
         return getTank(tank).insertFluid(fluid, simulate);
-    }
-
-    @Override
-    public long internalInsert(FluidHolder fluids, boolean simulate) {
-        long inserted = insertFluid(fluids, simulate);
-        if (inserted >= fluids.getFluidAmount()) {
-            return inserted;
-        }
-        FluidHolder copy = fluids.copyWithAmount(fluids.getFluidAmount() - inserted);
-        long originalAmount = copy.getFluidAmount();
-        for (FluidTank tank : tanks) {
-            if (copy.getFluidAmount() == 0) break;
-            inserted = tank.insertFluid(copy, simulate);
-            if (inserted > 0) {
-                copy.setAmount(copy.getFluidAmount() - inserted);
-            }
-        }
-        if (copy.getFluidAmount() < originalAmount){
-            return originalAmount - copy.getFluidAmount();
-        }
-        return 0;
     }
 
     @Override

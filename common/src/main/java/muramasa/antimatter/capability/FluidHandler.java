@@ -149,7 +149,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
 
     public long fillOutput(FluidHolder stack, boolean simulate) {
         if (getOutputTanks() != null) {
-            return getOutputTanks().internalInsert(stack, simulate);
+            return getOutputTanks().insertFluid(stack, simulate);
         }
         return 0;
     }
