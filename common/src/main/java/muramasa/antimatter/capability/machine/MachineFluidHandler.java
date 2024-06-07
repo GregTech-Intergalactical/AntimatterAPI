@@ -139,6 +139,10 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
         }
     }
 
+    public boolean canFluidBeAutoOutput(FluidHolder fluid) {
+        return true;
+    }
+
     public boolean canOutputsFit(FluidHolder[] outputs) {
         return getSpaceForOutputs(outputs) >= outputs.length;
     }

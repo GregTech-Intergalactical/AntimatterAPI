@@ -3,6 +3,7 @@ package muramasa.antimatter.cover;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.blockentity.BlockEntityFakeBlock;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
@@ -111,32 +112,47 @@ public class CoverOutput extends CoverInput {
 
     int processing = 0;
     protected void processItemOutput() {
-
-        BlockEntity adjTile = BlockEntityCache.getBlockEntity(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
+        BlockEntity adjTile;
+        if (handler.getTile() instanceof BlockEntityBase<?> base){
+            adjTile = base.getCachedBlockEntity(this.side);
+        } else {
+            adjTile = handler.getTile().getLevel().getBlockEntity(handler.getTile().getBlockPos().relative(this.side));
+        }
         if (adjTile == null)
             return;
         if (processing > 0) return;
         processing++;
         TesseractCapUtils.INSTANCE.getItemHandler(adjTile, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    TesseractCapUtils.INSTANCE.getItemHandler(handler.getTile(), this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
+                    TesseractCapUtils.INSTANCE.getItemHandler(handler.getTile(), this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false, i -> {
+                        return !(this.handler.getTile() instanceof BlockEntityMachine<?> machine) || machine.itemHandler.map(f -> f.canItemBeAutoOutput(i)).orElse(true);
+                    }));
                 });
         processing--;
     }
 
     protected void processFluidOutput() {
+        BlockEntity adjTile;
+        if (handler.getTile() instanceof BlockEntityBase<?> base){
+            adjTile = base.getCachedBlockEntity(this.side);
+        } else {
+            adjTile = handler.getTile().getLevel().getBlockEntity(handler.getTile().getBlockPos().relative(this.side));
+        }
         if (processing > 0) return;
         processing++;
-        BlockEntityCache.getFluidHandlerCached(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side), this.side.getOpposite())
+        FluidHooks.safeGetBlockFluidManager(adjTile, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
                     FluidHooks.safeGetBlockFluidManager(handler.getTile(), this.side).ifPresent(h -> tryFluidTransfer(adjHandler, h, Integer.MAX_VALUE * TesseractGraphWrappers.dropletMultiplier, true));
                 });
         processing--;
     }
 
-    public static void tryFluidTransfer(PlatformFluidHandler fluidDestination, PlatformFluidHandler fluidSource, long maxAmount, boolean doTransfer) {
+    public void tryFluidTransfer(PlatformFluidHandler fluidDestination, PlatformFluidHandler fluidSource, long maxAmount, boolean doTransfer) {
         for (int i = 0; i < fluidSource.getTankAmount(); i++) {
             FluidHolder fluid = fluidSource.getFluidInTank(i);
+            if (this.handler.getTile() instanceof BlockEntityMachine<?> machine && machine.fluidHandler.map(f -> !f.canFluidBeAutoOutput(fluid)).orElse(false)){
+                continue;
+            }
             FluidPlatformUtils.INSTANCE.tryFluidTransfer(fluidDestination, fluidSource, fluid.copyWithAmount(Math.min(fluid.getFluidAmount(), maxAmount)), doTransfer);
         }
     }
