@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.PlatformFluidHandler;
+import lombok.Getter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.blockentity.IPreTickTile;
@@ -48,6 +49,7 @@ import java.util.Optional;
 
 public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPipe<T> implements IFluidPipe, IPreTickTile, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
+    @Getter
     protected Optional<PipeFluidHandler> fluidHandler;
     public static byte[] SBIT = {1, 2, 4, 8, 16, 32};
     private PipeFluidHolder holder;

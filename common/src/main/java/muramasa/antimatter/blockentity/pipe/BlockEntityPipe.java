@@ -142,6 +142,20 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         coverHandler.ifPresent(h -> h.getCovers().forEach((d, c) -> c.onBlockUpdateAllSides()));
     }
 
+    public int getWeakRedstonePower(Direction facing) {
+        if (facing != null && this.getCover(facing).getWeakPower() >= 0) {
+            return this.getCover(facing).getWeakPower();
+        }
+        return 0;
+    }
+
+    public int getStrongRedstonePower(Direction facing) {
+        if (facing != null && this.getCover(facing).getStrongPower() >= 0) {
+            return this.getCover(facing).getStrongPower();
+        }
+        return 0;
+    }
+
     @Override
     public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);

@@ -373,14 +373,14 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public int getWeakRedstonePower(Direction facing) {
-        if (facing != null && !this.getCover(facing).isEmpty()) {
+        if (facing != null && this.getCover(facing).getWeakPower() >= 0) {
             return this.getCover(facing).getWeakPower();
         }
         return 0;
     }
 
     public int getStrongRedstonePower(Direction facing) {
-        if (facing != null && !this.getCover(facing).isEmpty()) {
+        if (facing != null && this.getCover(facing).getStrongPower() >= 0) {
             return this.getCover(facing).getStrongPower();
         }
         return 0;
