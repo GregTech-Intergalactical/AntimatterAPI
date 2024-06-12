@@ -184,7 +184,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
                 if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
                 if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
-                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                if (s.getSuffix().contains("smooth")) localized = "Polished " + localized.replace(" Smooth", "");
                 add(s, localized);
             });
             AntimatterAPI.all(ItemStoneCover.class).forEach(i -> {
@@ -192,7 +192,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (i.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
                 if (i.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
                 if (i.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
-                if (i.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                if (i.getSuffix().contains("smooth")) localized = "Polished " + localized.replace(" Smooth", "");
                 override(i.getDescriptionId(), localized);
             });
             AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> {
@@ -200,7 +200,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
                 if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
                 if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
-                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                if (s.getSuffix().contains("smooth")) localized = "Polished " + localized.replace(" Smooth", "");
                 add(s, localized);
             });
             AntimatterAPI.all(BlockStoneStair.class).forEach(s -> {
@@ -208,7 +208,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
                 if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
                 if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
-                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                if (s.getSuffix().contains("smooth")) localized = "Polished " + localized.replace(" Smooth", "");
                 add(s, localized);
             });
             AntimatterAPI.all(BlockStoneWall.class).forEach(s -> {
@@ -216,7 +216,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
                 if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
                 if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
-                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                if (s.getSuffix().contains("smooth")) localized = "Polished " + localized.replace(" Smooth", "");
                 add(s, localized);
             });
             AntimatterAPI.all(AntimatterFluid.class).forEach((AntimatterFluid s) -> {

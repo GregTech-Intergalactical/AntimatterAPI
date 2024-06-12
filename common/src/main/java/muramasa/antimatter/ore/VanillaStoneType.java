@@ -45,7 +45,7 @@ public class VanillaStoneType extends CobbleStoneType{
                     }
                     String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
                     String suffix = i == 7 ? "" : SUFFIXES[i];
-                    CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
+                    CoverFactory.builder(CoverStone::new).setIsValid(be -> true).item((coverFactory, tier) ->
                             new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                     blocks.put(SUFFIXES[i], stone);
                     if (i < 2){
@@ -72,22 +72,22 @@ public class VanillaStoneType extends CobbleStoneType{
                     stone = AntimatterPlatformUtils.getBlockFromId("minecraft", "polished_" + this.getId());
                     slab = AntimatterPlatformUtils.getBlockFromId("minecraft", "polished_" + this.getId() + "_slab");
                     stair = AntimatterPlatformUtils.getBlockFromId("minecraft", "polished_" + this.getId() + "_stairs");
-                    wall = new BlockStoneWall(this, SUFFIXES[i2]);
+                    wall = new BlockStoneWall(this, SUFFIXES[i]);
                     stoneTextureProvider = () -> new Texture[]{new Texture("block/polished_" + getId())};
                 } else {
                     BlockStone stone1 = new BlockStone(this, SUFFIXES[i]);
                     stone = stone1;
                     stoneTextureProvider = stone1;
                     if (i >= 2) {
-                        slab = new BlockStoneSlab(this, SUFFIXES[i2]);
-                        stair = new BlockStoneStair(this, SUFFIXES[i2], stone);
-                        wall = new BlockStoneWall(this, SUFFIXES[i2]);
+                        slab = new BlockStoneSlab(this, SUFFIXES[i]);
+                        stair = new BlockStoneStair(this, SUFFIXES[i], stone);
+                        wall = new BlockStoneWall(this, SUFFIXES[i]);
                     }
                 }
                 String id = i == 7 ? getId() : getId() + "_" + SUFFIXES[i];
                 String suffix = i == 7 ? "" : SUFFIXES[i];
                 CoverFactory.builder(CoverStone::new).item((coverFactory, tier) ->
-                        new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
+                        new ItemStoneCover(Ref.SHARED_ID, getId(), suffix, stoneTextureProvider)).setIsValid(be -> true).addTextures(stoneTextureProvider.getTextures()).build(Ref.SHARED_ID, id + "_cover");
                 blocks.put(SUFFIXES[i], stone);
                 if (i < 2){
                     continue;

@@ -374,14 +374,14 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     public int getWeakRedstonePower(Direction facing) {
-        if (facing != null && !this.getCover(facing).isEmpty()) {
+        if (facing != null && this.getCover(facing).getWeakPower() >= 0) {
             return this.getCover(facing).getWeakPower();
         }
         return 0;
     }
 
     public int getStrongRedstonePower(Direction facing) {
-        if (facing != null && !this.getCover(facing).isEmpty()) {
+        if (facing != null && this.getCover(facing).getStrongPower() >= 0) {
             return this.getCover(facing).getStrongPower();
         }
         return 0;
@@ -553,8 +553,8 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         }
     }
 
-    public CoverFactory[] getValidCovers() { 
-        return AntimatterAPI.all(CoverFactory.class).toArray(new CoverFactory[0]);
+    public CoverFactory[] getValidCovers() {
+        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> t.getIsValid().test(this)).toArray(CoverFactory[]::new);
     }
 
     public ICover getCover(Direction side) {
@@ -632,7 +632,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
 
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
         if (tag.contains(Ref.KEY_MACHINE_MUFFLED)) {
@@ -668,7 +667,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         if (disabledState != null)
@@ -690,7 +688,6 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (this.getMachineType().renderContainerLiquids()) {
             fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serialize(new CompoundTag())));
         }
-        tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         return tag;

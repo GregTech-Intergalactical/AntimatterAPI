@@ -59,6 +59,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         if (entityIn instanceof LivingEntity entity) {
             if (worldIn.getBlockEntity(pos) instanceof BlockEntityFluidPipe<?> fluidPipe) {
                 long temp = fluidPipe.getCurrentTemperature();
+                if (Utils.isFullHazmatSuit(entity)) return;
                 applyTemperatureDamage(entity, temp, 1.0f, 1.0f);
             }
         }

@@ -45,17 +45,6 @@ public class BlockEntityCable<T extends PipeType<T>> extends BlockEntityPipe<T> 
     }
 
     @Override
-    public CoverFactory[] getValidCovers() {
-        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> {
-            try {
-                return !t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t).isNode();
-            } catch (Exception ex) {
-                return false;
-            }
-        }).toArray(CoverFactory[]::new);
-    }
-
-    @Override
     protected void register() {
         TesseractGraphWrappers.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }

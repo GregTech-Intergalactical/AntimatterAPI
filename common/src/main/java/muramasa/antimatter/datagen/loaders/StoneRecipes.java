@@ -10,6 +10,7 @@ import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.ore.VanillaStoneType;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
@@ -63,7 +64,6 @@ public class StoneRecipes {
             }
             if (s instanceof CobbleStoneType c){
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("cobble")), c.getBlock(""), 0.1F, 200).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_stone");
-                SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("")), c.getBlock("smooth"), 0.1F, 200).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, m.getId() + "_smooth");
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("bricks")), c.getBlock("bricks_cracked"), 0.1F, 200).unlockedBy("has_bricks", provider.hasSafeItem(c.getBlock("bricks"))).save(output, m.getId() + "_bricks_cracked");
                 String[] types = new String[]{"bricks_mossy", "cobble_mossy", "bricks", "cobble", "smooth", ""};
                 for (String type : types){
@@ -75,11 +75,15 @@ public class StoneRecipes {
                     provider.addStackRecipe(output, Ref.ID, m.getId() + i + type + "_from_slabs", "slabs", new ItemStack(c.getBlock(type), 1), of('S', c.getBlock(type + i + "slab")), pattern);
                 }
                 provider.addStackRecipe(output, Ref.ID, "bricks_" + m.getId(), "bricks", new ItemStack(c.getBlock("bricks"), 4), of('S', c.getBlock("")), "SS", "SS");
+                provider.addStackRecipe(output, Ref.ID, "polished_" + m.getId(), "bricks", new ItemStack(c.getBlock("smooth"), 2), of('S', c.getBlock("")), "SS");
                 provider.addStackRecipe(output, Ref.ID, "bricks_chiseled_" + m.getId(), "bricks", new ItemStack(c.getBlock("bricks_chiseled"), 1), of('S', c.getBlock("bricks_slab")), "S", "S");
                 provider.shapeless(output, "bricks_mossy_" + m.getId(), "bricks", new ItemStack(c.getBlock("bricks_mossy")), c.getBlock("bricks"), Items.VINE);
                 provider.shapeless(output, "cobble_mossy_" + m.getId(), "bricks", new ItemStack(c.getBlock("cobble_mossy")), c.getBlock("cobble"), Items.VINE);
-                types = new String[]{"stairs", "slab", "wall", "bricks_slab", "bricks_stairs", "bricks_chiseled", "bricks_wall", "bricks"};
+                types = new String[]{"stairs", "slab", "wall", "bricks_slab", "bricks_stairs", "bricks_chiseled", "bricks_wall", "bricks", "smooth", "smooth_slab", "smooth_stairs", "smooth_wall"};
                 for (String type : types){
+                    if (s instanceof VanillaStoneType && !s.getId().equals("basalt") && !type.contains("bricks") && !type.equals("smooth_wall") && (type.contains("slab") || type.contains("stairs") || type.contains("wall"))){
+                        continue;
+                    }
                     int amount = type.contains("slab") ? 2 : 1;
                     SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("")), c.getBlock(type), amount).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, m.getId() + "_stone_" + type);
                 }
@@ -88,6 +92,11 @@ public class StoneRecipes {
                     Item cover = AntimatterAPI.get(Item.class, id, Ref.SHARED_ID);
                     if (cover == null) continue;
                     SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock(type)), cover, 4).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(type))).save(output, id);
+                    if (type.equals("bricks") || type.equals("smooth") || type.equals("bricks_chiseled")) {
+                        Item coverStone = AntimatterAPI.get(Item.class, c.getId() + "_cover", Ref.SHARED_ID);
+                        if (coverStone == null) continue;
+                        SingleItemRecipeBuilder.stonecutting(Ingredient.of(coverStone), cover, 1).unlockedBy("has_stone", provider.hasSafeItem(c.getBlock(""))).save(output, id + "_from_regular_cover");
+                    }
                 }
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("cobble")), c.getBlock("cobble_slab"), 2).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_cobble_slab");
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("cobble")), c.getBlock("cobble_stairs")).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_cobble_stairs");
@@ -102,8 +111,10 @@ public class StoneRecipes {
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("bricks_mossy")), c.getBlock("bricks_mossy_slab"), 2).unlockedBy("has_bricks_mossy", provider.hasSafeItem(c.getBlock("bricks_mossy"))).save(output, m.getId() + "_bricks_mossy_slab");
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("bricks_mossy")), c.getBlock("bricks_mossy_stairs")).unlockedBy("has_bricks_mossy", provider.hasSafeItem(c.getBlock("bricks_mossy"))).save(output, m.getId() + "_bricks_mossy_stairs");
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("bricks_mossy")), c.getBlock("bricks_mossy_wall")).unlockedBy("has_bricks_mossy", provider.hasSafeItem(c.getBlock("bricks_mossy"))).save(output, m.getId() + "_bricks_mossy_wall");
-                SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("smooth")), c.getBlock("smooth_slab"), 2).unlockedBy("has_smooth", provider.hasSafeItem(c.getBlock("smooth"))).save(output, m.getId() + "_smooth_slab");
-                SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("smooth")), c.getBlock("smooth_stairs")).unlockedBy("has_smooth", provider.hasSafeItem(c.getBlock("smooth"))).save(output, m.getId() + "_smooth_stairs");
+                if (!(s instanceof VanillaStoneType) || s.getId().equals("basalt")) {
+                    SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("smooth")), c.getBlock("smooth_slab"), 2).unlockedBy("has_smooth", provider.hasSafeItem(c.getBlock("smooth"))).save(output, m.getId() + "_smooth_slab");
+                    SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("smooth")), c.getBlock("smooth_stairs")).unlockedBy("has_smooth", provider.hasSafeItem(c.getBlock("smooth"))).save(output, m.getId() + "_smooth_stairs");
+                }
                 SingleItemRecipeBuilder.stonecutting(Ingredient.of(c.getBlock("smooth")), c.getBlock("smooth_wall")).unlockedBy("has_smooth", provider.hasSafeItem(c.getBlock("smooth"))).save(output, m.getId() + "_smooth_wall");
             }
         });

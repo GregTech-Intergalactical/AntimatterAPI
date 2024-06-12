@@ -311,6 +311,24 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
+    public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
+        BlockEntity entity = blockAccess.getBlockEntity(pos);
+        if (entity instanceof BlockEntityPipe<?> pipe) {
+            return pipe.getWeakRedstonePower(side == null ? null : side.getOpposite());
+        }
+        return super.getSignal(blockState, blockAccess, pos, side);
+    }
+
+    @Override
+    public int getDirectSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
+        BlockEntity entity = blockAccess.getBlockEntity(pos);
+        if (entity instanceof BlockEntityPipe<?> pipe) {
+            return pipe.getStrongRedstonePower(side == null ? null : side.getOpposite());
+        }
+        return super.getDirectSignal(blockState, blockAccess, pos, side);
+    }
+
+    @Override
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         onNeighborChange(stateIn, worldIn, currentPos, facingPos);
         return stateIn;

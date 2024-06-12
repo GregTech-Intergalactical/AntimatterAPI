@@ -376,8 +376,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
         BlockEntity entity = blockAccess.getBlockEntity(pos);
-        if (entity instanceof BlockEntityMachine) {
-            BlockEntityMachine<?> machine = (BlockEntityMachine<?>) entity;
+        if (entity instanceof BlockEntityMachine<?> machine) {
             return machine.getWeakRedstonePower(side == null ? null : side.getOpposite());
         }
         return super.getSignal(blockState, blockAccess, pos, side);
@@ -386,8 +385,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public int getDirectSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
         BlockEntity entity = blockAccess.getBlockEntity(pos);
-        if (entity instanceof BlockEntityMachine) {
-            BlockEntityMachine<?> machine = (BlockEntityMachine<?>) entity;
+        if (entity instanceof BlockEntityMachine<?> machine) {
             return machine.getStrongRedstonePower(side == null ? null : side.getOpposite());
         }
         return super.getDirectSignal(blockState, blockAccess, pos, side);

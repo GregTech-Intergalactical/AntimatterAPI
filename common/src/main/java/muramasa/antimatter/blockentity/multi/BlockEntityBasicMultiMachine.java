@@ -44,6 +44,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     // Number of calls into checkStructure, invalidateStructure. if > 0 ignore
     // callbacks from structurecache.
     protected int checkingStructure = 0;
+    protected boolean reCheckStructure = false;
     /**
      * Used whenever a machine might be rotated and is checking structure, since the
      * facing is changed before checkStructure()
@@ -212,8 +214,8 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
                 checkingStructure--;
                 return true;
             } else if (onStructureFormed() && StructureCache.validate(this.getLevel(), this.getBlockPos(), positions, maxShares())){
+                afterStructureFormed();
                 if (isServerSide()){
-                    afterStructureFormed();
                     if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
                         setMachineState(MachineState.IDLE);
                     }
@@ -224,6 +226,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
                         Utils.markTileForRenderUpdate(c.getTile());
                     }));
                 }
+
                 sidedSync(true);
                 StructureCache.add(level, getBlockPos(), positions);
             } else {
@@ -241,6 +244,9 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
             });
         }
         checkingStructure--;
+        if (validStructure != oldValidStructure){
+            reCheckStructure = true;
+        }
         return validStructure;
     }
 
@@ -327,8 +333,8 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
             e.onStructureFail((T) this, this.getLevel(), pos.getX(), pos.getY(), pos.getZ());
         });
         structurePositions.clear();
+        onStructureInvalidated();
         if (isServerSide()) {
-            onStructureInvalidated();
             recipeHandler.ifPresent(
                     t -> t.onMultiBlockStateChange(false, AntimatterConfig.INPUT_RESET_MULTIBLOCK.get()));
             components.clear();
@@ -431,12 +437,23 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         tag.putByte("flip", (byte) extendedFacing.getFlip().getIndex());
     }
 
+    @Override
+    public @NotNull CompoundTag getUpdateTag() {
+        CompoundTag updateTag = super.getUpdateTag();
+        updateTag.putBoolean("reCheckStructure", reCheckStructure);
+        return updateTag;
+    }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
+        }
+        reCheckStructure = tag.getBoolean("reCheckStructure");
+        if (reCheckStructure && level != null && level.isClientSide()){
+            checkStructure();
+            reCheckStructure = false;
         }
         this.extendedFacing = ExtendedFacing.of(extendedFacing.getDirection(), Rotation.byIndex(tag.getByte("rotation")), Flip.byIndex(tag.getByte("flip")));
     }

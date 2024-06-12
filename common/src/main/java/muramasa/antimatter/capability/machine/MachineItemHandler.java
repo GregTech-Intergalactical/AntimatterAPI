@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
 import earth.terrarium.botarium.common.energy.util.EnergyHooks;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.util.Serializable;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -99,6 +100,10 @@ public class MachineItemHandler<T extends BlockEntityMachine<T>> implements IMac
 
     public void onUpdate() {
 
+    }
+
+    public boolean canItemBeAutoOutput(ItemStack item) {
+        return true;
     }
 
     public List<ItemStack> getAllItems() {

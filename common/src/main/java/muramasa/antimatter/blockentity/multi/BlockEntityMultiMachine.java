@@ -61,6 +61,7 @@ public class BlockEntityMultiMachine<T extends BlockEntityMultiMachine<T>> exten
         this.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureFormed(this);
         }));
+        if (isClientSide()) return;
         //Handlers.
         this.itemHandler.ifPresent(handle -> {
             ((MultiMachineItemHandler<T>) handle).onStructureBuild();
@@ -82,6 +83,7 @@ public class BlockEntityMultiMachine<T extends BlockEntityMultiMachine<T>> exten
     @Override
     public void onStructureInvalidated() {
         this.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this)));
+        if (isClientSide()) return;
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>) handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>) handle).invalidate());
         this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>) handle).invalidate());

@@ -140,11 +140,11 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
     }
 
     default int getWeakPower() {
-        return 0;
+        return -1;
     }
 
     default int getStrongPower() {
-        return 0;
+        return -1;
     }
 
     default int getPriority(Class<?> clazz){

@@ -1,6 +1,7 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.JsonObject;
+import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -164,6 +165,26 @@ public class FluidIngredient {
             stack = stack.copyHolder();
             stack.setAmount(drained);
             FluidHolder drain = input ? handler.drainInput(stack, simulate) : handler.extractFluid(stack, simulate);
+            drained -= drain.getFluidAmount();
+            if (!drain.isEmpty()) {
+                ret.add(drain);
+            }
+            if (drained == 0) break;
+        }
+        return ret;
+    }
+
+    public List<FluidHolder> drain(FluidContainer handler, boolean simulate) {
+        return drain(amount, handler, simulate);
+    }
+
+    public List<FluidHolder> drain(long amount, FluidContainer handler, boolean simulate) {
+        long drained = amount;
+        List<FluidHolder> ret = new ObjectArrayList<>(1);
+        for (FluidHolder stack : stacks) {
+            stack = stack.copyHolder();
+            stack.setAmount(drained);
+            FluidHolder drain = handler.internalExtract(stack, simulate);
             drained -= drain.getFluidAmount();
             if (!drain.isEmpty()) {
                 ret.add(drain);

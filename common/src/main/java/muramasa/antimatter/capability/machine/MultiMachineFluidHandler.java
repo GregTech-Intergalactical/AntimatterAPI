@@ -64,7 +64,7 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
     }
 
     protected void cacheInputs() {
-        inputs = tile.getComponentsByHandlerId(inputComponentString()).stream().map(IComponentHandler::getFluidHandler).map(Optional::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        inputs = tile.getComponentsByHandlerId(inputComponentString()).stream().map(IComponentHandler::getFluidHandler).map(Optional::get).sorted(this::compareInputHatches).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         INPUT_TO_HANDLER.clear();
         INPUT_START.clear();
@@ -79,6 +79,10 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
         INPUT_END = i;
     }
 
+    protected int compareInputHatches(MachineFluidHandler<?> a, MachineFluidHandler<?> b) {
+        return 0;
+    }
+
     protected String inputComponentString(){
         return "fluid_input";
     }
@@ -88,7 +92,7 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
     }
 
     protected void cacheOutputs() {
-        outputs = tile.getComponentsByHandlerId(outputComponentString()).stream().map(IComponentHandler::getFluidHandler).map(Optional::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        outputs = tile.getComponentsByHandlerId(outputComponentString()).stream().map(IComponentHandler::getFluidHandler).map(Optional::get).sorted(this::compareOutputHatches).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         OUTPUT_TO_HANDLER.clear();
         OUTPUT_START.clear();
@@ -100,6 +104,10 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
             }
             i += output.getSize();
         }
+    }
+
+    protected int compareOutputHatches(MachineFluidHandler<?> a, MachineFluidHandler<?> b) {
+        return 0;
     }
 
     //TODO: Remove gettanks() != null as this is called twice.

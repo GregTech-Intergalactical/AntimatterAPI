@@ -10,7 +10,7 @@ public enum GuiEvents implements IGuiEvent.IGuiEventFactory {
     ITEM_EJECT("ie", GuiEvent::new),
     FLUID_EJECT("fe", GuiEvent::new),
     EXTRA_BUTTON("eb", GuiEvent::new), // When button which added thought addButton() pressed
-    EXTRA_SWITCH("es", GuiEvent::new); // When button which added thought addSwitch() toggled
+    EXPANDING_WIDGET("ew", GuiEvent::new); // When button which added thought addSwitch() toggled
 
     private final String id;
     private final BiFunction<IGuiEvent.IGuiEventFactory, FriendlyByteBuf, IGuiEvent> supplier;

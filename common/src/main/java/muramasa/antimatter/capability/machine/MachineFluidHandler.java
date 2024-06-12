@@ -139,6 +139,10 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
         }
     }
 
+    public boolean canFluidBeAutoOutput(FluidHolder fluid) {
+        return true;
+    }
+
     public boolean canOutputsFit(FluidHolder[] outputs) {
         return getSpaceForOutputs(outputs) >= outputs.length;
     }
@@ -147,7 +151,8 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
         int matchCount = 0;
         if (getOutputTanks() != null) {
             for (FluidHolder output : outputs) {
-                if (fillOutput(output, true) == output.getFluidAmount()) {
+                int tank = getOutputTanks().getFirstAvailableTank(output, false);
+                if (tank >= 0 && getOutputTanks().getTank(tank).insertFluid(output, true) == output.getFluidAmount()) {
                     matchCount++;
                 }
             }

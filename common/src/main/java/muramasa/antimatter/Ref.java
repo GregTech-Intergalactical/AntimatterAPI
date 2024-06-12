@@ -55,7 +55,7 @@ public class Ref {
     /**
      * Fluid per Material Unit (Prime Factors: Forge: 3 * 3 * 2 * 2 * 2 * 2 Fabric: 5 * 5 * 5 * 3 * 3 * 2 * 2 * 2)
      */
-    public static final long L = AntimatterPlatformUtils.isForge() ? 144L : 9000L;
+    public static final long L = AntimatterPlatformUtils.isForge() ? 144L : 9000L, L9 = L / 9;
 
 
     /**
@@ -81,7 +81,6 @@ public class Ref {
     public static final String KEY_STACK_NO_CONSUME = "nc";
     public static final String KEY_STACK_IGNORE_NBT = "inb";
 
-    public static final String KEY_MACHINE_TIER = "t";
     public static final String KEY_MACHINE_ITEMS = "it";
     public static final String KEY_MACHINE_STATE = "s";
     public static final String KEY_MACHINE_STATE_D = "sd";
