@@ -10,8 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
@@ -53,10 +51,10 @@ public class ClientEventsForge {
         }
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
         ClientEvents.onRenderDebugInfo(e.getLeft());
-    }
+    }*/
 
     @SubscribeEvent
     public static void onGuiMouseScrollPre(ScreenEvent.MouseScrolled e) {
