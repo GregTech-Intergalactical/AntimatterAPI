@@ -420,7 +420,7 @@ public final class AntimatterAPI {
     }
 
     public static boolean isModLoaded(String mod) {
-        return AntimatterPreLaunchUtil.isModLoaded(mod);
+        return AntimatterPreLaunchUtil.INSTANCE.isModLoaded(mod);
     }
 
     public static void runOnEvent(RegistrationEvent event, Runnable runnable) {
