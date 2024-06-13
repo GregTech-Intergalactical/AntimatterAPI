@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BehaviourUtil {
     @ExpectPlatform
-    public static BlockState onToolUse(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action){
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
         throw new AssertionError();
     }
 

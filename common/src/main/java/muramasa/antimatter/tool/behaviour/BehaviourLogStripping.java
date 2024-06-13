@@ -42,7 +42,7 @@ public class BehaviourLogStripping implements IItemUse<IBasicAntimatterTool> {
     @Override
     public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
-        BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "axe_strip");
+        BlockState stripped = getToolModifiedState(state, c, "axe_strip");
         if (stripped != null) {
             if (state.hasProperty(RotatedPillarBlock.AXIS) && stripped.hasProperty(RotatedPillarBlock.AXIS)) {
                 stripped = stripped.setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
@@ -55,8 +55,8 @@ public class BehaviourLogStripping implements IItemUse<IBasicAntimatterTool> {
         return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
-        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
+        BlockState eventState = BehaviourUtil.onToolUse(originalState, context, action);
         if (eventState != originalState) return eventState;
         Block stripped = STRIPPING_MAP.get(originalState.getBlock());
         if (stripped == null) return null;

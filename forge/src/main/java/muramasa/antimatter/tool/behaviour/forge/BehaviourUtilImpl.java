@@ -12,8 +12,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 
 public class BehaviourUtilImpl {
-    public static BlockState onToolUse(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action){
-        return ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, ToolAction.get(action));
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+        return ForgeEventFactory.onToolUse(originalState, context, ToolAction.get(action), false);
     }
 
     public static boolean onUseHoe(UseOnContext context){

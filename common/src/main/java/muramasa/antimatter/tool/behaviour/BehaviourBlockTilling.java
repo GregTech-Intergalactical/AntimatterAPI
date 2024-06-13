@@ -40,7 +40,7 @@ public class BehaviourBlockTilling implements IItemUse<IBasicAntimatterTool> {
     @Override
     public InteractionResult onItemUse(IBasicAntimatterTool instance, UseOnContext c) {
         if (c.getClickedFace() != Direction.DOWN && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
-            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "hoe_dig");
+            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c, "hoe_dig");
             if (blockstate == null) return InteractionResult.PASS;
             if (BehaviourUtil.onUseHoe(c)) return InteractionResult.PASS;
             Utils.damageStack(c.getItemInHand(), c.getPlayer());
@@ -52,8 +52,8 @@ public class BehaviourBlockTilling implements IItemUse<IBasicAntimatterTool> {
         return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
-        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
+        BlockState eventState = BehaviourUtil.onToolUse(originalState, context, action);
         return eventState != originalState ? eventState : TILLING_MAP.get(originalState);
     }
 
