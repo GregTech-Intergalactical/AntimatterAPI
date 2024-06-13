@@ -43,6 +43,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -55,8 +56,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.TierSortingRegistry;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -304,5 +307,13 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
         return TierSortingRegistry.isCorrectTierForDrops(tier, state);
+    }
+
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+        return ForgeEventFactory.onToolUse(originalState, context, ToolAction.get(action), false);
+    }
+
+    public static boolean onUseHoe(UseOnContext context){
+        return MinecraftForge.EVENT_BUS.post(new UseHoeEvent(context));
     }
 }

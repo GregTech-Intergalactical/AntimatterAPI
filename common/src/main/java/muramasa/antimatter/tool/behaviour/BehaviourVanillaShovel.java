@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IBasicAntimatterTool;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -66,7 +67,7 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
     }
 
     private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
-        BlockState eventState = BehaviourUtil.onToolUse(originalState, context, action);
+        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
         if (eventState != originalState) return eventState;
         Block flattened = FLATTENING_MAP.get(originalState.getBlock());
         if (flattened == null) return null;
@@ -80,7 +81,7 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
     }
 
     private BlockState getFireModifiedState(BlockState originalState, BlockState changedState, UseOnContext context, String action) {
-        BlockState eventState = BehaviourUtil.onToolUse(originalState, context, action);
+        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
         return eventState != originalState ? eventState : changedState;
     }
 

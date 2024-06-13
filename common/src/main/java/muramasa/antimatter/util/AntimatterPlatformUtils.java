@@ -34,6 +34,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -307,6 +308,16 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean onUseHoe(UseOnContext context){
         throw new AssertionError();
     }
 }
