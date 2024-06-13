@@ -9,6 +9,7 @@ import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.ToolUtils;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -84,7 +85,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
 
     private Item.Properties prepareInstantiation(String domain) {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterArmorType was instantiated with an empty domain name!");
-        return ToolUtils.getToolProperties(itemGroup, repairable);
+        return AntimatterPlatformUtils.getToolProperties(itemGroup, repairable);
     }
 
     public AntimatterArmorType setOverlayLayers(int overlayLayers) {

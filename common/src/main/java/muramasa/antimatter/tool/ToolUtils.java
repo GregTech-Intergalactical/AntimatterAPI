@@ -1,19 +1,18 @@
 package muramasa.antimatter.tool;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ToolUtils {
-    @ExpectPlatform
     public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
-        throw new AssertionError();
+        return AntimatterPlatformUtils.getToolProperties(group, repairable);
     }
 
-    @ExpectPlatform
     public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
-        throw new AssertionError();
+        return AntimatterPlatformUtils.isCorrectTierForDrops(tier, state);
     }
 }

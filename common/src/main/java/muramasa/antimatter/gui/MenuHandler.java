@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -56,9 +57,8 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
         return containerType;
     }
 
-    @ExpectPlatform
     static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
-        throw new AssertionError();
+        return AntimatterPlatformUtils.create(factory);
     }
 
     public abstract T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data);

@@ -9,6 +9,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
@@ -93,7 +94,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
                 break;
             }
         }
-        return containsEffectiveBlock && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+        return containsEffectiveBlock && AntimatterPlatformUtils.isCorrectTierForDrops(getTier(stack), state);
     }
 
     default float getDefaultMiningSpeed(ItemStack stack){

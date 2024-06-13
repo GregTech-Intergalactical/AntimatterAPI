@@ -5,10 +5,7 @@ import carbonconfiglib.config.Config;
 import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
-import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
-import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
-import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
-import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
+import io.github.fabricators_of_create.porting_lib.util.*;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -23,9 +20,12 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.tool.IAbstractToolMethods;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
@@ -37,11 +37,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -51,6 +54,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -233,5 +237,19 @@ public class AntimatterPlatformUtilsImpl {
 
     public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
         return CarbonConfig.createConfig(modid, config, settings);
+    }
+
+    public static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+        return new ExtendedScreenHandlerType<>(factory::apply);
+    }
+
+    public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
+        FabricItemSettings properties = new FabricItemSettings().group(group);
+        properties.customDamage(IAbstractToolMethods::damageItemStatic);
+        return properties;
+    }
+
+    public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
+        return TierSortingRegistry.isCorrectTierForDrops(tier, state);
     }
 }
