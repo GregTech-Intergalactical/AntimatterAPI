@@ -8,6 +8,7 @@ import muramasa.antimatter.texture.Texture;
 public class TextureSet implements IAntimatterObject {
 
     public static final TextureSet NONE = new TextureSet(Ref.ID, "none");
+    public static final TextureSet CUBE = new TextureSet(Ref.ID, "cube");
     public static final TextureSet DULL = new TextureSet(Ref.ID, "dull");
     public static final TextureSet METALLIC = new TextureSet(Ref.ID, "metallic");
     public static final TextureSet SHINY = new TextureSet(Ref.ID, "shiny");

@@ -15,6 +15,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
@@ -239,7 +240,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     protected Item.Properties prepareInstantiation(String domain) {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
-        return ToolUtils.getToolProperties(itemGroup, repairable);
+        return AntimatterPlatformUtils.getToolProperties(itemGroup, repairable);
     }
 
     /* SETTERS */

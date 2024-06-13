@@ -35,11 +35,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -51,7 +55,11 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.TierSortingRegistry;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -62,6 +70,7 @@ import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -284,5 +293,27 @@ public class AntimatterPlatformUtilsImpl {
 
     public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
         return CarbonConfig.CONFIGS.createConfig(config, settings);
+    }
+
+    public static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+        return IForgeMenuType.create(factory::apply);
+    }
+
+    public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
+        Item.Properties properties = new Item.Properties().tab(group);
+        if (!repairable) properties.setNoRepair();
+        return properties;
+    }
+
+    public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
+        return TierSortingRegistry.isCorrectTierForDrops(tier, state);
+    }
+
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+        return ForgeEventFactory.onToolUse(originalState, context, ToolAction.get(action), false);
+    }
+
+    public static boolean onUseHoe(UseOnContext context){
+        return MinecraftForge.EVENT_BUS.post(new UseHoeEvent(context));
     }
 }

@@ -1,17 +1,15 @@
 package muramasa.antimatter.forge;
 
+import muramasa.antimatter.AntimatterAPIPlatformHelper;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-public class AntimatterAPIImpl {
-    public static void registerTransferApi(BlockEntityType<?> type){}
+public class AntimatterAPIImpl implements AntimatterAPIPlatformHelper {
+    public void registerTransferApi(BlockEntityType<? extends muramasa.antimatter.blockentity.BlockEntityMachine<?>> type){}
 
-    public static void registerTransferApiPipe(BlockEntityType<?> type){}
+    public void registerTransferApiPipe(BlockEntityType<? extends muramasa.antimatter.blockentity.pipe.BlockEntityPipe<?>> type){}
 
-    public static void registerEventBus(){
-        //FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
-    }
-
-    public static boolean isRegistryEntry(Object object, String domain){
-        return object instanceof IForgeRegistryEntry<?>;
+    public boolean isRegistryEntry(Object object, String domain){
+        return object instanceof IForgeRegistryEntry<?> r && r.getRegistryName() != null
+                && r.getRegistryName().getNamespace().equals(domain);
     }
 }

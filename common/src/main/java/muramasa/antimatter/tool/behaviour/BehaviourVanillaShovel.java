@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IBasicAntimatterTool;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,13 +47,13 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
         // Campfire putout
         if (state.getBlock() instanceof CampfireBlock) {
             if (state.getValue(CampfireBlock.LIT)){
-                changedState = getFireModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "shovel_dig");
+                changedState = getFireModifiedState(state, state.setValue(CampfireBlock.LIT, false), c, "shovel_dig");
                 if (changedState != null) {
                     c.getLevel().levelEvent(c.getPlayer(), 1009, c.getClickedPos(), 0);
                 }
             }
         } else if (state != null) {
-            changedState = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "shovel_flatten");
+            changedState = getToolModifiedState(state, c, "shovel_flatten");
             if (changedState != null) {
                 SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
                 c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -65,8 +66,8 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
         } else return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
-        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
+        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
         if (eventState != originalState) return eventState;
         Block flattened = FLATTENING_MAP.get(originalState.getBlock());
         if (flattened == null) return null;
@@ -79,8 +80,8 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
         return state;
     }
 
-    private BlockState getFireModifiedState(BlockState originalState, BlockState changedState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
-        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getFireModifiedState(BlockState originalState, BlockState changedState, UseOnContext context, String action) {
+        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
         return eventState != originalState ? eventState : changedState;
     }
 

@@ -22,7 +22,7 @@ public class REIMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return AntimatterPreLaunchUtil.isModLoaded(Ref.MOD_REI);
+        return AntimatterPreLaunchUtil.INSTANCE.isModLoaded(Ref.MOD_REI);
     }
 
     @Override

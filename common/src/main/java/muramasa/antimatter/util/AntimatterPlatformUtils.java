@@ -26,11 +26,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -40,6 +44,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -288,6 +293,31 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean onUseHoe(UseOnContext context){
         throw new AssertionError();
     }
 }
