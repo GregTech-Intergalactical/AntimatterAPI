@@ -5,10 +5,7 @@ import carbonconfiglib.config.Config;
 import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
-import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
-import io.github.fabricators_of_create.porting_lib.util.NetworkHooks;
-import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
-import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
+import io.github.fabricators_of_create.porting_lib.util.*;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -262,7 +259,4 @@ public class AntimatterPlatformUtilsImpl {
         return originalState;
     }
 
-    public static boolean onUseHoe(UseOnContext context){
-        return false;
-    }
 }

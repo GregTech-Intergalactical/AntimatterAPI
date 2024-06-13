@@ -196,7 +196,7 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
-        return ForgeRegistries.CONTAINERS.getKey(menuType);
+        return ForgeRegistries.MENU_TYPES.getKey(menuType);
     }
 
     public static Block getBlockFromId(String domain, String id){
@@ -314,6 +314,6 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static boolean onUseHoe(UseOnContext context){
-        return MinecraftForge.EVENT_BUS.post(new UseHoeEvent(context));
+        return false;
     }
 }

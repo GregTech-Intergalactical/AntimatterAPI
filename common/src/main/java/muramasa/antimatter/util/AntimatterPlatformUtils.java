@@ -315,9 +315,4 @@ public class AntimatterPlatformUtils {
     public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
         throw new AssertionError();
     }
-
-    @ExpectPlatform
-    public static boolean onUseHoe(UseOnContext context){
-        throw new AssertionError();
-    }
 }
