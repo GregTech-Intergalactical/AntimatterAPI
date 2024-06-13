@@ -435,27 +435,18 @@ public final class AntimatterAPI {
                 registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar.getDomain(), registrar);
             }
         }
-        registerEventBus();
     }
 
-    @ExpectPlatform
-    private static void registerEventBus(){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static boolean isRegistryEntry(Object object, String domain){
-        throw new AssertionError();
+        return AntimatterAPIPlatformHelper.INSTANCE.isRegistryEntry(object, domain);
     }
 
-    @ExpectPlatform
     public static void registerTransferApi(BlockEntityType<? extends BlockEntityMachine<?>> type){
-        throw new AssertionError();
+        AntimatterAPIPlatformHelper.INSTANCE.registerTransferApi(type);
     }
 
-    @ExpectPlatform
     public static void registerTransferApiPipe(BlockEntityType<? extends BlockEntityPipe<?>> type){
-        throw new AssertionError();
+        AntimatterAPIPlatformHelper.INSTANCE.registerTransferApiPipe(type);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {

@@ -6,6 +6,6 @@ import tesseract.TesseractCapUtils;
 import java.util.ServiceLoader;
 
 public interface AntimatterPreLaunchUtil {
-    AntimatterPreLaunchUtil INSTANCE =  ServiceLoader.load(AntimatterPreLaunchUtil.class).findFirst().orElseThrow(() -> new IllegalStateException("No implementation of AntimatterPreLaunchUtil found"));
+    AntimatterPreLaunchUtil INSTANCE =  ImplLoader.load(AntimatterPreLaunchUtil.class);
     boolean isModLoaded(String modid);
 }

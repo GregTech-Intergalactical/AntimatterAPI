@@ -3,6 +3,7 @@ package muramasa.antimatter.fabric;
 import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.fabric.fluid.storage.FabricBlockFluidContainer;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterAPIPlatformHelper;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.pipe.*;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -21,9 +22,9 @@ import tesseract.api.heat.IHeatHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.fabric.TesseractImpl;
 
-public class AntimatterAPIImpl {
+public class AntimatterAPIImpl implements AntimatterAPIPlatformHelper {
     @SuppressWarnings("UnstableApiUsage")
-    public static void registerTransferApi(BlockEntityType<? extends BlockEntityMachine<?>> type){
+    public void registerTransferApi(BlockEntityType<? extends BlockEntityMachine<?>> type){
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).map(f -> new FabricBlockFluidContainer(f, t -> {}, be)).orElse(null), type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(ExtendedContainerWrapper::new).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
@@ -33,7 +34,7 @@ public class AntimatterAPIImpl {
         }
     }
 
-    public static void registerTransferApiPipe(BlockEntityType<? extends BlockEntityPipe<?>> type){
+    public void registerTransferApiPipe(BlockEntityType<? extends BlockEntityPipe<?>> type){
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> {
             if (!(be instanceof BlockEntityFluidPipe<?> fluidPipe)) return null;
             return (Storage<FluidVariant>) fluidPipe.getPipeCapHolder().side(direction).map(f -> new FabricBlockFluidContainer((FluidContainer) f, b -> {}, be)).orElse(null);
@@ -68,10 +69,8 @@ public class AntimatterAPIImpl {
         }
     }
 
-    public static void registerEventBus(){
-    }
 
-    public static boolean isRegistryEntry(Object object, String domain){
+    public boolean isRegistryEntry(Object object, String domain){
         return false;
     }
 }
