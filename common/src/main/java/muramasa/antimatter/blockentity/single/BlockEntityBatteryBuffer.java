@@ -35,13 +35,23 @@ public class BlockEntityBatteryBuffer<T extends BlockEntityBatteryBuffer<T>> ext
             @Override
             public void onUpdate() {
                 super.onUpdate();
-                if (this.energy > 0 && !cachedItems.isEmpty()){
+                if (this.energy > 0 && this.getEnergy() > this.voltageOut * 2 && !cachedItems.isEmpty()){
                     long energyToInsert = this.energy % cachedItems.size() == 0 ? this.energy / cachedItems.size() : this.energy;
                     cachedItems.forEach(h ->{
                         long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.right().getCapacity() - h.right().getEnergy()));
                         if (toAdd > 0 && Utils.addEnergy(h.right(), toAdd)){
                             h.left().setTag(h.right().getContainer().getTag());
                             this.energy -= toAdd;
+                        }
+                    });
+                }
+
+                if (this.energy < this.voltageOut && this.getBatteryEnergy() < this.voltageOut){
+                    cachedItems.forEach(h ->{
+                        long toRemove = Math.min(this.capacty - this.energy, h.right().getEnergy());
+                        if (toRemove > 0 && Utils.removeEnergy(h.right(), toRemove)){
+                            h.left().setTag(h.right().getContainer().getTag());
+                            this.energy += toRemove;
                         }
                     });
                 }

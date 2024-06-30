@@ -211,6 +211,10 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
         return super.getEnergy();
     }
 
+    protected long getBatteryEnergy(){
+        return cachedItems != null ? cachedItems.stream().map(Pair::right).mapToLong(IEnergyHandler::getEnergy).sum() : 0;
+    }
+
     @Override
     public void onUpdate() {
         super.onUpdate();

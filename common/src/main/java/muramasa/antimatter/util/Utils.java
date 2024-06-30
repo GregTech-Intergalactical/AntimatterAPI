@@ -525,6 +525,10 @@ public class Utils {
         return to.insertEu(eu, false) > 0;
     }
 
+    public static boolean removeEnergy(IEnergyHandler from, long eu){
+        return from.extractEu(eu, false) > 0;
+    }
+
     /**
      * Transfer energy with loss.
      *
