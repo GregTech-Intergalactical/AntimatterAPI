@@ -76,7 +76,7 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
             base.getInfo(simple).forEach(s -> context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID()));
             success = true;
         }
-        if (state.getBlock() instanceof BlockDynamic dynamic && context.getPlayer() != null) {
+        if (state.getBlock() instanceof BlockDynamic dynamic && context.getPlayer() != null && !simple) {
             dynamic.getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
                 context.getPlayer().sendMessage(Utils.literal(s), context.getPlayer().getUUID());
             });

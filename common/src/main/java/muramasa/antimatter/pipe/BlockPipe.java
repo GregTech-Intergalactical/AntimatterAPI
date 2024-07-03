@@ -685,15 +685,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        super.getInfo(info, world, state, pos);
-        info.add("Pipe Type: " + getType().getId());
-        info.add("Pipe Material: " + getType().getMaterial().getId());
-        info.add("Pipe Size: " + getSize().getId());
-        return info;
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
         builder.add(TICKING);

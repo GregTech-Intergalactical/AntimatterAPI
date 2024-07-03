@@ -174,16 +174,21 @@ public class BlockEntityFakeBlock extends BlockEntityTickable<BlockEntityFakeBlo
     @Override
     public List<String> getInfo(boolean simple) {
         List<String> list = super.getInfo(simple);
-        if (getState() != null)
-            list.add("State: " + getState().toString());
-        if (facing != null)
-            list.add("Facing: " + facing.getName());
-        covers.forEach((k, v) -> {
-            list.add("Cover on " + k.getName() + ": " + v.getId());
-        });
-        if (controller != null) {
-            list.add("Controller position: "
-                    + controller.getBlockPos());
+        if (!simple){
+            if (getState() != null)
+                list.add("State: " + getState().toString());
+            if (facing != null)
+                list.add("Facing: " + facing.getName());
+            covers.forEach((k, v) -> {
+                list.add("Cover on " + k.getName() + ": " + v.getId());
+            });
+            if (controller != null) {
+                list.add("Controller position: "
+                        + controller.getBlockPos());
+            }
+        }
+        if (controller != null){
+            controller.getInfo(simple);
         }
         return list;
     }

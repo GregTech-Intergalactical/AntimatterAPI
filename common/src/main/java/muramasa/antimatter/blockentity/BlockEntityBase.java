@@ -84,7 +84,7 @@ public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends Bloc
     //TODO pass constant StringBuilder
     public List<String> getInfo(boolean simple) {
         List<String> info = new ObjectArrayList<>();
-        info.add("Tile: " + getClass().getSimpleName());
+        if (!simple) info.add("Tile: " + getClass().getSimpleName());
         return info;
     }
 
