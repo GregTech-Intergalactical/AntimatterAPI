@@ -144,7 +144,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     if (!placedRock && lastMaterial != null && lastMaterial.has(AntimatterMaterialTypes.ORE) && lastMaterial.has(BEARING_ROCK)) {
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
-                        if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
+                        if (!below.isAir() && below != WorldGenHelper.WATER_STATE && AntimatterConfig.STONE_LAYER_ORE_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()) {
                             if (WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), lastMaterial, below, AntimatterConfig.STONE_LAYER_ORE_ROCK_CHANCE.get())){
                                 placedRock = true;
                             }
@@ -153,7 +153,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     if (!placedRock && rockType != null){
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
-                        if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
+                        if (!below.isAir() && below != WorldGenHelper.WATER_STATE && AntimatterConfig.STONE_LAYER_DENSE_ORE_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()) {
                             if (WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), Material.NULL, rockType.getState(), AntimatterConfig.STONE_LAYER_DENSE_ORE_ROCK_CHANCE.get())){
                                 placedRock = true;
                             }
@@ -168,7 +168,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     BlockPos offset = pos.offset(i, 0, j);
                     int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, offset.getX(), offset.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, offset.getX(), offset.getZ()));
                     BlockState below = world.getBlockState(offset.mutable().setY(y - 1));
-                    if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
+                    if (!below.isAir() && below != WorldGenHelper.WATER_STATE && AntimatterConfig.STONE_LAYER_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()) {
                         WorldGenHelper.setRock(world, offset.mutable().setY(y).immutable(), Material.NULL, topStoneType.getState(), AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
                     }
                 }

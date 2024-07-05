@@ -54,6 +54,10 @@ public class AntimatterConfig {
     public static ConfigEntry.BoolValue ORE_VEIN_SPECTATOR_DEBUG;
     public static ConfigEntry.BoolValue REGENERATE_DEFAULT_WORLDGEN_JSONS;
 
+    public static ConfigEntry.BoolValue ORE_VEIN_ROCKS;
+    public static ConfigEntry.BoolValue STONE_LAYER_ROCKS;
+    public static ConfigEntry.BoolValue STONE_LAYER_ORE_ROCKS;
+    public static ConfigEntry.BoolValue STONE_LAYER_DENSE_ORE_ROCKS;
     public static ConfigEntry.IntValue ORE_VEIN_ROCK_CHANCE;
     public static ConfigEntry.IntValue STONE_LAYER_ROCK_CHANCE;
     public static ConfigEntry.IntValue STONE_LAYER_ORE_ROCK_CHANCE;
@@ -83,6 +87,7 @@ public class AntimatterConfig {
         ORE_VEINS = oreVeins.addBool("ore_veins", true, "Enable ore veins - Default: true");
         ORE_VEIN_MAX_SIZE = oreVeins.addInt("ore_vein_max_size", 32, "Maximum size of an ore vein - Default: 32").setMin(1);
         ORE_VEIN_CHANCE = oreVeins.addInt("ore_vein_chance", 100, "Control percentage of filled 3x3 chunks. Lower number means less ore veins would spawn - Default : 100").setMin(1);
+        ORE_VEIN_ROCKS = oreVeins.addBool("ore_vein_rocks", true, "Enable ore veins having surface rocks - Default: true");
         ORE_VEIN_ROCK_CHANCE = oreVeins.addInt("ore_vein_rock_chance", 16, "Chance of ore veins having surface rocks. chance is 1/(the number) - Default: 16").setMin(1);
         ORE_VEIN_FIND_ATTEMPTS = oreVeins.addInt("ore_vein_find_attempts", 64, "Control number of attempts to find a valid ore vein,",
                         "Generally this maximum limit isn't hit, as selecting a vein is performant - Default : 64")
@@ -98,8 +103,11 @@ public class AntimatterConfig {
         ConfigSection stoneLayers = world.addSubSection("stone_layers");
         STONE_LAYERS = stoneLayers.addBool("stone_layers", true, "Enable stone layers - Default: true");
         STONE_LAYER_ORES = stoneLayers.addBool("stone_layer_ores", true, "Enable stone layers having ores - Default: true");
+        STONE_LAYER_ROCKS = stoneLayers.addBool("stone_layer_rocks", true, "Enable stone layers having surface rocks - Default: true");
         STONE_LAYER_ROCK_CHANCE = stoneLayers.addInt("stone_layer_rock_chance", 40, "Chance of stone layers having surface rocks. chance is 1/(the number) - Default: 20");
+        STONE_LAYER_ORE_ROCKS = stoneLayers.addBool("stone_layer_ore_rocks", true, "Enable stone layers ore veins having surface rocks - Default: true");
         STONE_LAYER_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_ore_rock_chance", 60, "Chance of stone layers ore veins having surface rocks. chance is 1/(the number) - Default: 40");
+        STONE_LAYER_DENSE_ORE_ROCKS = stoneLayers.addBool("stone_layer_dense_ore_rocks", true, "Enable dense ore stone layers having surface rocks - Default: true");
         STONE_LAYER_DENSE_ORE_ROCK_CHANCE = stoneLayers.addInt("stone_layer_dense_ore_rock_chance", 2000, "Chance of dense ore stone layers having surface rocks. chance is 1/(the number) - Default: 2000");
 
         ConfigSection gameplay = config.add("gameplay");
