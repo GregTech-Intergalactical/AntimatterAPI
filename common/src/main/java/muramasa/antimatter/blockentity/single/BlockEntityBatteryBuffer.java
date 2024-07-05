@@ -2,8 +2,11 @@ package muramasa.antimatter.blockentity.single;
 
 import it.unimi.dsi.fastutil.Pair;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.blockentity.BlockEntityStorage;
@@ -72,6 +75,16 @@ public class BlockEntityBatteryBuffer<T extends BlockEntityBatteryBuffer<T>> ext
                     return cachedItems.stream().map(Pair::right).mapToLong(IGTNode::getOutputAmperage).sum();
                 }
                 return super.getOutputAmperage();
+            }
+        });
+        this.itemHandler.set(() -> new MachineItemHandler<>((T)this){
+            @Override
+            protected TrackedItemHandler<T> createTrackedHandler(SlotType<?> type, T tile) {
+                int count = tile.getMachineType().getCount(tile.getMachineTier(), type);
+                if (type == SlotType.ENERGY){
+                    return new TrackedItemHandler<>(tile, type, count, true, type.input, type.tester);
+                }
+                return super.createTrackedHandler(type, tile);
             }
         });
     }
