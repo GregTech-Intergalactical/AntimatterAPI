@@ -47,6 +47,7 @@ public class AntimatterConfig {
     public static ConfigEntry.BoolValue VANILLA_STONE_GEN;
     public static ConfigEntry.BoolValue SMALL_ORES;
     public static ConfigEntry.BoolValue SURFACE_ROCKS;
+    public static ConfigEntry.BoolValue DETAILED_ROCKS;
     public static ConfigEntry.BoolValue ORE_VEINS;
     public static ConfigEntry.BoolValue STONE_LAYERS;
     public static ConfigEntry.BoolValue STONE_LAYER_ORES;
@@ -80,6 +81,7 @@ public class AntimatterConfig {
                 .setRequiredReload(ReloadMode.WORLD);
         SMALL_ORES = world.addBool("small_ores", true, "Enable small ores - Default: true");
         SURFACE_ROCKS = world.addBool("surface_rocks", true, "Enable surface rocks - Default: true");
+        DETAILED_ROCKS = world.addBool("detailed_rocks", true, "Enables rocks showing their stone and ore in world - Default: true", "Note: If false, rocks only show their stone type in the texture.");
         REGENERATE_DEFAULT_WORLDGEN_JSONS = world.addBool("regenerate_default_world_jsons", false, "Regenerates the default jsons for antimatter's ore generation systems. will self reset after generating configs - Default: false");
         ORE_VEIN_SPECTATOR_DEBUG = world.addBool("ore_vein_spectator_debug", false, "Shows ore veins very clearly in spectator mode - Default: false");
 
