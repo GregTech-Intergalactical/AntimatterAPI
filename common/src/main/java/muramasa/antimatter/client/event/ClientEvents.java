@@ -145,7 +145,7 @@ public class ClientEvents {
         if (state.getBlock() instanceof IInfoProvider info) {
             left.add("");
             left.add(ChatFormatting.AQUA + "[Antimatter Debug Server]");
-            left.addAll(info.getInfo(new ObjectArrayList<>(), world, state, pos));
+            left.addAll(info.getInfo(new ObjectArrayList<>(), world, state, pos, false));
         }
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof BlockEntityBase<?> b) {

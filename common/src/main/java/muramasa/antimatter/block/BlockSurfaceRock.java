@@ -162,9 +162,11 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        super.getInfo(info, world, state, pos);
-        info.add("Material: " + material.getId());
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos, boolean simple) {
+        super.getInfo(info, world, state, pos, simple);
+        if (material != Material.NULL) {
+            info.add("Material: " + material.getId());
+        }
         info.add("StoneType: " + stoneType.getId());
         return info;
     }
