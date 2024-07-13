@@ -17,7 +17,7 @@ public class DynamicTexturer<T extends IDynamicModelProvider, U> {
     }
 
     public List<BakedQuad> getQuads(String type, List<BakedQuad> currentList, BlockState state, T t, U key, int dir, BlockAndTintGetter level, BlockPos pos) {
-        if (key.equals(previousKey)) {
+        if (cache != null && key.equals(previousKey)) {
             currentList.addAll(cache[dir]);
             return currentList;
         }
