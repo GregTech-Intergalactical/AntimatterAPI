@@ -252,16 +252,20 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
         }
     }
 
-    public boolean incrementTransferCounter(int amount){
-        setHolder(getHolder() + amount);
+    public boolean pipeCapacityCheck(){
         return getHolder() < getCapacity();
     }
 
-    boolean canAcceptItemsFrom(Direction side, BlockEntityItemPipe<?> sender){
+    public boolean incrementTransferCounter(int amount){
+        setHolder(getHolder() + amount);
+        return pipeCapacityCheck();
+    }
+
+    public boolean canAcceptItemsFrom(Direction side, BlockEntityItemPipe<?> sender){
         return Connectivity.has(virtualConnection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksInput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
-    boolean canEmitItemsTo(Direction side, BlockEntityItemPipe<?> sender){
+    public boolean canEmitItemsTo(Direction side, BlockEntityItemPipe<?> sender){
         return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && Connectivity.has(virtualConnection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksOutput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
