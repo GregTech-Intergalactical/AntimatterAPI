@@ -57,7 +57,7 @@ public class TileTicker {
         } else {
             for (int i = 0; i < SERVER_TICK_POST.size(); i++) {
                 IPostTickTile tTileEntity = SERVER_TICK_POST.get(i);
-                if (tTileEntity == null || tTileEntity.getBlockEntity().isRemoved()) {
+                if (tTileEntity == null || tTileEntity.getBlockEntity().isRemoved() || (tTileEntity.getBlockEntity().getLevel() != null && tTileEntity.getBlockEntity().getLevel().isClientSide())) {
                     SERVER_TICK_POST.remove(i--);
                     if (tTileEntity != null){
                         tTileEntity.onUnregisterPost();
@@ -74,7 +74,7 @@ public class TileTicker {
             }
             for (int i = 0; i < SERVER_TICK_PO2T.size(); i++) {
                 IPostTickTile tTileEntity = SERVER_TICK_PO2T.get(i);
-                if (tTileEntity == null || tTileEntity.getBlockEntity().isRemoved()) {
+                if (tTileEntity == null || tTileEntity.getBlockEntity().isRemoved() || (tTileEntity.getBlockEntity().getLevel() != null && tTileEntity.getBlockEntity().getLevel().isClientSide())) {
                     SERVER_TICK_PO2T.remove(i--);
                     if (tTileEntity != null){
                         tTileEntity.onUnregisterPost();
