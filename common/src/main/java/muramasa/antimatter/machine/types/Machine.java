@@ -11,6 +11,7 @@ import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
@@ -110,6 +111,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IMachineColorHandlerBlock blockColorHandler = (state, world, pos, machine, i) -> -1;
     @Getter
     protected IMachineColorHandlerItem itemColorHandler = (stack, block, i) -> -1;
+    @Getter
+    protected ResourceLocation modelLoader = AntimatterModelManager.LOADER_MACHINE;
 
     protected boolean tierSpecificLang = false;
 
@@ -438,6 +441,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T itemColorHandler(IMachineColorHandlerItem handlerItem){
         this.itemColorHandler = handlerItem;
+        return (T) this;
+    }
+
+    public T modelLoader(ResourceLocation modelLoader){
+        this.modelLoader = modelLoader;
         return (T) this;
     }
 

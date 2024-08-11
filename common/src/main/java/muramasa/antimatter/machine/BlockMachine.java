@@ -349,7 +349,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
         buildModelsForState(builder, MachineState.IDLE);
         buildModelsForState(builder, MachineState.ACTIVE);
-        builder.loader(AntimatterModelManager.LOADER_MACHINE);
+        builder.loader(type.getModelLoader());
         builder.property("particle", getType().getBaseTexture(tier, MachineState.IDLE)[0].toString());
         prov.state(block, builder);
     }
