@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class MachineModel implements IAntimatterModel{
 
-    final Map<MachineState, UnbakedModel[]> models;
-    final ResourceLocation particle;
+    protected final Map<MachineState, UnbakedModel[]> models;
+    protected final ResourceLocation particle;
     public MachineModel(Map<MachineState, UnbakedModel[]> models, ResourceLocation particle) {
         this.models = models;
         this.particle = particle;
