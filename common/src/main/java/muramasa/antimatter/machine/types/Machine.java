@@ -151,6 +151,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     protected boolean renderTesr = false;
     protected boolean renderContainedLiquids = false;
+    protected boolean renderContainedLiquidLevel = false;
     @Getter
     @Setter
     protected int overlayLayers = 1;
@@ -707,13 +708,18 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T renderContainedLiquids() {
+    public T renderContainedLiquids(boolean renderContainedLiquidLevel) {
         this.renderContainedLiquids = true;
+        this.renderContainedLiquidLevel = renderContainedLiquidLevel;
         return tesr();
     }
 
     public boolean renderContainerLiquids() {
         return renderContainedLiquids;
+    }
+
+    public boolean renderContainerLiquidLevel(){
+        return renderContainedLiquidLevel;
     }
 
     public boolean hasTierSpecificLang(){
