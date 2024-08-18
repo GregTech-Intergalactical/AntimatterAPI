@@ -147,7 +147,7 @@ public class Utils {
 
     public static ItemStack extractAny(PlatformItemHandler handler) {
         for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.extractItem(i, 64, false);
+            ItemStack stack = handler.extractItem(i, Math.min(handler.getStackInSlot(i).getCount(), handler.getStackInSlot(i).getMaxStackSize()), false);
             if (!stack.isEmpty()) return stack;
         }
         return ItemStack.EMPTY;
