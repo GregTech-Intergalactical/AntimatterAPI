@@ -413,7 +413,7 @@ public class Utils {
     public static boolean transferItems(PlatformItemHandler from, PlatformItemHandler to, boolean once, Predicate<ItemStack> filter) {
         boolean successful = false;
         for (int i = 0; i < from.getSlots(); i++) {
-            ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
+            ItemStack toInsert = from.extractItem(i, Math.min(from.getStackInSlot(i).getCount(), from.getStackInSlot(i).getMaxStackSize()), true);
             if (toInsert.isEmpty() || !filter.test(toInsert)) {
                 continue;
             }
