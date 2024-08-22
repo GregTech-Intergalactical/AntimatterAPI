@@ -262,11 +262,11 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
     }
 
     public boolean canAcceptItemsFrom(Direction side, BlockEntityItemPipe<?> sender){
-        return coverHandler.map(c -> !c.get(side).blocksInput(ExtendedItemContainer.class, side)).orElse(true);
+        return Connectivity.has(connection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksInput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
     public boolean canEmitItemsTo(Direction side, BlockEntityItemPipe<?> sender){
-        return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && coverHandler.map(c -> !c.get(side).blocksOutput(ExtendedItemContainer.class, side)).orElse(true);
+        return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && Connectivity.has(connection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksOutput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
     private void addTicker(){
