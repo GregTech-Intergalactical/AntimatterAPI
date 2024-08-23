@@ -126,6 +126,7 @@ public class Ref {
     public static final String TAG_PIPE_TILE_INTERACT = "i";
     public static final String KEY_PIPE_TILE_COVER = "v";
     public static final String KEY_PIPE_TILE_CONFIG = "f";
+    public static final String KEY_PIPE_TILE_COLOR = "co";
 
     public static final String TAG_TOOL_DATA = "td";
     public static final String KEY_TOOL_DATA_PRIMARY_MATERIAL = "m";

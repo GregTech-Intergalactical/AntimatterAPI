@@ -262,6 +262,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         BlockEntityPipe<?> tile = getTilePipe(worldIn, pos);
         if (tile != null && !worldIn.isClientSide()) {
             tile.coverHandler.ifPresent(c -> c.readFromStack(stack));
+            if (stack.getTag() != null && stack.getTag().contains(Ref.KEY_PIPE_TILE_COLOR)){
+                tile.setPipeColor(stack.getTag().getInt(Ref.KEY_PIPE_TILE_COLOR));
+            }
             for (Direction side : Ref.DIRS) {
                 BlockEntityPipe<?> neighbour = tile.getPipe(side);
 
@@ -470,6 +473,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
+        BlockEntityPipe<?> pipe = getTilePipe(world, pos);
+        if (pipe.getPipeColor() != -1) return pipe.getPipeColor();
         return getRGB();
     }
 
