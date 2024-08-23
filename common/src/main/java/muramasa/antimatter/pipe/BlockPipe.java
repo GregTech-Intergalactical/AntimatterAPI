@@ -480,6 +480,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        if (stack.getTag() != null && stack.getTag().contains(Ref.KEY_PIPE_TILE_COLOR)){
+            return stack.getTag().getInt(Ref.KEY_PIPE_TILE_COLOR);
+        }
         return getRGB();
     }
 
