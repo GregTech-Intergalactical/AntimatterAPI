@@ -474,7 +474,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Override
     public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
         BlockEntityPipe<?> pipe = getTilePipe(world, pos);
-        if (pipe.getPipeColor() != -1) return pipe.getPipeColor();
+        if (pipe != null && pipe.getPipeColor() != -1) return pipe.getPipeColor();
         return getRGB();
     }
 

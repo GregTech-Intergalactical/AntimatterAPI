@@ -379,7 +379,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         if (newConnection != connection && (level != null && level.isClientSide)) {
             Utils.markTileForRenderUpdate(this);
         }
-        pipeColor = tag.getInt(Ref.KEY_PIPE_TILE_COLOR);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COLOR)) {
+            pipeColor = tag.getInt(Ref.KEY_PIPE_TILE_COLOR);
+        }
         if (connection != newConnection && level != null) {
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 boolean firstHas = Connectivity.has(connection, i);
@@ -406,7 +408,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize(new CompoundTag())));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         tag.putByte(Ref.TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY, virtualConnection);
-        tag.putInt(Ref.KEY_PIPE_TILE_COLOR, pipeColor);
+        if (pipeColor != -1) {
+            tag.putInt(Ref.KEY_PIPE_TILE_COLOR, pipeColor);
+        }
     }
 
     public CompoundTag getUpdateTag() {
