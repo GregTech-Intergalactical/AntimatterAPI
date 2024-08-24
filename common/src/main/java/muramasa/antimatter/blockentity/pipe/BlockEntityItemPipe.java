@@ -246,6 +246,7 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
 
     @Override
     public void addInventoryDrops(List<ItemStack> drops) {
+        super.addInventoryDrops(drops);
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack stack = inventory.getItem(i);
             if (!stack.isEmpty()) drops.add(stack);
