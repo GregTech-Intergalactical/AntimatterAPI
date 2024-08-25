@@ -8,6 +8,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.*;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.item.ICustomDurability;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -54,7 +55,7 @@ import java.util.*;
 
 import static muramasa.antimatter.material.Material.NULL;
 
-public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatterTool, IEnergyItem {
+public interface IAntimatterTool extends ISharedAntimatterObject, IBasicAntimatterTool, IEnergyItem, ICustomDurability {
 
     AntimatterItemTier getAntimatterItemTier();
 
