@@ -246,6 +246,20 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         }
     }
 
+    public void checkConnections(){
+        for (Direction side : Direction.values()) {
+            BlockEntityPipe<?> pipe = getPipe(side);
+            if (pipe != null) {
+                if (pipe.pipeColor != -1 && this.pipeColor != -1){
+                    if (pipe.pipeColor != this.pipeColor) {
+                        clearConnection(side);
+                        pipe.clearConnection(side.getOpposite());
+                    }
+                }
+            }
+        }
+    }
+
     public boolean canConnect(int side) {
         return Connectivity.has(connection, side);
     }
@@ -366,6 +380,8 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public boolean blocksSide(Direction side) {
+        BlockEntityPipe<?> neighbor = getPipe(side);
+        if (neighbor != null && this.pipeColor != -1 && neighbor.pipeColor != -1 && neighbor.getPipeColor() != this.getPipeColor()) return true;
         return coverHandler.map(t -> t.blocksCapability(getCapClass(), side) || t.get(side).blockConnection(side)).orElse(false);
     }
 
