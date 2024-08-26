@@ -38,11 +38,15 @@ public abstract class BlockEntityBase<T extends BlockEntityBase<T>> extends Bloc
             BlockEntity entity;
             if (!blockEntityCache.asMap().containsKey(side)){
                 entity = level.getBlockEntity(this.getBlockPos().relative(side));
+                if (entity instanceof IExtendingBlockEntity extendingBlockEntity) {
+                    entity = extendingBlockEntity.getExtendedBlockEntity(side);
+                }
                 if (entity == null) return null;
             } else {
                 entity = null;
             }
-            return blockEntityCache.get(side, () -> entity);
+            BlockEntity finalEntity = entity;
+            return blockEntityCache.get(side, () -> finalEntity);
         } catch (ExecutionException e) {
             Antimatter.LOGGER.error(e);
             return null;
