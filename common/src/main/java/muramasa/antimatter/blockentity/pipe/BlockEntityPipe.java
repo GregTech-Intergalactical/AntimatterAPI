@@ -1,6 +1,7 @@
 package muramasa.antimatter.blockentity.pipe;
 
 import lombok.Getter;
+import lombok.Setter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -47,6 +48,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
      **/
     protected T type;
     protected PipeSize size;
+    @Getter
+    @Setter
+    protected int pipeColor = -1;
 
     /**
      * Capabilities
@@ -242,6 +246,20 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         }
     }
 
+    public void checkConnections(){
+        for (Direction side : Direction.values()) {
+            BlockEntityPipe<?> pipe = getPipe(side);
+            if (pipe != null) {
+                if (pipe.pipeColor != -1 && this.pipeColor != -1){
+                    if (pipe.pipeColor != this.pipeColor) {
+                        clearConnection(side);
+                        pipe.clearConnection(side.getOpposite());
+                    }
+                }
+            }
+        }
+    }
+
     public boolean canConnect(int side) {
         return Connectivity.has(connection, side);
     }
@@ -290,7 +308,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public void addInventoryDrops(List<ItemStack> drops){
-
+        if (pipeColor != -1){
+            drops.get(0).getOrCreateTag().putInt(Ref.KEY_PIPE_TILE_COLOR, pipeColor);
+        }
     }
 
     /**
@@ -360,6 +380,8 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     }
 
     public boolean blocksSide(Direction side) {
+        BlockEntityPipe<?> neighbor = getPipe(side);
+        if (neighbor != null && this.pipeColor != -1 && neighbor.pipeColor != -1 && neighbor.getPipeColor() != this.getPipeColor()) return true;
         return coverHandler.map(t -> t.blocksCapability(getCapClass(), side) || t.get(side).blockConnection(side)).orElse(false);
     }
 
@@ -372,6 +394,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         virtualConnection = tag.getByte(Ref.TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY);
         if (newConnection != connection && (level != null && level.isClientSide)) {
             Utils.markTileForRenderUpdate(this);
+        }
+        if (tag.contains(Ref.KEY_PIPE_TILE_COLOR)) {
+            pipeColor = tag.getInt(Ref.KEY_PIPE_TILE_COLOR);
         }
         if (connection != newConnection && level != null) {
             for (int i = 0; i < Ref.DIRS.length; i++) {
@@ -399,6 +424,9 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize(new CompoundTag())));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         tag.putByte(Ref.TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY, virtualConnection);
+        if (pipeColor != -1) {
+            tag.putInt(Ref.KEY_PIPE_TILE_COLOR, pipeColor);
+        }
     }
 
     public CompoundTag getUpdateTag() {
@@ -410,6 +438,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
     @Override
     public List<String> getInfo(boolean simple) {
         List<String> info = super.getInfo(simple);
+        if (simple) return info;
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         info.add("Connection: " + connection);

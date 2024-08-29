@@ -168,13 +168,13 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     }
 
     @Override
-    public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
+    public InteractionResult onInteractServer(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
         if (!validStructure && checkingStructure == 0){
             if (checkStructure()){
                 return InteractionResult.SUCCESS;
             }
         }
-        return super.onInteractBoth(state, world, pos, player, hand, hit, type);
+        return super.onInteractServer(state, world, pos, player, hand, hit, type);
     }
 
     @Override
@@ -227,7 +227,6 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
                     }));
                 }
 
-                sidedSync(true);
                 StructureCache.add(level, getBlockPos(), positions);
             } else {
                 validStructure = false;
@@ -245,6 +244,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         }
         checkingStructure--;
         if (validStructure != oldValidStructure){
+            sidedSync(true);
             reCheckStructure = true;
         }
         return validStructure;
@@ -345,6 +345,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
             components.clear();
         }
         StructureCache.remove(level, worldPosition);
+        sidedSync(true);
         checkingStructure--;
     }
 

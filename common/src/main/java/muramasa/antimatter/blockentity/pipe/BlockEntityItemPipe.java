@@ -246,23 +246,28 @@ public class BlockEntityItemPipe<T extends ItemPipe<T>> extends BlockEntityPipe<
 
     @Override
     public void addInventoryDrops(List<ItemStack> drops) {
+        super.addInventoryDrops(drops);
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack stack = inventory.getItem(i);
             if (!stack.isEmpty()) drops.add(stack);
         }
     }
 
-    public boolean incrementTransferCounter(int amount){
-        setHolder(getHolder() + amount);
+    public boolean pipeCapacityCheck(){
         return getHolder() < getCapacity();
     }
 
-    boolean canAcceptItemsFrom(Direction side, BlockEntityItemPipe<?> sender){
-        return Connectivity.has(virtualConnection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksInput(ExtendedItemContainer.class, side)).orElse(true);
+    public boolean incrementTransferCounter(int amount){
+        setHolder(getHolder() + amount);
+        return pipeCapacityCheck();
     }
 
-    boolean canEmitItemsTo(Direction side, BlockEntityItemPipe<?> sender){
-        return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && Connectivity.has(virtualConnection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksOutput(ExtendedItemContainer.class, side)).orElse(true);
+    public boolean canAcceptItemsFrom(Direction side, BlockEntityItemPipe<?> sender){
+        return Connectivity.has(connection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksInput(ExtendedItemContainer.class, side)).orElse(true);
+    }
+
+    public boolean canEmitItemsTo(Direction side, BlockEntityItemPipe<?> sender){
+        return (sender != this || side.get3DDataValue() != mLastReceivedFrom) && Connectivity.has(connection, side.get3DDataValue()) && coverHandler.map(c -> !c.get(side).blocksOutput(ExtendedItemContainer.class, side)).orElse(true);
     }
 
     private void addTicker(){

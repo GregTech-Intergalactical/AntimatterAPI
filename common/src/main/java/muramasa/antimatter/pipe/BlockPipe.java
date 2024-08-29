@@ -262,6 +262,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         BlockEntityPipe<?> tile = getTilePipe(worldIn, pos);
         if (tile != null && !worldIn.isClientSide()) {
             tile.coverHandler.ifPresent(c -> c.readFromStack(stack));
+            if (stack.getTag() != null && stack.getTag().contains(Ref.KEY_PIPE_TILE_COLOR)){
+                tile.setPipeColor(stack.getTag().getInt(Ref.KEY_PIPE_TILE_COLOR));
+            }
             for (Direction side : Ref.DIRS) {
                 BlockEntityPipe<?> neighbour = tile.getPipe(side);
 
@@ -470,11 +473,16 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
+        BlockEntityPipe<?> pipe = getTilePipe(world, pos);
+        if (pipe != null && pipe.getPipeColor() != -1) return pipe.getPipeColor();
         return getRGB();
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        if (stack.getTag() != null && stack.getTag().contains(Ref.KEY_PIPE_TILE_COLOR)){
+            return stack.getTag().getInt(Ref.KEY_PIPE_TILE_COLOR);
+        }
         return getRGB();
     }
 
@@ -682,15 +690,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         builder.config(getPipeID(63, 0), SIMPLE, c -> c.tex(of("all", getFace())));
 
         return builder.loader(AntimatterModelManager.LOADER_PIPE);
-    }
-
-    @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        super.getInfo(info, world, state, pos);
-        info.add("Pipe Type: " + getType().getId());
-        info.add("Pipe Material: " + getType().getMaterial().getId());
-        info.add("Pipe Size: " + getSize().getId());
-        return info;
     }
 
     @Override

@@ -357,19 +357,21 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], AntimatterMaterialTypes.ORE_SMALL);
         }
-        for (int rockCount = 0; rockCount < nRocks; rockCount++) {
-            int tX = rand.nextInt(16) + posX;
-            int tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0], AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get());
-            tX = rand.nextInt(16) + posX;
-            tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*3/2);
-            tX = rand.nextInt(16) + posX;
-            tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*2);
-            tX = rand.nextInt(16) + posX;
-            tZ = rand.nextInt(16) + posZ;
-            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*5/2);
+        if (AntimatterConfig.ORE_VEIN_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()){
+            for (int rockCount = 0; rockCount < nRocks; rockCount++) {
+                int tX = rand.nextInt(16) + posX;
+                int tZ = rand.nextInt(16) + posZ;
+                WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0], AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get());
+                tX = rand.nextInt(16) + posX;
+                tZ = rand.nextInt(16) + posZ;
+                WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*3/2);
+                tX = rand.nextInt(16) + posX;
+                tZ = rand.nextInt(16) + posZ;
+                WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*2);
+                tX = rand.nextInt(16) + posX;
+                tZ = rand.nextInt(16) + posZ;
+                WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.ORE_VEIN_ROCK_CHANCE.get()*5/2);
+            }
         }
     }
 

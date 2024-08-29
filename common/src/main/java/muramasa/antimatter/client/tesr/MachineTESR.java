@@ -121,11 +121,23 @@ public class MachineTESR implements BlockEntityRenderer<BlockEntityMachine<?>> {
                         if (in) {
                             if (fh.getInputTanks() == null) return 0f;
                             FluidTank tank = fh.getInputTanks().getTank(off);
-                            return tank == null ? 0f : (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
+                            if (tank == null) return 0f;
+                            if (tile.getMachineType().renderContainerLiquidLevel()) {
+                                return (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
+                            } else {
+                                if (tank.getStoredFluid().getFluidAmount() > 0) return 1f;
+                                return 0f;
+                            }
                         }
                         if (fh.getOutputTanks() == null) return 0f;
                         FluidTank tank = fh.getOutputTanks().getTank(off);
-                        return tank == null ? 0f : (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
+                        if (tank == null) return 0f;
+                        if (tile.getMachineType().renderContainerLiquidLevel()) {
+                            return (float)tank.getStoredFluid().getFluidAmount() / (float)tank.getCapacity();
+                        } else {
+                            if (tank.getStoredFluid().getFluidAmount() > 0) return 1f;
+                            return 0f;
+                        }
                     }).orElse(0f);
 
                     ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f, dir));

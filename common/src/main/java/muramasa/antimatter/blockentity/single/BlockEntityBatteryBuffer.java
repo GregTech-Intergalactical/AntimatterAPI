@@ -2,8 +2,11 @@ package muramasa.antimatter.blockentity.single;
 
 import it.unimi.dsi.fastutil.Pair;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
+import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.blockentity.BlockEntityStorage;
@@ -35,13 +38,23 @@ public class BlockEntityBatteryBuffer<T extends BlockEntityBatteryBuffer<T>> ext
             @Override
             public void onUpdate() {
                 super.onUpdate();
-                if (this.energy > 0 && !cachedItems.isEmpty()){
+                if (this.energy > 0 && this.getEnergy() > this.voltageOut * 2 && !cachedItems.isEmpty()){
                     long energyToInsert = this.energy % cachedItems.size() == 0 ? this.energy / cachedItems.size() : this.energy;
                     cachedItems.forEach(h ->{
                         long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.right().getCapacity() - h.right().getEnergy()));
                         if (toAdd > 0 && Utils.addEnergy(h.right(), toAdd)){
                             h.left().setTag(h.right().getContainer().getTag());
                             this.energy -= toAdd;
+                        }
+                    });
+                }
+
+                if (this.energy < this.voltageOut && this.getBatteryEnergy() < this.voltageOut){
+                    cachedItems.forEach(h ->{
+                        long toRemove = Math.min(this.capacty - this.energy, h.right().getEnergy());
+                        if (toRemove > 0 && Utils.removeEnergy(h.right(), toRemove)){
+                            h.left().setTag(h.right().getContainer().getTag());
+                            this.energy += toRemove;
                         }
                     });
                 }
@@ -62,6 +75,16 @@ public class BlockEntityBatteryBuffer<T extends BlockEntityBatteryBuffer<T>> ext
                     return cachedItems.stream().map(Pair::right).mapToLong(IGTNode::getOutputAmperage).sum();
                 }
                 return super.getOutputAmperage();
+            }
+        });
+        this.itemHandler.set(() -> new MachineItemHandler<>((T)this){
+            @Override
+            protected TrackedItemHandler<T> createTrackedHandler(SlotType<?> type, T tile) {
+                int count = tile.getMachineType().getCount(tile.getMachineTier(), type);
+                if (type == SlotType.ENERGY){
+                    return new TrackedItemHandler<>(tile, type, count, true, type.input, type.tester);
+                }
+                return super.createTrackedHandler(type, tile);
             }
         });
     }

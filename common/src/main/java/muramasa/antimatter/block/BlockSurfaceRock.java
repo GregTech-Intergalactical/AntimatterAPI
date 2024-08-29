@@ -2,8 +2,10 @@ package muramasa.antimatter.block;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -75,7 +77,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         shapes.put(4, Block.box(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
         shapes.put(5, Block.box(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
         shapes.put(6, Block.box(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
-        String overlay = material == Material.NULL ? "block/empty" : "material/surface_rock_overlay";
+        String overlay = material == Material.NULL || !AntimatterConfig.DETAILED_ROCKS.get() ? "block/empty" : "material/surface_rock_overlay";
         textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, overlay));
     }
 
@@ -102,6 +104,11 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
                 Utils.breakBlock(world, null, ItemStack.EMPTY, pos, 0);
             }
         }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+        return AntimatterConfig.DETAILED_ROCKS.get() ? new ItemStack(this) : new ItemStack(ROCK.get().get(stoneType.getMaterial()).asItem());
     }
 
     @Override
@@ -155,9 +162,11 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        super.getInfo(info, world, state, pos);
-        info.add("Material: " + material.getId());
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos, boolean simple) {
+        super.getInfo(info, world, state, pos, simple);
+        if (material != Material.NULL) {
+            info.add("Material: " + material.getId());
+        }
         info.add("StoneType: " + stoneType.getId());
         return info;
     }

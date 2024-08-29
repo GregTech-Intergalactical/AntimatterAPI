@@ -48,8 +48,8 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        if (world.isClientSide) return info;
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos, boolean simple) {
+        if (world.isClientSide || simple) return info;
         info.add("Capacity: " + getType().getCapacity(getSize()));
         return info;
     }

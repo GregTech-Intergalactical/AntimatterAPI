@@ -12,6 +12,7 @@ import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.item.ICustomDurability;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.client.LevelRendererAccessor;
 import muramasa.antimatter.mixin.client.MultiPlayerGameModeAccessor;
@@ -145,7 +146,7 @@ public class ClientEvents {
         if (state.getBlock() instanceof IInfoProvider info) {
             left.add("");
             left.add(ChatFormatting.AQUA + "[Antimatter Debug Server]");
-            left.addAll(info.getInfo(new ObjectArrayList<>(), world, state, pos));
+            left.addAll(info.getInfo(new ObjectArrayList<>(), world, state, pos, false));
         }
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof BlockEntityBase<?> b) {
@@ -159,7 +160,7 @@ public class ClientEvents {
 
     //TODO still needed?
     public static void onItemTooltip(ItemStack stack, List<Component> tooltips, Player player, TooltipFlag flag) {
-        if (stack.getItem() instanceof IAntimatterTool tool){
+        if (stack.getItem() instanceof ICustomDurability tool){
             int j = -1;
             for (int i = 0; i < tooltips.size(); i++) {
                 Component component = tooltips.get(i);

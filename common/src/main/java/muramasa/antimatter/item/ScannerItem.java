@@ -7,6 +7,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockFrame;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.dynamic.BlockDynamic;
@@ -76,8 +77,8 @@ public class ScannerItem extends ItemBasic<ScannerItem> {
             base.getInfo(simple).forEach(s -> context.getPlayer().displayClientMessage(Utils.literal(s), false));
             success = true;
         }
-        if (state.getBlock() instanceof BlockDynamic dynamic && context.getPlayer() != null) {
-            dynamic.getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
+        if (state.getBlock() instanceof IInfoProvider dynamic && context.getPlayer() != null) {
+            dynamic.getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos(), simple).forEach(s -> {
                 context.getPlayer().displayClientMessage(Utils.literal(s), false);
             });
             success = true;

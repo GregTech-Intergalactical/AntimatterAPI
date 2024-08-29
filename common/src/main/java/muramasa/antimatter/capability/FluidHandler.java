@@ -11,6 +11,7 @@ import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.blockentity.BlockEntityBase;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -193,7 +194,7 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
     public FluidHolder drainInput(long maxDrain, boolean simulate) {
         if (getInputTanks() != null){
             for (int i = 0; i < getInputTanks().getSize(); i++) {
-                FluidHolder fluid = getInputTanks().extractFluid(getInputTanks().getFluidInTank(i), simulate);
+                FluidHolder fluid = getInputTanks().extractFluid(Utils.ca(maxDrain, getInputTanks().getFluidInTank(i)), simulate);
                 if (!fluid.isEmpty()) return fluid;
             }
         }

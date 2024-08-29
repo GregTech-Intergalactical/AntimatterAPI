@@ -53,11 +53,11 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         this.builder = builder;
     }
 
-    public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, BlockAndTintGetter level, BlockPos pos) {
+    public synchronized List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, BlockAndTintGetter level, BlockPos pos) {
         return bakeQuads(type, state, t, key, level, pos);
     }
 
-    private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, BlockAndTintGetter level, BlockPos pos) {
+    private synchronized List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, BlockAndTintGetter level, BlockPos pos) {
         List<BakedQuad>[] bakedArray = new List[Ref.DIRS.length];
         for (Direction dir : Ref.DIRS) {
             bakedArray[dir.get3DDataValue()] = builder.apply(new BuilderData(type, Ref.RNG, state, level, pos, c, key, dir));

@@ -27,18 +27,6 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        if (world.isClientSide) return info;
-        ITickingController<?, ?, ?> controller = TesseractGraphWrappers.FLUID.getController(world, pos.asLong());
-        controller.getInfo(pos.asLong(), info);
-        info.add("Pressure: " + getType().getPressure(getSize()));
-        info.add("Max temperature: " + getType().getMaxTemperature());
-        info.add(getType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
-        info.add(getType().isAcidProof() ? "Acid proof." : "Cannot handle acids.");
-        return info;
-    }
-
-    @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         tooltip.add(Utils.translatable("antimatter.tooltip.bandwidth", getType().getPressure(getSize()) + " L/t").withStyle(ChatFormatting.AQUA));
         tooltip.add(Utils.translatable("antimatter.tooltip.capacity", (getType().getPressure(getSize()) * 2) + "L").withStyle(ChatFormatting.AQUA));

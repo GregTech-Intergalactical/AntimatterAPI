@@ -9,6 +9,7 @@ import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.machine.ITooltipArgs;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.Pattern;
@@ -112,6 +113,14 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         return addTooltipInfo((machine, stack, world, tooltip, flag) -> {
             for (int i = 0; i < tooltips; i++) {
                 tooltip.add(Utils.translatable("tooltip." + getId() + "." + i));
+            }
+        });
+    }
+
+    public T addStructureTooltip(int tooltips, ITooltipArgs args){
+        return addTooltipInfo((machine, stack, world, tooltip, flag) -> {
+            for (int i = 0; i < tooltips; i++) {
+                tooltip.add(Utils.translatable("tooltip." + getId() + "." + i, args.getTooltipArgs(machine, stack, world, flag, i)));
             }
         });
     }

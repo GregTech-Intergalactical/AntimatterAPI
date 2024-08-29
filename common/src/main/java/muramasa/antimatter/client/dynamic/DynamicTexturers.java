@@ -96,8 +96,7 @@ public class DynamicTexturers {
                 Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
                 UnbakedModel model = ModelUtils.getModel(t.source.getModel(t.type, side));
                 BlockEntity blockEntity = t.getBlockEntity();
-                if (!(blockEntity instanceof BlockEntityMachine<?> machine)) return Collections.emptyList();
-                BlockModel m = (BlockModel) model;
+                if (!(blockEntity instanceof BlockEntityMachine<?> machine) ||!(model instanceof BlockModel m)) return Collections.emptyList();
                 ((BlockModelAccessor)m).getTextureMap().put("base", Either.left(
                     ModelUtils.getBlockMaterial(machine.getMultiTexture().apply(side))));
                    AntimatterProperties.MachineProperties prop = t.key.properties;

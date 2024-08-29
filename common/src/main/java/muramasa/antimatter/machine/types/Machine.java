@@ -11,6 +11,7 @@ import muramasa.antimatter.blockentity.BlockEntityBase;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.multi.BlockEntityBasicMultiMachine;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
@@ -110,6 +111,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IMachineColorHandlerBlock blockColorHandler = (state, world, pos, machine, i) -> -1;
     @Getter
     protected IMachineColorHandlerItem itemColorHandler = (stack, block, i) -> -1;
+    @Getter
+    protected ResourceLocation modelLoader = AntimatterModelManager.LOADER_MACHINE;
 
     protected boolean tierSpecificLang = false;
 
@@ -148,6 +151,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     protected boolean renderTesr = false;
     protected boolean renderContainedLiquids = false;
+    protected boolean renderContainedLiquidLevel = false;
     @Getter
     @Setter
     protected int overlayLayers = 1;
@@ -441,6 +445,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    public T modelLoader(ResourceLocation modelLoader){
+        this.modelLoader = modelLoader;
+        return (T) this;
+    }
+
     public T itemGroup(CreativeModeTab group) {
         this.group = group;
         return (T) this;
@@ -699,13 +708,18 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T renderContainedLiquids() {
+    public T renderContainedLiquids(boolean renderContainedLiquidLevel) {
         this.renderContainedLiquids = true;
+        this.renderContainedLiquidLevel = renderContainedLiquidLevel;
         return tesr();
     }
 
     public boolean renderContainerLiquids() {
         return renderContainedLiquids;
+    }
+
+    public boolean renderContainerLiquidLevel(){
+        return renderContainedLiquidLevel;
     }
 
     public boolean hasTierSpecificLang(){

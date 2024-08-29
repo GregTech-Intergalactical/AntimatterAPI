@@ -390,9 +390,11 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getSize(); i++) {
                 FluidHolder stack = t.getFluidInTank(i);
-                list.add(FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).toString() + " " + (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + " mb.");
+                String addition = AntimatterPlatformUtils.isFabric() && !stack.isEmpty() ? "/" + stack.getFluidAmount() + "droplets" : "";
+                list.add(("Tank " + (i + 1) + ": " + (stack.isEmpty() ? "Empty" : (stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + "mb" + addition + " of " + FluidPlatformUtils.INSTANCE.getFluidDisplayName(stack).getString())));
             }
         });
+        if (simple) return list;
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));
         list.add("Max temperature: " + getPipeType().getMaxTemperature());
         list.add(getPipeType().isGasProof() ? "Gas proof." : "Cannot handle gas.");

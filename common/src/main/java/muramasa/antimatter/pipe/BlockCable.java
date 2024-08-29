@@ -93,8 +93,8 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
-        if (world.isClientSide) return info;
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos, boolean simple) {
+        if (world.isClientSide || simple) return info;
         ITickingController<?, ?, ?> controller = TesseractGraphWrappers.GT_ENERGY.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         return info;

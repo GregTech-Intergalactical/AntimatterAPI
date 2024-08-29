@@ -69,7 +69,8 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     }
 
     @Override
-    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos, boolean simple) {
+        if (simple) return info;
         info.add("Config: " + Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()));
         //info.add("Model Index: " + config.getModelIndex());
         //r.setSeed(getPositionRandom(null, pos));

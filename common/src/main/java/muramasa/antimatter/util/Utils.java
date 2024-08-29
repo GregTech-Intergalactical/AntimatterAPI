@@ -146,7 +146,7 @@ public class Utils {
 
     public static ItemStack extractAny(PlatformItemHandler handler) {
         for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.extractItem(i, 64, false);
+            ItemStack stack = handler.extractItem(i, Math.min(handler.getStackInSlot(i).getCount(), handler.getStackInSlot(i).getMaxStackSize()), false);
             if (!stack.isEmpty()) return stack;
         }
         return ItemStack.EMPTY;
@@ -412,7 +412,7 @@ public class Utils {
     public static boolean transferItems(PlatformItemHandler from, PlatformItemHandler to, boolean once, Predicate<ItemStack> filter) {
         boolean successful = false;
         for (int i = 0; i < from.getSlots(); i++) {
-            ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
+            ItemStack toInsert = from.extractItem(i, Math.min(from.getStackInSlot(i).getCount(), from.getStackInSlot(i).getMaxStackSize()), true);
             if (toInsert.isEmpty() || !filter.test(toInsert)) {
                 continue;
             }
@@ -522,6 +522,10 @@ public class Utils {
 
     public static boolean addEnergy(IEnergyHandler to, long eu) {
         return to.insertEu(eu, false) > 0;
+    }
+
+    public static boolean removeEnergy(IEnergyHandler from, long eu){
+        return from.extractEu(eu, false) > 0;
     }
 
     /**

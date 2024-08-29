@@ -48,10 +48,9 @@ public class BehaviourTorchPlacing implements IItemUse<IBasicAntimatterTool> {
                 break;
             }
         }
-        if (!stack.isEmpty() || c.getPlayer().isCreative()) {
-            InteractionResult resultType = tryPlace(new BlockPlaceContext(c), stack);
+        if (!stack.isEmpty()) {
+            InteractionResult resultType = stack.useOn(new UseOnContext(c.getPlayer().getLevel(), c.getPlayer(), c.getHand(), stack, c.getHitResult()));
             if (resultType.consumesAction()) {
-                if (!c.getPlayer().isCreative()) stack.shrink(1);
                 return resultType;
             }
         }
