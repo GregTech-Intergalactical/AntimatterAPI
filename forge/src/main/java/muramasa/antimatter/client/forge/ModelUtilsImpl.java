@@ -64,11 +64,11 @@ public class ModelUtilsImpl {
             return antimatterBaked.getQuads(state, side, rand, level, pos);
         } else {
             ModelData data = model.getModelData(level, pos, state, ModelData.EMPTY);
-            return model.getQuads(state, side, rand, data);
+            return model.getQuads(state, side, rand, data, null);
         }
     }
     public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
-        List<BakedQuad> generalQuads = model.bake(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, ModelData.EMPTY);
+        List<BakedQuad> generalQuads = model.bake(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, ModelData.EMPTY, null);
         SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrides.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
         generalQuads.forEach(builder::addUnculledFace);
         return builder.build();
@@ -76,8 +76,8 @@ public class ModelUtilsImpl {
 
     public static BakedModel getSimpleBakedModel(BakedModel baked) {
         Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
-        Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, ModelData.EMPTY)));
-        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, ModelData.EMPTY), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
+        Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, ModelData.EMPTY, null)));
+        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, ModelData.EMPTY, null), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
     }
 
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
