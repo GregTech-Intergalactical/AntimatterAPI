@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 
 public class UtilsImpl {
@@ -20,7 +19,9 @@ public class UtilsImpl {
     }
 
     public static void requestModelDataRefresh(BlockEntity tile){
-        ModelDataManager.requestModelDataRefresh(tile);
+        if (tile.getLevel() != null && tile.getLevel().getModelDataManager() != null){
+            tile.getLevel().getModelDataManager().requestRefresh(tile);
+        }
     }
 
     public static boolean isCorrectToolForDrops(BlockState state, Player player){

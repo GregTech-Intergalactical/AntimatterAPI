@@ -59,7 +59,6 @@ import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -144,7 +143,7 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
-        NetworkHooks.openGui(player, containerSupplier, extraDataWriter);
+        NetworkHooks.openScreen(player, containerSupplier, extraDataWriter);
     }
 
     public static boolean isFabric(){
