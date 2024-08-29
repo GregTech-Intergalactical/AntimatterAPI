@@ -17,10 +17,10 @@ public interface MachineRecipeSchema {
         return rMap != null;
     });
     RecipeKey<String> MAP = MAP_COMPONENT.key("map");
-    RecipeKey<InputItem[]> INPUT_ITEMS = ItemComponents.INPUT_ARRAY.key("inputItems");
-    RecipeKey<InputFluid[]> INPUT_FLUIDS = FluidComponents.INPUT_ARRAY.key("inputFluids");
-    RecipeKey<Integer> DURATION = NumberComponent.INT.key("duration");
-    RecipeKey<Long> POWER = NumberComponent.LONG.key("eu").optional(0L).preferred("power");
+    RecipeKey<InputItem[]> INPUT_ITEMS = ItemComponents.INPUT_ARRAY.key("inputItems").optional(new InputItem[]{}).exclude();
+    RecipeKey<InputFluid[]> INPUT_FLUIDS = FluidComponents.INPUT_ARRAY.key("inputFluids").optional(new InputFluid[]{}).exclude();
+    RecipeKey<Integer> DURATION = NumberComponent.INT.key("duration").optional(1).exclude();
+    RecipeKey<Long> POWER = NumberComponent.LONG.key("eu").optional(0L).preferred("power").exclude();
     RecipeKey<OutputItem[]> OUTPUT_ITEMS = ItemComponents.OUTPUT_ARRAY.key("outputItems").optional((OutputItem[]) null).exclude();
     RecipeKey<OutputFluid[]> OUTPUT_FLUIDS = FluidComponents.OUTPUT_ARRAY.key("outputFluids").optional((OutputFluid[]) null).exclude();
     RecipeKey<Integer> AMPS = NumberComponent.INT.key("amps").optional(1).exclude();
@@ -31,7 +31,5 @@ public interface MachineRecipeSchema {
     RecipeKey<Integer[]> INPUT_CHANCES = NumberComponent.INT.asArray().key("inputChances").optional((Integer[]) null).exclude();
 
     RecipeSchema SCHEMA = new RecipeSchema(KubeJSRecipe.class, KubeJSRecipe::new,
-            MAP, INPUT_ITEMS, INPUT_FLUIDS, DURATION, POWER, OUTPUT_ITEMS, OUTPUT_FLUIDS, AMPS, SPECIAL, HIDDEN, FAKE, OUTPUT_CHANCES, INPUT_CHANCES)
-            .constructor(MAP, INPUT_ITEMS, DURATION, POWER).constructor(MAP, INPUT_FLUIDS, DURATION, POWER)
-            .constructor(MAP, INPUT_ITEMS, DURATION).constructor(MAP, INPUT_FLUIDS, DURATION);
+            MAP, INPUT_ITEMS, INPUT_FLUIDS, DURATION, POWER, OUTPUT_ITEMS, OUTPUT_FLUIDS, AMPS, SPECIAL, HIDDEN, FAKE, OUTPUT_CHANCES, INPUT_CHANCES);
 }
