@@ -2,6 +2,7 @@ package muramasa.antimatter.forge;
 
 
 import muramasa.antimatter.*;
+import muramasa.antimatter.common.event.forge.ARRPEvents;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
@@ -12,6 +13,7 @@ import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
+import net.devtech.arrp.ARRP;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -43,6 +45,7 @@ public class AntimatterImpl {
 
         eventBus.addListener(this::addCraftingLoaders);
         eventBus.addListener(this::providers);
+        ARRP.EVENT_BUS.register(ARRPEvents.class);
     }
 
     private void addCraftingLoaders(AntimatterCraftingEvent ev) {
