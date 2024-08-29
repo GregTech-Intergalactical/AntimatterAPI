@@ -72,14 +72,23 @@ public class ModelUtils {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
     public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
-        throw new AssertionError();
+        return ModelUtils::getModelOrMissing;
     }
 
-    @ExpectPlatform
     public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
-        throw new AssertionError();
+        return Material::sprite;
+    }
+
+    private static UnbakedModel getModelOrMissing(ResourceLocation location){
+        try
+        {
+            return ModelUtils.getModel(location);
+        }
+        catch(Exception e)
+        {
+            return ModelUtils.getMissingModel();
+        }
     }
 
     @ExpectPlatform

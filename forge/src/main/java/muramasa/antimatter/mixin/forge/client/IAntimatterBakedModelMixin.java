@@ -45,9 +45,13 @@ public interface IAntimatterBakedModelMixin extends IDynamicBakedModel {
     @Override
     default ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData) {
         ModelData d = IDynamicBakedModel.super.getModelData(level, pos, state, modelData);
-        if (d == ModelData.EMPTY) d = new ModelDataMap.Builder().build();
-        d.setData(AntimatterModelProperties.WORLD, level);
-        d.setData(AntimatterModelProperties.POS, pos);
+        if (d == ModelData.EMPTY) {
+            var builder = ModelData.builder();
+            builder.with(AntimatterModelProperties.WORLD, level);
+            builder.with(AntimatterModelProperties.POS, pos);
+            d = builder.build();
+        }
+
         return d;
     }
 

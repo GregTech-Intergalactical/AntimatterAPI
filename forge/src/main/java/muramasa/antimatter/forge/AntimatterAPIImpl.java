@@ -9,7 +9,6 @@ public class AntimatterAPIImpl implements AntimatterAPIPlatformHelper {
     public void registerTransferApiPipe(BlockEntityType<? extends muramasa.antimatter.blockentity.pipe.BlockEntityPipe<?>> type){}
 
     public boolean isRegistryEntry(Object object, String domain){
-        return object instanceof IForgeRegistryEntry<?> r && r.getRegistryName() != null
-                && r.getRegistryName().getNamespace().equals(domain);
+        return false;
     }
 }

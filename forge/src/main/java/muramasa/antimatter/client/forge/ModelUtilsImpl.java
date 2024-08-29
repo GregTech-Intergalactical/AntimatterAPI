@@ -5,6 +5,7 @@ import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.baked.IAntimatterBakedModel;
 import muramasa.antimatter.mixin.forge.client.SimpleBakedModel$BuilderAccessor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.util.TransformationHelper;
 import org.jetbrains.annotations.NotNull;
@@ -39,20 +41,12 @@ import java.util.function.Function;
 
 public class ModelUtilsImpl {
 
-    public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
-        return ForgeModelBakery.defaultModelGetter();
-    }
-
-    public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
-        return ForgeModelBakery.defaultTextureGetter();
-    }
-
     public static ModelBakery getModelBakery(){
-        return ForgeModelBakery.instance();
+        return null;
     }
 
     public static void setLightData(BakedQuad quad, int light){
-        LightUtil.setLightData(quad, light);
+        //LightUtil.setLightData(quad, light);
     }
 
     public static SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides){
@@ -85,7 +79,7 @@ public class ModelUtilsImpl {
     }
 
     public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
-        return new QuadTransformer(transform.blockCenterToCorner()).processMany(quads);
+        return QuadTransformers.applying(transform.blockCenterToCorner()).process(quads);
     }
 
     public static void setRenderLayer(Block block, RenderType renderType){

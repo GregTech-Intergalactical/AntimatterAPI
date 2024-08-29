@@ -27,7 +27,7 @@ public class ConfigCondition implements ICondition {
     }
 
     @Override
-    public boolean test() {
+    public boolean test(IContext context) {
         try {
             int lastIndex = this.configName.lastIndexOf('.');
             return Class.forName(this.configName.substring(0, lastIndex)).getField(this.configName.substring(lastIndex + 1)).getBoolean(null);

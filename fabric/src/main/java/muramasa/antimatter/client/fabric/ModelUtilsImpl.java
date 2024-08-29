@@ -41,25 +41,6 @@ import java.util.function.Function;
 public class ModelUtilsImpl {
     public static ModelBakery BAKERY = null;
 
-    public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
-        return ModelUtilsImpl::getModelOrMissing;
-    }
-
-    private static UnbakedModel getModelOrMissing(ResourceLocation location){
-        try
-        {
-            return ModelUtils.getModel(location);
-        }
-        catch(Exception e)
-        {
-            return ModelUtils.getMissingModel();
-        }
-    }
-
-    public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
-        return Material::sprite;
-    }
-
     public static ModelBakery getModelBakery(){
         return BAKERY;
     }

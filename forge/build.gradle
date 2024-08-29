@@ -38,14 +38,16 @@ dependencies {
     if (System.getProperty('idea.sync.active') != 'true') {
         annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
     }
-    //modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
-    //modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
-    modImplementation("mezz.jei:jei-1.18.2:9.7.2.1001")
+    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
+    modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
+    //modImplementation("mezz.jei:jei-1.18.2:9.7.2.1001")
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${rootProject.crafttweaker_version}")
     modImplementation(include("io.github.trinsdar:arrp-forge:0.6.7.1"))
     modImplementation(include("io.github.reforgedmods.terraform-api:terraform-utils-v1:4.2.1"))
-    modImplementation(include("earth.terrarium:botarium-forge-1.19.2:${project.botarium_version}"))
+    modImplementation(include("earth.terrarium:botarium-forge-1.19.2:${project.botarium_version}")){
+        exclude(group: "curse.maven")
+    }
     modImplementation(include("com.gtnewhorizon.structurelib:structurelib-forge:${project.structurelib_version}-${project.minecraft_version}"))
     modImplementation(include("com.teamresourceful.resourcefullib:resourcefullib-forge-1.19.2:${project.resourcefullib_version}"))
     modImplementation(include("io.github.llamalad7:mixinextras-forge:0.2.0-beta.11"))

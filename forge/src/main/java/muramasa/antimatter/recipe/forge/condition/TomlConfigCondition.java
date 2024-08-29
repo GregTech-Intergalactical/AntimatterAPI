@@ -32,7 +32,7 @@ public class TomlConfigCondition implements ICondition {
     }
 
     @Override
-    public boolean test() {
+    public boolean test(IContext context) {
         if (config.isEmpty() || configPath.isEmpty()){
             throw new JsonParseException("config and configPath cannot be empty!");
         }

@@ -48,12 +48,6 @@ public class AntimatterJEIPluginImpl {
             public <T> Optional<IFocus<T>> checkedCast(IIngredientType<T> ingredientType) {
                 return Optional.empty();
             }
-
-            @Override
-            public Mode getMode() {
-                return USE ? Mode.INPUT : Mode.OUTPUT;
-            }
-
         });
     }
 
@@ -62,7 +56,7 @@ public class AntimatterJEIPluginImpl {
     }
 
     public static IIngredientType<?> getFluidIngredientObjectType(){
-        return ForgeTypes.FLUID;
+        return ForgeTypes.FLUID_STACK;
     }
 
     public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
