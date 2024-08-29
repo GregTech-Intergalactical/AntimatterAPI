@@ -53,7 +53,12 @@ public class Recipe implements IRecipe {
         
     }
 
-    public static final RecipeType<IRecipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
+    public static final RecipeType<IRecipe> RECIPE_TYPE = new RecipeType<IRecipe>() {
+        @Override
+        public String toString() {
+            return "antimatter_machine";
+        }
+    };
 
     public Recipe(@NotNull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @NotNull List<FluidIngredient> fluidsInput, FluidHolder[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = ImmutableList.copyOf(stacksInput);

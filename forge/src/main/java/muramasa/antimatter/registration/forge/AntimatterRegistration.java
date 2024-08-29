@@ -6,6 +6,7 @@ import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.forge.condition.ConfigCondition;
 import muramasa.antimatter.recipe.forge.condition.TomlConfigCondition;
 import muramasa.antimatter.recipe.ingredient.IAntimatterIngredientSerializer;
@@ -158,6 +159,8 @@ public final class AntimatterRegistration {
             e.getForgeRegistry().register(new ResourceLocation(Ref.ID, "modifier"), new AntimatterBiomeModifier());
         } else if (e.getRegistryKey() == ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS){
             e.getForgeRegistry().register(new ResourceLocation(Ref.ID, "modifier"), AntimatterBiomeModifier.CODEC);
+        } else if (e.getRegistryKey() == ForgeRegistries.Keys.RECIPE_TYPES){
+            e.getForgeRegistry().register(new ResourceLocation("antimatter_machine"), Recipe.RECIPE_TYPE);
         }
         if (!domain.equals(Ref.ID)){
             ModLoadingContext.get().setActiveContainer(previous);

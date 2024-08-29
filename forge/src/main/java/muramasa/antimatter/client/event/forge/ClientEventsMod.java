@@ -12,6 +12,9 @@ import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -34,6 +37,21 @@ public class ClientEventsMod {
     @SubscribeEvent
     public static void preResourceRegistration(ModelEvent.RegisterGeometryLoaders ev) {
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
-        AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> ev.register(l.getLoc().toString(), new ModelLoaderWrapper(l)));
+        AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> {
+            String domain = l.getDomain();
+            ModContainer previous = ModLoadingContext.get().getActiveContainer();
+            ModContainer newContainer = ModList.get().getModContainerById(domain).orElse(null);
+            if (newContainer != null){
+                if (!domain.equals(Ref.ID)){
+                    ModLoadingContext.get().setActiveContainer(newContainer);
+                }
+            }
+            ev.register(l.getId(), new ModelLoaderWrapper(l));
+            if (newContainer != null){
+                if (!domain.equals(Ref.ID)){
+                    ModLoadingContext.get().setActiveContainer(previous);
+                }
+            }
+        });
     }
 }

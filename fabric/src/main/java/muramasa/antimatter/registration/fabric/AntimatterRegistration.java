@@ -13,6 +13,7 @@ import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fabric.AntimatterAPIImpl;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.IAntimatterIngredientSerializer;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -109,6 +110,7 @@ public class AntimatterRegistration {
         AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
             Registry.register(Registry.FEATURE, new ResourceLocation(d, i), t.asFeature());
         });
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("antimatter_machine"), Recipe.RECIPE_TYPE);
     }
 
     public static void registerTools(String domain) {
