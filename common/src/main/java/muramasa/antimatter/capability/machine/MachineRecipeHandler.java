@@ -30,9 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static muramasa.antimatter.machine.MachineState.*;
 
@@ -52,6 +50,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     @Nullable
     protected IRecipe activeRecipe;
     protected boolean consumedResources;
+    protected List<ItemStack> outputs = null;
     @Getter
     protected int currentProgress,
             maxProgress;
@@ -238,18 +237,13 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             currentProgress = 0;
         }
         lastRecipe = activeRecipe;
+        outputs = null;
     }
 
     protected void addOutputs() {
         if (activeRecipe.hasOutputItems()) {
             tile.itemHandler.ifPresent(h -> {
-                //Roll the chances here. If they don't fit add flat (no chances).
-                ItemStack[] out = activeRecipe.getOutputItems(true);
-                if (h.canOutputsFit(out)) {
-                    h.addOutputs(out);
-                } else {
-                    h.addOutputs(activeRecipe.getFlatOutputItems());
-                }
+                h.addOutputs(outputs.toArray(ItemStack[]::new));
                 tile.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
             });
         }
@@ -430,13 +424,21 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             }).orElse(true);
         }
         if (flag) consumedResources = true;
+        if (consumedResources){
+            if (activeRecipe.hasOutputItems()){
+                this.outputs = Arrays.stream(activeRecipe.getOutputItems(true)).toList();
+            }
+        }
         return flag;
     }
 
     public boolean canOutput() {
         //ignore chance for canOutput.
-        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.map(t -> t.canOutputsFit(activeRecipe.getFlatOutputItems())).orElse(false))
-            return false;
+        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && outputs != null) {
+            if (!tile.itemHandler.map(t -> t.canOutputsFit(outputs.toArray(ItemStack[]::new))).orElse(false)) {
+                return false;
+            }
+        }
         return !tile.fluidHandler.isPresent() || !activeRecipe.hasOutputFluids() || tile.fluidHandler.map(t -> t.canOutputsFit(activeRecipe.getOutputFluids())).orElse(false);
     }
 
@@ -520,6 +522,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     public void resetRecipe() {
         this.activeRecipe = null;
+        outputs = null;
         this.consumedResources = false;
         this.currentProgress = 0;
         this.overclock = 0;
@@ -632,6 +635,13 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         if (lastRecipe != null){
             nbt.putString("LR", lastRecipe.getId().toString());
         }
+        ListTag outputs = new ListTag();
+        if (this.outputs != null){
+            this.outputs.forEach(i -> outputs.add(i.save(new CompoundTag())));
+        }
+        if (!outputs.isEmpty()) {
+            nbt.put("O", outputs);
+        }
         return nbt;
     }
 
@@ -646,6 +656,14 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         this.consumedResources = nbt.getBoolean("C");
         this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("AR"))) : null;
         this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("LR"))) : null;
+        if (nbt.contains("O")) {
+            ListTag listTag = nbt.getList("O", 10);
+            List<ItemStack> stacks = new ArrayList<>();
+            listTag.forEach(t -> {
+                stacks.add(ItemStack.of((CompoundTag) t));
+            });
+            this.outputs = stacks;
+        }
         if (this.activeRecipe != null) calculateDurations();
     }
 
