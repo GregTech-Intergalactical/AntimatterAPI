@@ -243,12 +243,10 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     protected void addOutputs() {
         if (activeRecipe.hasOutputItems()) {
             tile.itemHandler.ifPresent(h -> {
-                //Roll the chances here. If they don't fit add flat (no chances).
+                //Roll the chances here..
                 ItemStack[] out = activeRecipe.getOutputItems(true);
                 if (h.canOutputsFit(out)) {
                     h.addOutputs(out);
-                } else {
-                    h.addOutputs(activeRecipe.getFlatOutputItems());
                 }
                 tile.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
             });
@@ -435,7 +433,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     public boolean canOutput() {
         //ignore chance for canOutput.
-        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.map(t -> t.canOutputsFit(activeRecipe.getFlatOutputItems())).orElse(false))
+        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.map(t -> t.canOutputsFit(activeRecipe.getOutputItems(false))).orElse(false))
             return false;
         return !tile.fluidHandler.isPresent() || !activeRecipe.hasOutputFluids() || tile.fluidHandler.map(t -> t.canOutputsFit(activeRecipe.getOutputFluids())).orElse(false);
     }
