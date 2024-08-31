@@ -308,13 +308,20 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             }
         }
         if (currentProgress == 0 && !consumedResources && shouldConsumeResources()) {
-            if (!this.consumeInputs()) { //No fucking clue why this is an empty loop - Trinsdar
-
+            setOutputs();
+            if (!canOutput() || !this.consumeInputs()) { //No clue why this was an empty loop, but I guessed at what it was meant to do - Trinsdar
+                return NO_POWER;
             }
         }
         this.currentProgress++;
         tile.onRecipePostTick();
         return ACTIVE;
+    }
+
+    protected void setOutputs(){
+        if (activeRecipe.hasOutputItems()){
+            this.outputs = Arrays.stream(activeRecipe.getOutputItems(true)).toList();
+        }
     }
 
     protected boolean shouldConsumeResources() {
@@ -424,11 +431,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             }).orElse(true);
         }
         if (flag) consumedResources = true;
-        if (consumedResources){
-            if (activeRecipe.hasOutputItems()){
-                this.outputs = Arrays.stream(activeRecipe.getOutputItems(true)).toList();
-            }
-        }
         return flag;
     }
 
@@ -443,7 +445,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     }
 
     protected boolean canRecipeContinue() {
-        return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || tile.fluidHandler.map(t -> t.consumeAndReturnInputs(activeRecipe.getInputFluids(), true).size() > 0).orElse(false));
+        return (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || tile.fluidHandler.map(t -> t.consumeAndReturnInputs(activeRecipe.getInputFluids(), true).size() > 0).orElse(false));
     }
 
     protected boolean consumeRFGeneratorResources(boolean simulate){
