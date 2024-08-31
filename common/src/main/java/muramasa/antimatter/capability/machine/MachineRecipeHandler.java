@@ -30,7 +30,9 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import tesseract.TesseractGraphWrappers;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineState.*;
 
@@ -50,7 +52,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     @Nullable
     protected IRecipe activeRecipe;
     protected boolean consumedResources;
-    protected List<ItemStack> outputs = null;
     @Getter
     protected int currentProgress,
             maxProgress;
@@ -237,13 +238,18 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             currentProgress = 0;
         }
         lastRecipe = activeRecipe;
-        outputs = null;
     }
 
     protected void addOutputs() {
         if (activeRecipe.hasOutputItems()) {
             tile.itemHandler.ifPresent(h -> {
-                h.addOutputs(outputs.toArray(ItemStack[]::new));
+                //Roll the chances here. If they don't fit add flat (no chances).
+                ItemStack[] out = activeRecipe.getOutputItems(true);
+                if (h.canOutputsFit(out)) {
+                    h.addOutputs(out);
+                } else {
+                    h.addOutputs(activeRecipe.getFlatOutputItems());
+                }
                 tile.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
             });
         }
@@ -308,20 +314,13 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             }
         }
         if (currentProgress == 0 && !consumedResources && shouldConsumeResources()) {
-            setOutputs();
-            if (!canOutput() || !this.consumeInputs()) { //No clue why this was an empty loop, but I guessed at what it was meant to do - Trinsdar
-                return NO_POWER;
+            if (!this.consumeInputs()) { //No fucking clue why this is an empty loop - Trinsdar
+
             }
         }
         this.currentProgress++;
         tile.onRecipePostTick();
         return ACTIVE;
-    }
-
-    protected void setOutputs(){
-        if (activeRecipe.hasOutputItems()){
-            this.outputs = Arrays.stream(activeRecipe.getOutputItems(true)).toList();
-        }
     }
 
     protected boolean shouldConsumeResources() {
@@ -436,16 +435,13 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     public boolean canOutput() {
         //ignore chance for canOutput.
-        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && outputs != null) {
-            if (!tile.itemHandler.map(t -> t.canOutputsFit(outputs.toArray(ItemStack[]::new))).orElse(false)) {
-                return false;
-            }
-        }
+        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.map(t -> t.canOutputsFit(activeRecipe.getFlatOutputItems())).orElse(false))
+            return false;
         return !tile.fluidHandler.isPresent() || !activeRecipe.hasOutputFluids() || tile.fluidHandler.map(t -> t.canOutputsFit(activeRecipe.getOutputFluids())).orElse(false);
     }
 
     protected boolean canRecipeContinue() {
-        return (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || tile.fluidHandler.map(t -> t.consumeAndReturnInputs(activeRecipe.getInputFluids(), true).size() > 0).orElse(false));
+        return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || tile.fluidHandler.map(t -> t.consumeAndReturnInputs(activeRecipe.getInputFluids(), true).size() > 0).orElse(false));
     }
 
     protected boolean consumeRFGeneratorResources(boolean simulate){
@@ -524,7 +520,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
 
     public void resetRecipe() {
         this.activeRecipe = null;
-        outputs = null;
         this.consumedResources = false;
         this.currentProgress = 0;
         this.overclock = 0;
@@ -637,13 +632,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         if (lastRecipe != null){
             nbt.putString("LR", lastRecipe.getId().toString());
         }
-        ListTag outputs = new ListTag();
-        if (this.outputs != null){
-            this.outputs.forEach(i -> outputs.add(i.save(new CompoundTag())));
-        }
-        if (!outputs.isEmpty()) {
-            nbt.put("O", outputs);
-        }
         return nbt;
     }
 
@@ -658,14 +646,6 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         this.consumedResources = nbt.getBoolean("C");
         this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("AR"))) : null;
         this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("LR"))) : null;
-        if (nbt.contains("O")) {
-            ListTag listTag = nbt.getList("O", 10);
-            List<ItemStack> stacks = new ArrayList<>();
-            listTag.forEach(t -> {
-                stacks.add(ItemStack.of((CompoundTag) t));
-            });
-            this.outputs = stacks;
-        }
         if (this.activeRecipe != null) calculateDurations();
     }
 
