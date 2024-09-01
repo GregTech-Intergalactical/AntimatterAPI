@@ -150,6 +150,8 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
         if (!array.isEmpty()){
             json.add("inputChances", array);
         }
+        json.addProperty("hidden", this.isHidden());
+        json.addProperty("fake", this.isFake());
         json.addProperty("recipeID", this.getId().toString());
         json.addProperty("map", this.getMapId());
         return json;
