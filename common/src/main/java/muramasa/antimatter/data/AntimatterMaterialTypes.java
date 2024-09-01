@@ -87,8 +87,8 @@ public class AntimatterMaterialTypes {
     public static final MaterialTypeItem<?> SCREWDRIVER_TIP = new MaterialTypeItem<>("screwdriver_tip", 2, true, U);
     public static final MaterialTypeItem<?> SCYTHE_BLADE = new MaterialTypeItem<>("scythe_blade", 2, true, U * 3);
     //Block Types
-    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> new BlockOre(domain, mat, s, type)));
-    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> new BlockOre(domain, mat, s, type)));
+    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).filter(s -> !AntimatterAPI.hasReplacement(((MaterialTypeBlock<?>)type).getMaterialTag(mat, s))).forEach(s -> new BlockOre(domain, mat, s, type)));
+    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).filter(s -> !AntimatterAPI.hasReplacement(((MaterialTypeBlock<?>)type).getMaterialTag(mat, s))).forEach(s -> new BlockOre(domain, mat, s, type)));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> ORE_STONE = new MaterialTypeBlock<>("ore_stone", 1, true, -1,(domain, type, mat) -> new BlockOreStone(domain, mat));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> BLOCK = new MaterialTypeBlock<>("block", 1, false, U * 9, BlockStorage::new);
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> RAW_ORE_BLOCK = new MaterialTypeBlock<>("raw_ore_block", 2, false, -1, BlockStorage::new);

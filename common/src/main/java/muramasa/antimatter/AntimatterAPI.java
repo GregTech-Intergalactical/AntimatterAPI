@@ -543,6 +543,10 @@ public final class AntimatterAPI {
         REPLACEMENTS.put(tag.location(), obj::get);
     }
 
+    public static boolean hasReplacement(TagKey<Item> tag) {
+        return REPLACEMENTS.containsKey(tag.location());
+    }
+
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {
         BLOCK_UPDATE_HANDLERS.add(handler);
     }
