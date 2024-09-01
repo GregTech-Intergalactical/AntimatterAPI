@@ -97,6 +97,10 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         return activeRecipe != null;
     }
 
+    protected IRecipeMap getRecipeMap() {
+        return tile.getMachineType().getRecipeMap(tile.getMachineTier());
+    }
+
     public float getClientProgress() {
         return ((float) currentProgress / (float) maxProgress);
     }
@@ -170,7 +174,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
             }
             activeRecipe = null;
         }
-        IRecipeMap map = tile.getMachineType().getRecipeMap(tile.getMachineTier());
+        IRecipeMap map = getRecipeMap();
         return map != null ? map.find(tile.itemHandler, tile.fluidHandler, tile.getMachineTier(), this::validateRecipe) : null;
     }
 
@@ -375,7 +379,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
             if (!tile.getMachineState().allowRecipeCheck()) return;
-            activeRecipe = tile.getMachineType().getRecipeMap(tile.getMachineTier()).find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidHolder[0]), this.tile.getMachineTier(), this::validateRecipe);
+            activeRecipe = getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidHolder[0]), this.tile.getMachineTier(), this::validateRecipe);
             if (activeRecipe == null) return;
             calculateDurations();
             lastRecipe = activeRecipe;
@@ -403,12 +407,12 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
     }
 
     public boolean accepts(ItemStack stack) {
-        IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
+        IRecipeMap map = getRecipeMap();
         return map == null || map.acceptsItem(stack);
     }
 
     public boolean accepts(FluidHolder stack) {
-        IRecipeMap map = this.tile.getMachineType().getRecipeMap(tile.getMachineTier());
+        IRecipeMap map = getRecipeMap();
         return map == null || map.acceptsFluid(stack);
     }
 
@@ -642,8 +646,8 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
-        this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("AR"))) : null;
-        this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap(tile.getMachineTier()).findByID(new ResourceLocation(nbt.getString("LR"))) : null;
+        this.activeRecipe = nbt.contains("AR") ? getRecipeMap().findByID(new ResourceLocation(nbt.getString("AR"))) : null;
+        this.lastRecipe = nbt.contains("LR") ? getRecipeMap().findByID(new ResourceLocation(nbt.getString("LR"))) : null;
         if (this.activeRecipe != null) calculateDurations();
     }
 
