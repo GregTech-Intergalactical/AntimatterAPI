@@ -83,7 +83,7 @@ public class Tier implements ISharedAntimatterObject {
     }
 
     public static Tier[] getStandard() {
-        return new Tier[]{LV, MV, HV, EV, IV};
+        return new Tier[]{LV, MV, HV, EV};
     }
 
     public static Tier[] getStandardWithIV(){
