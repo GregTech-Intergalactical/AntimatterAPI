@@ -42,9 +42,9 @@ public class IOWidget extends Widget {
     @Override
     public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
-        if (isInside(0, 0, 18, 18, mouseX, mouseY)){
+        if (isInside(0, 0, 18, 18, mouseX, mouseY) && hasFluid){
             renderTooltip(stack, Utils.translatable("antimatter.tooltip.io_widget.fluid"), mouseX, mouseY);
-        } else if (isInside(18, 0, 18, 18, mouseX, mouseY)){
+        } else if (isInside(18, 0, 18, 18, mouseX, mouseY) && hasItem){
             renderTooltip(stack, Utils.translatable("antimatter.tooltip.io_widget.item"), mouseX, mouseY);
         }
     }
