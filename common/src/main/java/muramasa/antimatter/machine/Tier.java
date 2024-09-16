@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import lombok.Getter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -36,41 +37,32 @@ public class Tier implements ISharedAntimatterObject {
     public static Tier NONE = new Tier(Ref.ID, "none", 0, ChatFormatting.WHITE);
 
     private final String domain, id;
+    @Getter
     private final long voltage;
 
-    private final int tierNumber;
-    private final ChatFormatting rarityColor;
+    @Getter
+    private final int integerId;
+    @Getter
+    private final ChatFormatting rarityFormatting;
     private final String baseTexture;
 
-    public Tier(String domain, String id, long voltage, ChatFormatting rarityColor){
-        this(domain, id, voltage, rarityColor, 1);
+    public Tier(String domain, String id, long voltage, ChatFormatting rarityFormatting){
+        this(domain, id, voltage, rarityFormatting, 1);
     }
 
-    public Tier(String domain, String id, long voltage, ChatFormatting rarityColor, int tierNumber) {
+    public Tier(String domain, String id, long voltage, ChatFormatting rarityFormatting, int integerId) {
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
-        this.rarityColor = rarityColor;
+        this.rarityFormatting = rarityFormatting;
         this.baseTexture = "block/machine/base/" + id;
-        this.tierNumber = tierNumber;
+        this.integerId = integerId;
         AntimatterAPI.register(Tier.class, this);
     }
 
     @Override
     public String getId() {
         return id;
-    }
-
-    public int getIntegerId() {
-        return tierNumber;
-    }
-
-    public long getVoltage() {
-        return voltage;
-    }
-
-    public ChatFormatting getRarityFormatting() {
-        return rarityColor;
     }
 
 
