@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.cover.CoverOutput;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.machine.types.TankMachine;
@@ -14,6 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
+
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
+import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class BlockEntityTank<T extends BlockEntityMachine<T>> extends BlockEntityMachine<T> implements IInfoRenderer<TankMachine.TankRenderWidget> {
 
@@ -79,5 +84,20 @@ public class BlockEntityTank<T extends BlockEntityMachine<T>> extends BlockEntit
             case '9' -> "⁹";
             default -> String.valueOf(c);
         };
+    }
+
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        setAutoOutput();
+    }
+
+    protected void setAutoOutput(){
+        coverHandler.ifPresent(t -> {
+            ICover cover = t.getOutputCover();
+            if (!(cover instanceof CoverOutput))
+                return;
+            ((CoverOutput) cover).setEjects(has(FLUID), has(ITEM));
+        });
     }
 }

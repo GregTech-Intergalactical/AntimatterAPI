@@ -376,7 +376,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public T addTier(Tier tier) {
         Collection<Tier> tiers = getTiers();
         tiers.add(tier);
-        setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
+        setTiers(!tiers.isEmpty() ? tiers.toArray(new Tier[0]) : Tier.getStandard());
         return (T) this;
     }
 
