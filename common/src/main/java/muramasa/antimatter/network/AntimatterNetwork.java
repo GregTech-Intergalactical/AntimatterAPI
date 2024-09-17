@@ -14,6 +14,7 @@ public abstract class AntimatterNetwork {
     public static final ResourceLocation COVER_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "cover_gui");
     public static final ResourceLocation GUI_SYNC_PACKET_ID = new ResourceLocation(Ref.ID, "gui_sync_clientbound");
     public static final ResourceLocation FAKE_TILE_PACKET_ID = new ResourceLocation(Ref.ID, "fake_tile");
+    public static final ResourceLocation STRUCTURE_CHECK_PACKET_ID = new ResourceLocation(Ref.ID, "structure_check");
 
     public static final ResourceLocation GUI_SYNC_PACKET_ID_SERVERBOUND = new ResourceLocation(Ref.ID, "gui_sync_serverbound");
 
@@ -23,5 +24,6 @@ public abstract class AntimatterNetwork {
         NETWORK.registerPacket(NetworkDirection.CLIENT_TO_SERVER, GUI_SYNC_PACKET_ID_SERVERBOUND, ServerboundGuiSyncPacket.HANDLER, ServerboundGuiSyncPacket.class);
         NETWORK.registerPacket(NetworkDirection.SERVER_TO_CLIENT, GUI_SYNC_PACKET_ID, ClientboundGuiSyncPacket.HANDLER, ClientboundGuiSyncPacket.class);
         NETWORK.registerPacket(NetworkDirection.SERVER_TO_CLIENT, FAKE_TILE_PACKET_ID, FakeTilePacket.HANDLER, FakeTilePacket.class);
+        NETWORK.registerPacket(NetworkDirection.SERVER_TO_CLIENT, STRUCTURE_CHECK_PACKET_ID, StructureCheckPacket.HANDLER, StructureCheckPacket.class);
     }
 }

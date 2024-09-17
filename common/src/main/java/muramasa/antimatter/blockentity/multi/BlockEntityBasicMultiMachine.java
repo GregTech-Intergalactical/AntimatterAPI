@@ -23,6 +23,8 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.network.AntimatterNetwork;
+import muramasa.antimatter.network.packets.StructureCheckPacket;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.structure.Structure;
@@ -73,7 +75,6 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     // Number of calls into checkStructure, invalidateStructure. if > 0 ignore
     // callbacks from structurecache.
     protected int checkingStructure = 0;
-    protected boolean reCheckStructure = false;
     /**
      * Used whenever a machine might be rotated and is checking structure, since the
      * facing is changed before checkStructure()
@@ -245,7 +246,9 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         checkingStructure--;
         if (validStructure != oldValidStructure){
             sidedSync(true);
-            reCheckStructure = true;
+            if (isServerSide()){
+                AntimatterNetwork.NETWORK.sendToPlayersInLevel(new StructureCheckPacket(this.getBlockPos(), false), this.level);
+            }
         }
         return validStructure;
     }
@@ -317,7 +320,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         }
     }
 
-    protected void invalidateStructure() {
+    public void invalidateStructure() {
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
         if (!validStructure) {
@@ -346,6 +349,9 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
         }
         StructureCache.remove(level, worldPosition);
         sidedSync(true);
+        if (isServerSide()){
+            AntimatterNetwork.NETWORK.sendToPlayersInLevel(new StructureCheckPacket(this.getBlockPos(), true), this.level);
+        }
         checkingStructure--;
     }
 
@@ -439,22 +445,10 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        CompoundTag updateTag = super.getUpdateTag();
-        updateTag.putBoolean("reCheckStructure", reCheckStructure);
-        return updateTag;
-    }
-
-    @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
-        }
-        reCheckStructure = tag.getBoolean("reCheckStructure");
-        if (reCheckStructure && level != null && level.isClientSide()){
-            checkStructure();
-            reCheckStructure = false;
         }
         this.extendedFacing = ExtendedFacing.of(extendedFacing.getDirection(), Rotation.byIndex(tag.getByte("rotation")), Flip.byIndex(tag.getByte("flip")));
     }
