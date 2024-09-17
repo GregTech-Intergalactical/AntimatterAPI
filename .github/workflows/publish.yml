@@ -33,7 +33,7 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           GITHUB_RELEASE: true
       - name: Upload Forge Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Antimatter-forge-nightly-${{ steps.vars.outputs.sha_short }}
           path: forge/build/libs
@@ -41,7 +41,7 @@ jobs:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Fabric Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Antimatter-fabric-nightly-${{ steps.vars.outputs.sha_short }}
           path: fabric/build/libs
