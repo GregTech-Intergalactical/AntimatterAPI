@@ -89,13 +89,7 @@ jar {
 publishing {
     publications {
         mavenJava(org.gradle.api.publish.maven.MavenPublication) {
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-
-            afterEvaluate {
-                artifact remapJar
-            }
+            from components.java
         }
     }
 
