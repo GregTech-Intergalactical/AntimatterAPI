@@ -156,4 +156,14 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
 
 
     }
+
+    @Override
+    public int getHeight() {
+        return recipe.getHeight();
+    }
+
+    @Override
+    public int getWidth() {
+        return recipe.getWidth();
+    }
 }
