@@ -4,6 +4,9 @@ plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply(false)
     id "com.github.johnrengelman.shadow" version "7.0.0" apply(false)
+    // Adds the Kotlin Gradle plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.8.21'
+    id 'org.jetbrains.kotlin.plugin.lombok' version '2.0.20'
 }
 
 architectury {
@@ -45,7 +48,9 @@ subprojects {
         // mappings "net.fabricmc:yarn:1.17.1+build.32:v2"
     }
 
-
+    compileKotlin {
+        kotlinOptions.jvmTarget = "17"
+    }
 }
 
 allprojects {
