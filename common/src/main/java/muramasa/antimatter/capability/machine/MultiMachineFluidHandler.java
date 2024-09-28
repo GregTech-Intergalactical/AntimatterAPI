@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.fluid.FluidTank;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import org.apache.commons.lang3.SerializationUtils;
@@ -20,63 +21,14 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
     MachineFluidHandler<?>[] inputs = new MachineFluidHandler[0];
     MachineFluidHandler<?>[] outputs = new MachineFluidHandler[0];
 
-    protected Int2ObjectMap<MachineFluidHandler<?>> INPUT_TO_HANDLER = new Int2ObjectOpenHashMap<>();
-    protected Object2IntMap<MachineFluidHandler<?>> INPUT_START = new Object2IntOpenHashMap<>();
-    protected int INPUT_END;
-    protected Int2ObjectMap<MachineFluidHandler<?>> OUTPUT_TO_HANDLER = new Int2ObjectOpenHashMap<>();
-    protected Object2IntMap<MachineFluidHandler<?>> OUTPUT_START = new Object2IntOpenHashMap<>();
-
-    protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
-
     public MultiMachineFluidHandler(T tile) {
         super(tile);
-    }
-
-    @Override
-    public boolean canOutputsFit(FluidHolder[] outputs) {
-        if (outputs != null && this.outputs != null){
-            FluidHolder[] outputCopies = new FluidHolder[outputs.length];
-            for (int i = 0; i < outputs.length; i++) {
-                outputCopies[i] = outputs[i].copyHolder();
-            }
-            int filled = 0;
-            List<MachineFluidHandler<?>> outputsList = new ArrayList<>(Arrays.asList(this.outputs));
-            for (FluidHolder outputCopy : outputCopies) {
-                MachineFluidHandler<?> outputToRemove = null;
-                for (MachineFluidHandler<?> output : outputsList) {
-                    long fill = output.fillOutput(outputCopy, true);
-                    if (fill > 0) {
-                        outputCopy.setAmount(outputCopy.getFluidAmount() - fill);
-                        if (outputCopy.getFluidAmount() <= 0) {
-                            filled++;
-                            outputToRemove = output;
-                            break;
-                        }
-                    }
-                }
-                if (outputToRemove != null){
-                    outputsList.remove(outputToRemove);
-                }
-            }
-            return filled == outputs.length;
-        }
-        return false;
+        tanks.clear();
     }
 
     protected void cacheInputs() {
         inputs = tile.getComponentsByHandlerId(inputComponentString()).stream().map(IComponentHandler::getFluidHandler).map(Optional::get).sorted(this::compareInputHatches).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
-        // handlers[handlers.length-1] = this.inputWrapper;
-        INPUT_TO_HANDLER.clear();
-        INPUT_START.clear();
-        int i = 0;
-        for (MachineFluidHandler<?> input : inputs) {
-            for (int j = 0; j < input.getSize(); j++) {
-                INPUT_TO_HANDLER.put(j + i, input);
-                if (j == 0) INPUT_START.put(input, i);
-            }
-            i += input.getSize();
-        }
-        INPUT_END = i;
+        tanks.put(FluidDirection.INPUT, new FluidTanks(Arrays.stream(inputs).filter(t -> t.getInputTanks() != null).flatMap(t -> Arrays.stream(t.getInputTanks().getBackingTanks())).collect(Collectors.toList())));
     }
 
     protected int compareInputHatches(MachineFluidHandler<?> a, MachineFluidHandler<?> b) {
@@ -93,52 +45,15 @@ public class MultiMachineFluidHandler<T extends BlockEntityMultiMachine<T>> exte
 
     protected void cacheOutputs() {
         outputs = tile.getComponentsByHandlerId(outputComponentString()).stream().map(IComponentHandler::getFluidHandler).map(Optional::get).sorted(this::compareOutputHatches).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
-        // handlers[handlers.length-1] = this.inputWrapper;
-        OUTPUT_TO_HANDLER.clear();
-        OUTPUT_START.clear();
-        int i = 0;
-        for (MachineFluidHandler<?> output : outputs) {
-            for (int j = 0; j < output.getSize(); j++) {
-                OUTPUT_TO_HANDLER.put(j + i, output);
-                if (j == 0) OUTPUT_START.put(output, i);
-            }
-            i += output.getSize();
-        }
+        tanks.put(FluidDirection.OUTPUT, new FluidTanks(Arrays.stream(outputs).filter(t -> t.getOutputTanks() != null).flatMap(t -> Arrays.stream(t.getOutputTanks().getBackingTanks())).collect(Collectors.toList())));
     }
 
     protected int compareOutputHatches(MachineFluidHandler<?> a, MachineFluidHandler<?> b) {
         return 0;
     }
 
-    //TODO: Remove gettanks() != null as this is called twice.
-    @Nullable
-    @Override
-    public FluidTanks getInputTanks() {
-        //Input tanks output into the machine.
-        return new FluidTanks(Arrays.stream(inputs).filter(t -> t.getInputTanks() != null).flatMap(t -> Arrays.stream(t.getInputTanks().getBackingTanks())).collect(Collectors.toList()));
-    }
-
-    //TODO: Remove gettanks() != null as this is called twice.
-    @Nullable
-    @Override
-    public FluidTanks getOutputTanks() {
-        return new FluidTanks(Arrays.stream(outputs).filter(t -> t.getOutputTanks() != null).flatMap(t -> Arrays.stream(t.getOutputTanks().getBackingTanks())).collect(Collectors.toList()));
-    }
-
-    @Override
-    public int getSize() {
-        return Arrays.stream(inputs).mapToInt(MachineFluidHandler::getSize).sum() + Arrays.stream(outputs).mapToInt(MachineFluidHandler::getSize).sum();
-    }
-
-    @NotNull
-    @Override
-    public FluidHolder getFluidInTank(int tank) {
-        if (tank < INPUT_END)
-            return INPUT_TO_HANDLER.get(tank).getFluidInTank(tank - INPUT_START.get(INPUT_TO_HANDLER.get(tank)));
-        return OUTPUT_TO_HANDLER.get(tank).getFluidInTank(tank - OUTPUT_START.get(OUTPUT_TO_HANDLER.get(tank)));
-    }
-
     public void invalidate() {
+        tanks.clear();
         inputs = new MachineFluidHandler[0];
         outputs = new MachineFluidHandler[0];
     }
