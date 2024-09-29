@@ -646,6 +646,19 @@ public class Utils {
     }
 
     /**
+     * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
+     */
+    @SafeVarargs
+    public static InventoryChangeTrigger.TriggerInstance hasItems(TagKey<Item>... tagIn) {
+        ItemPredicate[] predicates = new ItemPredicate[tagIn.length];
+        for (int i = 0; i < tagIn.length; i++) {
+            TagKey<Item> tag = tagIn[i];
+            predicates[i] = ItemPredicate.Builder.item().of(tag).build();
+        }
+        return hasItem(predicates);
+    }
+
+    /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
     public static InventoryChangeTrigger.TriggerInstance hasItem(ItemPredicate... predicates) {
