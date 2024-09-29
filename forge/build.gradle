@@ -53,6 +53,9 @@ dependencies {
     minecraftRuntimeLibraries(group: 'com.github.Speiger', name: 'Primitive-Collections', version: '[0.8,0.9)')
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
     modImplementation("curse.maven:the-one-probe-245211:${rootProject.top_forge_file}")
+    //include("org.jetbrains.kotlin:kotlin-reflect:${kotlin.coreLibrariesVersion}")
+    //include("org.jetbrains.kotlin:kotlin-stdlib:${kotlin.coreLibrariesVersion}")
+    //include("org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin.coreLibrariesVersion}")
 }
 
 processResources {

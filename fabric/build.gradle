@@ -76,6 +76,9 @@ dependencies{
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
     modCompileOnly "lol.bai.megane:megane-api:${project.megane_version}"
+    //include("org.jetbrains.kotlin:kotlin-reflect:${kotlin.coreLibrariesVersion}")
+    //include("org.jetbrains.kotlin:kotlin-stdlib:${kotlin.coreLibrariesVersion}")
+    //include("org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin.coreLibrariesVersion}")
 }
 
 architectury {
