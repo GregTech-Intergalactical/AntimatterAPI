@@ -115,7 +115,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 registry.add(category);
                 if (!tuple.workstations.isEmpty()){
                     tuple.workstations.forEach(s -> {
-                        ItemLike item = AntimatterPlatformUtils.getItemFromID(s);
+                        ItemLike item = AntimatterPlatformUtils.INSTANCE.getItemFromID(s);
                         if (item == Items.AIR) return;
                         registry.addWorkstations(category.getCategoryIdentifier(), EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(item)));
                     });

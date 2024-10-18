@@ -33,7 +33,7 @@ public abstract class ItemStackMixin {
             if (armor.getAntimatterArmorType().getSlot() == EquipmentSlot.HEAD && AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
                 if (invoker.getTag() != null && invoker.getTag().contains("theoneprobe") && invoker.getTag().getBoolean("theoneprobe")) {
                     if (entity instanceof Player) {
-                        ItemStack probe = new ItemStack(AntimatterPlatformUtils.getItemFromID(new ResourceLocation(Ref.MOD_TOP, "probe")));
+                        ItemStack probe = new ItemStack(AntimatterPlatformUtils.INSTANCE.getItemFromID(new ResourceLocation(Ref.MOD_TOP, "probe")));
                         if (!((Player) entity).addItem(probe)) {
                             ((Player) entity).drop(probe, false);
                         }

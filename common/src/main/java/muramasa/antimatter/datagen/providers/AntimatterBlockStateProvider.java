@@ -67,10 +67,10 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
     public void onCompletion() {
         models().buildAll();
         registeredBlocks.forEach((b, s) -> {
-            if (AntimatterPlatformUtils.getIdFromBlock(b) == null) { //TODO ?
+            if (AntimatterPlatformUtils.INSTANCE.getIdFromBlock(b) == null) { //TODO ?
                 BlockBasic block = (BlockBasic) b;
             } else {
-                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addBlockState(s.toState(), AntimatterPlatformUtils.getIdFromBlock(b));
+                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addBlockState(s.toState(), AntimatterPlatformUtils.INSTANCE.getIdFromBlock(b));
             }
         });
     }
@@ -85,14 +85,14 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {
-        if (AntimatterPlatformUtils.getIdFromBlock(block) == null) {
+        if (AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block) == null) {
             return models().getBuilder(((BlockBasic) block).getId());
         }
-        return models().getBuilder(AntimatterPlatformUtils.getIdFromBlock(block).getPath());
+        return models().getBuilder(AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block).getPath());
     }
 
     public AntimatterBlockModelBuilder cubeAll(Block block, ResourceLocation texture) {
-        return models().cubeAll(AntimatterPlatformUtils.getIdFromBlock(block).toString(), texture);
+        return models().cubeAll(AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block).toString(), texture);
     }
 
     public void state(Block block, IModelLocation model) {
@@ -136,12 +136,12 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
     }
 
     private String name(Block block) {
-        return AntimatterPlatformUtils.getIdFromBlock(block).getPath();
+        return AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block).getPath();
     }
 
 
     public ResourceLocation blockTexture(Block block) {
-        ResourceLocation name = AntimatterPlatformUtils.getIdFromBlock(block);
+        ResourceLocation name = AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block);
         return new ResourceLocation(name.getNamespace(), AntimatterModelProvider.BLOCK_FOLDER + "/" + name.getPath());
     }
 

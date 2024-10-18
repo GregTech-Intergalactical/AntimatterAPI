@@ -118,7 +118,7 @@ public class RecipeIngredient extends Ingredient {
     }
 
     public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
-        if (AntimatterPlatformUtils.isForge()){
+        if (AntimatterPlatformUtils.INSTANCE.isForge()){
             return Ingredient.fromNetwork(buffer);
         }
         return fromValues(buffer.readList(FriendlyByteBuf::readItem).stream().map(RecipeValue::new));
@@ -380,7 +380,7 @@ public class RecipeIngredient extends Ingredient {
     private static JsonObject toJson(ItemStack stack)
     {
         JsonObject ret = new JsonObject();
-        ret.addProperty("item", AntimatterPlatformUtils.getIdFromItem(stack.getItem()).toString());
+        ret.addProperty("item", AntimatterPlatformUtils.INSTANCE.getIdFromItem(stack.getItem()).toString());
         if (stack.getCount() != 1)
             ret.addProperty("count", stack.getCount());
         if (stack.getTag() != null)

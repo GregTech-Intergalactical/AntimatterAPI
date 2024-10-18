@@ -126,7 +126,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         json.addProperty("maxSize", maxSize);
         json.addProperty("heightScale", heightScale);
         if (fill != null){
-            json.addProperty("fill", AntimatterPlatformUtils.getIdFromBlock(fill.getBlock()).toString());
+            json.addProperty("fill", AntimatterPlatformUtils.INSTANCE.getIdFromBlock(fill.getBlock()).toString());
         }
         JsonArray array = new JsonArray();
         variants.forEach(m -> {
@@ -162,7 +162,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
                 }
             });
         }
-        BlockState fill = json.has("fill") ? AntimatterPlatformUtils.getBlockFromId(new ResourceLocation(json.get("fill").getAsString())).defaultBlockState() : null;
+        BlockState fill = json.has("fill") ? AntimatterPlatformUtils.INSTANCE.getBlockFromId(new ResourceLocation(json.get("fill").getAsString())).defaultBlockState() : null;
         return new WorldGenVein(
                 id,
                 json.get("layer").getAsInt(),

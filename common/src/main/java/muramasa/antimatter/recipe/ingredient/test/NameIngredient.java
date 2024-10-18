@@ -24,6 +24,6 @@ public class NameIngredient extends Ingredient {
 
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
-        return p_test_1_ != null && Objects.requireNonNull(AntimatterPlatformUtils.getIdFromItem(p_test_1_.getItem())).getPath().contains(test);
+        return p_test_1_ != null && Objects.requireNonNull(AntimatterPlatformUtils.INSTANCE.getIdFromItem(p_test_1_.getItem())).getPath().contains(test);
     }
 }

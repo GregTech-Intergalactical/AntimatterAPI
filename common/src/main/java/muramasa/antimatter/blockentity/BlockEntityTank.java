@@ -54,7 +54,7 @@ public class BlockEntityTank<T extends BlockEntityMachine<T>> extends BlockEntit
         }
         renderer.draw(stack, FluidPlatformUtils.INSTANCE.getFluidDisplayName(instance.stack).getString(), left, top, 0xFAFAFF);
         StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier);
-        if (AntimatterPlatformUtils.isFabric()){
+        if (AntimatterPlatformUtils.INSTANCE.isFabric()){
             fluidAmount.append(" ").append(intToSuperScript((int) (instance.stack.getFluidAmount() % 81L))).append("/₈₁");
         }
         renderer.draw(stack, fluidAmount.toString() + " mb", left, top + 8, 16448255);

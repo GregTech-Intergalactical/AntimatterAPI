@@ -67,7 +67,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 this.icon = EntryStacks.of(itemLike);
             }
         } else {
-            ItemLike item = iconId == null ? Data.DEBUG_SCANNER : AntimatterPlatformUtils.getItemFromID(iconId);
+            ItemLike item = iconId == null ? Data.DEBUG_SCANNER : AntimatterPlatformUtils.INSTANCE.getItemFromID(iconId);
             if (item == Items.AIR) item = Data.DEBUG_SCANNER;
             this.icon = EntryStacks.of(item);
         }

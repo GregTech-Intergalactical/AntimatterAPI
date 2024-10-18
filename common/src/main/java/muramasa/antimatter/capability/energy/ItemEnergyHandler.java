@@ -22,7 +22,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.maxEnergy = capacity;
         this.context = context;
-        if (AntimatterPlatformUtils.isFabric()) readFromContextOnFabric();
+        if (AntimatterPlatformUtils.INSTANCE.isFabric()) readFromContextOnFabric();
     }
 
     private void readFromContextOnFabric(){

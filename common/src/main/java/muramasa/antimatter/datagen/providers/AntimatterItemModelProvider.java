@@ -62,7 +62,7 @@ public class AntimatterItemModelProvider extends AntimatterModelProvider<Antimat
     }
 
     public AntimatterItemModelBuilder getBuilder(ItemLike item) {
-        return getBuilder(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath());
+        return getBuilder(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem()).getPath());
     }
 
     public AntimatterItemModelBuilder tex(ItemLike item, ResourceLocation... textures) {
@@ -83,7 +83,7 @@ public class AntimatterItemModelProvider extends AntimatterModelProvider<Antimat
     }
 
     public AntimatterItemModelBuilder blockItem(ItemLike item) {
-        return withParent(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath(), modLoc("block/" + AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath()));
+        return withParent(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem()).getPath(), modLoc("block/" + AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem()).getPath()));
     }
 
     public ResourceLocation existing(String domain, String path) {
@@ -91,7 +91,7 @@ public class AntimatterItemModelProvider extends AntimatterModelProvider<Antimat
     }
 
     public AntimatterItemModelBuilder getAntimatterBuilder(ItemLike item) {
-        return getBuilder(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath());
+        return getBuilder(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem()).getPath());
     }
 
     public AntimatterItemModelBuilder modelAndTexture(ItemLike item, String namespace, String path) {

@@ -181,7 +181,7 @@ public class AntimatterWorldGenerator {
         AntimatterAPI.all(IAntimatterFeature.class, t -> {
             t.build(name, climate, category, effects, gen, spawns);
         });
-        if (AntimatterPlatformUtils.isForge()) {
+        if (AntimatterPlatformUtils.INSTANCE.isForge()) {
             handleFeatureRemoval(gen);
         }
     }

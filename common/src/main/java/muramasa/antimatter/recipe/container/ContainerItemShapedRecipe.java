@@ -32,7 +32,7 @@ public class ContainerItemShapedRecipe extends ShapedRecipe {
     }
 
     public NonNullList<ItemStack> getRemainingItems(@NotNull CraftingContainer container) {
-        if (AntimatterPlatformUtils.isForge()) return super.getRemainingItems(container);
+        if (AntimatterPlatformUtils.INSTANCE.isForge()) return super.getRemainingItems(container);
         NonNullList<ItemStack> nonnulllist = NonNullList.withSize(container.getContainerSize(), ItemStack.EMPTY);
 
         for(int i = 0; i < nonnulllist.size(); ++i) {

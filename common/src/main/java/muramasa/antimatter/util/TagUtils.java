@@ -62,7 +62,7 @@ public class TagUtils {
      * @return BlockTag
      */
     public static TagKey<Block> getForgelikeBlockTag(String name) {
-        return getBlockTag(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", name));
+        return getBlockTag(new ResourceLocation(AntimatterPlatformUtils.INSTANCE.isForge() ? "forge" : "c", name));
     }
 
     /**
@@ -83,7 +83,7 @@ public class TagUtils {
      */
     public static TagKey<Item> getForgelikeItemTag(String name) {
         // TODO: Change "wood" -> "wooden", forge recognises "wooden"
-        return getItemTag(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", name));
+        return getItemTag(new ResourceLocation(AntimatterPlatformUtils.INSTANCE.isForge() ? "forge" : "c", name));
     }
 
     /**
@@ -91,7 +91,7 @@ public class TagUtils {
      * @return FluidTag
      */
     public static TagKey<Fluid> getForgelikeFluidTag(String name) {
-        return createTag(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", name), Fluid.class, fluidName -> TagKey.create(Registry.FLUID_REGISTRY, fluidName));
+        return createTag(new ResourceLocation(AntimatterPlatformUtils.INSTANCE.isForge() ? "forge" : "c", name), Fluid.class, fluidName -> TagKey.create(Registry.FLUID_REGISTRY, fluidName));
     }
 
     /**

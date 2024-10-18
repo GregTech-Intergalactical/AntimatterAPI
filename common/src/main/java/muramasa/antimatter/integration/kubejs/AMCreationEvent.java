@@ -29,7 +29,7 @@ public class AMCreationEvent extends EventJS {
     }
 
     public StoneType createStoneType(String id, String material, String texture, SoundType soundType, String stoneState) {
-        return AntimatterAPI.register(StoneType.class, new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> AntimatterPlatformUtils.getBlockFromId(new ResourceLocation(stoneState)).defaultBlockState()));
+        return AntimatterAPI.register(StoneType.class, new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> AntimatterPlatformUtils.INSTANCE.getBlockFromId(new ResourceLocation(stoneState)).defaultBlockState()));
     }
 
     public Material createMaterial(String id, int rgb, String textureSet, String textureSetDomain) {

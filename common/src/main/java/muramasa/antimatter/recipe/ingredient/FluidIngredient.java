@@ -135,7 +135,7 @@ public class FluidIngredient {
     }
 
     public static FluidIngredient of(Material mat, long droplets) {
-        return of(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", mat.getId()), droplets);
+        return of(new ResourceLocation(AntimatterPlatformUtils.INSTANCE.isForge() ? "forge" : "c", mat.getId()), droplets);
     }
 
     public static FluidIngredient ofMB(ResourceLocation loc, int amount) {

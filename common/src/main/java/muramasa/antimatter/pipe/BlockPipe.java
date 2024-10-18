@@ -377,7 +377,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             }
             if (type == AntimatterDefaultTools.SCREWDRIVER) {
                 /*if (player.isCrouching()) {
-                    AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
+                    AntimatterPlatformUtils.INSTANCE.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
                     Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
                 }*/

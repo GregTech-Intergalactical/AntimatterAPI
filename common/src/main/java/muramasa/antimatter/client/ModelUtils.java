@@ -128,7 +128,7 @@ public class ModelUtils {
     }
 
     public static BakedModel getBakedFromItem(Item item) {
-        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager().getModel(new ModelResourceLocation(AntimatterPlatformUtils.getIdFromItem(item), "inventory"));
+        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager().getModel(new ModelResourceLocation(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item), "inventory"));
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {

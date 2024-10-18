@@ -133,7 +133,7 @@ public class AntimatterShapedRecipeBuilder {
      * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void build(Consumer<FinishedRecipe> consumer) {
-        this.build(consumer, AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem()));
+        this.build(consumer, AntimatterPlatformUtils.INSTANCE.getIdFromItem(this.result.get(0).getItem()));
     }
 
     /**
@@ -154,7 +154,7 @@ public class AntimatterShapedRecipeBuilder {
     }
 
     public void buildTool(Consumer<FinishedRecipe> consumer, String builder){
-        buildTool(consumer, builder, AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem()));
+        buildTool(consumer, builder, AntimatterPlatformUtils.INSTANCE.getIdFromItem(this.result.get(0).getItem()));
     }
 
     public void buildTool(Consumer<FinishedRecipe> consumer, String builder, String id) {
@@ -238,7 +238,7 @@ public class AntimatterShapedRecipeBuilder {
             }
             json.add("key", jsonobject);
             JsonObject resultObj = new JsonObject();
-            resultObj.addProperty("item", AntimatterPlatformUtils.getIdFromItem(this.result.getItem()).toString());
+            resultObj.addProperty("item", AntimatterPlatformUtils.INSTANCE.getIdFromItem(this.result.getItem()).toString());
             if (this.result.getCount() > 1) {
                 resultObj.addProperty("count", this.result.getCount());
             }
@@ -290,7 +290,7 @@ public class AntimatterShapedRecipeBuilder {
             JsonArray arr = new JsonArray();
             result.forEach(el -> {
                 JsonObject resultObj = new JsonObject();
-                resultObj.addProperty("item", AntimatterPlatformUtils.getIdFromItem(el.getItem()).toString());
+                resultObj.addProperty("item", AntimatterPlatformUtils.INSTANCE.getIdFromItem(el.getItem()).toString());
                 if (el.getCount() > 1) {
                     resultObj.addProperty("count", el.getCount());
                 }

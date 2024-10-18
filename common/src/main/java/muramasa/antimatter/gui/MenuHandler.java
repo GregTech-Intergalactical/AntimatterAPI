@@ -58,7 +58,7 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
     }
 
     static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
-        return AntimatterPlatformUtils.create(factory);
+        return AntimatterPlatformUtils.INSTANCE.create(factory);
     }
 
     public abstract T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data);

@@ -62,7 +62,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
         boolean nbt = stack.hasTag();
         long tempHash = 1;
 
-        tempHash = 31 * tempHash + AntimatterPlatformUtils.getIdFromItem(stack.getItem()).hashCode();
+        tempHash = 31 * tempHash + AntimatterPlatformUtils.INSTANCE.getIdFromItem(stack.getItem()).hashCode();
         if (nbt && stack.getTag() != null) {
             CompoundTag newNbt = filterTags(stack.getTag());
             if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();

@@ -94,7 +94,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
                     recipeBuilder.addCriterion(id, hasSafeItem((TagKey<Item>) tag));
                     criteria.add(id);
                 } else if (o instanceof ItemLike itemLike){
-                    String id = "has_" + AntimatterPlatformUtils.getIdFromItem(itemLike.asItem()).getPath();
+                    String id = "has_" + AntimatterPlatformUtils.INSTANCE.getIdFromItem(itemLike.asItem()).getPath();
                     if (criteria.contains(id)) continue;
                     recipeBuilder.addCriterion(id, hasSafeItem(itemLike));
                     criteria.add(id);
@@ -129,7 +129,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             try {
                 if (input instanceof ItemLike l) {
                     builder.requires(l);
-                    String id = "has_" + AntimatterPlatformUtils.getIdFromItem(l.asItem()).getPath();
+                    String id = "has_" + AntimatterPlatformUtils.INSTANCE.getIdFromItem(l.asItem()).getPath();
                     if (criteria.contains(id)) continue;
                     builder.unlockedBy(id, hasSafeItem(l));
                     criteria.add(id);

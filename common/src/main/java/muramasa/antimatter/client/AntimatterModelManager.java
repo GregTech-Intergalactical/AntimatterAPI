@@ -57,21 +57,21 @@ public class AntimatterModelManager {
     }
 
     public static void put(Item item, IItemProviderOverride override) {
-        ITEM_OVERRIDES.put(AntimatterPlatformUtils.getIdFromItem(item), override);
+        ITEM_OVERRIDES.put(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item), override);
     }
 
     public static void put(Block block, IBlockProviderOverride override) {
-        BLOCK_OVERRIDES.put(AntimatterPlatformUtils.getIdFromBlock(block), override);
+        BLOCK_OVERRIDES.put(AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block), override);
     }
 
     public static void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        IItemProviderOverride override = ITEM_OVERRIDES.get(AntimatterPlatformUtils.getIdFromItem(item.asItem()));
+        IItemProviderOverride override = ITEM_OVERRIDES.get(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem()));
         if (override != null) override.apply(item.asItem(), prov);
         else if (item instanceof IModelProvider) ((IModelProvider) item).onItemModelBuild(item, prov);
     }
 
     public static void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        IBlockProviderOverride override = BLOCK_OVERRIDES.get(AntimatterPlatformUtils.getIdFromBlock(block));
+        IBlockProviderOverride override = BLOCK_OVERRIDES.get(AntimatterPlatformUtils.INSTANCE.getIdFromBlock(block));
         if (override != null) override.apply(block, prov, prov.getBuilder(block));
         else if (block instanceof IModelProvider) ((IModelProvider) block).onBlockModelBuild(block, prov);
     }

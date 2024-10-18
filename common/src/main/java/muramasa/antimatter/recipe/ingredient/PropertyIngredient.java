@@ -149,7 +149,7 @@ public class PropertyIngredient extends Ingredient {
         obj.add("item_tags", materialArr);
         materialArr = new JsonArray();
         for (ItemLike item : this.items) {
-            ResourceLocation name = AntimatterPlatformUtils.getIdFromItem(item.asItem());
+            ResourceLocation name = AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem());
             if (name != null) materialArr.add(name.toString());
         }
         obj.add("items", materialArr);
@@ -325,7 +325,7 @@ public class PropertyIngredient extends Ingredient {
             }
             buffer.writeVarInt(ingredient.items.size());
             for (ItemLike item : ingredient.items) {
-                ResourceLocation name = AntimatterPlatformUtils.getIdFromItem(item.asItem());
+                ResourceLocation name = AntimatterPlatformUtils.INSTANCE.getIdFromItem(item.asItem());
                 if (name != null) buffer.writeUtf(name.toString());
             }
             //Needed because tags might not be available on client.

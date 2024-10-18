@@ -118,7 +118,7 @@ public class RecipeMapDisplay implements Display {
         tooltip.entries().remove(2);
         tooltip.entries().remove(1);
         long mb = (stack.getAmount() / TesseractGraphWrappers.dropletMultiplier);
-        if (AntimatterPlatformUtils.isFabric()){
+        if (AntimatterPlatformUtils.INSTANCE.isFabric()){
             tooltip.add(Utils.translatable("antimatter.tooltip.fluid.amount", Utils.literal(mb + " " + intToSuperScript(stack.getAmount() % 81L) + "/₈₁ L")).withStyle(ChatFormatting.BLUE));
         } else {
             tooltip.add(Utils.translatable("antimatter.tooltip.fluid.amount", mb + " L").withStyle(ChatFormatting.BLUE));

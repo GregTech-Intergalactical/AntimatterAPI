@@ -148,7 +148,7 @@ public class SequencedAssemblyBuilder {
                 nestedRecipe.add("ingredients", ingredients);
                 JsonArray results = new JsonArray();
                 JsonObject item = new JsonObject();
-                item.addProperty("item", AntimatterPlatformUtils.getIdFromItem(s.result.asItem()).toString());
+                item.addProperty("item", AntimatterPlatformUtils.INSTANCE.getIdFromItem(s.result.asItem()).toString());
                 results.add(item);
                 nestedRecipe.add("results", results);
                 nestedRecipes.add(nestedRecipe);
@@ -157,7 +157,7 @@ public class SequencedAssemblyBuilder {
             for (Tuple<ItemStack, Float> result : results) {
                 JsonObject resultObject = new JsonObject();
                 ItemStack stack = result.getA();
-                resultObject.addProperty("item", AntimatterPlatformUtils.getIdFromItem(stack.getItem()).toString());
+                resultObject.addProperty("item", AntimatterPlatformUtils.INSTANCE.getIdFromItem(stack.getItem()).toString());
                 if (stack.getCount() != 1)
                     resultObject.addProperty("count", stack.getCount());
                 if (stack.hasTag())
@@ -171,7 +171,7 @@ public class SequencedAssemblyBuilder {
             json.add("sequence", nestedRecipes);
             json.add("results", resultArray);
             JsonObject transitionalItemObject = new JsonObject();
-            transitionalItemObject.addProperty("item", AntimatterPlatformUtils.getIdFromItem(transitionalItem.asItem()).toString());
+            transitionalItemObject.addProperty("item", AntimatterPlatformUtils.INSTANCE.getIdFromItem(transitionalItem.asItem()).toString());
             json.add("transitionalItem", transitionalItemObject);
             json.addProperty("loops", loops);
         }
