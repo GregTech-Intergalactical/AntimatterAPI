@@ -1,5 +1,6 @@
-package muramasa.antimatter.proxy.forge;
+package muramasa.antimatter.client.forge;
 
+import muramasa.antimatter.client.ClientPlatformHelper;
 import muramasa.antimatter.proxy.ClientHandler;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -10,18 +11,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-public class ClientHandlerImpl {
-    public ClientHandlerImpl() {
-        //eventBus.addListener(ClientHandlerImpl::onModelRegistry);
-        new ClientHandler();
-
-    }
-
-    public static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
+public class ClientPlatformHelperImpl implements ClientPlatformHelper {
+    @Override
+    public <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
         BlockEntityRenderers.register(type, renderProvider);
     }
 
-    public static<T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> renderProvider){
+    @Override
+    public <T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> renderProvider){
         EntityRenderers.register(type, renderProvider);
     }
 }

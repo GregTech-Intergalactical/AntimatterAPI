@@ -1,6 +1,7 @@
-package muramasa.antimatter.proxy.fabric;
+package muramasa.antimatter.client.fabric;
 
 
+import muramasa.antimatter.client.ClientPlatformHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -10,13 +11,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-public class ClientHandlerImpl {
+public class ClientPlatformHelperImpl implements ClientPlatformHelper {
 
-    public static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
+    @Override
+    public <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
         BlockEntityRendererRegistry.register(type, renderProvider);
     }
 
-    public static<T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> renderProvider){
+    @Override
+    public <T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> renderProvider){
         EntityRendererRegistry.register(type, renderProvider);
     }
 }

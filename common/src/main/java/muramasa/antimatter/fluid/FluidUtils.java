@@ -2,16 +2,12 @@ package muramasa.antimatter.fluid;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.registry.fluid.FluidData;
+import muramasa.antimatter.util.ImplLoader;
 import net.minecraft.world.level.material.FlowingFluid;
 
-public class FluidUtils {
-    @ExpectPlatform
-    public static FlowingFluid createSourceFluid(FluidData data){
-        throw new AssertionError();
-    }
+public interface FluidUtils {
+    FluidUtils INSTANCE = ImplLoader.load(FluidUtils.class);
+    FlowingFluid createSourceFluid(FluidData data);
 
-    @ExpectPlatform
-    public static FlowingFluid createFlowingFluid(FluidData data){
-        throw new AssertionError();
-    }
+    FlowingFluid createFlowingFluid(FluidData data);
 }
