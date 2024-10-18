@@ -1,6 +1,5 @@
 package muramasa.antimatter.fluid;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.registry.fluid.FluidData;
 import muramasa.antimatter.util.ImplLoader;
 import net.minecraft.world.level.material.FlowingFluid;

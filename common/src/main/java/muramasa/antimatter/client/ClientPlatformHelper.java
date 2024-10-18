@@ -1,6 +1,5 @@
 package muramasa.antimatter.client;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.util.ImplLoader;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

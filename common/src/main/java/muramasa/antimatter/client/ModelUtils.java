@@ -3,7 +3,6 @@ package muramasa.antimatter.client;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.ImplLoader;

@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.blockentity.BlockEntityMachine;
 import muramasa.antimatter.blockentity.pipe.BlockEntityPipe;
 import muramasa.antimatter.util.ImplLoader;

@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
