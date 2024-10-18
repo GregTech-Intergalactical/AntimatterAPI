@@ -6,6 +6,7 @@ import com.mojang.math.Vector3f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.ImplLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -34,10 +35,11 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class ModelUtils {
+public interface ModelUtils {
+    ModelUtils INSTANCE = ImplLoader.load(ModelUtils.class);
 
     //Assumes from North.
-    public static Transformation transform(Direction side) {
+    static Transformation transform(Direction side) {
         switch (side) {
             case DOWN:
                 return new Transformation(null, new Quaternion(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), 90.0F, true)), null, null);
@@ -56,118 +58,91 @@ public class ModelUtils {
         }
     }
 
-    public static UnbakedModel getMissingModel() {
-        return getModelBakery().getModel(new ModelResourceLocation("builtin/missing", "missing"));
+    static UnbakedModel getMissingModel() {
+        return INSTANCE.getModelBakery().getModel(new ModelResourceLocation("builtin/missing", "missing"));
     }
 
 
-    public static UnbakedModel getModel(ResourceLocation resourceLocation){
-        return getModelBakery().getModel(resourceLocation);
+    static UnbakedModel getModel(ResourceLocation resourceLocation){
+        return INSTANCE.getModelBakery().getModel(resourceLocation);
     }
 
 
-    @ExpectPlatform
-    public static SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides){
-        throw new AssertionError();
+    SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides);
+
+    static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
+        return ModelUtils::getModelOrMissing;
     }
 
-    @ExpectPlatform
-    public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
-        throw new AssertionError();
+    private static UnbakedModel getModelOrMissing(ResourceLocation location){
+        try {
+            return ModelUtils.getModel(location);
+        }
+        catch(Exception e) {
+            return ModelUtils.getMissingModel();
+        }
     }
 
-    @ExpectPlatform
-    public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
-        throw new AssertionError();
+    static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
+        return Material::sprite;
     }
 
-    @ExpectPlatform
-    public static ModelBakery getModelBakery(){
-        throw new AssertionError();
-    }
+    ModelBakery getModelBakery();
 
-    @ExpectPlatform
-    public static void setLightData(BakedQuad model, int light){
-        throw new AssertionError();
-    }
+    void setLightData(BakedQuad model, int light);
 
+    List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos);
 
-    @ExpectPlatform
-    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
-        throw new AssertionError();
-    }
-
-    public static List<BakedQuad> getQuadsFromBakedCover(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos, Predicate<Map.Entry<String, BakedModel>> coverPredicate){
+    static List<BakedQuad> getQuadsFromBakedCover(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos, Predicate<Map.Entry<String, BakedModel>> coverPredicate){
         if (model instanceof CoverBakedModel coverBakedModel){
             return coverBakedModel.getBlockQuads(state, side, rand, level, pos, coverPredicate);
         }
-        return getQuadsFromBaked(model, state, side, rand, level, pos);
+        return INSTANCE.getQuadsFromBaked(model, state, side, rand, level, pos);
     }
-    public static BakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
+
+    static BakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
         SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrides.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
         quads.forEach(builder::addUnculledFace);
         return builder.build();
     }
 
-    @ExpectPlatform
-    public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
-        throw new AssertionError();
+    BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc);
+
+    BakedModel getSimpleBakedModel(BakedModel baked);
+
+    static BakedModel getBaked(ResourceLocation loc) {
+        return INSTANCE.getModelBakery().getBakedTopLevelModels().get(loc);// SimpleModelState.IDENTITY, ForgeModelBakery.defaultTextureGetter());
     }
 
-    @ExpectPlatform
-    public static BakedModel getSimpleBakedModel(BakedModel baked) {
-        throw new AssertionError();
-    }
-
-    public static BakedModel getBaked(ResourceLocation loc) {
-        return getModelBakery().getBakedTopLevelModels().get(loc);// SimpleModelState.IDENTITY, ForgeModelBakery.defaultTextureGetter());
-    }
-
-    public static BakedModel getBakedFromState(BlockState state) {
+    static BakedModel getBakedFromState(BlockState state) {
         return Minecraft.getInstance().getModelManager().getModel(BlockModelShaper.stateToModelLocation(state));
     }
 
-    public static BakedModel getBakedFromItem(Item item) {
+    static BakedModel getBakedFromItem(Item item) {
         return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager().getModel(new ModelResourceLocation(AntimatterPlatformUtils.INSTANCE.getIdFromItem(item), "inventory"));
     }
 
-    public static TextureAtlasSprite getSprite(ResourceLocation loc) {
+    static TextureAtlasSprite getSprite(ResourceLocation loc) {
         return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(loc);
     }
 
-    public static Material getBlockMaterial(ResourceLocation loc) {
+    static Material getBlockMaterial(ResourceLocation loc) {
         return new Material(InventoryMenu.BLOCK_ATLAS, loc);
     }
 
-
-    public static List<BakedQuad> trans(List<BakedQuad> quads, Vector3f rotationL, Vector3f rotationR) {
-        Quaternion rotL = rotationL == null ? null : quatFromXYZ(rotationL, true);
-        Quaternion rotR = rotationR == null ? null : quatFromXYZ(rotationR, true);
-        return trans(quads, new Transformation(new Vector3f(0, 0, 0), rotL, null, rotR));
+    static List<BakedQuad> trans(List<BakedQuad> quads, Vector3f rotationL, Vector3f rotationR) {
+        Quaternion rotL = rotationL == null ? null : INSTANCE.quatFromXYZ(rotationL, true);
+        Quaternion rotR = rotationR == null ? null : INSTANCE.quatFromXYZ(rotationR, true);
+        return INSTANCE.trans(quads, new Transformation(new Vector3f(0, 0, 0), rotL, null, rotR));
     }
 
-    @ExpectPlatform
-    public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
-        throw new AssertionError();
-    }
+    Quaternion quatFromXYZ(Vector3f xyz, boolean degrees);
 
-    @ExpectPlatform
-    public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
-        throw new AssertionError();
-    }
+    List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform);
 
-    @ExpectPlatform
-    public static void setRenderLayer(Block block, RenderType renderType){
-        throw new AssertionError();
-    }
+    void setRenderLayer(Block block, RenderType renderType);
 
-    @ExpectPlatform
-    public static void setRenderLayer(Fluid fluid, RenderType renderType){
-        throw new AssertionError();
-    }
+    void setRenderLayer(Fluid fluid, RenderType renderType);
 
-    @ExpectPlatform
-    public static void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
-        throw new AssertionError();
-    }
+    void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function);
 }

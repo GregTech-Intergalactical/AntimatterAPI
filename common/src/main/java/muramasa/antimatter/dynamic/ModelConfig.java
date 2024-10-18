@@ -73,7 +73,7 @@ public class ModelConfig {
 
     public void addBaked(List<BakedQuad> quads, BakedModel[] baked, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos) {
         for (int j = 0; j < baked.length; j++) {
-            quads.addAll(ModelUtils.getQuadsFromBaked(baked[j], state, side, rand, level, pos));
+            quads.addAll(ModelUtils.INSTANCE.getQuadsFromBaked(baked[j], state, side, rand, level, pos));
         }
     }
 

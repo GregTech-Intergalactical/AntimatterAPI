@@ -29,7 +29,7 @@ public class ModelConfigRandom extends ModelConfig {
         BakedModel[] baked = bakedConfigs.get(getModelIndex());
         if (baked != null) {
             for (int i = 0; i < baked.length; i++) {
-                quads.addAll(ModelUtils.getQuadsFromBaked(baked[i], state, side, rand, level, pos));
+                quads.addAll(ModelUtils.INSTANCE.getQuadsFromBaked(baked[i], state, side, rand, level, pos));
             }
         }
         return quads;

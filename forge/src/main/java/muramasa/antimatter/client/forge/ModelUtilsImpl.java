@@ -5,6 +5,7 @@ import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.baked.IAntimatterBakedModel;
 import muramasa.antimatter.mixin.forge.client.SimpleBakedModel$BuilderAccessor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -40,29 +41,25 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
-public class ModelUtilsImpl {
+public class ModelUtilsImpl implements ModelUtils {
 
-    public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
-        return ForgeModelBakery.defaultModelGetter();
-    }
-
-    public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
-        return ForgeModelBakery.defaultTextureGetter();
-    }
-
-    public static ModelBakery getModelBakery(){
+    @Override
+    public ModelBakery getModelBakery(){
         return ForgeModelBakery.instance();
     }
 
-    public static void setLightData(BakedQuad quad, int light){
+    @Override
+    public void setLightData(BakedQuad quad, int light){
         LightUtil.setLightData(quad, light);
     }
 
-    public static SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides){
+    @Override
+    public SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides){
         return SimpleBakedModel$BuilderAccessor.antimatter$create(smoothLighting, sideLit, isShadedInGui, transforms, overrides);
     }
 
-    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
+    @Override
+    public List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, @NotNull BlockPos pos){
         if (model instanceof IAntimatterBakedModel antimatterBaked){
             return antimatterBaked.getQuads(state, side, rand, level, pos);
         } else {
@@ -70,36 +67,44 @@ public class ModelUtilsImpl {
             return model.getQuads(state, side, rand, data);
         }
     }
-    public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
+
+    @Override
+    public BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
         List<BakedQuad> generalQuads = model.bake(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE);
         SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrides.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
         generalQuads.forEach(builder::addUnculledFace);
         return builder.build();
     }
 
-    public static BakedModel getSimpleBakedModel(BakedModel baked) {
+    @Override
+    public BakedModel getSimpleBakedModel(BakedModel baked) {
         Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
         Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
         return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
     }
 
-    public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
+    @Override
+    public Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
         return TransformationHelper.quatFromXYZ(xyz, degrees);
     }
 
-    public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
+    @Override
+    public List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
         return new QuadTransformer(transform.blockCenterToCorner()).processMany(quads);
     }
 
-    public static void setRenderLayer(Block block, RenderType renderType){
+    @Override
+    public void setRenderLayer(Block block, RenderType renderType){
         ItemBlockRenderTypes.setRenderLayer(block, renderType);
     }
 
-    public static void setRenderLayer(Fluid fluid, RenderType renderType){
+    @Override
+    public void setRenderLayer(Fluid fluid, RenderType renderType){
         ItemBlockRenderTypes.setRenderLayer(fluid, renderType);
     }
 
-    public static void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
+    @Override
+    public void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
         ItemProperties.register(item, location, function);
     }
 }

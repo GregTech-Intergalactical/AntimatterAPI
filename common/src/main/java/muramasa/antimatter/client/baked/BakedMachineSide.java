@@ -22,7 +22,7 @@ public class BakedMachineSide extends GroupedBakedModel{
 
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, BlockPos pos) {
-        return ModelUtils.getQuadsFromBaked(this.models.get(""), state, side, rand, level, pos);
+        return ModelUtils.INSTANCE.getQuadsFromBaked(this.models.get(""), state, side, rand, level, pos);
     }
 
     /*@Override

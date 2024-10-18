@@ -80,9 +80,9 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
         BakedModel model = getModel(state, side, props.state, props.type);
         for (Direction dir : Ref.DIRS) {
-            quads.addAll(ModelUtils.getQuadsFromBaked(model, state, dir, rand, level, pos));
+            quads.addAll(ModelUtils.INSTANCE.getQuadsFromBaked(model, state, dir, rand, level, pos));
         }
-        quads.addAll(ModelUtils.getQuadsFromBaked(model, state, null, rand, level, pos));
+        quads.addAll(ModelUtils.INSTANCE.getQuadsFromBaked(model, state, null, rand, level, pos));
         if (props.type.isNoFacing() || props.type.isNoTextureRotation()) return quads;
         Matrix4f f = new Matrix4f();
         f.setIdentity();

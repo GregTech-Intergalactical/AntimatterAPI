@@ -75,19 +75,19 @@ public class ClientHandler implements IProxyHandler {
         });
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
-            AntimatterAPI.all(BlockMachine.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockFakeTile.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockMultiMachine.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockOre.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockPipe.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockMachine.class, b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockFakeTile.class, b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockMultiMachine.class, b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockOre.class, b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockPipe.class, b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == AntimatterMaterialTypes.RAW_ORE_BLOCK)
-                    .forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
+                    .forEach(b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockFrame.class).stream().filter(b -> b.getType() == AntimatterMaterialTypes.FRAME)
-                    .forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockSurfaceRock.class).stream().forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
+                    .forEach(b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockSurfaceRock.class).stream().forEach(b -> ModelUtils.INSTANCE.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
-                ModelUtils.setRenderLayer(f.getFluid(), RenderType.translucent());
-                ModelUtils.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
+                ModelUtils.INSTANCE.setRenderLayer(f.getFluid(), RenderType.translucent());
+                ModelUtils.INSTANCE.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
             });
         });
         AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).filter(Machine::renderContainerLiquids).map(Machine::getTileType).distinct().forEach(i -> ClientPlatformHelper.INSTANCE.registerBlockEntityRenderer(i, MachineTESR::new));

@@ -33,7 +33,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
         int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE[offset];
         if (arr == null) {
-            CACHE[offset] = models.values().stream().flatMap(t -> ModelUtils.getQuadsFromBaked(t, state, side, rand, level, pos).stream()).toArray(BakedQuad[]::new);
+            CACHE[offset] = models.values().stream().flatMap(t -> ModelUtils.INSTANCE.getQuadsFromBaked(t, state, side, rand, level, pos).stream()).toArray(BakedQuad[]::new);
             arr = CACHE[offset];
         }
         return Arrays.asList(arr);

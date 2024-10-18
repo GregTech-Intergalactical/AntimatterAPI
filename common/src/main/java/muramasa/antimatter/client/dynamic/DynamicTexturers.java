@@ -55,7 +55,7 @@ public class DynamicTexturers {
                     t.source.setTextures(
                             (name, texture) -> ((BlockModelAccessor)model).getTextureMap().put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
                     Transformation base = RenderHelper.faceRotation(t.source.side());
-                    BakedModel b = model.bake(ModelUtils.getModelBakery(), model, ModelUtils.getDefaultTextureGetter(),
+                    BakedModel b = model.bake(ModelUtils.INSTANCE.getModelBakery(), model, ModelUtils.getDefaultTextureGetter(),
                             new SimpleModelState(base), t.source.getModel(t.type, Direction.SOUTH), true);
 
                     Predicate<Map.Entry<String, BakedModel>> predicate = getEntryPredicate(t);
@@ -108,14 +108,14 @@ public class DynamicTexturers {
                                             prop.state, prop.tier, i)[side.get3DDataValue()])));
                 }
 
-                BakedModel b = model.bake(ModelUtils.getModelBakery(), ModelUtils.getDefaultTextureGetter(),
+                BakedModel b = model.bake(ModelUtils.INSTANCE.getModelBakery(), ModelUtils.getDefaultTextureGetter(),
                         new SimpleModelState(RenderHelper.faceRotation(t.state)),
                         new ResourceLocation(t.source.getId()));
                 List<BakedQuad> list = new ObjectArrayList<>(10);
                 for (Direction dir : Ref.DIRS) {
-                    list.addAll(ModelUtils.getQuadsFromBaked(b, t.state, dir, t.rand, t.level, t.pos));
+                    list.addAll(ModelUtils.INSTANCE.getQuadsFromBaked(b, t.state, dir, t.rand, t.level, t.pos));
                 }
-                list.addAll(ModelUtils.getQuadsFromBaked(b, t.state, null, t.rand, t.level, t.pos));
+                list.addAll(ModelUtils.INSTANCE.getQuadsFromBaked(b, t.state, null, t.rand, t.level, t.pos));
                 return list;
             });
 }
