@@ -1,16 +1,13 @@
 package muramasa.antimatter.integration.jei;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Getter;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.ingredients.IIngredientType;
-import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
@@ -18,17 +15,12 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
-import muramasa.antimatter.item.ItemBattery;
-import muramasa.antimatter.item.ItemMultiTextureBattery;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -40,7 +32,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -51,13 +42,11 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
-import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyItem;
 import tesseract.api.gt.IGTNode;
 import tesseract.api.wrapper.ItemStackWrapper;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
@@ -65,6 +54,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 @JeiPlugin
 public class AntimatterJEIPlugin implements IModPlugin {
     public static final Map<String, RecipeType<IRecipe>> RECIPE_TYPES = new Object2ObjectOpenHashMap<>();
+    @Getter
     private static IJeiRuntime runtime;
     private static IJeiHelpers helpers;
 
@@ -91,7 +81,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         AntimatterJEIREIPlugin.getFluidsToHide().forEach(c -> c.accept(fluidList));
         // wish there was a better way to do this
         if (!fluidList.isEmpty()){
-            runtime.getIngredientManager().removeIngredientsAtRuntime(AntimatterJEIPlugin.getFluidIngredientObjectType(), (Collection) fluidList.stream().map(f -> AntimatterJEIPlugin.getFluidObject(FluidHolder.of(f))).toList());
+            runtime.getIngredientManager().removeIngredientsAtRuntime(JEIPlatformHelper.INSTANCE.getFluidIngredientObjectType(), (Collection) fluidList.stream().map(f -> JEIPlatformHelper.INSTANCE.getFluidObject(FluidHolder.of(f))).toList());
             runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, fluidList.stream().map(i -> i.getBucket().getDefaultInstance()).toList());
         }
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
@@ -202,39 +192,10 @@ public class AntimatterJEIPlugin implements IModPlugin {
         });
     }
 
-    @ExpectPlatform
-    public static void uses(FluidHolder val, boolean USE) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static Object getFluidObject(FluidHolder fluidHolder){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static IIngredientType<?> getFluidIngredientObjectType(){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
-        throw new AssertionError();
-    }
-
-    public static IJeiRuntime getRuntime() {
-        return runtime;
-    }
-
     public static <T> void addModDescriptor(List<Component> tooltip, T t) {
         if (t == null || helpers == null) return;
         Object o = t;
-        if (t instanceof FluidHolder holder) o = getFluidObject(holder);
+        if (t instanceof FluidHolder holder) o = JEIPlatformHelper.INSTANCE.getFluidObject(holder);
         String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(o).getDisplayModId(o));
         tooltip.add(Utils.literal(text));
     }

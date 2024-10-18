@@ -51,8 +51,8 @@ public class RecipeManager implements IRecipeManager<IRecipe>, IRecipeHandler<IR
         ResourceLocation resourceLocation = new ResourceLocation(Ref.ID, name);
         List<Ingredient> input = in == null ? Collections.emptyList() : Arrays.stream(in).map(IIngredient::asVanillaIngredient).toList();
         ItemStack[] itemOut = out == null ? IRecipeMap.EMPTY_ITEM : Arrays.stream(out).map(IItemStack::getInternal).toArray(ItemStack[]::new);
-        List<FluidIngredient> fluidIn = fIn == null ? Collections.emptyList() : Arrays.stream(fIn).map(t -> FluidIngredient.of(CrafttweakerUtils.fromIFluidStack(t))).toList();
-        FluidHolder[] fluidOut = fOut == null ? IRecipeMap.EMPTY_FLUID : Arrays.stream(fOut).map(CrafttweakerUtils::fromIFluidStack).toArray(FluidHolder[]::new);
+        List<FluidIngredient> fluidIn = fIn == null ? Collections.emptyList() : Arrays.stream(fIn).map(t -> FluidIngredient.of(CrafttweakerUtils.INSTANCE.fromIFluidStack(t))).toList();
+        FluidHolder[] fluidOut = fOut == null ? IRecipeMap.EMPTY_FLUID : Arrays.stream(fOut).map(CrafttweakerUtils.INSTANCE::fromIFluidStack).toArray(FluidHolder[]::new);
         Recipe recipe = new Recipe(input, itemOut, fluidIn, fluidOut, duration, eu, special, amps);
         recipe.setIds(resourceLocation, map);
         CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));

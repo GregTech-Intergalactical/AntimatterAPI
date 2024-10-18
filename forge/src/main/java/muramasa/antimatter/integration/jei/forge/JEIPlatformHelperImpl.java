@@ -9,13 +9,15 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jei.JEIPlatformHelper;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 import java.util.Optional;
 
-public class AntimatterJEIPluginImpl {
-    public static void uses(FluidHolder val, boolean USE) {
+public class JEIPlatformHelperImpl implements JEIPlatformHelper {
+    @Override
+    public void uses(FluidHolder val, boolean USE) {
         FluidStack v = ForgeFluidHolder.toStack(val);
         AntimatterJEIPlugin.getRuntime().getRecipesGui().show(new IFocus<FluidStack>() {
             @Override
@@ -57,19 +59,23 @@ public class AntimatterJEIPluginImpl {
         });
     }
 
-    public static Object getFluidObject(FluidHolder fluidHolder){
+    @Override
+    public Object getFluidObject(FluidHolder fluidHolder){
         return ForgeFluidHolder.toStack(fluidHolder);
     }
 
-    public static IIngredientType<?> getFluidIngredientObjectType(){
+    @Override
+    public IIngredientType<?> getFluidIngredientObjectType(){
         return ForgeTypes.FLUID;
     }
 
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
+    @Override
+    public void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
         builder.addIngredients(ForgeTypes.FLUID_STACK, stacks.stream().map(ForgeFluidHolder::toStack).toList());
     }
 
-    public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
+    @Override
+    public FluidHolder getIngredient(ITypedIngredient<?> ingredient){
         return new ForgeFluidHolder(ingredient.getIngredient(ForgeTypes.FLUID_STACK).get());
     }
 }

@@ -12,6 +12,7 @@ import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.integration.create.client.PonderIntegration;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jei.JEIPlatformHelper;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
@@ -20,7 +21,6 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.structure.Pattern;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static muramasa.antimatter.gui.SlotType.*;
 import static muramasa.antimatter.gui.SlotType.FL_OUT;
@@ -146,7 +145,7 @@ public class AntimatterJEIREIPlugin{
 
     public static void uses(FluidHolder val, boolean USE) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            AntimatterJEIPlugin.uses(val, USE);
+            JEIPlatformHelper.INSTANCE.uses(val, USE);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             REIUtils.uses(val, USE);
         }

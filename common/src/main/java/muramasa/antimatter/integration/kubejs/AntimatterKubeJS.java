@@ -7,6 +7,7 @@ import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 
 public class AntimatterKubeJS extends KubeJSPlugin {
@@ -14,13 +15,11 @@ public class AntimatterKubeJS extends KubeJSPlugin {
     @Override
     public void initStartup() {
         super.initStartup();
-        onRegister();
+        if (AntimatterPlatformUtils.INSTANCE.isFabric()) {
+            KubeJSPlatform.INSTANCE.onRegister();
+        }
     }
 
-    @ExpectPlatform
-    private static void onRegister(){
-        throw new AssertionError();
-    }
 
     @Override
     public void addBindings(BindingsEvent event) {

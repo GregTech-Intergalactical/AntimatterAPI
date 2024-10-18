@@ -10,6 +10,7 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jei.JEIPlatformHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.material.Fluid;
 
@@ -17,8 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class AntimatterJEIPluginImpl {
-    public static void uses(FluidHolder val, boolean USE) {
+public class JEIPlatformHelperImpl implements JEIPlatformHelper {
+    @Override
+    public void uses(FluidHolder val, boolean USE) {
         //TODO uncomment when https://github.com/mezz/JustEnoughItems/issues/2891
         IJeiFluidIngredient v = new JeiFLuidWrapper(val);
         AntimatterJEIPlugin.getRuntime().getRecipesGui().show(new IFocus<IJeiFluidIngredient>() {
@@ -61,19 +63,23 @@ public class AntimatterJEIPluginImpl {
         });
     }
 
-    public static Object getFluidObject(FluidHolder fluidHolder){
+    @Override
+    public Object getFluidObject(FluidHolder fluidHolder){
         return new JeiFLuidWrapper(fluidHolder);
     }
 
-    public static IIngredientType<?> getFluidIngredientObjectType(){
+    @Override
+    public IIngredientType<?> getFluidIngredientObjectType(){
         return FabricTypes.FLUID_STACK;
     }
 
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
+    @Override
+    public void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidHolder> stacks){
         builder.addIngredients(FabricTypes.FLUID_STACK, stacks.stream().map(JeiFLuidWrapper::new).collect(Collectors.toList()));
     }
 
-    public static FluidHolder getIngredient(ITypedIngredient<?> ingredient){
+    @Override
+    public FluidHolder getIngredient(ITypedIngredient<?> ingredient){
         IJeiFluidIngredient fluidIngredient = ingredient.getIngredient(FabricTypes.FLUID_STACK).get();
         return FluidHooks.newFluidHolder(fluidIngredient.getFluid(), fluidIngredient.getAmount(), fluidIngredient.getTag().get());
     }
