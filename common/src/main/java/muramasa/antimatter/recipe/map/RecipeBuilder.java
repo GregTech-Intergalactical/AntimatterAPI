@@ -396,7 +396,7 @@ public class RecipeBuilder {
             }
             array = new JsonArray();
             for (ItemStack stack : itemsOutput){
-                array.add(RecipeUtil.itemstackToJson(stack));
+                array.add(RecipeUtil.INSTANCE.itemstackToJson(stack));
             }
             if (!array.isEmpty()){
                 json.add("outputItems", array);

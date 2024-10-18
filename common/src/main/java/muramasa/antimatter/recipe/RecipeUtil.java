@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
+import muramasa.antimatter.util.ImplLoader;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -12,38 +13,22 @@ import tesseract.FluidPlatformUtils;
 
 import java.util.function.Consumer;
 
-public class RecipeUtil {
-    @ExpectPlatform
-    public static boolean isNBTIngredient(Class<? extends Ingredient> clazz){
-        throw new AssertionError();
-    }
+public interface RecipeUtil {
+    RecipeUtil INSTANCE = ImplLoader.load(RecipeUtil.class);
 
-    @ExpectPlatform
-    public static boolean isCompoundIngredient(Class<? extends Ingredient> clazz){
-        throw new AssertionError();
-    }
+    boolean isNBTIngredient(Class<? extends Ingredient> clazz);
 
-    @ExpectPlatform
-    public static void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
-        throw new AssertionError();
-    }
+    boolean isCompoundIngredient(Class<? extends Ingredient> clazz);
 
-    @ExpectPlatform
-    public static void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, String config, String configField, String recipeDomain, String recipeName) {
-        throw new AssertionError();
-    }
+    void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName);
 
-    @ExpectPlatform
-    public static ItemStack getItemStack(JsonObject object, boolean readNBT){
-        throw new AssertionError();
-    }
+    void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, String config, String configField, String recipeDomain, String recipeName);
 
-    @ExpectPlatform
-    public static JsonObject itemstackToJson(ItemStack stack){
-        throw new AssertionError();
-    }
+    ItemStack getItemStack(JsonObject object, boolean readNBT);
 
-    public static JsonObject fluidstackToJson(FluidHolder stack){
+    JsonObject itemstackToJson(ItemStack stack);
+
+    static JsonObject fluidstackToJson(FluidHolder stack){
         JsonObject object = new JsonObject();
         object.addProperty("fluid", FluidPlatformUtils.INSTANCE.getFluidId(stack.getFluid()).toString());
         object.addProperty("amount", stack.getFluidAmount());
@@ -53,13 +38,7 @@ public class RecipeUtil {
         return object;
     }
 
-    @ExpectPlatform
-    public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient){
-        throw new AssertionError();
-    }
+    <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient);
 
-    @ExpectPlatform
-    public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
-        throw new AssertionError();
-    }
+    Ingredient fromNetwork(FriendlyByteBuf buffer);
 }

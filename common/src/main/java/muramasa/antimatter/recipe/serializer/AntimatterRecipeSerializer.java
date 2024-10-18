@@ -59,7 +59,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             }
             ItemStack[] outputs = null;
             if (json.has("outputItems")) {
-                outputs = Streams.stream(json.getAsJsonArray("outputItems")).map(t -> RecipeUtil.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
+                outputs = Streams.stream(json.getAsJsonArray("outputItems")).map(t -> RecipeUtil.INSTANCE.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
             }
             List<FluidIngredient> fluidInputs = new ObjectArrayList<>();
             if (json.has("inputFluids")) {
@@ -162,7 +162,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                ings.add(RecipeUtil.fromNetwork(buffer));
+                ings.add(RecipeUtil.INSTANCE.fromNetwork(buffer));
             }
         }
         size = buffer.readInt();
@@ -238,7 +238,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         }
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
-            recipe.getInputItems().forEach(t -> RecipeUtil.write(buffer, t));
+            recipe.getInputItems().forEach(t -> RecipeUtil.INSTANCE.write(buffer, t));
         }
         buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems(false).length);
         if (recipe.hasOutputItems()) {

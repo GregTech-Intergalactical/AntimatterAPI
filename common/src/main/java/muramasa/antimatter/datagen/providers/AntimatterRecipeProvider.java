@@ -59,11 +59,11 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     public void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
-        RecipeUtil.addConditionalRecipe(consumer, builtRecipe, configClass, configFieldName, recipeDomain, recipeName);
+        RecipeUtil.INSTANCE.addConditionalRecipe(consumer, builtRecipe, configClass, configFieldName, recipeDomain, recipeName);
     }
 
     public void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, String config, String configField, String recipeDomain, String recipeName) {
-        RecipeUtil.addConditionalRecipe(consumer, builtRecipe, config, configField, recipeDomain, recipeName);
+        RecipeUtil.INSTANCE.addConditionalRecipe(consumer, builtRecipe, config, configField, recipeDomain, recipeName);
     }
 
     public AntimatterShapedRecipeBuilder getItemRecipe(String groupName, boolean customCriterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {

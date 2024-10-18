@@ -106,7 +106,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
         array = new JsonArray();
         if (this.getOutputItems(false) != null){
             for (ItemStack stack : this.getOutputItems(false)){
-                array.add(RecipeUtil.itemstackToJson(stack));
+                array.add(RecipeUtil.INSTANCE.itemstackToJson(stack));
             }
         }
         if (!array.isEmpty()){
