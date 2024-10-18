@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
@@ -807,13 +806,8 @@ public class Utils {
         BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
         if (tile.getLevel().isClientSide) {
             tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, 11);
-            requestModelDataRefresh(tile);
+            AntimatterPlatformUtils.requestModelDataRefresh(tile);
         }
-    }
-
-    @ExpectPlatform
-    public static void requestModelDataRefresh(BlockEntity tile){
-        throw new AssertionError();
     }
 
     private static final Direction[][] TRANSFORM = new Direction[][]{
@@ -1092,33 +1086,19 @@ public class Utils {
         if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
         ServerPlayer serverPlayer = player == null ? null : ((ServerPlayer) player);
-        int exp = player == null ? -1 : onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
+        int exp = player == null ? -1 : AntimatterPlatformUtils.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
         FluidState fluidState = world.getFluidState(pos);
         boolean destroyed = world.setBlockAndUpdate(pos, fluidState.createLegacyBlock());// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed) {
             if (player != null) {
-                if (canHarvestBlock(state, world, pos, player)) {
+                if (AntimatterPlatformUtils.canHarvestBlock(state, world, pos, player)) {
                     state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
                 }
                 stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             }
         }
-        if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
+        if (exp > 0) AntimatterPlatformUtils.popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
-    }
-
-    @ExpectPlatform
-    private static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
-    }
-
-    @ExpectPlatform
-    public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos){
-        throw new AssertionError();
     }
 
     private static boolean LOCK;
@@ -1157,7 +1137,7 @@ public class Utils {
                 if (stack.isEmpty()) return;
                 if (stopped[0]) return;
                 BlockState state = world.getBlockState(b);
-                if (state.isAir() || !isCorrectToolForDrops(state, player))
+                if (state.isAir() || !AntimatterPlatformUtils.isCorrectToolForDrops(state, player))
                     return;
                 else if (state.is(BlockTags.LOGS)) {
                     if (breakBlock(world, player, stack, b, tool.getUseDurability())){
@@ -1169,11 +1149,6 @@ public class Utils {
             });
         }
         return harvested[0];
-    }
-
-    @ExpectPlatform
-    public static boolean isCorrectToolForDrops(BlockState state, Player player){
-        return false;
     }
 
     /**

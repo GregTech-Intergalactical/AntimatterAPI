@@ -23,6 +23,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -36,8 +37,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Fluid;
@@ -51,15 +55,16 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         throw new AssertionError();
     }
+public interface AntimatterPlatformUtils {
+    AntimatterPlatformUtils INSTANCE = ImplLoader.load(AntimatterPlatformUtils.class);
 
     @ExpectPlatform
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
@@ -319,5 +324,29 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static boolean onUseHoe(UseOnContext context){
         throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static void requestModelDataRefresh(BlockEntity tile){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
+    }
+
+    @ExpectPlatform
+    public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isCorrectToolForDrops(BlockState state, Player player){
+        return false;
     }
 }
