@@ -1,5 +1,46 @@
+plugins {
+    id "xyz.wagyourtail.unimined" version "1.3.9-SNAPSHOT"
+}
 archivesBaseName = "${rootProject.antimatter_archive_base_name}-common"
-version = "${project.mod_version}-${rootProject.minecraft_version}"
+
+configurations {
+    modCompileOnly
+    compileOnly.extendsFrom modCompileOnly
+    modRuntimeOnly
+    runtimeOnly.extendsFrom modRuntimeOnly
+}
+
+unimined.minecraft {
+    version minecraft_version
+    accessWidener {
+        accessWidener(file("src/main/resources/antimatter.accesswidener"))
+    }
+
+    defaultRemapJar = false
+
+    mappings {
+        intermediary()
+        mojmap()
+        devFallbackNamespace "official"
+        devNamespace "mojmap"
+        parchment(rootProject.minecraft_version, rootProject.mappings_version)
+    }
+
+    mods {
+        remap(configurations.modCompileOnly){
+            catchAWNamespaceAssertion()
+            namespace("intermediary")
+        }
+        remap(configurations.modRuntimeOnly){
+            catchAWNamespaceAssertion()
+            namespace("intermediary")
+        }
+        modImplementation {
+            catchAWNamespaceAssertion()
+            namespace("intermediary")
+        }
+    }
+}
 
 repositories {
     maven {
@@ -8,19 +49,11 @@ repositories {
     maven { url "https://maven.bai.lol" }
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/antimatter.accesswidener")
-}
-
-boolean hasTesseract = findProject(':tesseract-common') != null
-
-
-
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
-    implementation(project(path: ":tesseract-common", configuration: "namedElements"))
+    implementation(project(path: ":tesseract-common"))
     modImplementation("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable"){
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")
@@ -35,7 +68,7 @@ dependencies{
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
     modCompileOnly("io.github.trinsdar:arrp:0.6.7")
-    modImplementation("com.gtnewhorizon.structurelib:structurelib-common:${project.structurelib_version}-${project.minecraft_version}")
+    implementation("com.gtnewhorizon.structurelib:structurelib-common:${project.structurelib_version}-${project.minecraft_version}")
     modImplementation "maven.modrinth:carbon-config:${project.carbon_config_fabric_version}"
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modImplementation("earth.terrarium:botarium-common-1.18.2:${project.botarium_version}")
@@ -44,13 +77,6 @@ dependencies{
         transitive = false
     }
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
-
-}
-
-architectury {
-    common("forge", "fabric")
 }
 
 publishing {
