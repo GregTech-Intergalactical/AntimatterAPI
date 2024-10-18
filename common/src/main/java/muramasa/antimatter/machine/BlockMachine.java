@@ -233,7 +233,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         return InteractionResult.SUCCESS;
                     }
                     if (getType().has(MachineFlag.GUI) && tile.canPlayerOpenGui(player)) {
-                        AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> {
+                        AntimatterPlatformUtils.INSTANCE.openGui((ServerPlayer) player, tile, extra -> {
                             extra.writeBlockPos(pos);
                         });
                         return InteractionResult.SUCCESS;

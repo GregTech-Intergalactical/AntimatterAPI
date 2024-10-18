@@ -333,12 +333,12 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         BlockState tBlock = aWorld.getBlockState(pos);
         if (tBlock.getMaterial() == Material.LAVA || tBlock.getMaterial() == Material.FIRE) return false;
         if (tBlock.getMaterial() == Material.CLOTH_DECORATION || tBlock.getCollisionShape(aWorld, pos).isEmpty()) {
-            if (AntimatterPlatformUtils.getFlammability(tBlock, aWorld, pos, Direction.NORTH) > 0) return aWorld.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
+            if (AntimatterPlatformUtils.INSTANCE.getFlammability(tBlock, aWorld, pos, Direction.NORTH) > 0) return aWorld.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
             if (aCheckFlammability) {
                 for (Direction tSide : Direction.values()) {
                     BlockState tAdjacent = aWorld.getBlockState(pos.relative(tSide));
                     if (tAdjacent.getBlock() == Blocks.CHEST || tAdjacent.getBlock() == Blocks.TRAPPED_CHEST) return aWorld.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
-                    if (AntimatterPlatformUtils.getFlammability(tAdjacent, aWorld, pos.relative(tSide), tSide.getOpposite()) > 0) return aWorld.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
+                    if (AntimatterPlatformUtils.INSTANCE.getFlammability(tAdjacent, aWorld, pos.relative(tSide), tSide.getOpposite()) > 0) return aWorld.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
                 }
             } else {
                 return aWorld.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);

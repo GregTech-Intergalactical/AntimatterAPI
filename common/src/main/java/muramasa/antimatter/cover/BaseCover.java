@@ -268,7 +268,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     }
 
     protected void markAndNotifySource(){
-        AntimatterPlatformUtils.markAndNotifyBlock(source().getTile().getLevel(), source().getTile().getBlockPos(), source().getTile().getLevel().getChunkAt(source().getTile().getBlockPos()), source().getTile().getBlockState(), source().getTile().getBlockState(), 1, 512);
+        AntimatterPlatformUtils.INSTANCE.markAndNotifyBlock(source().getTile().getLevel(), source().getTile().getBlockPos(), source().getTile().getLevel().getChunkAt(source().getTile().getBlockPos()), source().getTile().getBlockState(), source().getTile().getBlockState(), 1, 512);
     }
 
 }

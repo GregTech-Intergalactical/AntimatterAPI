@@ -116,7 +116,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             }
             JsonObject obj = (JsonObject) element;
             ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
-            Fluid fluid = AntimatterPlatformUtils.getFluidFromID(fluidName);
+            Fluid fluid = AntimatterPlatformUtils.INSTANCE.getFluidFromID(fluidName);
             if (fluid == null) {
                 return FluidHooks.emptyFluid();
             }

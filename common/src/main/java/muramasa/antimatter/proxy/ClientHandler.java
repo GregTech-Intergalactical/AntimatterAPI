@@ -83,8 +83,8 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.runLaterClient(() -> {
             Set<ResourceLocation> registered = new ObjectOpenHashSet<>();
             AntimatterAPI.all(MenuHandler.class, h -> {
-                if (!registered.contains(AntimatterPlatformUtils.getIdFromMenuType(h.getContainerType()))) {
-                    registered.add(AntimatterPlatformUtils.getIdFromMenuType(h.getContainerType()));
+                if (!registered.contains(AntimatterPlatformUtils.INSTANCE.getIdFromMenuType(h.getContainerType()))) {
+                    registered.add(AntimatterPlatformUtils.INSTANCE.getIdFromMenuType(h.getContainerType()));
                     MenuScreens.register(h.getContainerType(), AntimatterAPI.get(MenuScreens.ScreenConstructor.class, h.screenID(), h.screenDomain()));
                 }
             });

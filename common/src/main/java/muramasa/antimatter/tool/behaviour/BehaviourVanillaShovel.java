@@ -67,7 +67,7 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
     }
 
     private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
-        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
+        BlockState eventState = AntimatterPlatformUtils.INSTANCE.onToolUse(originalState, context, action);
         if (eventState != originalState) return eventState;
         Block flattened = FLATTENING_MAP.get(originalState.getBlock());
         if (flattened == null) return null;
@@ -81,7 +81,7 @@ public class BehaviourVanillaShovel implements IItemUse<IBasicAntimatterTool> {
     }
 
     private BlockState getFireModifiedState(BlockState originalState, BlockState changedState, UseOnContext context, String action) {
-        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
+        BlockState eventState = AntimatterPlatformUtils.INSTANCE.onToolUse(originalState, context, action);
         return eventState != originalState ? eventState : changedState;
     }
 

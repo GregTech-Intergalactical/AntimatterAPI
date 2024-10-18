@@ -43,7 +43,7 @@ public class BehaviourBlockTilling implements IItemUse<IBasicAntimatterTool> {
         if (c.getClickedFace() != Direction.DOWN && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
             BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c, "hoe_dig");
             if (blockstate == null) return InteractionResult.PASS;
-            if (AntimatterPlatformUtils.onUseHoe(c)) return InteractionResult.PASS;
+            if (AntimatterPlatformUtils.INSTANCE.onUseHoe(c)) return InteractionResult.PASS;
             Utils.damageStack(c.getItemInHand(), c.getPlayer());
             SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.HOE_TILL : instance.getAntimatterToolType().getUseSound();
             c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -54,7 +54,7 @@ public class BehaviourBlockTilling implements IItemUse<IBasicAntimatterTool> {
     }
 
     private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
-        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
+        BlockState eventState = AntimatterPlatformUtils.INSTANCE.onToolUse(originalState, context, action);
         return eventState != originalState ? eventState : TILLING_MAP.get(originalState);
     }
 

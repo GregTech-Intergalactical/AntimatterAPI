@@ -225,7 +225,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
                 CompoundTag cnbt = (CompoundTag) tank;
                 if (i > tanks.length - 1)
                     break;
-                tanks[i++].setFluid(0, AntimatterPlatformUtils.fromTag(cnbt));
+                tanks[i++].setFluid(0, AntimatterPlatformUtils.INSTANCE.fromTag(cnbt));
             }
         }
     }

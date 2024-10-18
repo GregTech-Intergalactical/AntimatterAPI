@@ -240,7 +240,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     protected Item.Properties prepareInstantiation(String domain) {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
-        return AntimatterPlatformUtils.getToolProperties(itemGroup, repairable);
+        return AntimatterPlatformUtils.INSTANCE.getToolProperties(itemGroup, repairable);
     }
 
     /* SETTERS */

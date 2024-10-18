@@ -47,13 +47,13 @@ public class CommonEvents {
 
 
     public static void lootTableLoad(LootTable table, ResourceLocation name){
-        if (AntimatterPlatformUtils.getLootTableID(table).getPath().startsWith("blocks/")) {
-            ResourceLocation blockId = new ResourceLocation(AntimatterPlatformUtils.getLootTableID(table).getNamespace(), name.getPath().replace("blocks/", ""));
-            if (AntimatterPlatformUtils.blockExists(blockId)) {
-                Block block = AntimatterPlatformUtils.getBlockFromId(blockId);
+        if (AntimatterPlatformUtils.INSTANCE.getLootTableID(table).getPath().startsWith("blocks/")) {
+            ResourceLocation blockId = new ResourceLocation(AntimatterPlatformUtils.INSTANCE.getLootTableID(table).getNamespace(), name.getPath().replace("blocks/", ""));
+            if (AntimatterPlatformUtils.INSTANCE.blockExists(blockId)) {
+                Block block = AntimatterPlatformUtils.INSTANCE.getBlockFromId(blockId);
                 //Antimatter.LOGGER.info(blockId.toString());
                 if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE) {
-                    AntimatterPlatformUtils.addPool(table, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(LootItem.lootTableItem(block)).build());
+                    AntimatterPlatformUtils.INSTANCE.addPool(table, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(LootItem.lootTableItem(block)).build());
                 }
             }
         }

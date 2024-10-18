@@ -806,7 +806,7 @@ public class Utils {
         BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
         if (tile.getLevel().isClientSide) {
             tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, 11);
-            AntimatterPlatformUtils.requestModelDataRefresh(tile);
+            AntimatterPlatformUtils.INSTANCE.requestModelDataRefresh(tile);
         }
     }
 
@@ -1086,18 +1086,18 @@ public class Utils {
         if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
         ServerPlayer serverPlayer = player == null ? null : ((ServerPlayer) player);
-        int exp = player == null ? -1 : AntimatterPlatformUtils.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
+        int exp = player == null ? -1 : AntimatterPlatformUtils.INSTANCE.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
         FluidState fluidState = world.getFluidState(pos);
         boolean destroyed = world.setBlockAndUpdate(pos, fluidState.createLegacyBlock());// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed) {
             if (player != null) {
-                if (AntimatterPlatformUtils.canHarvestBlock(state, world, pos, player)) {
+                if (AntimatterPlatformUtils.INSTANCE.canHarvestBlock(state, world, pos, player)) {
                     state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
                 }
                 stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             }
         }
-        if (exp > 0) AntimatterPlatformUtils.popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
+        if (exp > 0) AntimatterPlatformUtils.INSTANCE.popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
     }
 
@@ -1137,7 +1137,7 @@ public class Utils {
                 if (stack.isEmpty()) return;
                 if (stopped[0]) return;
                 BlockState state = world.getBlockState(b);
-                if (state.isAir() || !AntimatterPlatformUtils.isCorrectToolForDrops(state, player))
+                if (state.isAir() || !AntimatterPlatformUtils.INSTANCE.isCorrectToolForDrops(state, player))
                     return;
                 else if (state.is(BlockTags.LOGS)) {
                     if (breakBlock(world, player, stack, b, tool.getUseDurability())){

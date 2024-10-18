@@ -252,8 +252,8 @@ public class PropertyIngredient extends Ingredient {
             Set<ItemLike> itemProviders = new ObjectArraySet<>(size);
             for (int i = 0; i < size; i++) {
                 ResourceLocation name = new ResourceLocation(buffer.readUtf());
-                if (AntimatterPlatformUtils.itemExists(name)) {
-                    itemProviders.add(AntimatterPlatformUtils.getItemFromID(name));
+                if (AntimatterPlatformUtils.INSTANCE.itemExists(name)) {
+                    itemProviders.add(AntimatterPlatformUtils.INSTANCE.getItemFromID(name));
                 }
             }
             ItemStack[] stacks = new ItemStack[buffer.readVarInt()];
@@ -274,8 +274,8 @@ public class PropertyIngredient extends Ingredient {
             arr = json.getAsJsonArray("items");
             Set<ItemLike> items2 = new ObjectArraySet<>(arr.size());
             arr.forEach(el -> {
-                if (AntimatterPlatformUtils.itemExists(new ResourceLocation(el.getAsString())))
-                    items2.add(AntimatterPlatformUtils.getItemFromID(new ResourceLocation(el.getAsString())));
+                if (AntimatterPlatformUtils.INSTANCE.itemExists(new ResourceLocation(el.getAsString())))
+                    items2.add(AntimatterPlatformUtils.INSTANCE.getItemFromID(new ResourceLocation(el.getAsString())));
             });
             String ingId = json.get("id").getAsString();
             boolean inverse = json.get("inverse").getAsBoolean();

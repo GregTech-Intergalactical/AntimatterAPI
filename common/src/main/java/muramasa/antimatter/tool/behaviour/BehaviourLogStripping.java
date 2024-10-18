@@ -57,7 +57,7 @@ public class BehaviourLogStripping implements IItemUse<IBasicAntimatterTool> {
     }
 
     private BlockState getToolModifiedState(BlockState originalState, UseOnContext context, String action) {
-        BlockState eventState = AntimatterPlatformUtils.onToolUse(originalState, context, action);
+        BlockState eventState = AntimatterPlatformUtils.INSTANCE.onToolUse(originalState, context, action);
         if (eventState != originalState) return eventState;
         Block stripped = STRIPPING_MAP.get(originalState.getBlock());
         if (stripped == null) return null;

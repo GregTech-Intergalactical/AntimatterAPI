@@ -52,7 +52,7 @@ public class BlockFakeTile extends BlockBasic implements IRegistryEntryProvider,
             if (fakeBlock.getController() != null){
                 if (fakeBlock.getController().getMachineType().has(MachineFlag.GUI) && fakeBlock.getController().canPlayerOpenGui(player)) {
                     if (!level.isClientSide){
-                        AntimatterPlatformUtils.openGui((ServerPlayer) player, fakeBlock.getController(), extra -> {
+                        AntimatterPlatformUtils.INSTANCE.openGui((ServerPlayer) player, fakeBlock.getController(), extra -> {
                             extra.writeBlockPos(fakeBlock.getController().getBlockPos());
                         });
                     }

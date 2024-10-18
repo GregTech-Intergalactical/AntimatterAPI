@@ -84,7 +84,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
 
     private Item.Properties prepareInstantiation(String domain) {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterArmorType was instantiated with an empty domain name!");
-        return AntimatterPlatformUtils.getToolProperties(itemGroup, repairable);
+        return AntimatterPlatformUtils.INSTANCE.getToolProperties(itemGroup, repairable);
     }
 
     public AntimatterArmorType setOverlayLayers(int overlayLayers) {

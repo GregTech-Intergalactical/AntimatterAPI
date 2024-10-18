@@ -127,7 +127,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
     default boolean openGui(Player player, Direction side) {
         if (!hasGui())
             return false;
-        AntimatterPlatformUtils.openGui((ServerPlayer) player, this, packetBuffer -> {
+        AntimatterPlatformUtils.INSTANCE.openGui((ServerPlayer) player, this, packetBuffer -> {
             packetBuffer.writeBlockPos(this.source().getTile().getBlockPos());
             packetBuffer.writeInt(side.get3DDataValue());
         });

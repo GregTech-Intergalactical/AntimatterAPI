@@ -5,9 +5,11 @@ import carbonconfiglib.config.Config;
 import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSettings;
 import com.mojang.math.Matrix4f;
+import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.BlockAccessor;
 import io.github.fabricators_of_create.porting_lib.util.*;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
+import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
@@ -21,6 +23,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.tool.IAbstractToolMethods;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -34,6 +37,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -47,8 +51,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Fluid;
@@ -65,201 +72,278 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class AntimatterPlatformUtilsImpl {
+public class AntimatterPlatformUtilsImpl implements AntimatterPlatformUtils {
 
-    public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
+    @Override
+    public void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         LevelUtil.markAndNotifyBlock(level, arg, levelchunk, blockstate, arg2, j, k);
     }
 
-    public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
+    @Override
+    public CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
         return FabricItemGroupBuilder.build(new ResourceLocation(domain, id), iconSupplier);
     }
 
-    public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+    @Override
+    public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         Integer burn = FuelRegistry.INSTANCE.get(stack.getItem());
         return burn == null ? 0 : burn;
     }
 
-    public static int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
+    @Override
+    public int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
         return FlammableBlockRegistry.getDefaultInstance().get(state.getBlock()).getBurnChance();
     }
 
-    public static void setBurnTime(Item item, int burnTime){
+    @Override
+    public void setBurnTime(Item item, int burnTime){
         FuelRegistry.INSTANCE.add(item, burnTime);
     }
 
-    public static void setFlammability(Block block, int burn, int spread){
+    @Override
+    public void setFlammability(Block block, int burn, int spread){
         FlammableBlockRegistry.getDefaultInstance().add(block, burn, spread);
     }
 
-    public static Map<Item, Integer> getAllBurnables(){
+    @Override
+    public Map<Item, Integer> getAllBurnables(){
         return ((FuelRegistryImpl)FuelRegistry.INSTANCE).getFuelTimes();
     }
 
-    public static boolean isProduction(){
+    @Override
+    public boolean isProduction(){
         return !FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    public static String getActiveNamespace(){
+    @Override
+    public String getActiveNamespace(){
         return Ref.ID;
     }
 
-    public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
+    @Override
+    public void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
         NetworkUtil.openGui(player, containerSupplier, extraDataWriter);
     }
 
-    public static MinecraftServer getCurrentServer(){
+    @Override
+    public MinecraftServer getCurrentServer(){
         return ServerLifecycleHooks.getCurrentServer();
     }
-    public static boolean isFabric(){
+    @Override
+    public boolean isFabric(){
         return true;
     }
 
-    public static boolean isForge(){
+    @Override
+    public boolean isForge(){
         return false;
     }
 
-    public static String getModName(String modid){
+    @Override
+    public String getModName(String modid){
         return FabricLoader.getInstance().getModContainer(modid).map(m -> m.getMetadata().getName()).orElse(modid);
     }
 
-    public static boolean blockExists(ResourceLocation id){
+    @Override
+    public boolean blockExists(ResourceLocation id){
         return Registry.BLOCK.containsKey(id);
     }
 
-    public static boolean itemExists(ResourceLocation id){
+    @Override
+    public boolean itemExists(ResourceLocation id){
         return Registry.ITEM.containsKey(id);
     }
 
-    public static boolean fluidExists(ResourceLocation id){
+    @Override
+    public boolean fluidExists(ResourceLocation id){
         return Registry.FLUID.containsKey(id);
     }
 
-    public static Block getBlockFromId(ResourceLocation id){
+    @Override
+    public Block getBlockFromId(ResourceLocation id){
         return Registry.BLOCK.get(id);
     }
 
-    public static Item getItemFromID(ResourceLocation id){
+    @Override
+    public Item getItemFromID(ResourceLocation id){
         return Registry.ITEM.get(id);
     }
 
-    public static Fluid getFluidFromID(ResourceLocation id){
+    @Override
+    public Fluid getFluidFromID(ResourceLocation id){
         return Registry.FLUID.get(id);
     }
 
-    public static ResourceLocation getIdFromBlock(Block block){
+    @Override
+    public ResourceLocation getIdFromBlock(Block block){
         return Registry.BLOCK.getKey(block);
     }
 
-    public static ResourceLocation getIdFromItem(Item item){
+    @Override
+    public ResourceLocation getIdFromItem(Item item){
         return Registry.ITEM.getKey(item);
     }
 
-    public static ResourceLocation getIdFromFluid(Fluid fluid){
+    @Override
+    public ResourceLocation getIdFromFluid(Fluid fluid){
         return Registry.FLUID.getKey(fluid);
     }
 
-    public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
+    @Override
+    public ResourceLocation getIdFromMenuType(MenuType<?> menuType){
         return Registry.MENU.getKey(menuType);
     }
 
-    public static Collection<Item> getAllItems(){
+    @Override
+    public Collection<Item> getAllItems(){
         return Registry.ITEM.stream().toList();
     }
 
-    public static Collection<Fluid> getAllFluids(){
+    @Override
+    public Collection<Fluid> getAllFluids(){
         return Registry.FLUID.stream().toList();
     }
 
-    public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
+    @Override
+    public CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
         CraftingEvent event = new CraftingEvent();
         CraftingEvents.CRAFTING.invoker().onMaterialRegister(event);
         return event;
     }
 
-    public static void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
+    @Override
+    public void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
         LoaderEvents.LOADER.invoker().load(registrar, reg);
     }
 
-    public static ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
+    @Override
+    public ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
         ProvidersEvent providerEvent = new ProvidersEvent(side);
         ProviderEvents.PROVIDERS.invoker().onProvidersInit(providerEvent);
         return providerEvent;
     }
 
-    public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
+    @Override
+    public WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
         WorldGenEvent event = new WorldGenEvent();
         WorldGenEvents.WORLD_GEN.invoker().onWorldGen(event);
         return event;
     }
 
     //TODO
-    public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
+    @Override
+    public InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
         return null;
         //return ForgeEventFactory.onBucketUse(player, world, stack, trace);
     }
 
     //TODO
-    public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
+    @Override
+    public void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
         /*if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
             MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(machine, patterns));
         }*/
     }
 
-    public static Matrix4f createMatrix4f(float[] values){
+    @Override
+    public Matrix4f createMatrix4f(float[] values){
         return Matrix4fHelper.fromFloatArray(values);
     }
 
     //TODO
-    public static boolean isRepairable(ItemStack stack){
+    @Override
+    public boolean isRepairable(ItemStack stack){
         return true;
         //return stack.isRepairable();
     }
 
-    public static void addPool(LootTable table, LootPool pool){
+    @Override
+    public void addPool(LootTable table, LootPool pool){
         ((LootTableExtension)table).addPool(pool);
     }
 
-    public static ResourceLocation getLootTableID(LootTable table){
+    @Override
+    public ResourceLocation getLootTableID(LootTable table){
         return table.getLootTableId();
     }
 
-    public static boolean areCapsCompatible(ItemStack a, ItemStack b){
+    @Override
+    public boolean areCapsCompatible(ItemStack a, ItemStack b){
         return true; //TODO figure out compat for future forge abstraction layers
     }
 
-    public static Path getConfigDir(){
+    @Override
+    public Path getConfigDir(){
         return FabricLoader.getInstance().getConfigDir();
     }
 
-    public static ConfigHandler createConfig(String modid, Config config){
+    @Override
+    public ConfigHandler createConfig(String modid, Config config){
         return CarbonConfig.createConfig(modid, config);
     }
 
-    public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
+    @Override
+    public ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
         return CarbonConfig.createConfig(modid, config, settings);
     }
 
-    public static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
         return new ExtendedScreenHandlerType<>(factory::apply);
     }
 
-    public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
+    @Override
+    public Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
         FabricItemSettings properties = new FabricItemSettings().group(group);
         properties.customDamage(IAbstractToolMethods::damageItemStatic);
         return properties;
     }
 
-    public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
+    @Override
+    public boolean isCorrectTierForDrops(Tier tier, BlockState state){
         return TierSortingRegistry.isCorrectTierForDrops(tier, state);
     }
 
     //TODO make this use fabric events, if they exist
-    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+    @Override
+    public BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
         return originalState;
     }
 
-    public static boolean onUseHoe(UseOnContext context){
+    @Override
+    public boolean onUseHoe(UseOnContext context){
         return false;
+    }
+
+    @Override
+    public void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
+        ((BlockAccessor)block).port_lib$popExperience(level, pos, exp);
+    }
+
+    @Override
+    public void requestModelDataRefresh(BlockEntity tile){
+    }
+
+    @Override
+    public boolean isCorrectToolForDrops(BlockState state, Player player){
+        if (!state.requiresCorrectToolForDrops()){
+            //TODO
+            //return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
+        }
+
+        return player.hasCorrectToolForDrops(state);
+    }
+
+    @Override
+    public int onBlockBreakEvent(Level level, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
+    {
+        return PortingHooks.onBlockBreakEvent(level, gameType, entityPlayer, pos);
+    }
+
+    //TODO
+    @Override
+    public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
+        return isCorrectToolForDrops(state, player);
+        //return state.canHarvestBlock(level, pos, player);
     }
 }

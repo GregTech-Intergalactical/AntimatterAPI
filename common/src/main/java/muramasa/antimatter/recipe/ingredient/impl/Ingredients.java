@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class Ingredients {
 
-    public static final Ingredient BURNABLES = Ingredient.of(AntimatterPlatformUtils.getAllItems().stream().map(Item::getDefaultInstance).filter(t -> AntimatterPlatformUtils.getBurnTime(t, null) > 0));
+    public static final Ingredient BURNABLES = Ingredient.of(AntimatterPlatformUtils.INSTANCE.getAllItems().stream().map(Item::getDefaultInstance).filter(t -> AntimatterPlatformUtils.INSTANCE.getBurnTime(t, null) > 0));
 
     public static final RecyclerIngredient RECYCLABLE = new RecyclerIngredient();
 

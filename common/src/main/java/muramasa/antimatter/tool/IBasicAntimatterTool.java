@@ -94,7 +94,7 @@ public interface IBasicAntimatterTool extends IAntimatterObject, IColorHandler, 
                 break;
             }
         }
-        return containsEffectiveBlock && AntimatterPlatformUtils.isCorrectTierForDrops(getTier(stack), state);
+        return containsEffectiveBlock && AntimatterPlatformUtils.INSTANCE.isCorrectTierForDrops(getTier(stack), state);
     }
 
     default float getDefaultMiningSpeed(ItemStack stack){

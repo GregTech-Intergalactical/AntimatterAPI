@@ -168,7 +168,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     private RecipeManager getRecipeManager(){
         if (AntimatterAPI.getSIDE().isServer()){
-            return AntimatterPlatformUtils.getCurrentServer().getRecipeManager();
+            return AntimatterPlatformUtils.INSTANCE.getCurrentServer().getRecipeManager();
         } else {
             if (getWorld() == null) return null;
             return getWorld().getRecipeManager();
@@ -245,7 +245,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
             if (tuple.workstations.isEmpty()) return;
             tuple.workstations.forEach(s -> {
-                ItemLike item = AntimatterPlatformUtils.getItemFromID(s);
+                ItemLike item = AntimatterPlatformUtils.INSTANCE.getItemFromID(s);
                 if (item == Items.AIR) return;
                 registration.addRecipeCatalyst(new ItemStack(item), tuple.map.getLoc());
             });

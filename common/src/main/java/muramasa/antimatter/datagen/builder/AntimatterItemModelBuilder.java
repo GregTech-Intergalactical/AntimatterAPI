@@ -51,7 +51,7 @@ public class AntimatterItemModelBuilder extends AntimatterModelBuilder<Antimatte
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid, boolean tint, boolean islighter) {
-        property("fluid", AntimatterPlatformUtils.getIdFromFluid(fluid).toString());
+        property("fluid", AntimatterPlatformUtils.INSTANCE.getIdFromFluid(fluid).toString());
         property("flipGas", islighter);
         property("applyTint", tint);
         // property("coverIsMask", false);

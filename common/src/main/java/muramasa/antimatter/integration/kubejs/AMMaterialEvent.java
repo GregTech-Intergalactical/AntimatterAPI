@@ -27,9 +27,9 @@ public class AMMaterialEvent extends EventJS {
         if (material1 == Material.NULL){
             return;
         }
-        if (!AntimatterPlatformUtils.itemExists(new ResourceLocation(item))){
+        if (!AntimatterPlatformUtils.INSTANCE.itemExists(new ResourceLocation(item))){
             return;
         }
-        type.replacement(material1, () -> AntimatterPlatformUtils.getItemFromID(new ResourceLocation(item)));
+        type.replacement(material1, () -> AntimatterPlatformUtils.INSTANCE.getItemFromID(new ResourceLocation(item)));
     }
 }

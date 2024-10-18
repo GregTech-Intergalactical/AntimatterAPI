@@ -209,9 +209,9 @@ public class Antimatter extends AntimatterMod {
                 if (map != null){
                     map.forEach((t, i) -> {
                         if (t instanceof MaterialTypeItem<?> typeItem){
-                            AntimatterPlatformUtils.setBurnTime(typeItem.get(m), i);
+                            AntimatterPlatformUtils.INSTANCE.setBurnTime(typeItem.get(m), i);
                         } else if (t instanceof MaterialTypeBlock<?> typeBlock && typeBlock.get() instanceof MaterialTypeBlock.IBlockGetter blockGetter){
-                            AntimatterPlatformUtils.setBurnTime(blockGetter.get(m).asItem(), i);
+                            AntimatterPlatformUtils.INSTANCE.setBurnTime(blockGetter.get(m).asItem(), i);
                         }
                     });
                 }

@@ -316,7 +316,7 @@ public class Recipe implements IRecipe {
         if (fluidsOutput != null) {
             builder.append("Output Fluids: { ");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(AntimatterPlatformUtils.getIdFromFluid(fluidsOutput[i].getFluid())).append(": ").append(fluidsOutput[i].getFluidAmount() / TesseractGraphWrappers.dropletMultiplier).append("mb");
+                builder.append(AntimatterPlatformUtils.INSTANCE.getIdFromFluid(fluidsOutput[i].getFluid())).append(": ").append(fluidsOutput[i].getFluidAmount() / TesseractGraphWrappers.dropletMultiplier).append("mb");
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");

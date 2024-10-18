@@ -255,7 +255,7 @@ public class BlockEntityBasicMultiMachine<T extends BlockEntityBasicMultiMachine
 
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         super.serverTick(level, pos, state);
-        if (level.getGameTime() % 100 == 0 && !validStructure && checkingStructure == 0 && !AntimatterPlatformUtils.isProduction()){
+        if (level.getGameTime() % 100 == 0 && !validStructure && checkingStructure == 0 && !AntimatterPlatformUtils.INSTANCE.isProduction()){
             //checkStructure();
         }
     }

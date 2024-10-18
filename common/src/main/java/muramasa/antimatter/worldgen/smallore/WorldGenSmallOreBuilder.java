@@ -60,7 +60,7 @@ public class WorldGenSmallOreBuilder {
 
 
     private WorldGenVein readJson(WorldGenVein original){
-        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/small_ore/overrides");
+        File dir = new File(AntimatterPlatformUtils.INSTANCE.getConfigDir().toFile(), "antimatter/small_ore/overrides");
         File target = new File(dir, id + ".json");
 
 

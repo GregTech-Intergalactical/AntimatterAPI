@@ -29,7 +29,7 @@ public class CookingRecipeHandler<T extends BlockEntityMachine<T>> extends Machi
             return !stack.isEmpty();
         }
         if (!(stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), false)).orElse(Collections.emptyList())).isEmpty()) {
-            burnDuration += AntimatterPlatformUtils.getBurnTime(stack.get(0), null) * burnMultiplier;
+            burnDuration += AntimatterPlatformUtils.INSTANCE.getBurnTime(stack.get(0), null) * burnMultiplier;
             return true;
         }
         return false;

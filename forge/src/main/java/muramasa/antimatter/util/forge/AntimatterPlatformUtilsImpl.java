@@ -32,6 +32,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -45,14 +46,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.TierSortingRegistry;
@@ -80,39 +85,46 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class AntimatterPlatformUtilsImpl {
+public class AntimatterPlatformUtilsImpl implements AntimatterPlatformUtils {
 
     private static ImmutableMap<Item, Integer> FUEL_LIST = null;
 
-    public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
+    @Override
+    public void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         level.markAndNotifyBlock(arg, levelchunk, blockstate, arg2, j, k);
     }
 
-    public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
+    @Override
+    public CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
         return new AntimatterItemGroup(domain, id, iconSupplier);
     }
 
-    public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+    @Override
+    public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         return ForgeHooks.getBurnTime(stack, recipeType);
     }
 
-    public static int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
+    @Override
+    public int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
         return state.getFlammability(level, pos, face);
     }
 
-    public static void setBurnTime(Item item, int burnTime){
+    @Override
+    public void setBurnTime(Item item, int burnTime){
         TerraformFuelRegistry.addFuel(item, burnTime);
     }
 
-    public static void setFlammability(Block block, int burn, int spread){
+    @Override
+    public void setFlammability(Block block, int burn, int spread){
         TerraformFlammableBlockRegistry.addFlammableBlock(block, burn, spread);
     }
 
-    public static Map<Item, Integer> getAllBurnables(){
+    @Override
+    public Map<Item, Integer> getAllBurnables(){
         if (FUEL_LIST == null){
             ForgeHooks.updateBurns();
             ImmutableMap.Builder<Item, Integer> builder = ImmutableMap.builder();
-            AntimatterPlatformUtils.getAllItems().forEach(i -> {
+            AntimatterPlatformUtils.INSTANCE.getAllItems().forEach(i -> {
                 int burnTime = getBurnTime(i.getDefaultInstance(), null);
                 if (burnTime > 0){
                     builder.put(i, burnTime);
@@ -123,114 +135,131 @@ public class AntimatterPlatformUtilsImpl {
         return FUEL_LIST;
     }
 
-    public static boolean isServer(){
-        return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();
-    }
-
-    public static MinecraftServer getCurrentServer(){
+    @Override
+    public MinecraftServer getCurrentServer(){
         return ServerLifecycleHooks.getCurrentServer();
     }
 
-    public static boolean isClient(){
-        return FMLEnvironment.dist.isClient() || EffectiveSide.get().isClient();
-    }
-
-    public static boolean isProduction(){
+    @Override
+    public boolean isProduction(){
         return FMLEnvironment.production;
     }
 
-    public static String getActiveNamespace(){
+    @Override
+    public String getActiveNamespace(){
         return ModLoadingContext.get().getActiveNamespace();
     }
 
-    public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
+    @Override
+    public void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
         NetworkHooks.openGui(player, containerSupplier, extraDataWriter);
     }
 
-    public static boolean isFabric(){
+    @Override
+    public boolean isFabric(){
         return false;
     }
 
-    public static boolean isForge(){
+    @Override
+    public boolean isForge(){
         return true;
     }
 
-    public static String getModName(String modid){
+    @Override
+    public String getModName(String modid){
         return ModList.get().getModContainerById(modid).map(m -> m.getModInfo().getDisplayName()).orElse(modid);
     }
 
-    public static boolean blockExists(ResourceLocation id){
+    @Override
+    public boolean blockExists(ResourceLocation id){
         return ForgeRegistries.BLOCKS.containsKey(id);
     }
 
-    public static boolean itemExists(ResourceLocation id){
+    @Override
+    public boolean itemExists(ResourceLocation id){
         return ForgeRegistries.ITEMS.containsKey(id);
     }
 
-    public static boolean fluidExists(ResourceLocation id){
+    @Override
+    public boolean fluidExists(ResourceLocation id){
         return ForgeRegistries.FLUIDS.containsKey(id);
     }
 
-    public static Block getBlockFromId(ResourceLocation id){
+    @Override
+    public Block getBlockFromId(ResourceLocation id){
         return ForgeRegistries.BLOCKS.getValue(id);
     }
 
-    public static Item getItemFromID(ResourceLocation id){
+    @Override
+    public Item getItemFromID(ResourceLocation id){
         return ForgeRegistries.ITEMS.getValue(id);
     }
 
-    public static Fluid getFluidFromID(ResourceLocation id){
+    @Override
+    public Fluid getFluidFromID(ResourceLocation id){
         return ForgeRegistries.FLUIDS.getValue(id);
     }
 
-    public static ResourceLocation getIdFromBlock(Block block){
+    @Override
+    public ResourceLocation getIdFromBlock(Block block){
         return ForgeRegistries.BLOCKS.getKey(block);
     }
 
-    public static ResourceLocation getIdFromItem(Item item){
+    @Override
+    public ResourceLocation getIdFromItem(Item item){
         return ForgeRegistries.ITEMS.getKey(item);
     }
 
-    public static ResourceLocation getIdFromFluid(Fluid fluid){
+    @Override
+    public ResourceLocation getIdFromFluid(Fluid fluid){
         return ForgeRegistries.FLUIDS.getKey(fluid);
     }
 
-    public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
+    @Override
+    public ResourceLocation getIdFromMenuType(MenuType<?> menuType){
         return ForgeRegistries.CONTAINERS.getKey(menuType);
     }
 
-    public static Block getBlockFromId(String domain, String id){
+    @Override
+    public Block getBlockFromId(String domain, String id){
         return getBlockFromId(new ResourceLocation(domain, id));
     }
 
-    public static Item getItemFromID(String domain, String id){
+    @Override
+    public Item getItemFromID(String domain, String id){
         return getItemFromID(new ResourceLocation(domain, id));
     }
 
-    public static Fluid getFluidFromID(String domain, String id){
+    @Override
+    public Fluid getFluidFromID(String domain, String id){
         return getFluidFromID(new ResourceLocation(domain, id));
     }
 
-    public static Collection<Item> getAllItems(){
+    @Override
+    public Collection<Item> getAllItems(){
         return ForgeRegistries.ITEMS.getValues();
     }
 
-    public static Collection<Fluid> getAllFluids(){
+    @Override
+    public Collection<Fluid> getAllFluids(){
         return ForgeRegistries.FLUIDS.getValues();
     }
 
-    public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
+    @Override
+    public CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
         CraftingEvent event = new CraftingEvent();
         AntimatterCraftingEvent ev = new AntimatterCraftingEvent(registrar, event);
         ModLoader.get().postEvent(ev);
         return event;
     }
 
-    public static void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
+    @Override
+    public void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
         MinecraftForge.EVENT_BUS.post(new AntimatterLoaderEvent(registrar, reg));
     }
 
-    public static ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
+    @Override
+    public ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
         ProvidersEvent providerEvent = new ProvidersEvent(side);
         AntimatterProvidersEvent ev = new AntimatterProvidersEvent(providerEvent, registrar);
         ModLoader.get().postEvent(ev);
@@ -238,82 +267,115 @@ public class AntimatterPlatformUtilsImpl {
         return providerEvent;
     }
 
-    public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
+    @Override
+    public WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
         WorldGenEvent event = new WorldGenEvent();
         AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE, event);
         MinecraftForge.EVENT_BUS.post(ev);
         return event;
     }
 
-    public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
+    @Override
+    public InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
         return ForgeEventFactory.onBucketUse(player, world, stack, trace);
     }
 
-    public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {
-        buf.writeFluidStack(stack);
-    }
-
-    public static FluidStack readFluidStack(FriendlyByteBuf buf) {
-        return buf.readFluidStack();
-    }
-
-    public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
+    @Override
+    public void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
         /*if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
             MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(machine, patterns));
         }*/
     }
 
-    public static Matrix4f createMatrix4f(float[] values){
+    @Override
+    public Matrix4f createMatrix4f(float[] values){
         return new Matrix4f(values);
     }
 
-    public static boolean isRepairable(ItemStack stack){
+    @Override
+    public boolean isRepairable(ItemStack stack){
         return stack.isRepairable();
     }
 
-    public static void addPool(LootTable table, LootPool pool){
+    @Override
+    public void addPool(LootTable table, LootPool pool){
         table.addPool(pool);
     }
 
-    public static ResourceLocation getLootTableID(LootTable table){
+    @Override
+    public ResourceLocation getLootTableID(LootTable table){
         return table.getLootTableId();
     }
 
-    public static boolean areCapsCompatible(ItemStack a, ItemStack b){
+    @Override
+    public boolean areCapsCompatible(ItemStack a, ItemStack b){
         return a.areCapsCompatible(b);
     }
 
-    public static Path getConfigDir(){
+    @Override
+    public Path getConfigDir(){
         return FMLPaths.CONFIGDIR.get();
     }
 
-    public static ConfigHandler createConfig(String modid, Config config){
+    @Override
+    public ConfigHandler createConfig(String modid, Config config){
         return CarbonConfig.CONFIGS.createConfig(config);
     }
 
-    public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
+    @Override
+    public ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
         return CarbonConfig.CONFIGS.createConfig(config, settings);
     }
 
-    public static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
         return IForgeMenuType.create(factory::apply);
     }
 
-    public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
+    @Override
+    public Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
         Item.Properties properties = new Item.Properties().tab(group);
         if (!repairable) properties.setNoRepair();
         return properties;
     }
 
-    public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
+    @Override
+    public boolean isCorrectTierForDrops(Tier tier, BlockState state){
         return TierSortingRegistry.isCorrectTierForDrops(tier, state);
     }
 
-    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
+    @Override
+    public BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
         return ForgeEventFactory.onToolUse(originalState, context, ToolAction.get(action), false);
     }
 
-    public static boolean onUseHoe(UseOnContext context){
+    @Override
+    public boolean onUseHoe(UseOnContext context){
         return MinecraftForge.EVENT_BUS.post(new UseHoeEvent(context));
+    }
+
+    @Override
+    public void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
+        block.popExperience(level, pos, exp);
+    }
+
+    @Override
+    public void requestModelDataRefresh(BlockEntity tile){
+        ModelDataManager.requestModelDataRefresh(tile);
+    }
+
+    @Override
+    public boolean isCorrectToolForDrops(BlockState state, Player player){
+        return ForgeHooks.isCorrectToolForDrops(state, player);
+    }
+
+    @Override
+    public int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos){
+        return ForgeHooks.onBlockBreakEvent(world, gameType, player, pos);
+    }
+
+    @Override
+    public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
+        return state.canHarvestBlock(level, pos, player);
     }
 }

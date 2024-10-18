@@ -69,7 +69,7 @@ public class RecipeMapDisplay implements Display {
                     components.add(c);
                 }
                 if (recipe.getId() != null){
-                    components.add(Utils.literal("Recipe by: ").append(Utils.literal(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                    components.add(Utils.literal("Recipe by: ").append(Utils.literal(AntimatterPlatformUtils.INSTANCE.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
                     Minecraft minecraft = Minecraft.getInstance();
                     boolean showAdvanced = minecraft.options.advancedItemTooltips || Screen.hasShiftDown();
                     if (showAdvanced){
@@ -87,7 +87,7 @@ public class RecipeMapDisplay implements Display {
             fluidStackEntryStack.setting(EntryStack.Settings.TOOLTIP_PROCESSOR, (entry, t) -> {
                 createFluidTooltip(t, fluidStackEntryStack.getValue());
                 if (recipe.getId() != null){
-                    t.add(Utils.literal("Recipe by: ").append(Utils.literal(AntimatterPlatformUtils.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                    t.add(Utils.literal("Recipe by: ").append(Utils.literal(AntimatterPlatformUtils.INSTANCE.getModName(recipe.getId().getNamespace())).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
                     Minecraft minecraft = Minecraft.getInstance();
                     boolean showAdvanced = minecraft.options.advancedItemTooltips || Screen.hasShiftDown();
                     if (showAdvanced){

@@ -119,7 +119,7 @@ public class AntimatterDynamics {
 
     public static void runDataProvidersDynamically() {
         AntimatterBlockLootProvider.init();
-        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(AntimatterAPI.getSIDE(), Antimatter.INSTANCE);
+        ProvidersEvent ev = AntimatterPlatformUtils.INSTANCE.postProviderEvent(AntimatterAPI.getSIDE(), Antimatter.INSTANCE);
         Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
@@ -129,8 +129,8 @@ public class AntimatterDynamics {
         AntimatterTagProvider.afterCompletion();
         AntimatterBlockLootProvider.afterCompletion();
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
-        if (AntimatterConfig.EXPORT_DEFAULT_RECIPES.get() || !AntimatterPlatformUtils.isProduction()) {
-            RUNTIME_DATA_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
+        if (AntimatterConfig.EXPORT_DEFAULT_RECIPES.get() || !AntimatterPlatformUtils.INSTANCE.isProduction()) {
+            RUNTIME_DATA_PACK.dump(AntimatterPlatformUtils.INSTANCE.getConfigDir().getParent().resolve("dumped"));
         }
     }
 
@@ -144,8 +144,8 @@ public class AntimatterDynamics {
         providers.forEach(IAntimatterProvider::onCompletion);
         AntimatterLanguageProvider.postCompletion();
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
-        if (!AntimatterPlatformUtils.isProduction()) {
-            DYNAMIC_RESOURCE_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
+        if (!AntimatterPlatformUtils.INSTANCE.isProduction()) {
+            DYNAMIC_RESOURCE_PACK.dump(AntimatterPlatformUtils.INSTANCE.getConfigDir().getParent().resolve("dumped"));
         }
     }
 
@@ -155,7 +155,7 @@ public class AntimatterDynamics {
      * @param rec consumer for IFinishedRecipe.
      */
     public static void collectRecipes(AntimatterRecipeProvider provider, Consumer<FinishedRecipe> rec) {
-        CraftingEvent ev = AntimatterPlatformUtils.postCraftingEvent(Antimatter.INSTANCE);
+        CraftingEvent ev = AntimatterPlatformUtils.INSTANCE.postCraftingEvent(Antimatter.INSTANCE);
         for (ICraftingLoader loader : ev.getLoaders()) {
             loader.loadRecipes(rec, provider);
         }
@@ -238,7 +238,7 @@ public class AntimatterDynamics {
             filter = Collections.emptySet();
         }
         Map<ResourceLocation, IRecipeRegistrate.IRecipeLoader> loaders = new Object2ObjectOpenHashMap<>(30);
-        AntimatterPlatformUtils.postLoaderEvent(Antimatter.INSTANCE, (a, b, c) -> {
+        AntimatterPlatformUtils.INSTANCE.postLoaderEvent(Antimatter.INSTANCE, (a, b, c) -> {
             if (filter.contains(new ResourceLocation(a, b)))
                 return;
             if (loaders.put(new ResourceLocation(a, b), c) != null) {
@@ -261,7 +261,7 @@ public class AntimatterDynamics {
             runRegular = !ev.disableBuiltin;
         }
         if (runRegular) {
-            WorldGenEvent ev = AntimatterPlatformUtils.postWorldEvent(Antimatter.INSTANCE);
+            WorldGenEvent ev = AntimatterPlatformUtils.INSTANCE.postWorldEvent(Antimatter.INSTANCE);
             veins.addAll(ev.VEINS);
             veins.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenVeinLayer.class, WorldGenVeinLayer::fromJson, "vein_layers"));
             smallOres.addAll(ev.SMALL_ORES);

@@ -28,11 +28,11 @@ public class Ref {
     /**
      * Creative Tabs
      **/
-    public static final CreativeModeTab TAB_ITEMS = AntimatterPlatformUtils.createTab(ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final CreativeModeTab TAB_TOOLS = AntimatterPlatformUtils.createTab(ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final CreativeModeTab TAB_BLOCKS = AntimatterPlatformUtils.createTab(ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final CreativeModeTab TAB_MATERIALS = AntimatterPlatformUtils.createTab(ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final CreativeModeTab TAB_MACHINES = AntimatterPlatformUtils.createTab(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_ITEMS = AntimatterPlatformUtils.INSTANCE.createTab(ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_TOOLS = AntimatterPlatformUtils.INSTANCE.createTab(ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_BLOCKS = AntimatterPlatformUtils.INSTANCE.createTab(ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_MATERIALS = AntimatterPlatformUtils.INSTANCE.createTab(ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_MACHINES = AntimatterPlatformUtils.INSTANCE.createTab(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
 
     /**
      * Sound Events

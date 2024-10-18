@@ -59,142 +59,72 @@ import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-    @ExpectPlatform
-    public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
-        throw new AssertionError();
-    }
+
 public interface AntimatterPlatformUtils {
     AntimatterPlatformUtils INSTANCE = ImplLoader.load(AntimatterPlatformUtils.class);
 
-    @ExpectPlatform
-    public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
-        throw new AssertionError();
-    }
+    void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k);
 
-    @ExpectPlatform
-    public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
-        throw new AssertionError();
-    }
+    CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier);
 
-    @ExpectPlatform
-    public static int getFlammability(BlockState state, Level level, BlockPos pos, Direction face) {
-        throw new AssertionError();
-    }
+    int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType);
 
-    @ExpectPlatform
-    public static void setBurnTime(Item item, int burnTime){
-        throw new AssertionError();
-    }
+    int getFlammability(BlockState state, Level level, BlockPos pos, Direction face);
 
-    @ExpectPlatform
-    public static void setFlammability(Block block, int burn, int spread){
-        throw new AssertionError();
-    }
+    void setBurnTime(Item item, int burnTime);
 
-    @ExpectPlatform
-    public static boolean isProduction(){
-        throw new AssertionError();
-    }
+    void setFlammability(Block block, int burn, int spread);
 
-    @ExpectPlatform
-    public static String getActiveNamespace(){
-        throw new AssertionError();
-    }
+    boolean isProduction();
 
-    @ExpectPlatform
-    public static Map<Item, Integer> getAllBurnables(){
-        throw new AssertionError();
-    }
+    String getActiveNamespace();
 
-    @ExpectPlatform
-    public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
-        throw new AssertionError();
-    }
+    Map<Item, Integer> getAllBurnables();
 
-    @ExpectPlatform
-    public static MinecraftServer getCurrentServer(){
-        throw new AssertionError();
-    }
+    void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter);
 
-    @ExpectPlatform
-    public static boolean isFabric(){
-        throw new AssertionError();
-    }
+    MinecraftServer getCurrentServer();
 
-    @ExpectPlatform
-    public static boolean isForge(){
-        throw new AssertionError();
-    }
+    boolean isFabric();
 
-    @ExpectPlatform
-    public static String getModName(String modid){
-        throw new AssertionError();
-    }
+    boolean isForge();
 
-    @ExpectPlatform
-    public static boolean blockExists(ResourceLocation id){
-        throw new AssertionError();
-    }
+    String getModName(String modid);
 
-    @ExpectPlatform
-    public static boolean itemExists(ResourceLocation id){
-        throw new AssertionError();
-    }
+    boolean blockExists(ResourceLocation id);
 
-    @ExpectPlatform
-    public static boolean fluidExists(ResourceLocation id){
-        throw new AssertionError();
-    }
+    boolean itemExists(ResourceLocation id);
 
-    @ExpectPlatform
-    public static Block getBlockFromId(ResourceLocation id){
-        throw new AssertionError();
-    }
+    boolean fluidExists(ResourceLocation id);
 
-    @ExpectPlatform
-    public static Item getItemFromID(ResourceLocation id){
-        throw new AssertionError();
-    }
+    Block getBlockFromId(ResourceLocation id);
 
-    @ExpectPlatform
-    public static Fluid getFluidFromID(ResourceLocation id){
-        throw new AssertionError();
-    }
+    Item getItemFromID(ResourceLocation id);
 
-    @ExpectPlatform
-    public static ResourceLocation getIdFromBlock(Block block){
-        throw new AssertionError();
-    }
+    Fluid getFluidFromID(ResourceLocation id);
 
-    @ExpectPlatform
-    public static ResourceLocation getIdFromItem(Item item){
-        throw new AssertionError();
-    }
+    ResourceLocation getIdFromBlock(Block block);
 
-    @ExpectPlatform
-    public static ResourceLocation getIdFromFluid(Fluid fluid){
-        throw new AssertionError();
-    }
+    ResourceLocation getIdFromItem(Item item);
 
-    @ExpectPlatform
-    public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
-        throw new AssertionError();
-    }
+    ResourceLocation getIdFromFluid(Fluid fluid);
 
-    public static Block getBlockFromId(String domain, String id){
+    ResourceLocation getIdFromMenuType(MenuType<?> menuType);
+
+    default Block getBlockFromId(String domain, String id){
         return getBlockFromId(new ResourceLocation(domain, id));
     }
 
-    public static Item getItemFromID(String domain, String id){
+    default Item getItemFromID(String domain, String id){
         return getItemFromID(new ResourceLocation(domain, id));
     }
 
-    public static Fluid getFluidFromID(String domain, String id){
+    default Fluid getFluidFromID(String domain, String id){
         return getFluidFromID(new ResourceLocation(domain, id));
     }
 
-    public static FluidHolder fromTag(CompoundTag tag){
-        if (AntimatterPlatformUtils.isForge()){
+    default FluidHolder fromTag(CompoundTag tag){
+        if (isForge()){
             if (tag == null) {
                 return FluidHooks.emptyFluid();
             }
@@ -216,137 +146,55 @@ public interface AntimatterPlatformUtils {
         return FluidHooks.fluidFromCompound(tag);
     }
 
-    @ExpectPlatform
-    public static Collection<Item> getAllItems(){
-        throw new AssertionError();
-    }
+    Collection<Item> getAllItems();
 
-    @ExpectPlatform
-    public static Collection<Fluid> getAllFluids(){
-        throw new AssertionError();
-    }
+    Collection<Fluid> getAllFluids();
 
-    @ExpectPlatform
-    public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
-        throw new AssertionError();
-    }
+    CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar);
 
-    @ExpectPlatform
-    public static void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
-        throw new AssertionError();
-    }
+    void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg);
 
-    @ExpectPlatform
-    public static void postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
-        throw new AssertionError();
-    }
+    ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar);
 
-    @ExpectPlatform
-    public static ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
-        throw new AssertionError();
-    }
+    WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar);
 
-    @ExpectPlatform
-    public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
-        throw new AssertionError();
-    }
+    InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace);
 
-    @ExpectPlatform
-    public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
-        throw new AssertionError();
-    }
+    void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns);
 
-    @ExpectPlatform
-    public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
-        throw new AssertionError();
-    }
+    Matrix4f createMatrix4f(float[] values);
 
-    @ExpectPlatform
-    public static Matrix4f createMatrix4f(float[] values){
-        throw new AssertionError();
-    }
+    boolean isRepairable(ItemStack stack);
 
-    @ExpectPlatform
-    public static boolean isRepairable(ItemStack stack){
-        throw new AssertionError();
-    }
+    void addPool(LootTable table, LootPool pool);
 
-    @ExpectPlatform
-    public static void addPool(LootTable table, LootPool pool){
-        throw new AssertionError();
-    }
+    ResourceLocation getLootTableID(LootTable table);
 
-    @ExpectPlatform
-    public static ResourceLocation getLootTableID(LootTable table){
-        throw new AssertionError();
-    }
+    boolean areCapsCompatible(ItemStack a, ItemStack b);
 
-    @ExpectPlatform
-    public static boolean areCapsCompatible(ItemStack a, ItemStack b){
-        throw new AssertionError();
-    }
+    Path getConfigDir();
 
-    @ExpectPlatform
-    public static Path getConfigDir(){
-        throw new AssertionError();
-    }
+    ConfigHandler createConfig(String modid, Config config);
 
-    @ExpectPlatform
-    public static ConfigHandler createConfig(String modid, Config config){
-        throw new AssertionError();
-    }
+    ConfigHandler createConfig(String modid, Config config, ConfigSettings settings);
 
-    @ExpectPlatform
-    public static ConfigHandler createConfig(String modid, Config config, ConfigSettings settings){
-        throw new AssertionError();
-    }
+    <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory);
 
-    @ExpectPlatform
-    public static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
-        throw new AssertionError();
-    }
+    Item.Properties getToolProperties(CreativeModeTab group, boolean repairable);
 
-    @ExpectPlatform
-    public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
-        throw new AssertionError();
-    }
+    boolean isCorrectTierForDrops(Tier tier, BlockState state);
 
-    @ExpectPlatform
-    public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
-        throw new AssertionError();
-    }
+    BlockState onToolUse(BlockState originalState, UseOnContext context, String action);
 
-    @ExpectPlatform
-    public static BlockState onToolUse(BlockState originalState, UseOnContext context, String action){
-        throw new AssertionError();
-    }
+    boolean onUseHoe(UseOnContext context);
 
-    @ExpectPlatform
-    public static boolean onUseHoe(UseOnContext context){
-        throw new AssertionError();
-    }
+    void requestModelDataRefresh(BlockEntity tile);
 
-    @ExpectPlatform
-    public static void requestModelDataRefresh(BlockEntity tile){
-        throw new AssertionError();
-    }
+    void popExperience(Block block, ServerLevel level, BlockPos pos, int exp);
 
-    @ExpectPlatform
-    static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
-    }
+    boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player);
 
-    @ExpectPlatform
-    public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
-        throw new AssertionError();
-    }
+    int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos);
 
-    @ExpectPlatform
-    public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static boolean isCorrectToolForDrops(BlockState state, Player player){
-        return false;
-    }
+    boolean isCorrectToolForDrops(BlockState state, Player player);
 }

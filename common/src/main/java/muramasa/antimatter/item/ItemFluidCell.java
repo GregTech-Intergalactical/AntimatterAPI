@@ -200,7 +200,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
         BlockHitResult trace = getPlayerPOVHitResult(world, player, (fluid.getFluidAmount() / TesseractGraphWrappers.dropletMultiplier) + 1000 <= capacity ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 
         // fire Forge event for bucket use
-        InteractionResultHolder<ItemStack> ret = AntimatterPlatformUtils.postBucketUseEvent(player, world, stack, trace);
+        InteractionResultHolder<ItemStack> ret = AntimatterPlatformUtils.INSTANCE.postBucketUseEvent(player, world, stack, trace);
         if (ret != null) {
             return ret;
         }
