@@ -23,6 +23,8 @@ import muramasa.antimatter.tool.IBasicAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -48,13 +50,12 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-@Environment(Environment.EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ClientEvents {
 
     private static final Minecraft MC = Minecraft.getInstance();

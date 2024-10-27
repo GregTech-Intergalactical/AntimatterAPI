@@ -16,12 +16,13 @@ import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractGraphWrappers;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class FluidSlotWidget extends Widget {
         renderFluid(matrixStack, this.stack, realX(), realY());
     }
 
-    @Environment(Environment.EnvType.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void renderFluid(PoseStack stack, FluidHolder fluid, int x, int y) {
         if (fluid.isEmpty())
             return;

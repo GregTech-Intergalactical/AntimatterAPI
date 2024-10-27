@@ -2,6 +2,8 @@ package muramasa.antimatter.client;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.machine.types.Machine;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -9,12 +11,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 import java.util.Map;
 
 
-@Environment(Environment.EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class SoundHelper {
 
     private static final Map<Level, Map<BlockPos, SoundInstance>> MACHINE_SOUNDS = new Object2ObjectOpenHashMap<>();

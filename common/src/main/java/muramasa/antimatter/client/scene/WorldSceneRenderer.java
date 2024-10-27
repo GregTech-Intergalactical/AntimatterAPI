@@ -5,6 +5,8 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
 import muramasa.antimatter.client.RenderStateHelper;
 import muramasa.antimatter.client.glu.GLU;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -23,7 +25,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -42,7 +43,7 @@ import java.util.function.Consumer;
  * @Date: 2021/08/23
  * @Description: Abstract class, and extend a lot of features compared with the original one.
  */
-@Environment(Environment.EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public abstract class WorldSceneRenderer {
     protected static final FloatBuffer MODELVIEW_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
     protected static final FloatBuffer PROJECTION_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();

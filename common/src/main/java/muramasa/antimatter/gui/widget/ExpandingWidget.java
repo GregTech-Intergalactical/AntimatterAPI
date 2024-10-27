@@ -4,13 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.event.GuiEvents;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -95,7 +96,7 @@ public class ExpandingWidget extends Widget {
         }
     }
 
-    @Environment(Environment.EnvType.CLIENT)
+    @Environment(EnvType.CLIENT)
     protected void clientClick() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }

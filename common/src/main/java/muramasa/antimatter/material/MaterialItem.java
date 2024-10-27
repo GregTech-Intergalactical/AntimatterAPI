@@ -16,6 +16,8 @@ import muramasa.antimatter.util.CodeUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.WorldGenHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
@@ -43,7 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.Nullable;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 import java.util.List;
 
@@ -270,7 +271,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         return -1;
     }
 
-    @Environment(Environment.EnvType.CLIENT)
+    @Environment(EnvType.CLIENT)
     private int getChangingMaterialColor(){
         long currentRemainder = Minecraft.getInstance().player != null ?  Minecraft.getInstance().player.getLevel().getGameTime() % 100 : -1;
         if (currentRemainder >= 0){

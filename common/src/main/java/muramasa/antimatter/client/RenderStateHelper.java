@@ -1,10 +1,11 @@
 package muramasa.antimatter.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL13;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
-@Environment(Environment.EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RenderStateHelper {
     public static void setGlClearColorFromInt(int colorValue, int opacity) {
         int i = (colorValue & 16711680) >> 16;

@@ -5,10 +5,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
 
 ;
 ;
@@ -48,7 +49,7 @@ public class BackgroundWidget extends Widget {
         drawTexture(matrixStack, loc, realX(), realY(), 0, 0, xSize, ySize);
     }
 
-    @Environment(Environment.EnvType.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
         RenderSystem.setShaderColor(1, 1, 1, 1);

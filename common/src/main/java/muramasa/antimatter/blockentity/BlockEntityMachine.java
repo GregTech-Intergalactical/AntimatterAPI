@@ -38,6 +38,8 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Cache;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -67,8 +69,6 @@ import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.heat.IHeatHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
-import xyz.wagyourtail.unimined.expect.annotation.Environment;
-import xyz.wagyourtail.unimined.expect.annotation.Environment.EnvType;
 
 import java.util.List;
 import java.util.Optional;
