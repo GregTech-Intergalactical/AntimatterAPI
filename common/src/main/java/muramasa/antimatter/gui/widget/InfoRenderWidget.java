@@ -17,7 +17,6 @@ import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
 import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.gt.GTController;
-import tesseract.api.item.ItemController;
 
 import java.util.Set;
 
@@ -119,78 +118,6 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
         public static WidgetSupplier build() {
             return builder((a, b) -> new TesseractGTWidget(a, b, (IInfoRenderer<TesseractGTWidget>) a.handler));
-        }
-    }
-
-    public static class TesseractItemWidget extends InfoRenderWidget<TesseractItemWidget> {
-
-        public int transferred = 0;
-        public int cableTransferred = 0;
-
-        protected TesseractItemWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractItemWidget> renderer) {
-            super(gui, parent, renderer);
-        }
-
-        @Override
-        public void init() {
-            super.init();
-            BlockEntityPipe<?> pipe = (BlockEntityPipe<?>) gui.handler;
-            final long pos = pipe.getBlockPos().asLong();
-            gui.syncInt(() -> {
-                ITickingController controller = TesseractGraphWrappers.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
-                if (controller == null) return 0;
-                ItemController gt = (ItemController) controller;
-                return gt.getTransferred();
-            }, a -> this.transferred = a, SERVER_TO_CLIENT);
-            gui.syncInt(() -> {
-                ITickingController controller = TesseractGraphWrappers.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
-                if (controller == null) return 0;
-                ItemController gt = (ItemController) controller;
-                return gt.getCableTransferred(pipe.getBlockPos().asLong());
-            }, a -> this.cableTransferred = a, SERVER_TO_CLIENT);
-        }
-
-        public static WidgetSupplier build() {
-            return builder((a, b) -> new TesseractItemWidget(a, b, (IInfoRenderer<TesseractItemWidget>) a.handler));
-        }
-    }
-
-    public static class TesseractFluidWidget extends InfoRenderWidget<TesseractFluidWidget> {
-
-        public int holderPressure = 0;
-        public FluidHolder stack = FluidHooks.emptyFluid();
-
-        protected TesseractFluidWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractFluidWidget> renderer) {
-            super(gui, parent, renderer);
-        }
-
-        @Override
-        public void init() {
-            super.init();
-            BlockEntityFluidPipe<?> pipe = (BlockEntityFluidPipe<?>) gui.handler;
-            final long pos = pipe.getBlockPos().asLong();
-            /*gui.syncInt(() -> {
-                ITickingController controller = Tesseract.FLUID.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
-                if (controller instanceof FluidController c) {
-                    return c.sentPressure.get(pos);
-                }
-                return 0;
-            }, a -> this.holderPressure = a, SERVER_TO_CLIENT);*/
-            gui.syncFluidStack(() -> {
-                PipeFluidHolder holder = pipe.getHolder();
-                if (holder != null) {
-                    Set<PipeFluidHolder.SetHolder> fluids = holder.getFluids();
-                    if (fluids != null && fluids.size() > 0) {
-                        long pressure = holder.tickPressure*20 - holder.getPressureAvailable();
-                        return FluidPlatformUtils.createFluidStack(fluids.iterator().next().fluid, pressure);
-                    }
-                }
-                return FluidHooks.emptyFluid();
-            }, a -> this.stack = a, SERVER_TO_CLIENT);
-        }
-
-        public static WidgetSupplier build() {
-            return builder((a, b) -> new TesseractFluidWidget(a, b, (IInfoRenderer<TesseractFluidWidget>) a.handler));
         }
     }
 }

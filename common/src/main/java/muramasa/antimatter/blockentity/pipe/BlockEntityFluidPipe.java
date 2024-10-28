@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPipe<T> implements IFluidPipe, IPreTickTile, Dispatch.Sided<FluidContainer>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
+public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPipe<T> implements IFluidPipe, IPreTickTile, Dispatch.Sided<FluidContainer> {
 
     @Getter
     protected Optional<PipeFluidHandler> fluidHandler;
@@ -129,12 +129,6 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
         TileTicker.SERVER_TICK_PR2.remove(this);
         TileTicker.SERVER_TICK_PRE.remove(this);
         super.onRemove();
-    }
-
-    @Override
-    public void addWidgets(GuiInstance instance, IGuiElement parent) {
-        super.addWidgets(instance, parent);
-        instance.addWidget(InfoRenderWidget.TesseractFluidWidget.build().setPos(10, 10));
     }
 
 
@@ -361,27 +355,11 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
             return Optional.of(new FluidHandlerNullSideWrapper(fluidHandler.get()));
         }
         return Optional.of(new PipeFluidHandlerSidedWrapper(fluidHandler.get(), this, side));
-        /*if (FluidController.SLOOSH) {
-
-        } else {
-            return Optional.of(new PipeFluidHandlerSidedWrapper(new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) ->
-            this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))), this, side));
-        }*/
     }
 
     @Override
     public Optional<? extends FluidContainer> forNullSide() {
         return forSide(null);
-    }
-
-    @Override
-    public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
-        renderer.draw(stack, "Pressure used: " + instance.stack.getFluidAmount(), left, top, 16448255);
-        renderer.draw(stack, "Pressure total: " + getPressure()*20, left, top + 8, 16448255);
-        renderer.draw(stack, "Fluid: " + FluidPlatformUtils.INSTANCE.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
-        renderer.draw(stack, "(Above only in intersection)", left, top + 24, 16448255);
-        //renderer.draw(stack, "Frame average: " + instance.holderPressure / 20, left, top + 32, 16448255);
-        return 32;
     }
 
     @Override

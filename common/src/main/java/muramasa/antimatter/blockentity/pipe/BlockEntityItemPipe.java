@@ -1,30 +1,20 @@
 package muramasa.antimatter.blockentity.pipe;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import muramasa.antimatter.blockentity.BlockEntityCache;
 import muramasa.antimatter.blockentity.IPreTickTile;
 import muramasa.antimatter.capability.Dispatch;
-import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.item.ROCombinedInvWrapper;
-import muramasa.antimatter.capability.item.SidedCombinedInvWrapper;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.pipe.PipeItemHandler;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.gui.widget.InfoRenderWidget;
-import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.TileTicker;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.util.CodeUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,14 +23,10 @@ import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import tesseract.TesseractCapUtils;
-import tesseract.TesseractGraphWrappers;
-import tesseract.api.capability.TesseractItemCapability;
-import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.item.IItemPipe;
 import tesseract.api.item.PlatformItemHandler;
 import tesseract.graph.Connectivity;
-import tesseract.util.Pos;
 
 import java.util.*;
 
