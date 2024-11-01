@@ -137,7 +137,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
                 return;
             }
         }
-        if (activeRecipe != null && tile.getMachineState() == tile.getDefaultMachineState()){
+        if (activeRecipe != null && tile.getMachineState() == IDLE){
             tile.setMachineState(NO_POWER);
         }
         if (activeRecipe == null) return;
@@ -146,7 +146,9 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         switch (tile.getMachineState()) {
             case ACTIVE:
                 state = tickRecipe();
-                tile.setMachineState(state);
+                if (state != ACTIVE) {
+                    tile.setMachineState(state);
+                }
                 break;
             case NO_POWER:
                 state = tickRecipe();
