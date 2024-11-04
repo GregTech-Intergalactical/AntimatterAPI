@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine.types;
 
+import lombok.Getter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.blockentity.multi.BlockEntityMultiMachine;
 import muramasa.antimatter.cover.CoverFactory;
@@ -14,11 +15,12 @@ import net.minecraft.world.level.block.state.properties.Property;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class HatchMachine extends Machine<HatchMachine> {
+    @Getter
     String idForHandlers;
 
-    public HatchMachine(String domain, String id, CoverFactory cover) {
+    public HatchMachine(String domain, String id, CoverFactory cover, String idForHandlers) {
         super(domain, id);
-        idForHandlers = id.replace("hatch_", "").replace("_hatch", "");
+        this.idForHandlers = idForHandlers;
         setTile(BlockEntityHatch::new);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, COVERABLE);
@@ -45,10 +47,6 @@ public class HatchMachine extends Machine<HatchMachine> {
     public HatchMachine setIdForHandlers(String idForHandlers) {
         this.idForHandlers = idForHandlers;
         return this;
-    }
-
-    public String getIdForHandlers() {
-        return idForHandlers;
     }
 
     @Override
