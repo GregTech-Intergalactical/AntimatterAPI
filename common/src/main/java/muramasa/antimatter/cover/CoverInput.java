@@ -6,7 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-//Behaves like CoverOutput in terms of refresh but no event handler.
 public class CoverInput extends BaseCover {
 
     public CoverInput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
