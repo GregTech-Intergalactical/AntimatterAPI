@@ -67,7 +67,7 @@ public class CombinedInvWrapper implements ExtendedItemContainer {
         ExtendedItemContainer handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
         if (handler instanceof TrackedItemHandler<?> trackedItemHandler){
-            if (trackedItemHandler.getType() == SlotType.IT_IN && !(trackedItemHandler.getTile() instanceof BlockEntityHatch<?>)){
+            if (trackedItemHandler.hasSlotDiversity()){
                 for (int i = 0; i < trackedItemHandler.getSize(); i++){
                     if (i == slot) continue;
                     if (trackedItemHandler.getItem(i).isEmpty()) continue;

@@ -41,6 +41,10 @@ public class TrackedItemHandler<T extends IGuiHandler> extends ItemStackHandler 
         this.type = type;
     }
 
+    public boolean hasSlotDiversity(){
+        return this.type == SlotType.IT_IN && !(tile instanceof BlockEntityHatch<?>);
+    }
+
     @Override
     public int getSlotLimit(int slot) {
         return limit;
