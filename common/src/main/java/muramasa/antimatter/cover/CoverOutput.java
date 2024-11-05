@@ -19,6 +19,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +29,7 @@ import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
 
-public class CoverOutput extends CoverInput {
+public class CoverOutput extends BaseCover {
 
     private boolean ejectItems = false;
     private boolean ejectFluids = false;
@@ -43,13 +44,17 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
+    public ResourceLocation getModel(String type, Direction dir) {
+        if (type.equals("pipe"))
+            return PIPE_COVER_MODEL;
+        return getBasicDepthModel();
+    }
+
+    @Override
     public void onUpdate() {
         super.onUpdate();
         if (handler.getTile().getLevel().isClientSide) return;
-        if (shouldOutputFluids())
-            processFluidOutput();
-        if (shouldOutputItems())
-            processItemOutput();
+        manualOutput();
     }
 
     @Override
