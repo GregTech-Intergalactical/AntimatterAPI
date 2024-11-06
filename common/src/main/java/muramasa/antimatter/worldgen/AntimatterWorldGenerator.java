@@ -178,12 +178,14 @@ public class AntimatterWorldGenerator {
 
 
     public static void reloadEvent(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
+
         AntimatterAPI.all(IAntimatterFeature.class, t -> {
             t.build(name, climate, category, effects, gen, spawns);
         });
         if (AntimatterPlatformUtils.INSTANCE.isForge()) {
             handleFeatureRemoval(gen);
         }
+        AntimatterAPI.all(IAntimatterWorldgenFunction.class, t -> t.build(name, climate, category, effects, gen, spawns));
     }
 
     private static void handleFeatureRemoval(BiomeGenerationSettings.Builder gen) {
