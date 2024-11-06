@@ -1,6 +1,8 @@
 package muramasa.antimatter.integration.ct;
 
+import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.CraftTweakerConstants;
+import com.blamejared.crafttweaker.api.action.recipe.ActionAddRecipe;
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
@@ -23,15 +25,15 @@ import java.util.List;
 @ZenCodeType.Name("mods.antimatter.Machines")
 public class CTRecipeBuilder {
     RecipeBuilder recipeBuilder;
+    RecipeManager manager;
 
-
-
-    public CTRecipeBuilder(String mapId) {
+    public CTRecipeBuilder(String mapId, RecipeManager manager) {
         IRecipeMap map = AntimatterAPI.get(IRecipeMap.class, mapId);
         if(!(map instanceof RecipeMap<?> recipeMap)) {
             throw new IllegalArgumentException("Invalid recipe map: " + mapId);
         }
         recipeBuilder = recipeMap.RB();
+        this.manager = manager;
     }
 
     public CTRecipeBuilder ii(IIngredient... itemInput) {
@@ -83,7 +85,7 @@ public class CTRecipeBuilder {
     }
 
     public void build(String domain, String id, long duration, long power, long special, int amps) {
-        recipeBuilder.add(domain, id, duration, power, special, amps);
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(manager, recipeBuilder.recipeMapOnly().add(domain, id, duration, power, special, amps)));
     }
 
     public void build(String id, long duration, long power, long special, int amps) {

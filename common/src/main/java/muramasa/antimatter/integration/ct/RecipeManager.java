@@ -36,6 +36,6 @@ public class RecipeManager implements IRecipeManager<IRecipe> {
 
     @ZenCodeType.Method
     public CTRecipeBuilder recipeBuilder(String mapId){
-        return new CTRecipeBuilder(mapId);
+        return new CTRecipeBuilder(mapId, this);
     }
 }
