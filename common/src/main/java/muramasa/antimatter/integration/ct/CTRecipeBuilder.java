@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@ZenRegister
-@ZenCodeType.Name("mods.antimatter.Machines")
 public class CTRecipeBuilder {
     RecipeBuilder recipeBuilder;
     RecipeManager manager;
