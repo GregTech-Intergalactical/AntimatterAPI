@@ -26,6 +26,14 @@ public class CodeUtils {
     public static byte   bindByte (long   aBoundValue) {return (byte) Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, aBoundValue));}
     public static byte   bindStack(long   aBoundValue) {return (byte) Math.max(1, Math.min(64, aBoundValue));}
 
+    public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
+        if (aTargetUnit == 0) return 0;
+        if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
+        if (aOriginalUnit %   aTargetUnit == 0) {aOriginalUnit /=   aTargetUnit;   aTargetUnit = 1;} else
+        if (aTargetUnit   % aOriginalUnit == 0) {  aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
+        return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
+    }
+
     public static int getRGB(int r, int g, int b){
         return (bind8(r) << 16) | (bind8(g) << 8) | bind8(b);
     }
