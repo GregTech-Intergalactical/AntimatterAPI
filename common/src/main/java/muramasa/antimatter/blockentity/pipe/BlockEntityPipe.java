@@ -424,9 +424,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize(new CompoundTag())));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         tag.putByte(Ref.TAG_PIPE_TILE_VIRTUAL_CONNECTIVITY, virtualConnection);
-        if (pipeColor != -1) {
-            tag.putInt(Ref.KEY_PIPE_TILE_COLOR, pipeColor);
-        }
+        tag.putInt(Ref.KEY_PIPE_TILE_COLOR, pipeColor);
     }
 
     public CompoundTag getUpdateTag() {
