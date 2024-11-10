@@ -155,7 +155,8 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (type.has(COVERABLE)) {
             coverHandler.set(() -> new MachineCoverHandler<>((T) this));
         }
-        multiTexturer = new LazyLoadedValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER)); }
+        multiTexturer = new LazyLoadedValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
+    }
 
     public void addOpenContainer(ContainerMachine<T> c, Player player) {
         this.openContainers.add(c);

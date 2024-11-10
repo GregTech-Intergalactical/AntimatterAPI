@@ -206,8 +206,8 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean hasCover(Class<? extends ICover> clazz) {
-        return this.reverseLookup.containsKey(clazz);
+    public boolean hasCover(CoverFactory coverFactory) {
+        return this.reverseLookup.containsKey(coverFactory);
     }
 
     @Override

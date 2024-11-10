@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability;
 
 import earth.terrarium.botarium.util.Serializable;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.core.Direction;
@@ -52,7 +53,7 @@ public interface ICoverHandler<T extends BlockEntity> extends Serializable {
      */
     boolean removeCover(Player player, Direction side, boolean onlyRemove);
 
-    boolean hasCover(Class<? extends ICover> clazz);
+    boolean hasCover(CoverFactory coverFactory);
 
     boolean isValid(Direction side, ICover replacement);
 
@@ -134,7 +135,7 @@ public interface ICoverHandler<T extends BlockEntity> extends Serializable {
         }
 
         @Override
-        public boolean hasCover(Class<? extends ICover> clazz) {
+        public boolean hasCover(CoverFactory coverFactory) {
             return false;
         }
 
