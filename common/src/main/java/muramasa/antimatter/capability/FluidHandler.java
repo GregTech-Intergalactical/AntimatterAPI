@@ -28,17 +28,16 @@ public abstract class FluidHandler<T extends BlockEntityBase & IMachineHandler> 
     @Getter
     protected final T tile;
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
-    protected int capacity, pressure;
+    protected int capacity;
 
     /**
      * For GUI
      **/
     protected boolean dirty;
 
-    public FluidHandler(T tile, int capacity, int pressure, int inputCount, int outputCount) {
+    public FluidHandler(T tile, int capacity, int inputCount, int outputCount) {
         this.tile = tile;
         this.capacity = capacity;
-        this.pressure = pressure;
         if (inputCount > 0) {
             tanks.put(FluidDirection.INPUT, FluidTanks.create(tile, SlotType.FL_IN, b -> {
                 for (int i = 0; i < inputCount; i++) {

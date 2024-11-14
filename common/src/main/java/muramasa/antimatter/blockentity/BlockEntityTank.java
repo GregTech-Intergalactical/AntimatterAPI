@@ -25,7 +25,7 @@ public class BlockEntityTank<T extends BlockEntityMachine<T>> extends BlockEntit
     public BlockEntityTank(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         int capacity = type instanceof TankMachine tankMachine ? tankMachine.getCapacityPerTier().apply(tier) : 8000 * (1 + tier.getIntegerId());
-        fluidHandler.set(() -> new MachineFluidHandler<T>((T) this, capacity, 8000) {
+        fluidHandler.set(() -> new MachineFluidHandler<T>((T) this, capacity) {
             @Nullable
             @Override
             public FluidTanks getOutputTanks() {

@@ -60,7 +60,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     public BlockEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         int count = getPipeSize() == PipeSize.QUADRUPLE ? 4 : getPipeSize() == PipeSize.NONUPLE ? 9 : 1;
-        fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), count, 0));
+        fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, count, 0));
         pipeCapHolder.set(() -> this);
         lastSide = new byte[count];
         for (int i = 0; i < count; i++){
@@ -349,7 +349,7 @@ public class BlockEntityFluidPipe<T extends FluidPipe<T>> extends BlockEntityPip
     @Override
     public Optional<? extends FluidContainer> forSide(Direction side) {
         if (fluidHandler.isEmpty()) {
-            fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, type.getPressure(getPipeSize()), 1, 0));
+            fluidHandler = Optional.of(new PipeFluidHandler(this, type.getPressure(getPipeSize()) * 2, 1, 0));
         }
         if (side == null){
             return Optional.of(new FluidHandlerNullSideWrapper(fluidHandler.get()));

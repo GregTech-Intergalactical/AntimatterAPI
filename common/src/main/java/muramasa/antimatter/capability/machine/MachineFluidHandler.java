@@ -39,17 +39,21 @@ public class MachineFluidHandler<T extends BlockEntityMachine<T>> extends FluidH
     protected boolean filledLastTick = false;
     private int lastCellSlot = 0;
 
-    public MachineFluidHandler(T tile, int capacity, int pressure) {
-        this(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
+    public MachineFluidHandler(T tile, int capacity) {
+        this(tile, capacity, tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
                 tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
     }
 
-    public MachineFluidHandler(T tile, int capacity, int pressure, int inputCount, int outputCount) {
-        super(tile, capacity, pressure, inputCount, outputCount);
+    public MachineFluidHandler(T tile, int capacity, int inputCount, int outputCount) {
+        super(tile, capacity, inputCount, outputCount);
+    }
+
+    public MachineFluidHandler(T tile, int capacity, int unused, int inputCount, int outputCount) {
+        this(tile, capacity, inputCount, outputCount);
     }
 
     public MachineFluidHandler(T tile) {
-        this(tile, 32000, 1000 * (250 + tile.getMachineTier().getIntegerId()));
+        this(tile, 32000);
     }
 
     @Override

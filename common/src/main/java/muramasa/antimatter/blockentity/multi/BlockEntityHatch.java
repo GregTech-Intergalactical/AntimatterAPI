@@ -56,7 +56,7 @@ public class BlockEntityHatch<T extends BlockEntityHatch<T>> extends BlockEntity
         componentHandler = Optional
                 .of(new HatchComponentHandler<>((T)this));
         if (type.has(FLUID)) {
-            fluidHandler.set(() -> new MachineFluidHandler<>((T) this,8000 * (getMachineTier().getIntegerId() + 1), 1000 * (250 + getMachineTier().getIntegerId())));
+            fluidHandler.set(() -> new MachineFluidHandler<>((T) this,8000 * (getMachineTier().getIntegerId() + 1)));
         }
         if (type.has(EU)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
