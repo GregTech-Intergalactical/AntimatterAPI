@@ -227,7 +227,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
             return;
         }*/
 
-        TileTicker.addTickFunction(this::refreshConnection);
+        this.refreshConnection();
         if (pipe != null) {
             pipe.setConnection(side.getOpposite());
         }
@@ -239,7 +239,7 @@ public abstract class BlockEntityPipe<T extends PipeType<T>> extends BlockEntity
         connection = Connectivity.clear(connection, side.get3DDataValue());
         virtualConnection = Connectivity.clear(virtualConnection, side.get3DDataValue());
         dispatch.invalidate(side);
-        TileTicker.addTickFunction(this::refreshConnection);
+        this.refreshConnection();
         BlockEntityPipe<?> pipe = getPipe(side);
         if (pipe != null) {
             pipe.clearConnection(side.getOpposite());
