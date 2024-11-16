@@ -114,6 +114,7 @@ public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> e
                 if (energyHandlerLazyOptional[index] == null || !energyHandlerLazyOptional[index].isPresent()){
                     energyHandlerLazyOptional[index] = fromHolder(energyHandler, side);
                 }
+                if (cap == CapabilityEnergy.ENERGY && side == null) return LazyOptional.empty();
                 return energyHandlerLazyOptional[index].cast();
             }
         }
