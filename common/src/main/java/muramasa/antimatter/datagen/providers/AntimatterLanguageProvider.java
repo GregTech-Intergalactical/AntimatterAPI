@@ -342,6 +342,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.cover.output.allow_input", "Inputs allowed");
         add("antimatter.tooltip.cover.covers_on_item", "Covers");
         add("antimatter.tooltip.cover.stack", "%s: %s");
+        add("antimatter.tooltip.valid_structure", "Structure Formed");
+        add("antimatter.tooltip.invalid_structure", "Structure Invalid");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
         //Is this loss?

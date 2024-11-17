@@ -22,13 +22,13 @@ public class MultiblockInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile instanceof BlockEntityBasicMultiMachine machine) {
+            if (tile instanceof BlockEntityBasicMultiMachine<?> machine) {
 
                 IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
                 if (machine.isStructureValid()) {
-                    horizontalPane.text(ChatFormatting.GREEN + "Structure Formed");
+                    horizontalPane.text(Utils.translatable("antimatter.tooltip.valid_structure").withStyle(ChatFormatting.GREEN));
                 } else {
-                    horizontalPane.text(ChatFormatting.RED + "Structure Incomplete");
+                    horizontalPane.text(Utils.translatable("antimatter.tooltip.invalid_structure").withStyle(ChatFormatting.RED));
                 }
 
             }

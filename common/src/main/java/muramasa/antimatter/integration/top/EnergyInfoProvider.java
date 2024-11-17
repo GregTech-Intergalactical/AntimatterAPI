@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import tesseract.TesseractCapUtils;
+import tesseract.api.gt.IEnergyHandler;
 
 import java.util.List;
 
@@ -23,33 +25,11 @@ public class EnergyInfoProvider implements IProbeInfoProvider {
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level,
                              BlockState blockState, IProbeHitData data) {
-
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile instanceof BlockEntityMachine machine) {
-                if(!machine.energyHandler.isPresent()) {
-                    return;
-                }
-
-                List<IElement> elements = probeInfo.getElements();
-                IElement rf = null;
-                for (IElement e : elements) {
-                    if (e instanceof ElementProgress progress) {
-                        IProgressStyle style = progress.getStyle();
-                        if (style.getSuffix().contains("FE")) {
-                            rf = e;
-                            break;
-                        }
-                    }
-                }
-                if (rf != null){
-                    elements.remove(rf);
-                }
-
-
-                MachineEnergyHandler energyHandler = (MachineEnergyHandler) machine.energyHandler.get();
-
+            IEnergyHandler energyHandler = TesseractCapUtils.INSTANCE.getEnergyHandler(tile, null).orElse(null);
+            if (energyHandler != null) {
                 long maxCapacity = energyHandler.getCapacity();
                 if (maxCapacity == 0) return;
 
@@ -58,12 +38,10 @@ public class EnergyInfoProvider implements IProbeInfoProvider {
                 NumberFormat format = player.isCrouching() ? NumberFormat.FULL : NumberFormat.COMPACT;
                 horizontalPane.progress(energyHandler.getEnergy(), maxCapacity, probeInfo.defaultProgressStyle()
                         .suffix(Utils.literal(" / ").append(ElementProgress.format(maxCapacity, format, Utils.literal(" EU"))))
-                        .filledColor(0xFFEEE600)
-                        .alternateFilledColor(0xFFEEE600)
+                        .filledColor(0xFF00FFFF)
+                        .alternateFilledColor(0xFF009999)
                         .borderColor(0xFF555555).numberFormat(format));
-
             }
-
         }
 
     }

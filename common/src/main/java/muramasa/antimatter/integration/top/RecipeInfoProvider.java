@@ -25,12 +25,11 @@ public class RecipeInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile instanceof BlockEntityMachine machine) {
-                if(!machine.recipeHandler.isPresent()) {
+            if (tile instanceof BlockEntityMachine<?> machine) {
+                MachineRecipeHandler<?> recipeHandler = machine.recipeHandler.orElse(null);
+                if(recipeHandler == null) {
                     return;
                 }
-
-                MachineRecipeHandler recipeHandler = (MachineRecipeHandler) machine.recipeHandler.get();
 
                 int currentProgress = recipeHandler.getCurrentProgress();
                 int maxProgress = recipeHandler.getMaxProgress();
