@@ -90,7 +90,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
     @Override
     public long insertEu(long voltage, boolean simulate) {
         if (voltage < 0) return 0;
-        if (getState().getAmpsReceived() >= getInputAmperage()) return 0;
+        if (inputAmperageCheck()) return 0;
         int loss = canInput() && canOutput() ? 1 : 0;
         voltage -= loss;
         if (!this.tile.getMachineType().has(MachineFlag.PARTIAL_AMPS) && cachedItems.isEmpty() && this.getEnergy() + voltage > this.getCapacity()) return 0;
@@ -104,6 +104,10 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
         }
         long internalInsert = insertInternal(voltage, simulate);
         return internalInsert > 0 ? internalInsert + loss : 0;
+    }
+
+    protected boolean inputAmperageCheck(){
+        return getState().getAmpsReceived() >= getInputAmperage();
     }
 
     public long insertInternal(long energy, boolean simulate) {
