@@ -17,7 +17,6 @@ public class MultiMachineItemHandler<T extends BlockEntityMultiMachine<T>> exten
     Optional<ITrackedHandler> outputs = Optional.empty();
 
     public MultiMachineItemHandler(T tile) {
-        //TODO: Won't work otherwise, requires TEM tile as argument to this constructor. Not sure why! Feel free to fix, this works thoguh
         super(tile);
     }
 
@@ -42,9 +41,13 @@ public class MultiMachineItemHandler<T extends BlockEntityMultiMachine<T>> exten
     }
 
     private ITrackedHandler calculateInputs() {
-        List<ExtendedItemContainer> handlers = tile.getComponentsByHandlerId(inputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getInputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
+        List<ExtendedItemContainer> handlers = tile.getComponentsByHandlerId(inputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get()).sorted(this::compareInputBuses).map(MachineItemHandler::getInputHandler).collect(Collectors.toList());
         handlers.add(super.getInputHandler());
         return new MultiTrackedItemHandler(handlers.toArray(new ExtendedItemContainer[0]));
+    }
+
+    protected int compareInputBuses(MachineItemHandler<?> a, MachineItemHandler<?> b) {
+        return 0;
     }
 
     protected String inputComponentString(){
@@ -55,8 +58,12 @@ public class MultiMachineItemHandler<T extends BlockEntityMultiMachine<T>> exten
         return "item_output";
     }
 
+    protected int compareOutputBuses(MachineItemHandler<?> a, MachineItemHandler<?> b) {
+        return 0;
+    }
+
     private ITrackedHandler calculateOutputs() {
-        List<ExtendedItemContainer> handlers = tile.getComponentsByHandlerId(outputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getOutputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
+        List<ExtendedItemContainer> handlers = tile.getComponentsByHandlerId(outputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get()).sorted(this::compareOutputBuses).map(MachineItemHandler::getOutputHandler).collect(Collectors.toList());
         handlers.add(super.getOutputHandler());
         return new MultiTrackedItemHandler(handlers.toArray(new ExtendedItemContainer[0]));
     }
