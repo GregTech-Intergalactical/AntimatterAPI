@@ -13,6 +13,7 @@ import muramasa.antimatter.blockentity.BlockEntityTickable;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.CoverReplacements;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
@@ -160,10 +161,18 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             if (ty.consumesAction()) return ty;
             if (!world.isClientSide) {
                 if (hand == InteractionHand.MAIN_HAND) {
-                    if (player.getItemInHand(hand).getItem() instanceof IHaveCover) {
-                        CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
+                    if (stack.getItem() instanceof IHaveCover cover) {
+                        CoverFactory factory = cover.getCover();
                         Direction dir = Utils.getInteractSide(hit);
-                        boolean ok = tile.getCoverHandler().map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
+                        boolean ok = tile.getCoverHandler().map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, cover.getTier(), dir, factory))).orElse(false);
+                        if (ok) {
+                            return InteractionResult.SUCCESS;
+                        }
+                    }
+                    else if (CoverReplacements.hasReplacement(stack.getItem())){
+                        CoverFactory factory = CoverReplacements.getReplacement(stack.getItem());
+                        Direction dir = Utils.getInteractSide(hit);
+                        boolean ok = tile.getCoverHandler().map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, null, dir, factory))).orElse(false);
                         if (ok) {
                             return InteractionResult.SUCCESS;
                         }
