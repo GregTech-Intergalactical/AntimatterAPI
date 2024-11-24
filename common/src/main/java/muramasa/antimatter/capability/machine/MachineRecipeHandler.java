@@ -97,7 +97,7 @@ public class MachineRecipeHandler<T extends BlockEntityMachine<T>> implements IM
         return activeRecipe != null;
     }
 
-    protected IRecipeMap getRecipeMap() {
+    public IRecipeMap getRecipeMap() {
         return tile.getMachineType().getRecipeMap(tile.getMachineTier());
     }
 
