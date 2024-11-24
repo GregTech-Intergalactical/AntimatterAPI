@@ -80,7 +80,7 @@ public class FluidTanks implements FluidContainer, FluidContainerHandler {
         for (int i = 0; i < tanks.length; i++) {
             FluidTank tank = this.tanks[i];
             if (!drain){
-                if (tank.isEmpty() && firstEmpty == -1){
+                if (tank.isEmpty() && tank.isFluidValid(stack) && firstEmpty == -1){
                     firstEmpty = i;
                 }
             }
