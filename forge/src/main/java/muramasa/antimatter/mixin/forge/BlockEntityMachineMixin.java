@@ -37,6 +37,8 @@ import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.item.ExtendedItemContainer;
 import tesseract.api.rf.IRFNode;
 
+import java.util.Optional;
+
 @Mixin(BlockEntityMachine.class)
 public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> extends BlockEntityTickable<T> implements IFakeTileCap {
 
@@ -123,7 +125,8 @@ public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> e
 
     private  <U> LazyOptional<U> fromHolder(Holder<U, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
-        LazyOptional<U> opt = LazyOptional.of(() -> holder.side(side).get());
+        Optional<? extends U> optional = holder.side(side);
+        LazyOptional<U> opt = optional.isPresent() ? LazyOptional.of(optional::get) : LazyOptional.empty();
         boolean add = holder.addListener(side, opt::invalidate);
         if (!add) return LazyOptional.empty();
         return opt;
@@ -131,7 +134,8 @@ public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> e
 
     private LazyOptional<IItemHandler> fromItemHolder(Holder<ExtendedItemContainer, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
-        LazyOptional<IItemHandler> opt = LazyOptional.of(() -> new ExtendedContainerWrapper(holder.side(side).get()));
+        Optional<? extends ExtendedItemContainer> optional = holder.side(side);
+        LazyOptional<IItemHandler> opt = optional.<LazyOptional<IItemHandler>>map(extendedItemContainer -> LazyOptional.of(() -> new ExtendedContainerWrapper(extendedItemContainer))).orElseGet(LazyOptional::empty);
         boolean add = holder.addListener(side, opt::invalidate);
         if (!add) return LazyOptional.empty();
         return opt;
@@ -139,7 +143,8 @@ public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> e
 
     private LazyOptional<IFluidHandler> fromFluidHolder(Holder<FluidContainer, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
-        LazyOptional<IFluidHandler> opt = LazyOptional.of(() -> new ForgeFluidContainer(holder.side(side).get()));
+        Optional<? extends FluidContainer> optional = holder.side(side);
+        LazyOptional<IFluidHandler> opt = optional.<LazyOptional<IFluidHandler>>map(fluidContainer -> LazyOptional.of(() -> new ForgeFluidContainer(fluidContainer))).orElseGet(LazyOptional::empty);
         boolean add = holder.addListener(side, opt::invalidate);
         if (!add) return LazyOptional.empty();
         return opt;
@@ -147,7 +152,8 @@ public abstract class BlockEntityMachineMixin<T extends BlockEntityMachine<T>> e
 
     private LazyOptional<IEnergyStorage> fromEnergyHolder(Holder<IRFNode, ?> holder, Direction side){
         if (!holder.isPresent()) return LazyOptional.empty();
-        LazyOptional<IEnergyStorage> opt = LazyOptional.of(() -> new ForgeEnergyContainer<>(holder.side(side).get(), this));
+        Optional<? extends IRFNode> optional = holder.side(side);
+        LazyOptional<IEnergyStorage> opt = optional.<LazyOptional<IEnergyStorage>>map(irfNode -> LazyOptional.of(() -> new ForgeEnergyContainer<>(irfNode, this))).orElseGet(LazyOptional::empty);
         boolean add = holder.addListener(side, opt::invalidate);
         if (!add) return LazyOptional.empty();
         return opt;
