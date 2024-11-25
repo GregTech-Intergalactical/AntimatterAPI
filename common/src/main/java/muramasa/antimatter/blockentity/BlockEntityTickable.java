@@ -27,7 +27,7 @@ public class BlockEntityTickable<T extends BlockEntityTickable<T>> extends Block
             onFirstTick();
             hadFirstTick = true;
         }
-        if (level.isClientSide()) {
+        if (level.isClientSide() && canClientTick()) { //TODO figure out if this change can cause any amount of client lag
             clientTick(level, pos, state);
         } else {
             serverTick(level, pos, state);
@@ -35,8 +35,12 @@ public class BlockEntityTickable<T extends BlockEntityTickable<T>> extends Block
         level.getProfiler().pop();
     }
 
+    protected boolean canClientTick(){
+        return false;
+    }
+
     public static <T extends BlockEntity> void commonTick(Level level, BlockPos pos, BlockState state, T tile) {
-        if (tile instanceof BlockEntityTickable tick) {
+        if (tile instanceof BlockEntityTickable<?> tick) {
             tick.tick(level, pos, state);
         }
     }

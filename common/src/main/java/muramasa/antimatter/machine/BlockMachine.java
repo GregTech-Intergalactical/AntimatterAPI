@@ -409,7 +409,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide() && !getType().isClientTicking()) return null;
         return BlockEntityTickable::commonTick;
     }
 

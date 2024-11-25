@@ -287,6 +287,11 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
     }
 
     @Override
+    protected boolean canClientTick() {
+        return getMachineType().isClientTicking();
+    }
+
+    @Override
     public void onRemove() {
         if (isServerSide()) {
             coverHandler.ifPresent(MachineCoverHandler::onRemove);
