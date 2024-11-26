@@ -89,21 +89,18 @@ public class FluidTank implements FluidContainer, FluidContainerHandler {
 
     @Override
     public FluidHolder extractFluid(FluidHolder fluid, boolean simulate) {
-        if (validator.test(fluid)) {
-            FluidHolder toExtract = fluid.copyHolder();
-            if (this.storedFluid.isEmpty()) {
-                return FluidHooks.emptyFluid();
-            } else if (this.storedFluid.matches(fluid)) {
-                long extractedAmount = Mth.clamp(fluid.getFluidAmount(), 0, this.storedFluid.getFluidAmount());
-                toExtract.setAmount(extractedAmount);
-                if (simulate) return toExtract;
-                this.storedFluid.setAmount(this.storedFluid.getFluidAmount() - extractedAmount);
-                onContentsChanged();
-                if (this.storedFluid.getFluidAmount() == 0) this.storedFluid = FluidHooks.emptyFluid();
-                return toExtract;
-            }
+        FluidHolder toExtract = fluid.copyHolder();
+        if (this.storedFluid.matches(fluid)) {
+            long extractedAmount = Mth.clamp(fluid.getFluidAmount(), 0, this.storedFluid.getFluidAmount());
+            toExtract.setAmount(extractedAmount);
+            if (simulate) return toExtract;
+            this.storedFluid.setAmount(this.storedFluid.getFluidAmount() - extractedAmount);
+            onContentsChanged();
+            if (this.storedFluid.getFluidAmount() == 0) this.storedFluid = FluidHooks.emptyFluid();
+            return toExtract;
+        } else {
+            return FluidHooks.emptyFluid();
         }
-        return FluidHooks.emptyFluid();
     }
 
     protected void onContentsChanged() {
