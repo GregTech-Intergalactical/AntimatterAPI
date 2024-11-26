@@ -222,7 +222,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (recipe.hasOutputItems()) {
             for (ItemStack stack : recipe.getOutputItems()) {
                 if (stack.isEmpty()) {
-                    Utils.onInvalidData("RECIPE WITH EMPTY OUTPUT ITEM");
+                    Utils.onInvalidData("RECIPE WITH EMPTY OUTPUT ITEM (ID): " + recipe.getId());
                     return;
                 }
             }
@@ -236,7 +236,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                 }
                 if (inputItem.isEmpty() || (inputItem.getItems().length == 1
                         && inputItem.getItems()[0].getItem() == Items.BARRIER)) {
-                    Utils.onInvalidData("RECIPE WITH EMPTY INPUT (MAP): " + this.loc.getPath());
+                    Utils.onInvalidData("RECIPE WITH EMPTY INPUT (ID): " + recipe.getId());
                     return;
                 }
             }
