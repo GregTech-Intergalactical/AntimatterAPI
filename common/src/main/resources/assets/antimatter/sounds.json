@@ -12,5 +12,8 @@
   },
   "john-cena": {
     "sounds": [ "antimatter:john-cena" ]
+  },
+  "machine-explode": {
+    "sounds": [ "antimatter:machine-explode" ]
   }
 }

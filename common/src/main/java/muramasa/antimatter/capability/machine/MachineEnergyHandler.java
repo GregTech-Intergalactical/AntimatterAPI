@@ -17,6 +17,7 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,6 +36,7 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
     protected List<Pair<ItemStack, IEnergyHandlerItem>> cachedItems = new ObjectArrayList<>();
     protected int offsetInsert = 0;
     protected int offsetExtract = 0;
+    boolean exploded = false;
 
     public MachineEnergyHandler(T tile, long energy, long capacity, long voltageIn, long voltageOut, int amperageIn, int amperageOut) {
         super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
@@ -71,7 +73,11 @@ public class MachineEnergyHandler<T extends BlockEntityMachine<T>> extends Energ
     protected boolean checkVoltage(long voltage) {
         if (voltage > this.getInputVoltage()) {
             if (AntimatterConfig.MACHINES_EXPLODE.get()) {
-                Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.DESTROY);
+                if (!exploded){
+                    Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.DESTROY);
+                    tile.getLevel().playSound(null, tile.getBlockPos(), Ref.MACHINE_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
+                    exploded = true;
+                }
             } else {
                 return false;
             }

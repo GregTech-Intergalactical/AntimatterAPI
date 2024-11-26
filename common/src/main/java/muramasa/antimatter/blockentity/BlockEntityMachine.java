@@ -271,8 +271,10 @@ public class BlockEntityMachine<T extends BlockEntityMachine<T>> extends BlockEn
         if (allowExplosionsInRain()) {
             double d = Ref.RNG.nextDouble();
             if (d > 0.97D && this.level.isRainingAt(new BlockPos(this.worldPosition.getX(), this.worldPosition.getY() + 1, this.worldPosition.getZ()))) {
-                if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
+                if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false)) {
                     Utils.createExplosion(this.level, worldPosition, 6.0F, Explosion.BlockInteraction.DESTROY);
+                    level.playSound(null, this.worldPosition, Ref.MACHINE_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
+                }
             }
         }
     }
