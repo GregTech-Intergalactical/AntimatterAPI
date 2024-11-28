@@ -17,18 +17,20 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class WorldGenBedrockVein extends WorldGenBase<WorldGenBedrockVein> {
-    private final int probability;
-    private final Material material;
-    private final boolean indicatorRocks, indicatorFlowers;
-    private final Block flower;
+    public final int probability;
+    public final Material material;
+    public final boolean indicatorRocks, indicatorFlowers;
+    public final Block flower;
 
     private WorldGenBedrockVein(String id, int probability, Material material, boolean indicatorRocks, boolean indicatorFlowers, Block flower, List<ResourceLocation> dimensions) {
         super(id, WorldGenBedrockVein.class, dimensions.stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
@@ -95,7 +97,7 @@ public class WorldGenBedrockVein extends WorldGenBase<WorldGenBedrockVein> {
         );
     }
 
-    public static boolean generateVein(Material material, Level level, int dimType, int minX, int minZ, Random random) {
+    public static boolean generateVein(Material material, LevelAccessor level, int dimType, int minX, int minZ, Random random) {
         try {
             Block tStone = level.getBlockState(new BlockPos(minX+8, level.getMinBuildHeight(), minZ+8)).getBlock();
             // Requires existing Bedrock!
@@ -132,15 +134,15 @@ public class WorldGenBedrockVein extends WorldGenBase<WorldGenBedrockVein> {
             }
 
             for (int i = 5+random.nextInt(3); i-->0;) {
-                int tX = 5+random.nextInt(6), tZ = 5+random.nextInt(6), tW = level.getSeaLevel();
+                int tX = 5+random.nextInt(6), tZ = 5+random.nextInt(6), tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, tX, tZ);
 
-                for (int tY = tD1.length; tY < tW; tY++) {
+                for (int tY = tD1.length - yOffset; tY < tW; tY++) {
                     switch(random.nextInt(7)) {case 0: tX++; break; case 1: tX--; break; case 2: tZ++; break; case 3: tZ--; break;}
                     if (tX <= 0 || tX >= 15 || tZ <= 0 || tZ >= 15) {
-                        WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY - yOffset, minZ + tZ), material, AntimatterMaterialTypes.ORE_SMALL);
+                        WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY, minZ + tZ), material, AntimatterMaterialTypes.ORE_SMALL);
                         break;
                     } else if (random.nextInt(3) != 0) {
-                        WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY - yOffset, minZ + tZ), material, AntimatterMaterialTypes.ORE_SMALL);
+                        WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY, minZ + tZ), material, AntimatterMaterialTypes.ORE_SMALL);
                     }
                 }
             }

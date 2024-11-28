@@ -49,6 +49,7 @@ public class AntimatterWorldGenerator {
     static final AntimatterFeature<NoneFeatureConfiguration> VEIN_LAYER = new FeatureVeinLayer();
     static final AntimatterFeature<NoneFeatureConfiguration> ORE = new FeatureOre();
     static final AntimatterFeature<NoneFeatureConfiguration> STONE_LAYER = new FeatureStoneLayer();
+    static final AntimatterFeature<NoneFeatureConfiguration> BEDROCK_VEINS = new FeatureBedrockOre();
 
     public static void clear() {
         AntimatterAPI.all(AntimatterFeature.class, t -> t.getRegistry().clear());

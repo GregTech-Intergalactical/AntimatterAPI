@@ -19,6 +19,7 @@ public class AntimatterConfiguredFeatures {
     public static final Holder<PlacedFeature> VEIN_LAYER = register("vein_layer", FeatureUtils.register("vein_layer", AntimatterWorldGenerator.VEIN_LAYER, NoneFeatureConfiguration.NONE));
     public static final Holder<PlacedFeature> ORE = register("ore", FeatureUtils.register("ore", AntimatterWorldGenerator.ORE, NoneFeatureConfiguration.NONE));
     public static final Holder<PlacedFeature> STONE_LAYER = register("stone_layer", FeatureUtils.register("stone_layer", AntimatterWorldGenerator.STONE_LAYER, NoneFeatureConfiguration.NONE));
+    public static final Holder<PlacedFeature> BEDROCK_VEINS = register("bedrock_veins", FeatureUtils.register("bedrock_veins", AntimatterWorldGenerator.BEDROCK_VEINS, NoneFeatureConfiguration.NONE));
 
     @SuppressWarnings("unchecked")
     public static <T extends FeatureConfiguration> Holder<PlacedFeature> register(String id, Holder<ConfiguredFeature<T, ?>> feature) {
