@@ -128,7 +128,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                                     break;
                                 }
                             }
-                        } else if (layers[3].getStoneState().getBlock() == layers[5].getStoneState().getBlock() || layers[3].getStoneState().getBlock() == layers[1].getStoneState().getBlock()){
+                        } else {
                             StoneType type = layers[3].getStoneType() != null ? layers[3].getStoneType() : rockType;
                             if (type != null && type.doesGenerateOre()) {
                                 for (StoneLayerOre ore : WorldGenStoneLayer.getCollision(type, layers[5].getStoneState(), layers[1].getStoneState())) {
