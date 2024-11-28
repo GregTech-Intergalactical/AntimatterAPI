@@ -34,6 +34,7 @@ import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.StoneLayerOre;
+import muramasa.antimatter.worldgen.bedrockore.WorldGenBedrockVein;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
@@ -249,6 +250,7 @@ public class AntimatterDynamics {
         List<WorldGenStoneLayer> stoneLayers = new ObjectArrayList<>();
         List<WorldGenSmallOre> smallOres = new ObjectArrayList<>();
         List<WorldGenVanillaOre> vanillaOres = new ObjectArrayList<>();
+        List<WorldGenBedrockVein> bedrockVeins = new ObjectArrayList<>();
         Int2ObjectOpenHashMap<List<StoneLayerOre>> collisionMap = new Int2ObjectOpenHashMap<>();
         boolean runRegular = true;
         WorldGenVeinLayer.resetTotalWeight();
@@ -270,6 +272,8 @@ public class AntimatterDynamics {
             stoneLayers.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenStoneLayer.class, WorldGenStoneLayer::fromJson, "stone_layers"));
             vanillaOres.addAll(ev.VANILLA_ORES);
             vanillaOres.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenVanillaOre.class, WorldGenVanillaOre::fromJson, "vanilla_ore"));
+            bedrockVeins.addAll(ev.BEDROCK_VEINS);
+            bedrockVeins.addAll(AntimatterWorldGenerator.readCustomJsonObjects(WorldGenBedrockVein.class, WorldGenBedrockVein::fromJson, "bedrock_veins"));
             ev.COLLISION_MAP.forEach((i, l) -> {
                 collisionMap.computeIfAbsent(i, i2 -> new ArrayList<>()).addAll(l);
             });
@@ -287,6 +291,9 @@ public class AntimatterDynamics {
         }
         for (WorldGenVanillaOre vanillaOre : vanillaOres){
             AntimatterWorldGenerator.register(vanillaOre.toRegister, vanillaOre);
+        }
+        for (WorldGenBedrockVein vein : bedrockVeins){
+            AntimatterWorldGenerator.register(vein.toRegister, vein);
         }
         if (AntimatterConfig.REGENERATE_DEFAULT_WORLDGEN_JSONS.get()) {
             AntimatterConfig.REGENERATE_DEFAULT_WORLDGEN_JSONS.set(false);

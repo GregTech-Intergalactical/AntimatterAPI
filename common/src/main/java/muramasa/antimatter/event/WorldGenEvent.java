@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.worldgen.StoneLayerOre;
+import muramasa.antimatter.worldgen.bedrockore.WorldGenBedrockVein;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
@@ -21,6 +22,7 @@ public class WorldGenEvent {
     public final List<WorldGenSmallOre> SMALL_ORES = new ObjectArrayList<>();
 
     public final List<WorldGenVanillaOre> VANILLA_ORES = new ObjectArrayList<>();
+    public final List<WorldGenBedrockVein> BEDROCK_VEINS = new ObjectArrayList<>();
     public final Int2ObjectOpenHashMap<List<StoneLayerOre>> COLLISION_MAP = new Int2ObjectOpenHashMap<>();
 
     public void vein(WorldGenVeinLayer veins) {
@@ -49,6 +51,14 @@ public class WorldGenEvent {
             return;
         }
         VANILLA_ORES.add(veins);
+    }
+
+    public void bedrockOre(WorldGenBedrockVein veins) {
+        if (BEDROCK_VEINS.stream().anyMatch(s -> s.getId().equals(veins.getId()))){
+            Antimatter.LOGGER.warn("Duplicate bedrock vein, aborting. Id: " + veins.getId());
+            return;
+        }
+        BEDROCK_VEINS.add(veins);
     }
 
     public void addCollisionTopBottom(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
