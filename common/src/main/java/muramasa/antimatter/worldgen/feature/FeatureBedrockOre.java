@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen.feature;
 
 import com.mojang.serialization.Codec;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.material.Material;
@@ -12,6 +13,8 @@ import muramasa.antimatter.worldgen.bedrockore.WorldGenBedrockVein;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -20,6 +23,7 @@ import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -28,6 +32,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 
 import java.util.List;
 import java.util.Random;
+
+import static muramasa.antimatter.data.AntimatterMaterialTypes.BEARING_ROCK;
 
 public class FeatureBedrockOre extends AntimatterFeature<NoneFeatureConfiguration>{
 
@@ -64,10 +70,39 @@ public class FeatureBedrockOre extends AntimatterFeature<NoneFeatureConfiguratio
         List<WorldGenBedrockVein> veins = AntimatterWorldGenerator.all(WorldGenBedrockVein.class, world.getLevel().dimension());
         if (veins.isEmpty()) return false;
         for (WorldGenBedrockVein vein : veins) {
-            if (rand.nextInt(vein.probability) != 0) continue;
-            return generateVein(vein.material, world, pos.getX(), pos.getZ(), rand);
+            return generateBedrockVein(vein, world, pos.getX(), pos.getZ(), pos.getX() + 16, pos.getZ() + 16, rand);
         }
         return false;
+    }
+
+    public static boolean generateBedrockVein(WorldGenBedrockVein vein, LevelAccessor levelAccessor, int minX, int minZ, int maxX, int maxZ, Random random) {
+        if (!(levelAccessor instanceof Level level)) return false;
+        if (random.nextInt(vein.probability) != 0) return false;
+        if (!generateVein(vein.material, level, minX, minZ, random)) return false;
+
+        if ((vein.indicatorRocks || vein.indicatorFlowers) && (!level.dimension().location().toString().equals("minecraft:overworld") || (Math.abs(minX) >= 64 && Math.abs(maxX) >= 64 && Math.abs(minZ) >= 64 && Math.abs(maxZ) >= 64))) {
+            boolean tFlowers = vein.indicatorFlowers && vein.flower != Blocks.AIR, tRocks = vein.indicatorRocks && vein.material.has(BEARING_ROCK);
+
+
+            // Generate first an 8x8 of 4, then a 16x16 of 8, and at the end a 32x32 of 16 Rocks/Flowers. That way the Pattern gets denser in the middle, and Chunk Boundary Issues of GalactiCraft wont be as terrible.
+            for (int tD = 4; tD <= 16; tD *= 2) try {for (int i = 0; i < tD; i++) {
+                int tX = minX+random.nextInt(tD*2)+8-tD, tZ = minZ+random.nextInt(tD*2)+8-tD;
+                int y = Math.min(level.getHeight(Heightmap.Types.OCEAN_FLOOR, tX, tZ), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, tX, tZ));
+                BlockPos offset = new BlockPos(tX, y, tZ);
+                BlockState below = level.getBlockState(new BlockPos(tX, y - 1, tZ));
+                if (tFlowers && (!tRocks || random.nextInt(4) > 0)){
+                    level.setBlock(offset, vein.flower.defaultBlockState(), 0);
+                } else if (tRocks){
+                    if (!below.isAir() && below != WorldGenHelper.WATER_STATE && AntimatterConfig.STONE_LAYER_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()) {
+                        WorldGenHelper.setRock(level, offset, vein.material, null, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
+                    }
+                }
+            }} catch(Throwable e) {
+                Antimatter.LOGGER.error(e);
+            }
+        }
+
+        return true;
     }
 
     public static boolean generateVein(Material material, LevelAccessor level, int minX, int minZ, Random random) {
