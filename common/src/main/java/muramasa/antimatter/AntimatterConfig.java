@@ -51,6 +51,7 @@ public class AntimatterConfig {
     public static ConfigEntry.BoolValue ORE_VEINS;
     public static ConfigEntry.BoolValue STONE_LAYERS;
     public static ConfigEntry.BoolValue STONE_LAYER_ORES;
+    public static ConfigEntry.BoolValue BEDROCK_VEINS;
     public static ConfigEntry.BoolValue ORE_VEIN_SMALL_ORE_MARKERS;
     public static ConfigEntry.BoolValue ORE_VEIN_SPECTATOR_DEBUG;
     public static ConfigEntry.BoolValue REGENERATE_DEFAULT_WORLDGEN_JSONS;
@@ -84,6 +85,7 @@ public class AntimatterConfig {
         DETAILED_ROCKS = world.addBool("detailed_rocks", true, "Enables rocks showing their stone and ore in world - Default: true", "Note: If false, rocks only show their stone type in the texture.");
         REGENERATE_DEFAULT_WORLDGEN_JSONS = world.addBool("regenerate_default_world_jsons", false, "Regenerates the default jsons for antimatter's ore generation systems. will self reset after generating configs - Default: false");
         ORE_VEIN_SPECTATOR_DEBUG = world.addBool("ore_vein_spectator_debug", false, "Shows ore veins very clearly in spectator mode - Default: false");
+        BEDROCK_VEINS = world.addBool("bedrock_veins", true, "Enable bedrock veins - Default: true");
 
         ConfigSection oreVeins = world.addSubSection("ore_veins");
         ORE_VEINS = oreVeins.addBool("ore_veins", true, "Enable ore veins - Default: true");

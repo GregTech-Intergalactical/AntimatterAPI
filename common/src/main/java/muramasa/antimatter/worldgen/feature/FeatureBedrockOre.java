@@ -13,6 +13,7 @@ import muramasa.antimatter.worldgen.bedrockore.WorldGenBedrockVein;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -48,7 +49,7 @@ public class FeatureBedrockOre extends AntimatterFeature<NoneFeatureConfiguratio
 
     @Override
     public boolean enabled() {
-        return !getRegistry().isEmpty();
+        return AntimatterConfig.BEDROCK_VEINS.get() && !getRegistry().isEmpty();
     }
 
     @Override
@@ -70,35 +71,41 @@ public class FeatureBedrockOre extends AntimatterFeature<NoneFeatureConfiguratio
         List<WorldGenBedrockVein> veins = AntimatterWorldGenerator.all(WorldGenBedrockVein.class, world.getLevel().dimension());
         if (veins.isEmpty()) return false;
         for (WorldGenBedrockVein vein : veins) {
-            return generateBedrockVein(vein, world, pos.getX(), pos.getZ(), pos.getX() + 16, pos.getZ() + 16, rand);
+            if(generateBedrockVein(vein, world, pos.getX(), pos.getZ(), pos.getX() + 16, pos.getZ() + 16, rand)){
+                return true;
+            }
         }
         return false;
     }
 
-    public static boolean generateBedrockVein(WorldGenBedrockVein vein, LevelAccessor levelAccessor, int minX, int minZ, int maxX, int maxZ, Random random) {
-        if (!(levelAccessor instanceof Level level)) return false;
+    public static boolean generateBedrockVein(WorldGenBedrockVein vein, LevelAccessor level, int minX, int minZ, int maxX, int maxZ, Random random) {
         if (random.nextInt(vein.probability) != 0) return false;
         if (!generateVein(vein.material, level, minX, minZ, random)) return false;
 
-        if ((vein.indicatorRocks || vein.indicatorFlowers) && (!level.dimension().location().toString().equals("minecraft:overworld") || (Math.abs(minX) >= 64 && Math.abs(maxX) >= 64 && Math.abs(minZ) >= 64 && Math.abs(maxZ) >= 64))) {
+
+        if ((vein.indicatorRocks || vein.indicatorFlowers)) {
             boolean tFlowers = vein.indicatorFlowers && vein.flower != Blocks.AIR, tRocks = vein.indicatorRocks && vein.material.has(BEARING_ROCK);
 
 
             // Generate first an 8x8 of 4, then a 16x16 of 8, and at the end a 32x32 of 16 Rocks/Flowers. That way the Pattern gets denser in the middle, and Chunk Boundary Issues of GalactiCraft wont be as terrible.
-            for (int tD = 4; tD <= 16; tD *= 2) try {for (int i = 0; i < tD; i++) {
-                int tX = minX+random.nextInt(tD*2)+8-tD, tZ = minZ+random.nextInt(tD*2)+8-tD;
-                int y = Math.min(level.getHeight(Heightmap.Types.OCEAN_FLOOR, tX, tZ), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, tX, tZ));
-                BlockPos offset = new BlockPos(tX, y, tZ);
-                BlockState below = level.getBlockState(new BlockPos(tX, y - 1, tZ));
-                if (tFlowers && (!tRocks || random.nextInt(4) > 0)){
-                    level.setBlock(offset, vein.flower.defaultBlockState(), 0);
-                } else if (tRocks){
-                    if (!below.isAir() && below != WorldGenHelper.WATER_STATE && AntimatterConfig.STONE_LAYER_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()) {
-                        WorldGenHelper.setRock(level, offset, vein.material, null, AntimatterConfig.STONE_LAYER_ROCK_CHANCE.get());
+            for (int tD = 4; tD <= 16; tD *= 2) {
+                try {
+                    for (int i = 0; i < tD; i++) {
+                        int tX = minX+random.nextInt(tD*2)+8-tD, tZ = minZ+random.nextInt(tD*2)+8-tD;
+                        int y = Math.min(level.getHeight(Heightmap.Types.OCEAN_FLOOR, tX, tZ), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, tX, tZ));
+                        BlockPos offset = new BlockPos(tX, y, tZ);
+                        BlockState below = level.getBlockState(new BlockPos(tX, y - 1, tZ));
+                        if (tFlowers && (!tRocks || random.nextInt(4) > 0) && vein.flower.canSurvive(vein.flower.defaultBlockState(), level, offset)){
+                            level.setBlock(offset, vein.flower.defaultBlockState(), 0);
+                        } else if (tRocks){
+                            if (!below.isAir() && below != WorldGenHelper.WATER_STATE && AntimatterConfig.STONE_LAYER_ROCKS.get() && AntimatterConfig.SURFACE_ROCKS.get()) {
+                                WorldGenHelper.setRock(level, offset, vein.material, Blocks.DEEPSLATE.defaultBlockState(), 1);
+                            }
+                        }
                     }
+                } catch(Throwable e) {
+                    Antimatter.LOGGER.error(e);
                 }
-            }} catch(Throwable e) {
-                Antimatter.LOGGER.error(e);
             }
         }
 
@@ -130,11 +137,6 @@ public class FeatureBedrockOre extends AntimatterFeature<NoneFeatureConfiguratio
             // Portion a Muffin shaped Ore Blob around the Bedrock Spot.
             for (int tY = 1; tY < tD1.length; tY++) for (int tX = tD1[tY]; tX < tD2[tY]; tX++) for (int tZ = tD1[tY]; tZ < tD2[tY]; tZ++) {
                 level.setBlock(new BlockPos(minX + tX, tY - yOffset, minZ + tZ), tStone.defaultBlockState(), 0);
-                /*if (GENERATED_NO_BEDROCK_ORE) {
-                    level.setBlock(minX+tX, tY, minZ+tZ, tStone, 0, 0);
-                } else {
-                    WD.removeBedrock(level, minX+tX, tY, minZ+tZ);
-                }*/
                 switch (random.nextInt(6)) {
                     case 0 -> WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY - yOffset, minZ + tZ), material, AntimatterMaterialTypes.ORE);
                     case 1, 2 -> WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY - yOffset, minZ + tZ), material, AntimatterMaterialTypes.ORE_SMALL);
@@ -142,10 +144,28 @@ public class FeatureBedrockOre extends AntimatterFeature<NoneFeatureConfiguratio
             }
 
             for (int i = 5+random.nextInt(3); i-->0;) {
-                int tX = 5+random.nextInt(6), tZ = 5+random.nextInt(6), tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, tX, tZ);
+                int tX = 5+random.nextInt(6), tZ = 5+random.nextInt(6), tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, minX + tX, minZ + tZ);
 
                 for (int tY = tD1.length - yOffset; tY < tW; tY++) {
-                    switch(random.nextInt(7)) {case 0: tX++; break; case 1: tX--; break; case 2: tZ++; break; case 3: tZ--; break;}
+                    switch(random.nextInt(7)) {
+                        case 0 -> {
+                            tX++;
+                            tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, minX + tX, minZ + tZ);
+                        }
+                        case 1 -> {
+                            tX--;
+                            tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, minX + tX, minZ + tZ);
+                        }
+                        case 2 -> {
+                            tZ++;
+                            tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, minX + tX, minZ + tZ);
+                        }
+                        case 3 -> {
+                            tZ--;
+                            tW = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, minX + tX, minZ + tZ);
+                        }
+                    }
+                    if (tY >= tW) break;
                     if (tX <= 0 || tX >= 15 || tZ <= 0 || tZ >= 15) {
                         WorldGenHelper.setOre(level, new BlockPos(minX + tX, tY, minZ + tZ), material, AntimatterMaterialTypes.ORE_SMALL);
                         break;
