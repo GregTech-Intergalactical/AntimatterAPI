@@ -64,6 +64,7 @@ public class Material implements ISharedAntimatterObject {
         this.id = id;
         this.rgb = rgb;
         this.set = set;
+        this.displayNameString = Utils.lowerUnderscoreToUpperSpaced(id);
         if (modIds != null && modIds.length > 0) {
             for (String modId : modIds) {
                 if (!AntimatterAPI.isModLoaded(modId)) {

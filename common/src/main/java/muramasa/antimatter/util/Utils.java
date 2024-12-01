@@ -1360,7 +1360,7 @@ public class Utils {
 
     public static String getLocalizedType(IAntimatterObject type) {
         String id = type.getId();
-        if (type instanceof Material material && material.getDisplayNameString() != null && !material.getDisplayNameString().isEmpty()){
+        if (type instanceof Material material){
             return material.getDisplayNameString();
         }
         int index = id.indexOf("_");

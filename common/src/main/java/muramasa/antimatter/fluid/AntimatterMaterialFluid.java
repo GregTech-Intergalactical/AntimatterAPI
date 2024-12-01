@@ -74,7 +74,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     @Override
     public String getLang(String lang) {
         if (lang.equals(Language.DEFAULT)) {
-            String display = material.getDisplayNameString() != null && !material.getDisplayNameString().isEmpty() ? material.getDisplayNameString() : Utils.lowerUnderscoreToUpperSpaced(material.getId());
+            String display = material.getDisplayNameString();
             if (isGasType()) {
                 return display;
             }
