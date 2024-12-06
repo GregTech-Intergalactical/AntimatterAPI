@@ -189,6 +189,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.INGOT.replacement(AntimatterMaterials.Gold, () -> Items.GOLD_INGOT);
         AntimatterMaterialTypes.INGOT.replacement(AntimatterMaterials.Netherite, () -> Items.NETHERITE_INGOT);
         AntimatterMaterialTypes.INGOT.replacement(AntimatterMaterials.Copper, () -> Items.COPPER_INGOT);
+        AntimatterMaterialTypes.INGOT.replacement(AntimatterMaterials.NetheriteScrap, () -> Items.NETHERITE_SCRAP);
 
 
         AntimatterMaterialTypes.DUST.replacement(AntimatterMaterials.Redstone, () -> Items.REDSTONE);
