@@ -21,8 +21,7 @@ public class MaterialDataInit {
     public static void onMaterialEvent(MaterialEvent event){
         //why?
         //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
-        event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.GEAR, ROCK).addHandleStat(-10, -0.5F);
-        AntimatterMaterials.Stone.remove(PLATE);
+        event.setMaterial(AntimatterMaterials.Stone).asDust(ROCK);
         event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Andesite).asDust(AntimatterMaterialTypes.ROCK);
@@ -47,7 +46,6 @@ public class MaterialDataInit {
 
         event.setMaterial(AntimatterMaterials.Glowstone).asDust();
         event.setMaterial(AntimatterMaterials.Sugar).asDust();
-        event.setMaterial(AntimatterMaterials.Bone).addHandleStat(12, 0.0F);
         event.setMaterial(AntimatterMaterials.Wood).asDust(PLATE, MaterialTags.RUBBERTOOLS, MaterialTags.WOOD)
                 .tool().toolDamage(WOOD.getAttackDamageBonus()).toolSpeed(WOOD.getSpeed()).toolDurability(16).toolQuality(WOOD.getLevel()).allowedToolTypes(List.of(AntimatterDefaultTools.SOFT_HAMMER)).build();
         event.setMaterial(AntimatterMaterials.Blaze).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
