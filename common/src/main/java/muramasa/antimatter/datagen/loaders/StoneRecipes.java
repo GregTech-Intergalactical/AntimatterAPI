@@ -53,15 +53,6 @@ public class StoneRecipes {
         }
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             Material m = s.getMaterial();
-            if (m.has(AntimatterMaterialTypes.ROD)){
-                provider.addStackRecipe(output, Ref.ID, s.getId() + "_to_" + m.getId() + "_rod", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', s.getState().getBlock()), "S", "S");
-                if (s == AntimatterStoneTypes.STONE){
-                    provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', Items.COBBLESTONE), "S", "S");
-                }
-                if (s instanceof CobbleStoneType){
-                    provider.addStackRecipe(output, Ref.ID, m.getId() + "_rod_2", "rods", AntimatterMaterialTypes.ROD.get(m, 4), ImmutableMap.of('S', ((CobbleStoneType)s).getBlock("cobble")), "S", "S");
-                }
-            }
             if (s instanceof CobbleStoneType c){
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("cobble")), c.getBlock(""), 0.1F, 200).unlockedBy("has_cobble", provider.hasSafeItem(c.getBlock("cobble"))).save(output, m.getId() + "_stone");
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(c.getBlock("bricks")), c.getBlock("bricks_cracked"), 0.1F, 200).unlockedBy("has_bricks", provider.hasSafeItem(c.getBlock("bricks"))).save(output, m.getId() + "_bricks_cracked");
