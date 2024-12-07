@@ -73,7 +73,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     private int[] energyTiers;
     @Getter
-    private final int useDurability, attackDurability, craftingDurability;
+    @Setter
+    private int useDurability, attackDurability, craftingDurability;
     @Getter
     @Setter
     private float durabilityMultiplier = 1;
@@ -82,7 +83,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     private int baseQuality, overlayLayers;
     @Getter
-    private final float baseAttackDamage, baseAttackSpeed;
+    @Setter
+    private float baseAttackDamage, baseAttackSpeed;
     @Getter
     @Setter
     private CreativeModeTab itemGroup;
