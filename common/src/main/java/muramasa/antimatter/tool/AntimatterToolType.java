@@ -170,30 +170,6 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     /* IAntimatterTool Instantiations */
 
     /**
-     * Instantiates a MaterialTool with Reflection (only use this when you have done setToolClass when creating your AntimatterToolType)
-     *
-     * @param domain  namespace
-     * @param objects an Object array that should be ordered same way as your custom ToolClass constructor
-     *                (e.g. for MaterialItem: String domain, AntimatterToolType type, IItemTier tier, Item.Properties properties, Material primary, Material secondary)
-     * @return a brand new custom implementation of IAntimatterTool for enjoyment
-     */
-    public IAntimatterTool instantiateTools(String domain, Object... objects) {
-        if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
-        if (objects.length == 0) {
-            Utils.onInvalidData("An AntimatterToolType was instantiated with an empty arguments list!");
-        }
-        if (toolClass.equals(MaterialTool.class) || toolClass.equals(MaterialSword.class)) {
-            Utils.onInvalidData("Please use the correct instantiation method in AntimatterToolType to return the correct instance!");
-        }
-        try {
-            return ConstructorUtils.invokeConstructor(toolClass, domain, objects);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Instantiates powered MaterialTools
      */
     public List<IAntimatterTool> instantiatePoweredTools(String domain) {
