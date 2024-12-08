@@ -14,6 +14,7 @@ import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.material.data.ToolData;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
@@ -55,6 +56,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Getter
     @Setter
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
+    @Getter
+    private final Map<String, Supplier<Item>> replacements = new Object2ObjectOpenHashMap<>();
     @Getter
     @Setter
     private Set<Enchantment> blacklistedEnchantments = new HashSet<>();
@@ -230,6 +233,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         if (simple){
             MaterialTags.TOOLS.getAll().forEach((m, t) -> {
                 if (primaryMaterialRequirement != null && !m.has(primaryMaterialRequirement)) return;
+                if (replacements.containsKey(m.getId())) return;
                 if (t.toolTypes().contains(this)){
                     tools.add(instantiateTool(domain, AntimatterItemTier.getOrCreate(m, hasSecondary ? t.handleMaterial() : Material.NULL), properties));
                 }
@@ -246,6 +250,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     }
 
     /* SETTERS */
+
+    public AntimatterToolType addReplacement(Material material, Supplier<Item> item){
+        this.replacements.put(material.getId(), item);
+        return this;
+    }
 
     public AntimatterToolType setToolTip(Component... tooltip) {
         this.tooltip.addAll(Arrays.asList(tooltip));
@@ -390,11 +399,28 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     }
 
     public ItemStack getToolStack(Material primary) {
+        if (simple && replacements.containsKey(primary.getId())){
+            ItemStack stack = new ItemStack(replacements.get(primary.getId()).get());
+            if (!primary.has(MaterialTags.TOOLS)) {
+                return stack;
+            } else {
+                Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.get(primary).toolEnchantment();
+                if (!mainEnchants.isEmpty()) {
+                    mainEnchants.entrySet().stream().filter((e) -> e.getKey().canEnchant(stack)).forEach((e) -> {
+                        stack.enchant(e.getKey(), e.getValue());
+                    });
+                }
+                return stack;
+            }
+        }
         String id = simple ? primary.getId() + "_" + this.id : this.id;
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, Material.NULL);
     }
 
     public Item getToolItem(Material material){
+        if (simple && replacements.containsKey(material.getId())){
+            return replacements.get(material.getId()).get();
+        }
         String id = simple ? material.getId() + "_" + this.id : this.id;
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).getItem();
     }
