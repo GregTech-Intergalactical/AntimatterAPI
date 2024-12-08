@@ -1,11 +1,15 @@
 {
   "wrench": {
-	"subtitle": "antimatter.subtitle.wrench",
+    "subtitle": "antimatter.subtitle.wrench",
     "sounds": [ "antimatter:wrench" ]
   },
   "drill": {
     "subtitle": "antimatter.subtitle.drill",
     "sounds": [ "antimatter:drill" ]
+  },
+  "wire-cutters": {
+    "subtitle": "antimatter.subtitle.wire_cutters",
+    "sounds": [ "antimatter:wire-cutters" ]
   },
   "interrupt": {
     "sounds": [ "antimatter:interrupt" ]
