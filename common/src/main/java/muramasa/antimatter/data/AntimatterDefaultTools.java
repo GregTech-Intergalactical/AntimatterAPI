@@ -14,11 +14,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.*;
+import static muramasa.antimatter.data.AntimatterMaterials.*;
 import static net.minecraft.world.level.material.Material.*;
 
 public class AntimatterDefaultTools {
@@ -59,6 +61,21 @@ public class AntimatterDefaultTools {
         if (side == Side.CLIENT) {
             clientInit();
         }
+        PICKAXE.addReplacement(Iron, () -> Items.IRON_PICKAXE);
+        PICKAXE.addReplacement(Gold, () -> Items.GOLDEN_PICKAXE);
+        PICKAXE.addReplacement(Diamond, () -> Items.DIAMOND_PICKAXE);
+        AXE.addReplacement(Iron, () -> Items.IRON_AXE);
+        AXE.addReplacement(Gold, () -> Items.GOLDEN_AXE);
+        AXE.addReplacement(Diamond, () -> Items.DIAMOND_AXE);
+        SHOVEL.addReplacement(Iron, () -> Items.IRON_SHOVEL);
+        SHOVEL.addReplacement(Gold, () -> Items.GOLDEN_SHOVEL);
+        SHOVEL.addReplacement(Diamond, () -> Items.DIAMOND_SHOVEL);
+        SWORD.addReplacement(Iron, () -> Items.IRON_SWORD);
+        SWORD.addReplacement(Gold, () -> Items.GOLDEN_SWORD);
+        SWORD.addReplacement(Diamond, () -> Items.DIAMOND_SWORD);
+        HOE.addReplacement(Iron, () -> Items.IRON_HOE);
+        HOE.addReplacement(Gold, () -> Items.GOLDEN_HOE);
+        HOE.addReplacement(Diamond, () -> Items.DIAMOND_HOE);
     }
 
     public static void postInit(){

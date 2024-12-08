@@ -18,9 +18,7 @@ import static muramasa.antimatter.material.MaterialTags.QUARTZ_LIKE_BLOCKS;
 import static net.minecraft.world.item.Tiers.*;
 
 public class MaterialDataInit {
-    public static void onMaterialEvent(MaterialEvent event){
-        //why?
-        //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
+    public static void onMaterialEvent(MaterialEvent<?> event){
         event.setMaterial(AntimatterMaterials.Stone).asDust(ROCK);
         event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.ROCK);
@@ -37,10 +35,9 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Netherrack).asDust();
         event.setMaterial(AntimatterMaterials.Prismarine).asDust();
         event.setMaterial(AntimatterMaterials.DarkPrismarine).asDust();
-        AntimatterToolType[] vanillaToolTypes = new AntimatterToolType[]{AntimatterDefaultTools.PICKAXE, AntimatterDefaultTools.AXE, AntimatterDefaultTools.SHOVEL, AntimatterDefaultTools.SWORD, AntimatterDefaultTools.HOE};
 
-        event.setMaterial(AntimatterMaterials.Iron).asMetal(1811, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).tool().toolDamage(IRON.getAttackDamageBonus()).toolSpeed(IRON.getSpeed()).toolDurability(256).toolQuality(IRON.getLevel()).blacklistToolTypes(vanillaToolTypes).build();
-        event.setMaterial(AntimatterMaterials.Gold).asMetal(1337, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).tool().toolDamage(GOLD.getAttackDamageBonus()).toolSpeed(GOLD.getSpeed()).toolDurability(GOLD.getUses()).toolQuality(GOLD.getLevel()).blacklistToolTypes(vanillaToolTypes).toolEnchantments(of(Enchantments.SMITE, 3)).build().harvestLevel(2);
+        event.setMaterial(AntimatterMaterials.Iron).asMetal(1811, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).tool().toolDamage(IRON.getAttackDamageBonus()).toolSpeed(IRON.getSpeed()).toolDurability(256).toolQuality(IRON.getLevel()).build();
+        event.setMaterial(AntimatterMaterials.Gold).asMetal(1337, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(1, 5, true).tool().toolDamage(GOLD.getAttackDamageBonus()).toolSpeed(GOLD.getSpeed()).toolDurability(GOLD.getUses()).toolQuality(GOLD.getLevel()).toolEnchantments(of(Enchantments.SMITE, 3)).build().harvestLevel(2);
         //cause 1.18
         event.setMaterial(AntimatterMaterials.Copper).asMetal(1357).asOre(1, 5, true).harvestLevel(1);
 
@@ -57,7 +54,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Charcoal).asDust(AntimatterMaterialTypes.BLOCK);
         event.setMaterial(AntimatterMaterials.Coal).asGemBasic(false).asOre(0, 2, true, AntimatterMaterialTypes.ORE_STONE);
         event.setMaterial(AntimatterMaterials.Diamond).asGemBasic(false, PICKAXE_HEAD, AXE_HEAD, SHOVEL_HEAD, HOE_HEAD, SWORD_BLADE).asOre(3, 7, true)
-                .tool().toolDamage(DIAMOND.getAttackDamageBonus()).toolSpeed(DIAMOND.getSpeed()).toolDurability(DIAMOND.getUses()).toolQuality(DIAMOND.getLevel()).blacklistToolTypes(vanillaToolTypes).build();
+                .tool().toolDamage(DIAMOND.getAttackDamageBonus()).toolSpeed(DIAMOND.getSpeed()).toolDurability(DIAMOND.getUses()).toolQuality(DIAMOND.getLevel()).build();
         event.setMaterial(AntimatterMaterials.Emerald).asGemBasic(false).asOre(3, 7, true).harvestLevel(2);
         event.setMaterial(AntimatterMaterials.EnderPearl).asGemBasic(false);
         event.setMaterial(AntimatterMaterials.EnderEye).asGemBasic(false);
